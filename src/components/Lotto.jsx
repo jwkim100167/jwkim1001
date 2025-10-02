@@ -829,7 +829,9 @@ const Lotto = () => {
     const loadStaticData = async () => {
       try {
         console.log('📂 정적 JSON 파일에서 데이터 로드 시도...');
-        const response = await fetch('/lotto-data.json');
+        // GitHub Pages base path 고려
+        const basePath = import.meta.env.MODE === 'production' ? '/jwkim1001' : '';
+        const response = await fetch(`${basePath}/lotto-data.json`);
         if (response.ok) {
           const jsonData = await response.json();
           console.log(`✅ 정적 JSON 파일 로드 성공: ${jsonData.totalRounds}회차`);
