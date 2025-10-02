@@ -861,14 +861,23 @@ const Lotto = () => {
       }
     };
 
-    // 데이터 로드 순서: 정적 JSON -> localStorage
+    // 데이터 로드 순서: 정적 JSON -> localStorage -> 필요시 다운로드
     (async () => {
       const loadedFromStatic = await loadStaticData();
       if (!loadedFromStatic) {
-        loadFromStorage();
+        const loadedFromStorage = loadFromStorage();
+        // 정적 파일도 없고 localStorage도 없을 때만 다운로드
+        if (!loadedFromStorage) {
+          console.log('⚠️ 정적 데이터와 저장된 데이터 모두 없음. 다운로드 시작...');
+          runCompleteDownloadWithRetry();
+        } else {
+          console.log('✅ localStorage에서 데이터 로드 완료. 다운로드 건너뜀.');
+        }
+      } else {
+        console.log('✅ 정적 JSON 파일에서 데이터 로드 완료. 다운로드 건너뜀.');
       }
     })();
-    
+
     // 1회차부터 최신회차까지 완전 다운로드 실행 (반복 시도)
     const runCompleteDownloadWithRetry = async () => {
       // 최신 회차 추정 계산
@@ -959,9 +968,6 @@ const Lotto = () => {
         checkAndDownload();
       }, 1500);
     };
-    
-    // 즉시 완전 다운로드 실행
-    runCompleteDownloadWithRetry();
   }, [databaseInitialized]); // databaseInitialized 의존성
 
   // 추가 제외 번호 함수들
