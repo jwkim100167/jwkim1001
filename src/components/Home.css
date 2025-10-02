@@ -1,0 +1,218 @@
+.home {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.home-container {
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+}
+
+.home-header {
+  color: white;
+  margin-bottom: 50px;
+}
+
+.home-header h1 {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+}
+
+.home-header p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.navigation-cards {
+  display: grid;
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+.nav-card {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 30px;
+  text-decoration: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.nav-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.nav-card:hover::before {
+  left: 100%;
+}
+
+.card-icon {
+  font-size: 3.5rem;
+  flex-shrink: 0;
+}
+
+.card-content {
+  flex: 1;
+  text-align: left;
+}
+
+.card-content h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.card-content p {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.card-features {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.card-features span {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  color: #e0e6ff;
+}
+
+.card-arrow {
+  font-size: 2rem;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.nav-card:hover .card-arrow {
+  transform: translateX(10px);
+}
+
+.dashboard-card:hover {
+  border-color: rgba(76, 175, 80, 0.5);
+  box-shadow: 0 20px 40px rgba(76, 175, 80, 0.1);
+}
+
+.lotto-card:hover {
+  border-color: rgba(255, 193, 7, 0.5);
+  box-shadow: 0 20px 40px rgba(255, 193, 7, 0.1);
+}
+
+.jobs-card:hover {
+  border-color: rgba(102, 126, 234, 0.5);
+  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.1);
+}
+
+.home-footer {
+  color: white;
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-bottom: 30px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #fff;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.creator {
+  font-size: 1rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .home-header h1 {
+    font-size: 2.2rem;
+  }
+  
+  .nav-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 25px;
+  }
+  
+  .card-content {
+    text-align: center;
+  }
+  
+  .stats {
+    gap: 30px;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .nav-card {
+    padding: 20px;
+  }
+  
+  .card-icon {
+    font-size: 2.5rem;
+  }
+  
+  .card-content h2 {
+    font-size: 1.4rem;
+  }
+  
+  .stats {
+    flex-direction: column;
+    gap: 20px;
+  }
+}

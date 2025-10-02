@@ -1,0 +1,128 @@
+.dashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dashboard-header {
+  text-align: center;
+  color: white;
+  margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.global-color-guide {
+  font-size: 1.1rem;
+  color: #fff;
+  opacity: 0.9;
+  margin: 10px 0;
+}
+
+.batch-info {
+  font-size: 0.9rem;
+  color: #ccc;
+  margin-top: 10px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px 15px;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.traffic-lights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  max-width: 1000px;
+  width: 100%;
+  justify-items: center;
+  margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+  .traffic-lights-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 2rem;
+  }
+  
+  .footer-navigation {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .traffic-lights-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 1.8rem;
+  }
+}
+
+.dashboard-footer {
+  color: white;
+  text-align: center;
+  opacity: 0.8;
+  margin-top: auto;
+}
+
+.footer-navigation {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.home-btn,
+.manual-update-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+
+.home-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.home-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.manual-update-btn {
+  background: rgba(76, 175, 80, 0.3);
+  color: white;
+  border: 1px solid rgba(76, 175, 80, 0.5);
+}
+
+.manual-update-btn:hover {
+  background: rgba(76, 175, 80, 0.5);
+  transform: translateY(-2px);
+}
+
+.dashboard-footer p {
+  margin: 0;
+  font-size: 1rem;
+}

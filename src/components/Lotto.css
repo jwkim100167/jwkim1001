@@ -1,0 +1,1988 @@
+.lotto {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ff9a56 0%, #ff6b6b 100%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.lotto-container {
+  max-width: 800px;
+  min-width: 800px; /* 최소 너비도 설정해서 일관성 유지 */
+  width: 100%;
+  text-align: center;
+}
+
+.lotto-header {
+  color: white;
+  margin-bottom: 30px;
+}
+
+.lotto-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+}
+
+.lotto-header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* 탭 스타일 */
+.lotto-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 25px;
+  padding: 5px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.tab-btn.active {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.02);
+}
+
+.tab-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* 콘텐츠 영역 */
+.lotto-content {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 30px;
+  backdrop-filter: blur(10px);
+  min-height: 600px; /* 두 탭 공통 최소 높이 */
+}
+
+/* 탭별 섹션 공통 스타일 */
+.generator-section,
+.checker-section {
+  min-height: 500px; /* 내용 영역 최소 높이 */
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* 전체 너비 사용 */
+}
+
+/* 필수 포함 번호 섹션 */
+.include-section {
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 15px;
+  max-width: 100%;
+  overflow: hidden; /* 내용이 넘치지 않도록 */
+}
+
+/* 제외 번호 섹션 */
+.exclude-section {
+  margin-bottom: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 15px;
+  max-width: 100%;
+  overflow: hidden; /* 내용이 넘치지 않도록 */
+}
+
+/* 빠른 제외 버튼들 */
+.quick-exclude-buttons {
+  margin-bottom: 15px;
+}
+
+.button-row-1,
+.button-row-2,
+.button-row-3 {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.button-row-1 {
+  /* 첫 번째 줄: 메인 버튼들 (큰 크기) */
+  flex-wrap: nowrap;
+}
+
+.button-row-1 .quick-exclude-btn {
+  /* 첫 번째 줄 버튼들 - 큰 크기 */
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  min-width: 100px;
+  flex-shrink: 1;
+}
+
+.button-row-2 {
+  /* 두 번째 줄: 통계 기반 버튼들 (중간 크기) */
+  flex-wrap: nowrap;
+}
+
+.button-row-2 .quick-exclude-btn {
+  /* 두 번째 줄 버튼들 - 중간 크기 */
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  min-width: 75px;
+  flex-shrink: 1;
+}
+
+.button-row-3 {
+  /* 세 번째 줄: 수학적 분류 버튼들 (작은 크기) */
+}
+
+.button-row-3 .quick-exclude-btn {
+  /* 세 번째 줄 버튼들 - 작은 크기 */
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  min-width: 60px;
+}
+
+.quick-exclude-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  color: white;
+  border: 1px solid transparent;
+}
+
+.quick-exclude-btn.anniversary {
+  background: rgba(255, 105, 180, 0.3);
+  border-color: rgba(255, 105, 180, 0.5);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.quick-exclude-btn.anniversary:hover {
+  background: rgba(255, 105, 180, 0.5);
+  transform: translateY(-1px);
+}
+
+.anniversary-numbers,
+.range-text {
+  font-size: 0.6rem;
+  opacity: 0.8;
+  font-weight: normal;
+  line-height: 1;
+}
+
+.quick-exclude-btn.frequent {
+  background: rgba(156, 39, 176, 0.3);
+  border-color: rgba(156, 39, 176, 0.5);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.quick-exclude-btn.frequent:hover {
+  background: rgba(156, 39, 176, 0.5);
+  transform: translateY(-1px);
+}
+
+.quick-exclude-btn.rare {
+  background: rgba(33, 150, 243, 0.3);
+  border-color: rgba(33, 150, 243, 0.5);
+}
+
+.quick-exclude-btn.rare:hover {
+  background: rgba(33, 150, 243, 0.5);
+  transform: translateY(-1px);
+}
+
+.quick-exclude-btn.prime {
+  background: rgba(156, 39, 176, 0.3);
+  border-color: rgba(156, 39, 176, 0.5);
+}
+
+.quick-exclude-btn.prime:hover {
+  background: rgba(156, 39, 176, 0.5);
+  transform: translateY(-1px);
+}
+
+.quick-exclude-btn.even {
+  background: rgba(76, 175, 80, 0.3);
+  border-color: rgba(76, 175, 80, 0.5);
+}
+
+.quick-exclude-btn.even:hover {
+  background: rgba(76, 175, 80, 0.5);
+  transform: translateY(-1px);
+}
+
+.quick-exclude-btn.birthday {
+  background: rgba(255, 20, 147, 0.3);
+  border-color: rgba(255, 20, 147, 0.5);
+}
+
+.quick-exclude-btn.birthday:hover {
+  background: rgba(255, 20, 147, 0.5);
+  transform: translateY(-1px);
+}
+
+.quick-exclude-btn.songsong-birthday {
+  background: rgba(255, 165, 0, 0.3);
+  border-color: rgba(255, 165, 0, 0.5);
+}
+
+.quick-exclude-btn.songsong-birthday:hover {
+  background: rgba(255, 165, 0, 0.5);
+  transform: translateY(-1px);
+}
+
+.quick-exclude-btn.wedding-anniversary {
+  background: rgba(220, 20, 60, 0.3);
+  border-color: rgba(220, 20, 60, 0.5);
+}
+
+.quick-exclude-btn.wedding-anniversary:hover {
+  background: rgba(220, 20, 60, 0.5);
+  transform: translateY(-1px);
+}
+
+.quick-exclude-btn.edge {
+  background: rgba(233, 30, 99, 0.3);
+  border-color: rgba(233, 30, 99, 0.5);
+}
+
+.quick-exclude-btn.edge:hover {
+  background: rgba(233, 30, 99, 0.5);
+  transform: translateY(-1px);
+}
+
+.quick-exclude-btn.multiple {
+  background: rgba(63, 81, 181, 0.3);
+  border-color: rgba(63, 81, 181, 0.5);
+}
+
+.quick-exclude-btn.multiple:hover {
+  background: rgba(63, 81, 181, 0.5);
+  transform: translateY(-1px);
+}
+
+.quick-exclude-btn.consecutive {
+  background: rgba(121, 85, 72, 0.3);
+  border-color: rgba(121, 85, 72, 0.5);
+}
+
+.quick-exclude-btn.consecutive:hover {
+  background: rgba(121, 85, 72, 0.5);
+  transform: translateY(-1px);
+}
+
+.quick-exclude-btn.not-appeared {
+  background: rgba(244, 67, 54, 0.3);
+  border-color: rgba(244, 67, 54, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.quick-exclude-btn.not-appeared:hover {
+  background: rgba(244, 67, 54, 0.5);
+  transform: translateY(-1px);
+}
+
+.quick-exclude-btn.all-time-most {
+  background: rgba(255, 152, 0, 0.3);
+  border-color: rgba(255, 152, 0, 0.5);
+}
+
+.quick-exclude-btn.all-time-most:hover {
+  background: rgba(255, 152, 0, 0.5);
+  transform: translateY(-1px);
+}
+
+.quick-exclude-btn.all-time-least {
+  background: rgba(96, 125, 139, 0.3);
+  border-color: rgba(96, 125, 139, 0.5);
+}
+
+.quick-exclude-btn.all-time-least:hover {
+  background: rgba(96, 125, 139, 0.5);
+  transform: translateY(-1px);
+}
+
+.include-section h3 {
+  color: white;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.include-count-setting {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.include-count-setting label {
+  color: white;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.count-input {
+  width: 60px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 0.9rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.count-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.include-input {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.include-input-field {
+  padding: 10px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 0.9rem;
+  backdrop-filter: blur(10px);
+  width: 200px;
+  text-align: center;
+}
+
+.include-input-field::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.add-include-btn {
+  padding: 10px 20px;
+  border: none;
+  background: rgba(33, 150, 243, 0.3);
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(33, 150, 243, 0.5);
+}
+
+.add-include-btn:hover {
+  background: rgba(33, 150, 243, 0.5);
+  transform: translateY(-2px);
+}
+
+.included-numbers {
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.included-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 10px;
+  max-width: 100%;
+  width: 100%;
+  max-height: 200px; /* 최대 높이 설정 (게임 수 설정이 있어서 조금 더 크게) */
+  overflow-x: hidden; /* 가로 스크롤 완전 금지 */
+  overflow-y: auto; /* 세로 스크롤만 허용 */
+  box-sizing: border-box;
+}
+
+.included-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.included-ball {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  background: rgba(33, 150, 243, 0.8);
+  color: white;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.game-count-setting {
+  text-align: center;
+}
+
+.game-count-setting label {
+  color: white;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.game-count-input {
+  width: 40px;
+  padding: 4px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 0.8rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.game-count-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.included-ball:hover {
+  background: rgba(33, 150, 243, 1);
+  transform: scale(1.05);
+}
+
+.clear-include-btn {
+  padding: 6px 15px;
+  border: none;
+  background: rgba(33, 150, 243, 0.3);
+  color: white;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(33, 150, 243, 0.5);
+}
+
+.clear-include-btn:hover {
+  background: rgba(33, 150, 243, 0.5);
+}
+
+.no-includes {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  padding: 15px;
+  font-style: italic;
+}
+
+/* 자동 제외 토글 */
+.auto-exclude-toggle {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.toggle-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-checkbox {
+  display: none;
+}
+
+.toggle-slider {
+  width: 50px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  position: relative;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  top: 1px;
+  left: 2px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-checkbox:checked + .toggle-slider {
+  background: rgba(76, 175, 80, 0.5);
+  border-color: rgba(76, 175, 80, 0.7);
+}
+
+.toggle-checkbox:checked + .toggle-slider::before {
+  transform: translateX(26px);
+  background: #4CAF50;
+}
+
+.toggle-label {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.exclude-section h3 {
+  color: white;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.auto-exclude-info {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.auto-exclude-info small {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 15px;
+  display: inline-block;
+}
+
+.exclude-input {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.exclude-input-field {
+  padding: 10px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 0.9rem;
+  backdrop-filter: blur(10px);
+  width: 200px;
+  text-align: center;
+}
+
+.exclude-input-field::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.add-exclude-btn {
+  padding: 10px 20px;
+  border: none;
+  background: rgba(255, 193, 7, 0.3);
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 193, 7, 0.5);
+}
+
+.add-exclude-btn:hover {
+  background: rgba(255, 193, 7, 0.5);
+  transform: translateY(-2px);
+}
+
+.excluded-numbers {
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.excluded-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 10px;
+  max-width: 100%;
+  width: 100%;
+  max-height: 150px; /* 최대 높이 설정 */
+  overflow-x: hidden; /* 가로 스크롤 완전 금지 */
+  overflow-y: auto; /* 세로 스크롤만 허용 */
+  box-sizing: border-box;
+}
+
+.excluded-ball {
+  display: inline-block;
+  padding: 8px 16px;
+  background: rgba(244, 67, 54, 0.8);
+  color: white;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  min-width: 50px;
+  text-align: center;
+}
+
+.excluded-ball:hover {
+  background: rgba(244, 67, 54, 1);
+  transform: scale(1.05);
+}
+
+.excluded-ball.auto-excluded {
+  background: rgba(76, 175, 80, 0.8);
+  cursor: default;
+}
+
+.excluded-ball.auto-excluded:hover {
+  background: rgba(76, 175, 80, 0.9);
+  transform: none;
+}
+
+.excluded-ball.auto-excluded.date-excluded {
+  background: rgba(156, 39, 176, 0.8);
+}
+
+.excluded-ball.auto-excluded.date-excluded:hover {
+  background: rgba(156, 39, 176, 0.9);
+}
+
+/* 최신최다로 제외된 번호 (보라색) */
+.excluded-ball.anniversary-excluded {
+  background: rgba(255, 105, 180, 0.8) !important;
+}
+
+.excluded-ball.anniversary-excluded:hover {
+  background: rgba(255, 105, 180, 1) !important;
+}
+
+.excluded-ball.frequent-excluded {
+  background: rgba(156, 39, 176, 0.8) !important;
+}
+
+.excluded-ball.frequent-excluded:hover {
+  background: rgba(156, 39, 176, 1) !important;
+}
+
+/* 다른 타입들 색상 */
+.excluded-ball.not-appeared-excluded {
+  background: rgba(255, 152, 0, 0.8);
+}
+
+.excluded-ball.not-appeared-excluded:hover {
+  background: rgba(255, 152, 0, 1);
+}
+
+.excluded-ball.all-time-most-excluded {
+  background: rgba(33, 150, 243, 0.8);
+}
+
+.excluded-ball.all-time-most-excluded:hover {
+  background: rgba(33, 150, 243, 1);
+}
+
+.excluded-ball.all-time-least-excluded {
+  background: rgba(76, 175, 80, 0.8);
+}
+
+.excluded-ball.all-time-least-excluded:hover {
+  background: rgba(76, 175, 80, 1);
+}
+
+.excluded-ball.prime-excluded {
+  background: rgba(233, 30, 99, 0.8);
+}
+
+.excluded-ball.prime-excluded:hover {
+  background: rgba(233, 30, 99, 1);
+}
+
+.excluded-ball.even-excluded {
+  background: rgba(63, 81, 181, 0.8);
+}
+
+.excluded-ball.even-excluded:hover {
+  background: rgba(63, 81, 181, 1);
+}
+
+.excluded-ball.birthday-excluded {
+  background: rgba(255, 20, 147, 0.8);
+}
+
+.excluded-ball.birthday-excluded:hover {
+  background: rgba(255, 20, 147, 1);
+}
+
+.excluded-ball.songsong-birthday-excluded {
+  background: rgba(255, 165, 0, 0.8);
+}
+
+.excluded-ball.songsong-birthday-excluded:hover {
+  background: rgba(255, 165, 0, 1);
+}
+
+.excluded-ball.wedding-anniversary-excluded {
+  background: rgba(220, 20, 60, 0.8);
+}
+
+.excluded-ball.wedding-anniversary-excluded:hover {
+  background: rgba(220, 20, 60, 1);
+}
+
+/* 새로운 버튼들 색상 */
+.quick-exclude-btn.this-week-date {
+  background: rgba(103, 58, 183, 0.3);
+  border-color: rgba(103, 58, 183, 0.5);
+  color: white;
+}
+
+.quick-exclude-btn.this-week-date:hover {
+  background: rgba(103, 58, 183, 0.5);
+  transform: translateY(-1px);
+}
+
+.quick-exclude-btn.last-week-winning {
+  background: rgba(121, 85, 72, 0.3);
+  border-color: rgba(121, 85, 72, 0.5);
+  color: white;
+}
+
+.quick-exclude-btn.last-week-winning:hover {
+  background: rgba(121, 85, 72, 0.5);
+  transform: translateY(-1px);
+}
+
+/* 새로운 타입들의 제외된 번호 색상 */
+.excluded-ball.this-week-date-excluded {
+  background: rgba(103, 58, 183, 0.8) !important;
+}
+
+.excluded-ball.this-week-date-excluded:hover {
+  background: rgba(103, 58, 183, 1) !important;
+}
+
+.lotto .lotto-container .lotto-content .exclude-section .excluded-numbers .excluded-list .excluded-ball.last-week-winning-excluded {
+  background: rgba(121, 85, 72, 0.8) !important;
+  border: 2px solid rgba(121, 85, 72, 0.9) !important;
+}
+
+.lotto .lotto-container .lotto-content .exclude-section .excluded-numbers .excluded-list .excluded-ball.last-week-winning-excluded:hover {
+  background: rgba(121, 85, 72, 1) !important;
+  border: 2px solid rgba(121, 85, 72, 1) !important;
+}
+
+/* 다중 타입 그라데이션 스타일 */
+/* 모든 다중 타입에 대한 범용 폴백 (가장 먼저 정의) */
+.excluded-numbers .excluded-list .excluded-ball.multi-type {
+  background: linear-gradient(to right, rgba(244, 67, 54, 0.8) 50%, rgba(156, 39, 176, 0.8) 50%) !important;
+  border: 2px solid rgba(255, 215, 0, 0.8) !important;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3) !important;
+}
+
+/* 주요 조합들의 좌우 분할 그라데이션 - 특이성 극대화 */
+/* 지난주 당첨번호(갈색) + 최신최다(보라색) 조합 */
+.lotto .lotto-container .lotto-content .exclude-section .excluded-numbers .excluded-list .excluded-ball.multi-type.last-week-winning-excluded.frequent-excluded,
+.lotto .lotto-container .lotto-content .exclude-section .excluded-numbers .excluded-list .excluded-ball.multi-type.frequent-excluded.last-week-winning-excluded {
+  background: linear-gradient(to right, rgba(121, 85, 72, 0.9) 50%, rgba(156, 39, 176, 0.9) 50%) !important;
+  border: 3px solid rgba(255, 215, 0, 0.9) !important;
+  box-shadow: 0 3px 12px rgba(255, 215, 0, 0.4) !important;
+  position: relative !important;
+}
+
+.lotto .lotto-container .lotto-content .exclude-section .excluded-numbers .excluded-list .excluded-ball.multi-type.last-week-winning-excluded.frequent-excluded:hover,
+.lotto .lotto-container .lotto-content .exclude-section .excluded-numbers .excluded-list .excluded-ball.multi-type.frequent-excluded.last-week-winning-excluded:hover {
+  background: linear-gradient(to right, rgba(121, 85, 72, 1) 50%, rgba(156, 39, 176, 1) 50%) !important;
+  transform: scale(1.1) !important;
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.6) !important;
+}
+
+.excluded-ball.multi-type.this-week-date-excluded.frequent-excluded {
+  background: linear-gradient(to right, rgba(103, 58, 183, 0.8) 50%, rgba(156, 39, 176, 0.8) 50%) !important;
+}
+
+.excluded-ball.multi-type.this-week-date-excluded.frequent-excluded:hover {
+  background: linear-gradient(to right, rgba(103, 58, 183, 1) 50%, rgba(156, 39, 176, 1) 50%) !important;
+}
+
+.excluded-ball.multi-type.frequent-excluded.this-week-date-excluded {
+  background: linear-gradient(to right, rgba(103, 58, 183, 0.8) 50%, rgba(156, 39, 176, 0.8) 50%) !important;
+}
+
+.excluded-ball.multi-type.frequent-excluded.this-week-date-excluded:hover {
+  background: linear-gradient(to right, rgba(103, 58, 183, 1) 50%, rgba(156, 39, 176, 1) 50%) !important;
+}
+
+.excluded-ball.multi-type.last-week-winning-excluded.not-appeared-excluded {
+  background: linear-gradient(to right, rgba(121, 85, 72, 0.8) 50%, rgba(255, 152, 0, 0.8) 50%) !important;
+}
+
+.excluded-ball.multi-type.last-week-winning-excluded.not-appeared-excluded:hover {
+  background: linear-gradient(to right, rgba(121, 85, 72, 1) 50%, rgba(255, 152, 0, 1) 50%) !important;
+}
+
+.excluded-ball.multi-type.last-week-winning-excluded.all-time-most-excluded {
+  background: linear-gradient(to right, rgba(121, 85, 72, 0.8) 50%, rgba(33, 150, 243, 0.8) 50%) !important;
+}
+
+.excluded-ball.multi-type.last-week-winning-excluded.all-time-most-excluded:hover {
+  background: linear-gradient(to right, rgba(121, 85, 72, 1) 50%, rgba(33, 150, 243, 1) 50%) !important;
+}
+
+.excluded-ball.multi-type.this-week-date-excluded.last-week-winning-excluded {
+  background: linear-gradient(to right, rgba(103, 58, 183, 0.8) 50%, rgba(121, 85, 72, 0.8) 50%) !important;
+}
+
+.excluded-ball.multi-type.this-week-date-excluded.last-week-winning-excluded:hover {
+  background: linear-gradient(to right, rgba(103, 58, 183, 1) 50%, rgba(121, 85, 72, 1) 50%) !important;
+}
+
+/* 기타 조합들을 위한 폴백 스타일 */
+.excluded-ball.multi-type.frequent-excluded {
+  background: linear-gradient(to right, rgba(156, 39, 176, 0.8) 50%, rgba(244, 67, 54, 0.6) 50%) !important;
+}
+
+.excluded-ball.multi-type.not-appeared-excluded {
+  background: linear-gradient(to right, rgba(255, 152, 0, 0.8) 50%, rgba(244, 67, 54, 0.6) 50%) !important;
+}
+
+.clear-exclude-btn {
+  padding: 6px 15px;
+  border: none;
+  background: rgba(244, 67, 54, 0.3);
+  color: white;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(244, 67, 54, 0.5);
+}
+
+.clear-exclude-btn:hover {
+  background: rgba(244, 67, 54, 0.5);
+}
+
+.no-excludes {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  padding: 15px;
+  font-style: italic;
+}
+
+/* 번호 생성기 스타일 */
+.generator-controls {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.generate-btn {
+  padding: 12px 24px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.generate-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.generated-numbers {
+  margin-top: 20px;
+}
+
+.number-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+}
+
+.game-label {
+  color: white;
+  font-weight: bold;
+  min-width: 80px;
+  text-align: left;
+}
+
+.number-balls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.number-ball {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  background: #fff;
+  color: #333;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.no-numbers {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.1rem;
+  padding: 40px;
+}
+
+/* 당첨번호 확인 스타일 */
+.checker-controls {
+  margin-bottom: 30px;
+}
+
+.round-input {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.round-input input {
+  padding: 12px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1rem;
+  backdrop-filter: blur(10px);
+  width: 200px;
+  text-align: center;
+}
+
+.round-input input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+
+.check-btn {
+  padding: 12px 24px;
+  border: none;
+  background: rgba(76, 175, 80, 0.3);
+  color: white;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(76, 175, 80, 0.5);
+}
+
+.check-btn:hover:not(:disabled) {
+  background: rgba(76, 175, 80, 0.5);
+  transform: translateY(-2px);
+}
+
+.check-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.winning-result {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 25px;
+  margin-top: 20px;
+}
+
+.winning-result h3 {
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.draw-date {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 20px;
+}
+
+.winning-numbers {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.main-numbers {
+  display: flex;
+  gap: 8px;
+}
+
+.winning-ball {
+  display: inline-block;
+  width: 45px;
+  height: 45px;
+  line-height: 45px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.2rem;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.bonus-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.plus {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.bonus-ball {
+  display: inline-block;
+  width: 45px;
+  height: 45px;
+  line-height: 45px;
+  background: linear-gradient(135deg, #FF9800, #F57C00);
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.2rem;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.prize-info {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.prize-info p {
+  margin: 5px 0;
+}
+
+
+.download-btn {
+  padding: 10px 20px;
+  border: none;
+  background: rgba(33, 150, 243, 0.3);
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(33, 150, 243, 0.5);
+}
+
+.download-btn:hover:not(:disabled) {
+  background: rgba(33, 150, 243, 0.5);
+  transform: translateY(-2px);
+}
+
+.download-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* 네비게이션 */
+.navigation {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.back-btn,
+.dashboard-btn {
+  padding: 12px 24px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.back-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.dashboard-btn {
+  background: rgba(76, 175, 80, 0.3);
+  color: white;
+  border: 1px solid rgba(76, 175, 80, 0.5);
+}
+
+.dashboard-btn:hover {
+  background: rgba(76, 175, 80, 0.5);
+  transform: translateY(-2px);
+}
+
+.lotto-footer {
+  color: white;
+  opacity: 0.7;
+}
+
+.lotto-footer p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .lotto-container {
+    min-width: auto; /* 모바일에서는 최소 너비 제한 해제 */
+    max-width: 100%;
+    padding: 0 10px;
+  }
+  
+  .lotto-header h1 {
+    font-size: 2rem;
+  }
+  
+  .lotto-content {
+    padding: 20px;
+    min-height: 500px; /* 모바일에서는 조금 더 작게 */
+  }
+  
+  .generator-section,
+  .checker-section {
+    min-height: 400px; /* 모바일용 최소 높이 */
+  }
+  
+  .exclude-input {
+    flex-direction: column;
+  }
+  
+  .exclude-input-field {
+    width: 100%;
+  }
+  
+  .generator-controls {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .number-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .game-label {
+    text-align: center;
+  }
+  
+  .round-input {
+    flex-direction: column;
+  }
+  
+  .round-input input,
+  .round-select {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .navigation {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .data-management {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .data-management .download-btn {
+    margin: 5px 0 !important;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .included-list,
+  .excluded-list {
+    max-height: 120px; /* 모바일에서는 높이 줄임 */
+  }
+  
+  .button-row-1,
+  .button-row-2,
+  .button-row-3 {
+    gap: 4px;
+  }
+  
+  .button-row-1 .quick-exclude-btn {
+    /* 모바일에서도 큰 크기 유지 */
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    min-width: 80px;
+  }
+
+  .button-row-2 .quick-exclude-btn {
+    /* 모바일에서 중간 크기 */
+    font-size: 0.7rem;
+    padding: 5px 8px;
+    min-width: 55px;
+  }
+
+  .button-row-3 .quick-exclude-btn {
+    /* 모바일에서 작은 크기 */
+    font-size: 0.65rem;
+    padding: 4px 6px;
+    min-width: 45px;
+  }
+  
+  .quick-exclude-btn {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lotto-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .number-balls {
+    justify-content: center;
+  }
+  
+  .number-ball, .winning-ball, .bonus-ball {
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    font-size: 1rem;
+  }
+  
+  .main-numbers {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* 회차 조회 개선 스타일 */
+.checker-info {
+  margin-bottom: 30px;
+  flex-shrink: 0; /* 크기 고정 */
+}
+
+.data-range-info {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.data-range-info {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.data-range-info p {
+  margin: 5px 0;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.data-range-info small {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+}
+
+.data-status-section {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.data-management {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 15px 0;
+  flex-wrap: wrap;
+}
+
+.no-data-section {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.no-data-section .data-status {
+  color: white;
+  margin-bottom: 15px;
+  font-size: 1rem;
+}
+
+
+.round-select {
+  padding: 12px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  min-width: 250px;
+  text-align: center;
+  text-align-last: center;
+}
+
+.round-select option {
+  background: #333;
+  color: white;
+  padding: 5px;
+}
+
+.round-select optgroup {
+  background: #222;
+  color: #ffd700;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.round-select:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* 전체 조회 결과 스타일 */
+.all-results {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 20px;
+  margin-top: 20px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.all-results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.all-results-header h3 {
+  color: white;
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.close-all-btn {
+  padding: 6px 12px;
+  border: none;
+  background: rgba(244, 67, 54, 0.3);
+  color: white;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(244, 67, 54, 0.5);
+}
+
+.close-all-btn:hover {
+  background: rgba(244, 67, 54, 0.5);
+}
+
+.all-results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.result-row {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.result-row:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.result-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 100px;
+}
+
+.result-round {
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.result-date {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+}
+
+.result-numbers {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.result-ball {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-right: 3px;
+}
+
+.bonus-result-ball {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  background: linear-gradient(135deg, #FF9800, #F57C00);
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.all-results-footer {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.all-results-footer p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  margin: 0;
+  text-align: center;
+}
+
+/* 커스텀 스크롤바 스타일 */
+.included-list::-webkit-scrollbar,
+.excluded-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.included-list::-webkit-scrollbar-track,
+.excluded-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.included-list::-webkit-scrollbar-thumb,
+.excluded-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.included-list::-webkit-scrollbar-thumb:hover,
+.excluded-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* 반응형: 전체 조회 */
+@media (max-width: 768px) {
+  .result-row {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  
+  .result-info {
+    align-items: center;
+  }
+  
+  .all-results-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* 제외 패턴 설정 섹션 */
+.overlap-prevention-section {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.overlap-prevention-section h3 {
+  color: white;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.overlap-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.overlap-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.overlap-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.overlap-option input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  accent-color: #4CAF50;
+  flex-shrink: 0;
+}
+
+.overlap-label {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  color: white;
+  font-weight: 500;
+  margin: 0;
+  flex: 1;
+}
+
+.overlap-label small {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  font-weight: normal;
+}
+
+.overlap-warning {
+  background: rgba(76, 175, 80, 0.2);
+  color: white;
+  padding: 8px;
+  border-radius: 6px;
+  margin-top: 6px;
+  font-size: 0.85rem;
+  border-left: 3px solid #4CAF50;
+}
+
+.overlap-info {
+  background: rgba(255, 193, 7, 0.2);
+  color: white;
+  padding: 8px;
+  border-radius: 6px;
+  margin-top: 6px;
+  font-size: 0.85rem;
+  border-left: 3px solid #FFC107;
+}
+
+/* 반응형: 제외 패턴 섹션 */
+@media (max-width: 768px) {
+  .overlap-prevention-section {
+    padding: 15px;
+    margin: 15px 0;
+  }
+
+  .overlap-option {
+    padding: 8px;
+  }
+
+  .overlap-label {
+    font-size: 0.9rem;
+  }
+}
+
+/* 통계 섹션 스타일 */
+.statistics-section {
+  min-height: 500px;
+}
+
+.stats-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.stats-header h2 {
+  color: white;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.stats-header p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+}
+
+.stats-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stats-card h3 {
+  color: white;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+}
+
+/* 번호 리스트 */
+.stats-number-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stats-number-item {
+  display: grid;
+  grid-template-columns: 40px 60px 80px 1fr;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.stats-number-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
+}
+
+.stats-number-item .rank {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.number-ball-stat {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.number-ball-stat.least {
+  background: linear-gradient(135deg, #FF9800, #F57C00);
+}
+
+.stats-number-item .count {
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.progress-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #66BB6A);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-fill.least {
+  background: linear-gradient(90deg, #FF9800, #FFB74D);
+}
+
+.progress-fill.odd {
+  background: linear-gradient(90deg, #2196F3, #42A5F5);
+}
+
+.progress-fill.even {
+  background: linear-gradient(90deg, #9C27B0, #BA68C8);
+}
+
+/* 통계 그리드 */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.stats-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.stats-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.stats-value {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.stats-value-large {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.stats-ratio {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.2rem;
+  margin-left: 10px;
+}
+
+.stats-description {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 5px;
+}
+
+/* 구간별 통계 */
+.range-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.range-item {
+  display: grid;
+  grid-template-columns: 80px 1fr 80px;
+  align-items: center;
+  gap: 15px;
+}
+
+.range-label {
+  color: white;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.range-bar {
+  height: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.range-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #673AB7, #9575CD);
+  border-radius: 15px;
+  transition: width 0.3s ease;
+}
+
+.range-count {
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: right;
+}
+
+/* 전체 번호 빈도표 */
+.all-numbers-grid {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 10px;
+}
+
+.number-frequency-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.number-frequency-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
+}
+
+.number-badge {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #FF6B6B, #EE5A6F);
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.frequency-count {
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* 반응형: 통계 */
+@media (max-width: 768px) {
+  .stats-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .stats-card {
+    padding: 15px;
+  }
+
+  .stats-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .stats-number-item {
+    grid-template-columns: 35px 50px 70px 1fr;
+    gap: 10px;
+    padding: 8px;
+  }
+
+  .number-ball-stat {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-value {
+    font-size: 1.2rem;
+  }
+
+  .stats-value-large {
+    font-size: 2rem;
+  }
+
+  .range-item {
+    grid-template-columns: 70px 1fr 70px;
+    gap: 10px;
+  }
+
+  .all-numbers-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+
+  .number-frequency-item {
+    padding: 8px;
+  }
+
+  .number-badge {
+    width: 30px;
+    height: 30px;
+    font-size: 0.85rem;
+  }
+
+  .frequency-count {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .all-numbers-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

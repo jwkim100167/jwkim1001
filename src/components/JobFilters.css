@@ -1,0 +1,172 @@
+/* 채용공고 필터 스타일 */
+
+.job-filters {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 25px;
+  border-radius: 15px;
+  margin: 0 auto 30px auto;
+  max-width: 1200px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.filters-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-group label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.filter-group input,
+.filter-group select {
+  padding: 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background: white;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.search-input {
+  font-size: 1rem;
+}
+
+.search-input::placeholder {
+  color: #adb5bd;
+}
+
+/* 활성 필터 표시 */
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.active-filter-tag {
+  background: #667eea;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.remove-filter-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.remove-filter-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.clear-all-filters-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.clear-all-filters-btn:hover {
+  background: #c0392b;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .filters-row {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .job-filters {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .filters-row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .filter-group input,
+  .filter-group select {
+    padding: 10px;
+  }
+
+  .active-filters {
+    gap: 8px;
+  }
+
+  .active-filter-tag {
+    font-size: 0.75rem;
+    padding: 5px 10px;
+  }
+
+  .clear-all-filters-btn {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .job-filters {
+    padding: 15px;
+  }
+
+  .active-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .active-filter-tag {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .clear-all-filters-btn {
+    align-self: center;
+    margin-top: 10px;
+  }
+}

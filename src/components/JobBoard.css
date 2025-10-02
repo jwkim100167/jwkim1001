@@ -1,0 +1,488 @@
+/* 채용공고 보드 스타일 */
+
+.job-board {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.job-board-header {
+  text-align: center;
+  color: white;
+  margin-bottom: 30px;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.job-board-header h1 {
+  font-size: 2.5rem;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.settings-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.settings-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.update-info {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 10px;
+  border-radius: 10px;
+  margin: 10px auto;
+  max-width: 400px;
+  backdrop-filter: blur(10px);
+}
+
+.update-info span {
+  font-size: 0.9rem;
+  display: block;
+}
+
+/* 통계 섹션 */
+.job-stats {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  min-width: 120px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stat-value {
+  display: block;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #667eea;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.source-stats {
+  text-align: center;
+  color: white;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+/* 채용공고 리스트 */
+.job-list {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.job-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-left: 5px solid #667eea;
+}
+
+.job-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.job-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.job-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  line-height: 1.4;
+  flex: 1;
+  margin-right: 10px;
+}
+
+.job-source {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.job-source.saramin {
+  background: #ff6b6b;
+  color: white;
+}
+
+.job-source.wanted {
+  background: #4ecdc4;
+  color: white;
+}
+
+.job-source.jobplanet {
+  background: #45b7d1;
+  color: white;
+}
+
+.job-company-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.job-company {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #667eea;
+  margin: 0;
+}
+
+.company-size-tag {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.company-size-tag.large {
+  background: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #bbdefb;
+}
+
+.company-size-tag.medium-large {
+  background: #f3e5f5;
+  color: #7b1fa2;
+  border: 1px solid #ce93d8;
+}
+
+.company-size-tag.medium {
+  background: #e8f5e8;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.company-size-tag.small {
+  background: #fff3e0;
+  color: #ef6c00;
+  border: 1px solid #ffcc02;
+}
+
+.job-details {
+  margin-bottom: 15px;
+}
+
+.job-detail-item {
+  display: flex;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #666;
+  min-width: 50px;
+  font-size: 0.9rem;
+}
+
+.detail-value {
+  color: #333;
+  margin-left: 10px;
+  font-size: 0.9rem;
+}
+
+.job-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.skill-tag {
+  background: #f8f9fa;
+  color: #667eea;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid #e9ecef;
+}
+
+.job-description {
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.job-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 15px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.job-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.job-dates small {
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.job-link-btn {
+  background: #667eea;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.job-link-btn:hover {
+  background: #5a6fd8;
+  transform: translateX(5px);
+}
+
+/* 빈 상태 */
+.no-jobs {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 40px;
+  border-radius: 15px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.no-jobs p {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.no-jobs button {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.no-jobs button:hover {
+  background: #5a6fd8;
+}
+
+/* 로딩 상태 */
+.loading-state {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 60px;
+  border-radius: 15px;
+  max-width: 400px;
+  margin: 50px auto;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-state p {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* 에러 상태 */
+.error-state {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 40px;
+  border-radius: 15px;
+  max-width: 500px;
+  margin: 50px auto;
+}
+
+.error-state p {
+  color: #e74c3c;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.retry-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.retry-btn:hover {
+  background: #c0392b;
+}
+
+/* 푸터 */
+.job-board-footer {
+  text-align: center;
+  color: white;
+  margin-top: 40px;
+}
+
+.footer-navigation {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.home-btn, .manual-update-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 12px 25px;
+  border-radius: 25px;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.home-btn:hover, .manual-update-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.manual-update-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.job-board-footer p {
+  margin: 0;
+  opacity: 0.7;
+  font-size: 0.9rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .job-board {
+    padding: 15px;
+  }
+
+  .job-board-header h1 {
+    font-size: 2rem;
+  }
+
+  .job-stats {
+    gap: 15px;
+  }
+
+  .stat-item {
+    min-width: 100px;
+    padding: 15px;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .job-list {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .job-card {
+    padding: 20px;
+  }
+
+  .job-title {
+    font-size: 1.1rem;
+  }
+
+  .job-card-footer {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .job-link-btn {
+    text-align: center;
+  }
+
+  .footer-navigation {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .home-btn, .manual-update-btn {
+    display: inline-block;
+    text-align: center;
+  }
+}
