@@ -6,8 +6,11 @@ import Lotto from './components/Lotto';
 import JobBoard from './components/JobBoard';
 
 function App() {
+  // GitHub Pages의 경우 basename 설정
+  const basename = import.meta.env.MODE === 'production' ? '/jwkim1001' : '/';
+
   return (
-    <Router>
+    <Router basename={basename}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
