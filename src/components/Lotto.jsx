@@ -824,16 +824,48 @@ const Lotto = () => {
       console.log('🗄️ 데이터베이스가 초기화되어 있어 로직 스킵');
       return;
     }
-    
-    const stored = loadLottoDataFromStorage();
-    console.log('💾 localStorage에서 데이터 로드:', stored);
-    if (stored) {
-      console.log(`📊 로드된 데이터: ${stored.totalRounds}회차, 데이터 배열 길이: ${stored.data?.length}`);
-      console.log('🔍 데이터 샘플 (처음 3개):', stored.data?.slice(0, 3));
-      setLottoData(stored);
-    } else {
-      console.log('❌ 저장된 데이터 없음');
-    }
+
+    // 1. 먼저 정적 JSON 파일에서 로드 시도
+    const loadStaticData = async () => {
+      try {
+        console.log('📂 정적 JSON 파일에서 데이터 로드 시도...');
+        const response = await fetch('/lotto-data.json');
+        if (response.ok) {
+          const jsonData = await response.json();
+          console.log(`✅ 정적 JSON 파일 로드 성공: ${jsonData.totalRounds}회차`);
+          setLottoData(jsonData);
+          // localStorage에도 저장
+          saveLottoDataToStorage(jsonData.data);
+          return true;
+        }
+      } catch (error) {
+        console.log('⚠️ 정적 JSON 파일 로드 실패:', error.message);
+      }
+      return false;
+    };
+
+    // 2. 정적 파일 로드 실패 시 localStorage 확인
+    const loadFromStorage = () => {
+      const stored = loadLottoDataFromStorage();
+      console.log('💾 localStorage에서 데이터 로드:', stored);
+      if (stored) {
+        console.log(`📊 로드된 데이터: ${stored.totalRounds}회차, 데이터 배열 길이: ${stored.data?.length}`);
+        console.log('🔍 데이터 샘플 (처음 3개):', stored.data?.slice(0, 3));
+        setLottoData(stored);
+        return true;
+      } else {
+        console.log('❌ 저장된 데이터 없음');
+        return false;
+      }
+    };
+
+    // 데이터 로드 순서: 정적 JSON -> localStorage
+    (async () => {
+      const loadedFromStatic = await loadStaticData();
+      if (!loadedFromStatic) {
+        loadFromStorage();
+      }
+    })();
     
     // 1회차부터 최신회차까지 완전 다운로드 실행 (반복 시도)
     const runCompleteDownloadWithRetry = async () => {
