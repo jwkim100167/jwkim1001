@@ -2886,16 +2886,15 @@ const Lotto = () => {
 
               {winningNumbers && !showAllResults && (
                 <div className="winning-result">
-                  <h3>{winningNumbers.round}회차 당첨번호</h3>
-                  <p className="draw-date">{winningNumbers.date}</p>
+                  <h3>{winningNumbers.round}회차 ({winningNumbers.date})</h3>
                   <div className="winning-numbers">
                     <div className="main-numbers">
-                      {winningNumbers.numbers ? 
+                      {winningNumbers.numbers ?
                         winningNumbers.numbers.map(num => (
                           <span key={num} className="winning-ball">{num}</span>
                         )) :
                         // 새로운 8컬럼 형태 지원
-                        [winningNumbers.num1, winningNumbers.num2, winningNumbers.num3, 
+                        [winningNumbers.num1, winningNumbers.num2, winningNumbers.num3,
                          winningNumbers.num4, winningNumbers.num5, winningNumbers.num6].map(num => (
                           <span key={num} className="winning-ball">{num}</span>
                         ))

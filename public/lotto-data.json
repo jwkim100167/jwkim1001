@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2025-10-02T06:43:04.128Z",
-  "totalRounds": 1191,
+  "lastUpdated": "2025-10-13T06:25:00.304Z",
+  "totalRounds": 1193,
   "format": "static_json",
   "data": [
     {
@@ -13103,6 +13103,28 @@
       "num5": 20,
       "num6": 41,
       "bonus": 2
+    },
+    {
+      "round": 1192,
+      "date": "2025-10-04",
+      "num1": 10,
+      "num2": 16,
+      "num3": 23,
+      "num4": 36,
+      "num5": 39,
+      "num6": 40,
+      "bonus": 11
+    },
+    {
+      "round": 1193,
+      "date": "2025-10-11",
+      "num1": 6,
+      "num2": 9,
+      "num3": 16,
+      "num4": 19,
+      "num5": 24,
+      "num6": 28,
+      "bonus": 17
     }
   ]
 }
