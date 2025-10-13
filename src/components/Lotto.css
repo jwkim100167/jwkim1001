@@ -54,6 +54,11 @@
   font-weight: bold;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+  white-space: nowrap;
+  word-break: keep-all;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tab-btn.active {
@@ -117,12 +122,21 @@
   gap: 6px;
   margin-bottom: 10px;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.button-row-1::-webkit-scrollbar,
+.button-row-2::-webkit-scrollbar,
+.button-row-3::-webkit-scrollbar {
+  display: none;
 }
 
 .button-row-1 {
   /* 첫 번째 줄: 메인 버튼들 (큰 크기) */
-  flex-wrap: nowrap;
 }
 
 .button-row-1 .quick-exclude-btn {
@@ -135,7 +149,6 @@
 
 .button-row-2 {
   /* 두 번째 줄: 통계 기반 버튼들 (중간 크기) */
-  flex-wrap: nowrap;
 }
 
 .button-row-2 .quick-exclude-btn {
@@ -168,6 +181,8 @@
   backdrop-filter: blur(10px);
   color: white;
   border: 1px solid transparent;
+  white-space: nowrap;
+  word-break: keep-all;
 }
 
 .quick-exclude-btn.anniversary {
@@ -1268,32 +1283,47 @@
   .button-row-2,
   .button-row-3 {
     gap: 4px;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
   }
-  
+
   .button-row-1 .quick-exclude-btn {
     /* 모바일에서도 큰 크기 유지 */
-    font-size: 0.8rem;
-    padding: 6px 12px;
-    min-width: 80px;
+    font-size: 0.75rem;
+    padding: 8px 12px;
+    min-width: auto;
+    flex-shrink: 0;
   }
 
   .button-row-2 .quick-exclude-btn {
     /* 모바일에서 중간 크기 */
     font-size: 0.7rem;
-    padding: 5px 8px;
-    min-width: 55px;
+    padding: 6px 10px;
+    min-width: auto;
+    flex-shrink: 0;
   }
 
   .button-row-3 .quick-exclude-btn {
     /* 모바일에서 작은 크기 */
     font-size: 0.65rem;
-    padding: 4px 6px;
-    min-width: 45px;
+    padding: 5px 8px;
+    min-width: auto;
+    flex-shrink: 0;
   }
-  
+
   .quick-exclude-btn {
     font-size: 0.7rem;
-    padding: 4px 8px;
+    padding: 6px 10px;
+    flex-shrink: 0;
+  }
+
+  .lotto-tabs {
+    padding: 4px;
+  }
+
+  .tab-btn {
+    padding: 10px 12px;
+    font-size: 0.9rem;
   }
 }
 
@@ -1301,21 +1331,83 @@
   .lotto-header h1 {
     font-size: 1.8rem;
   }
-  
+
   .number-balls {
     justify-content: center;
   }
-  
+
   .number-ball, .winning-ball, .bonus-ball {
     width: 35px;
     height: 35px;
     line-height: 35px;
     font-size: 1rem;
   }
-  
+
   .main-numbers {
     flex-wrap: wrap;
     justify-content: center;
+  }
+
+  .tab-btn {
+    padding: 10px 8px;
+    font-size: 0.85rem;
+  }
+
+  .button-row-1 .quick-exclude-btn {
+    font-size: 0.7rem;
+    padding: 7px 10px;
+  }
+
+  .button-row-2 .quick-exclude-btn {
+    font-size: 0.65rem;
+    padding: 6px 8px;
+  }
+
+  .button-row-3 .quick-exclude-btn {
+    font-size: 0.6rem;
+    padding: 5px 6px;
+  }
+}
+
+/* iPhone 16 Pro 및 최신 아이폰 최적화 */
+@media (max-width: 430px) {
+  .lotto-container {
+    padding: 0 5px;
+  }
+
+  .lotto-content {
+    padding: 15px;
+  }
+
+  .lotto-tabs {
+    padding: 3px;
+    gap: 0;
+  }
+
+  .tab-btn {
+    padding: 8px 6px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .button-row-1 .quick-exclude-btn {
+    font-size: 0.68rem;
+    padding: 7px 9px;
+  }
+
+  .button-row-2 .quick-exclude-btn {
+    font-size: 0.63rem;
+    padding: 6px 7px;
+  }
+
+  .button-row-3 .quick-exclude-btn {
+    font-size: 0.58rem;
+    padding: 5px 6px;
+  }
+
+  .anniversary-numbers,
+  .range-text {
+    font-size: 0.55rem;
   }
 }
 
