@@ -2765,23 +2765,21 @@ const Lotto = () => {
                     </div>
                     
                     <div className="data-management">
-                      <button 
-                        onClick={downloadLatestLottoData}
-                        disabled={isLoading}
-                        className="download-btn"
-                      >
-                        {isLoading ? `업데이트 중... ${downloadProgress}%` : '📥 최신 데이터 업데이트'}
-                      </button>
-                      <button 
+                      <button
                         onClick={analyzeOverlapCombinations}
                         disabled={isLoading}
                         className="download-btn"
-                        style={{backgroundColor: '#ffa726', marginLeft: '10px'}}
+                        style={{backgroundColor: '#ffa726'}}
                       >
                         🔍 겹침 분석
                       </button>
                     </div>
-                    
+                    <div className="data-range-info" style={{marginTop: '10px'}}>
+                      <small style={{color: 'rgba(255, 255, 255, 0.7)'}}>
+                        ℹ️ 로또 데이터는 매주 일요일 오전 7시에 자동으로 업데이트됩니다
+                      </small>
+                    </div>
+
                   </div>
                 ) : (
                   <div className="no-data-section">
