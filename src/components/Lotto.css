@@ -75,16 +75,16 @@
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 20px;
-  padding: 30px;
+  padding: 25px;
   margin-bottom: 30px;
   backdrop-filter: blur(10px);
-  min-height: 600px; /* 두 탭 공통 최소 높이 */
+  min-height: 400px; /* 두 탭 공통 최소 높이 */
 }
 
 /* 탭별 섹션 공통 스타일 */
 .generator-section,
 .checker-section {
-  min-height: 500px; /* 내용 영역 최소 높이 */
+  min-height: 300px; /* 내용 영역 최소 높이 */
   display: flex;
   flex-direction: column;
   width: 100%; /* 전체 너비 사용 */
@@ -1055,14 +1055,14 @@
 .winning-result {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
-  padding: 25px;
-  margin-top: 20px;
+  padding: 20px;
+  margin-top: 15px;
 }
 
 .winning-result h3 {
   color: white;
-  font-size: 1.5rem;
-  margin-bottom: 10px;
+  font-size: 1.3rem;
+  margin-bottom: 15px;
 }
 
 .draw-date {
@@ -1074,52 +1074,52 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 15px;
+  flex-wrap: nowrap;
 }
 
 .main-numbers {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
 .winning-ball {
   display: inline-block;
-  width: 38px;
-  height: 38px;
-  line-height: 38px;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
   background: linear-gradient(135deg, #4CAF50, #45a049);
   color: white;
   border-radius: 50%;
   font-weight: bold;
-  font-size: 1rem;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  font-size: 0.9rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .bonus-section {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .plus {
   color: white;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: bold;
 }
 
 .bonus-ball {
   display: inline-block;
-  width: 38px;
-  height: 38px;
-  line-height: 38px;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
   background: linear-gradient(135deg, #FF9800, #F57C00);
   color: white;
   border-radius: 50%;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: bold;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .prize-info {
@@ -1421,17 +1421,13 @@
 .data-range-info {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 15px;
-}
-
-.data-range-info {
+  padding: 12px;
+  margin-bottom: 12px;
   text-align: center;
-  margin-bottom: 15px;
 }
 
 .data-range-info p {
-  margin: 5px 0;
+  margin: 3px 0;
   color: white;
   font-size: 0.9rem;
 }
@@ -1444,8 +1440,8 @@
 .data-status-section {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
-  padding: 20px;
-  margin-bottom: 20px;
+  padding: 15px;
+  margin-bottom: 15px;
 }
 
 .data-management {
