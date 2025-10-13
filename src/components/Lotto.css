@@ -79,6 +79,8 @@
   margin-bottom: 30px;
   backdrop-filter: blur(10px);
   min-height: 400px; /* 두 탭 공통 최소 높이 */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* 탭별 섹션 공통 스타일 */
@@ -1214,16 +1216,20 @@
   .lotto-container {
     min-width: auto; /* 모바일에서는 최소 너비 제한 해제 */
     max-width: 100%;
+    width: 100%;
     padding: 0 10px;
+    box-sizing: border-box;
   }
-  
+
   .lotto-header h1 {
     font-size: 2rem;
   }
-  
+
   .lotto-content {
     padding: 20px;
     min-height: 500px; /* 모바일에서는 조금 더 작게 */
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .generator-section,
