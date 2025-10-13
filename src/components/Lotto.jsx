@@ -2761,12 +2761,10 @@ const Lotto = () => {
                   <div className="data-status-section">
                     <div className="data-range-info">
                       <p>📊 저장된 데이터: 1회차 ~ {Math.max(...lottoData.data.map(item => item.round))}회차</p>
-                      <small>최신 업데이트: {new Date(lottoData.lastUpdated).toLocaleDateString()}</small>
-                    </div>
-                    
-                    <div className="data-range-info" style={{marginTop: '10px'}}>
-                      <small style={{color: 'rgba(255, 255, 255, 0.7)'}}>
-                        ℹ️ 데이터는 자동으로 업데이트됩니다<br/>매주 일요일 오전 7시
+                      <small>최신 업데이트: {new Date(lottoData.lastUpdated).toLocaleDateString('ko-KR', {year: 'numeric', month: 'numeric', day: 'numeric'}).replace(/\./g, '.').replace(/\s/g, ' ')}</small>
+                      <br/>
+                      <small style={{color: 'rgba(255, 255, 255, 0.7)', marginTop: '5px', display: 'inline-block'}}>
+                        자동 업데이트 일시: 일요일 오전 7시
                       </small>
                     </div>
 

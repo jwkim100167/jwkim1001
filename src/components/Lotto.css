@@ -1086,39 +1086,39 @@
 
 .winning-ball {
   display: inline-block;
-  width: 45px;
-  height: 45px;
-  line-height: 45px;
+  width: 38px;
+  height: 38px;
+  line-height: 38px;
   background: linear-gradient(135deg, #4CAF50, #45a049);
   color: white;
   border-radius: 50%;
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1rem;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
 
 .bonus-section {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .plus {
   color: white;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
 }
 
 .bonus-ball {
   display: inline-block;
-  width: 45px;
-  height: 45px;
-  line-height: 45px;
+  width: 38px;
+  height: 38px;
+  line-height: 38px;
   background: linear-gradient(135deg, #FF9800, #F57C00);
   color: white;
   border-radius: 50%;
+  font-size: 1rem;
   font-weight: bold;
-  font-size: 1.2rem;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
 
