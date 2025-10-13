@@ -11,7 +11,7 @@
 .lotto-container {
   max-width: 800px;
   min-width: 800px; /* 최소 너비도 설정해서 일관성 유지 */
-  width: 100%;
+  width: 800px;
   text-align: center;
 }
 
@@ -1214,22 +1214,22 @@
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .lotto-container {
-    min-width: auto; /* 모바일에서는 최소 너비 제한 해제 */
-    max-width: 100%;
-    width: 100%;
-    padding: 0 10px;
-    box-sizing: border-box;
+    min-width: 100vw; /* 모바일에서는 뷰포트 전체 너비 */
+    max-width: 100vw;
+    width: 100vw;
+    padding: 0;
+    margin: 0;
   }
 
   .lotto-header h1 {
     font-size: 2rem;
+    padding: 0 15px;
   }
 
   .lotto-content {
-    padding: 20px;
+    padding: 15px;
     min-height: 500px; /* 모바일에서는 조금 더 작게 */
-    width: 100%;
-    box-sizing: border-box;
+    margin: 0 10px;
   }
   
   .generator-section,
@@ -1590,28 +1590,31 @@
 .result-numbers {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
+  flex-wrap: nowrap;
 }
 
 .result-ball {
   display: inline-block;
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
   background: linear-gradient(135deg, #4CAF50, #45a049);
   color: white;
   border-radius: 50%;
   font-weight: bold;
-  font-size: 0.9rem;
-  margin-right: 3px;
+  font-size: 0.85rem;
+  margin-right: 2px;
+  flex-shrink: 0;
 }
 
 .bonus-result-ball {
   display: inline-block;
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
   background: linear-gradient(135deg, #FF9800, #F57C00);
+  flex-shrink: 0;
   color: white;
   border-radius: 50%;
   font-weight: bold;
@@ -1660,12 +1663,33 @@
     flex-direction: column;
     gap: 10px;
     text-align: center;
+    padding: 10px;
   }
-  
+
   .result-info {
     align-items: center;
   }
-  
+
+  .result-numbers {
+    gap: 3px;
+    justify-content: center;
+  }
+
+  .result-ball {
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    font-size: 0.8rem;
+    margin-right: 1px;
+  }
+
+  .bonus-result-ball {
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    font-size: 0.8rem;
+  }
+
   .all-results-header {
     flex-direction: column;
     gap: 10px;
