@@ -1074,8 +1074,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
+  gap: 8px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .main-numbers {
@@ -1099,12 +1100,12 @@
 .bonus-section {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .plus {
   color: white;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
 }
 

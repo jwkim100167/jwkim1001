@@ -2764,19 +2764,9 @@ const Lotto = () => {
                       <small>최신 업데이트: {new Date(lottoData.lastUpdated).toLocaleDateString()}</small>
                     </div>
                     
-                    <div className="data-management">
-                      <button
-                        onClick={analyzeOverlapCombinations}
-                        disabled={isLoading}
-                        className="download-btn"
-                        style={{backgroundColor: '#ffa726'}}
-                      >
-                        🔍 겹침 분석
-                      </button>
-                    </div>
                     <div className="data-range-info" style={{marginTop: '10px'}}>
                       <small style={{color: 'rgba(255, 255, 255, 0.7)'}}>
-                        ℹ️ 로또 데이터는 매주 일요일 오전 7시에 자동으로 업데이트됩니다
+                        ℹ️ 데이터는 자동으로 업데이트됩니다<br/>매주 일요일 오전 7시
                       </small>
                     </div>
 
@@ -2963,6 +2953,14 @@ const Lotto = () => {
                       <div className="stats-header">
                         <h2>📊 로또 번호 통계</h2>
                         <p>총 {stats.totalRounds}회차 데이터 기반</p>
+                        <button
+                          onClick={analyzeOverlapCombinations}
+                          disabled={isLoading}
+                          className="download-btn"
+                          style={{backgroundColor: '#ffa726', marginTop: '15px'}}
+                        >
+                          🔍 겹침 분석
+                        </button>
                       </div>
 
                       {/* 가장 많이 나온 번호 TOP 10 */}
