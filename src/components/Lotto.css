@@ -83,7 +83,8 @@
 
 /* 탭별 섹션 공통 스타일 */
 .generator-section,
-.checker-section {
+.checker-section,
+.statistics-section {
   min-height: 300px; /* 내용 영역 최소 높이 */
   display: flex;
   flex-direction: column;
@@ -1055,14 +1056,14 @@
 .winning-result {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
-  padding: 20px;
-  margin-top: 15px;
+  padding: 15px;
+  margin-top: 12px;
 }
 
 .winning-result h3 {
   color: white;
-  font-size: 1.3rem;
-  margin-bottom: 15px;
+  font-size: 1.2rem;
+  margin-bottom: 12px;
 }
 
 .draw-date {
@@ -1074,52 +1075,55 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   margin-bottom: 15px;
   flex-wrap: nowrap;
 }
 
 .main-numbers {
   display: flex;
-  gap: 6px;
+  gap: 4px;
 }
 
 .winning-ball {
   display: inline-block;
-  width: 32px;
-  height: 32px;
-  line-height: 32px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
   background: linear-gradient(135deg, #4CAF50, #45a049);
   color: white;
   border-radius: 50%;
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
 }
 
 .bonus-section {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 
 .plus {
   color: white;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: bold;
+  flex-shrink: 0;
 }
 
 .bonus-ball {
   display: inline-block;
-  width: 32px;
-  height: 32px;
-  line-height: 32px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
   background: linear-gradient(135deg, #FF9800, #F57C00);
   color: white;
   border-radius: 50%;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: bold;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
 }
 
 .prize-info {
@@ -1421,27 +1425,27 @@
 .data-range-info {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  padding: 12px;
-  margin-bottom: 12px;
+  padding: 8px;
+  margin-bottom: 8px;
   text-align: center;
 }
 
 .data-range-info p {
-  margin: 3px 0;
+  margin: 2px 0;
   color: white;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .data-range-info small {
   color: rgba(255, 255, 255, 0.7);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
 }
 
 .data-status-section {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
-  padding: 15px;
-  margin-bottom: 15px;
+  padding: 12px;
+  margin-bottom: 12px;
 }
 
 .data-management {
@@ -1468,12 +1472,12 @@
 
 
 .round-select {
-  padding: 12px 15px;
+  padding: 8px 12px;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 25px;
+  border-radius: 20px;
   background: rgba(255, 255, 255, 0.1);
   color: white;
-  font-size: 1rem;
+  font-size: 0.9rem;
   cursor: pointer;
   backdrop-filter: blur(10px);
   min-width: 250px;
