@@ -19,7 +19,8 @@ const Momok = () => {
 
   // 메뉴 데이터 로드
   useEffect(() => {
-    fetch('/menu-data.json')
+    const basePath = import.meta.env.BASE_URL;
+    fetch(`${basePath}menu-data.json`)
       .then(response => response.json())
       .then(data => {
         setMenuData(data.categories);
