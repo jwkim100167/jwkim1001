@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Momok.css';
 
@@ -6,33 +6,52 @@ const Momok = () => {
   const [activeTab, setActiveTab] = useState('recommend');
   const [selectedMenu, setSelectedMenu] = useState(null);
   const [dislikedFoods, setDislikedFoods] = useState([]);
+  const [likedFoods, setLikedFoods] = useState([]);
   const [inputFood, setInputFood] = useState('');
+  const [inputLikedFood, setInputLikedFood] = useState('');
+  const [menuData, setMenuData] = useState([]);
+  const [editingCategoryId, setEditingCategoryId] = useState(null);
+  const [newRestaurantInput, setNewRestaurantInput] = useState('');
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategoryIcon, setNewCategoryIcon] = useState('🍴');
+  const [showAddCategory, setShowAddCategory] = useState(false);
+  const [excludedCategories, setExcludedCategories] = useState([]);
 
-  // 메뉴 데이터 (사진 URL과 함께)
-  const menuData = [
-    { id: 1, name: '한식', category: '한식', keywords: ['밥', '국', '김치', '찌개'], image: '🍚' },
-    { id: 2, name: '중식', category: '중식', keywords: ['짜장면', '짬뽕', '탕수육'], image: '🍜' },
-    { id: 3, name: '일식', category: '일식', keywords: ['초밥', '라멘', '돈까스'], image: '🍱' },
-    { id: 4, name: '양식', category: '양식', keywords: ['파스타', '스테이크', '피자'], image: '🍝' },
-    { id: 5, name: '치킨', category: '치킨', keywords: ['프라이드', '양념', '간장'], image: '🍗' },
-    { id: 6, name: '분식', category: '분식', keywords: ['떡볶이', '김밥', '라면'], image: '🍢' },
-    { id: 7, name: '피자', category: '피자', keywords: ['콤비네이션', '페퍼로니', '치즈'], image: '🍕' },
-    { id: 8, name: '햄버거', category: '햄버거', keywords: ['버거', '감자튀김', '콜라'], image: '🍔' },
-    { id: 9, name: '샐러드', category: '샐러드', keywords: ['야채', '닭가슴살', '드레싱'], image: '🥗' },
-    { id: 10, name: '국밥', category: '한식', keywords: ['돼지국밥', '선지국', '순대국'], image: '🍲' },
-  ];
+  // 메뉴 데이터 로드
+  useEffect(() => {
+    fetch('/menu-data.json')
+      .then(response => response.json())
+      .then(data => {
+        setMenuData(data.categories);
+      })
+      .catch(error => {
+        console.error('메뉴 데이터 로드 실패:', error);
+      });
+  }, []);
 
   // 싫어하는 음식 필터링 후 메뉴 추천
   const getAvailableMenus = () => {
     return menuData.filter(menu => {
-      // 카테고리나 키워드가 싫어하는 음식에 포함되지 않은 메뉴만 반환
+      // 제외된 카테고리는 제외
+      if (excludedCategories.includes(menu.id)) {
+        return false;
+      }
+      // 카테고리나 식당명이 싫어하는 음식에 포함되지 않은 메뉴만 반환
       const isDisliked = dislikedFoods.some(disliked =>
-        menu.category.includes(disliked) ||
-        menu.keywords.some(keyword => keyword.includes(disliked)) ||
-        menu.name.includes(disliked)
+        menu.name.includes(disliked) ||
+        menu.restaurants.some(restaurant => restaurant.includes(disliked))
       );
       return !isDisliked;
     });
+  };
+
+  // 카테고리 제외/포함 토글
+  const toggleCategoryExclusion = (categoryId) => {
+    if (excludedCategories.includes(categoryId)) {
+      setExcludedCategories(excludedCategories.filter(id => id !== categoryId));
+    } else {
+      setExcludedCategories([...excludedCategories, categoryId]);
+    }
   };
 
   // 랜덤 메뉴 추천
@@ -59,12 +78,98 @@ const Momok = () => {
     setDislikedFoods(dislikedFoods.filter(f => f !== food));
   };
 
+  // 좋아하는 음식 추가
+  const addLikedFood = () => {
+    if (inputLikedFood.trim() && !likedFoods.includes(inputLikedFood.trim())) {
+      setLikedFoods([...likedFoods, inputLikedFood.trim()]);
+      setInputLikedFood('');
+    }
+  };
+
+  // 좋아하는 음식 제거
+  const removeLikedFood = (food) => {
+    setLikedFoods(likedFoods.filter(f => f !== food));
+  };
+
+  // 추천 가능한 메뉴의 모든 식당 가져오기
+  const getAvailableRestaurants = () => {
+    const availableMenus = getAvailableMenus();
+    const restaurants = [];
+    availableMenus.forEach(menu => {
+      menu.restaurants.forEach(restaurant => {
+        if (!restaurants.includes(restaurant)) {
+          restaurants.push(restaurant);
+        }
+      });
+    });
+    return restaurants.sort();
+  };
+
   // 네이버 지도로 검색
   const searchOnNaverMap = () => {
     if (selectedMenu) {
       const query = encodeURIComponent(selectedMenu.name + ' 맛집');
       window.open(`https://map.naver.com/v5/search/${query}`, '_blank');
     }
+  };
+
+  // 카테고리에 식당 추가
+  const addRestaurantToCategory = (categoryId) => {
+    if (!newRestaurantInput.trim()) return;
+
+    setMenuData(menuData.map(category => {
+      if (category.id === categoryId) {
+        if (!category.restaurants.includes(newRestaurantInput.trim())) {
+          return {
+            ...category,
+            restaurants: [...category.restaurants, newRestaurantInput.trim()]
+          };
+        }
+      }
+      return category;
+    }));
+    setNewRestaurantInput('');
+  };
+
+  // 카테고리에서 식당 삭제
+  const removeRestaurantFromCategory = (categoryId, restaurant) => {
+    setMenuData(menuData.map(category => {
+      if (category.id === categoryId) {
+        return {
+          ...category,
+          restaurants: category.restaurants.filter(r => r !== restaurant)
+        };
+      }
+      return category;
+    }));
+  };
+
+  // 카테고리 삭제
+  const deleteCategory = (categoryId) => {
+    if (window.confirm('이 카테고리를 삭제하시겠습니까?')) {
+      setMenuData(menuData.filter(category => category.id !== categoryId));
+    }
+  };
+
+  // 새 카테고리 추가
+  const addNewCategory = () => {
+    if (!newCategoryName.trim()) {
+      alert('카테고리 이름을 입력해주세요');
+      return;
+    }
+
+    const newId = menuData.length > 0 ? Math.max(...menuData.map(c => c.id)) + 1 : 1;
+    const newCategory = {
+      id: newId,
+      name: newCategoryName.trim(),
+      image: newCategoryIcon,
+      restaurants: []
+    };
+
+    setMenuData([...menuData, newCategory]);
+    setNewCategoryName('');
+    setNewCategoryIcon('🍴');
+    setShowAddCategory(false);
   };
 
   return (
@@ -81,6 +186,12 @@ const Momok = () => {
             onClick={() => setActiveTab('recommend')}
           >
             메뉴 추천
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'liked' ? 'active' : ''}`}
+            onClick={() => setActiveTab('liked')}
+          >
+            추가할 음식
           </button>
           <button
             className={`tab-btn ${activeTab === 'dislike' ? 'active' : ''}`}
@@ -102,10 +213,9 @@ const Momok = () => {
                   <div className="menu-card">
                     <div className="menu-image">{selectedMenu.image}</div>
                     <h2>{selectedMenu.name}</h2>
-                    <p className="menu-category">{selectedMenu.category}</p>
                     <div className="menu-keywords">
-                      {selectedMenu.keywords.map((keyword, idx) => (
-                        <span key={idx} className="keyword-tag">#{keyword}</span>
+                      {selectedMenu.restaurants.map((restaurant, idx) => (
+                        <span key={idx} className="keyword-tag">#{restaurant}</span>
                       ))}
                     </div>
                     <button className="map-btn" onClick={searchOnNaverMap}>
@@ -116,14 +226,22 @@ const Momok = () => {
               )}
 
               <div className="available-menus">
-                <h3>추천 가능한 메뉴 ({getAvailableMenus().length}개)</h3>
+                <h3>추천 가능한 카테고리 ({getAvailableMenus().length}개)</h3>
                 <div className="menu-grid">
-                  {getAvailableMenus().map(menu => (
-                    <div key={menu.id} className="menu-item">
-                      <span className="menu-icon">{menu.image}</span>
-                      <span className="menu-name">{menu.name}</span>
-                    </div>
-                  ))}
+                  {menuData.map(menu => {
+                    const isExcluded = excludedCategories.includes(menu.id);
+                    return (
+                      <div
+                        key={menu.id}
+                        className={`menu-item ${isExcluded ? 'excluded' : ''}`}
+                        onClick={() => toggleCategoryExclusion(menu.id)}
+                        title={menu.restaurants.join(', ')}
+                      >
+                        <span className="menu-icon">{menu.image}</span>
+                        <span className="menu-name">{menu.name}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -137,7 +255,7 @@ const Momok = () => {
                   value={inputFood}
                   onChange={(e) => setInputFood(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addDislikedFood()}
-                  placeholder="싫어하는 음식 입력 (예: 짜장면, 중식, 매운맛)"
+                  placeholder="싫어하는 음식 입력 (예: 중식, 밥플러스)"
                   className="dislike-input"
                 />
                 <button onClick={addDislikedFood} className="add-dislike-btn">
@@ -167,9 +285,121 @@ const Momok = () => {
                 <h4>💡 팁</h4>
                 <ul>
                   <li>카테고리 이름을 입력하면 해당 카테고리 전체가 제외됩니다</li>
-                  <li>특정 메뉴나 키워드를 입력하면 관련 메뉴만 제외됩니다</li>
+                  <li>특정 식당명을 입력하면 해당 식당만 제외됩니다</li>
                   <li>예시: "중식" 입력 → 중식 카테고리 전체 제외</li>
-                  <li>예시: "짜장면" 입력 → 짜장면 포함 메뉴만 제외</li>
+                  <li>예시: "밥플러스" 입력 → 밥플러스만 제외</li>
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'liked' && (
+            <div className="liked-section">
+              <div className="category-management-header">
+                <h3 className="section-main-title">카테고리 관리</h3>
+                <button
+                  className="add-category-btn"
+                  onClick={() => setShowAddCategory(!showAddCategory)}
+                >
+                  {showAddCategory ? '✕ 취소' : '+ 카테고리 추가'}
+                </button>
+              </div>
+
+              {showAddCategory && (
+                <div className="add-category-form">
+                  <input
+                    type="text"
+                    value={newCategoryIcon}
+                    onChange={(e) => setNewCategoryIcon(e.target.value)}
+                    placeholder="🍴"
+                    className="category-icon-input"
+                    maxLength="2"
+                  />
+                  <input
+                    type="text"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && addNewCategory()}
+                    placeholder="카테고리 이름 (예: 한식, 중식)"
+                    className="category-name-input"
+                  />
+                  <button onClick={addNewCategory} className="submit-category-btn">
+                    추가
+                  </button>
+                </div>
+              )}
+
+              <div className="categories-container">
+                {menuData.map((category) => (
+                  <div key={category.id} className="category-card">
+                    <div className="category-header">
+                      <div className="category-info">
+                        <span className="category-icon">{category.image}</span>
+                        <h4 className="category-name">{category.name}</h4>
+                        <span className="restaurant-count">({category.restaurants.length}개)</span>
+                      </div>
+                      <div className="category-actions">
+                        <button
+                          className="edit-category-btn"
+                          onClick={() => setEditingCategoryId(
+                            editingCategoryId === category.id ? null : category.id
+                          )}
+                        >
+                          {editingCategoryId === category.id ? '완료' : '편집'}
+                        </button>
+                        <button
+                          className="delete-category-btn"
+                          onClick={() => deleteCategory(category.id)}
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    </div>
+
+                    {editingCategoryId === category.id && (
+                      <div className="add-restaurant-form">
+                        <input
+                          type="text"
+                          value={newRestaurantInput}
+                          onChange={(e) => setNewRestaurantInput(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && addRestaurantToCategory(category.id)}
+                          placeholder="식당명 입력"
+                          className="restaurant-input"
+                        />
+                        <button
+                          onClick={() => addRestaurantToCategory(category.id)}
+                          className="add-restaurant-btn"
+                        >
+                          추가
+                        </button>
+                      </div>
+                    )}
+
+                    <div className="category-restaurants">
+                      {category.restaurants.map((restaurant, idx) => (
+                        <div key={idx} className="restaurant-tag">
+                          <span>{restaurant}</span>
+                          {editingCategoryId === category.id && (
+                            <button
+                              className="remove-restaurant-btn"
+                              onClick={() => removeRestaurantFromCategory(category.id, restaurant)}
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="info-box">
+                <h4>💡 팁</h4>
+                <ul>
+                  <li>편집 버튼을 클릭하면 식당을 추가하거나 삭제할 수 있습니다</li>
+                  <li>카테고리 삭제 시 해당 카테고리의 모든 식당도 삭제됩니다</li>
+                  <li>변경사항은 브라우저를 새로고침하면 초기화됩니다</li>
                 </ul>
               </div>
             </div>
