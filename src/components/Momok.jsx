@@ -194,12 +194,6 @@ const Momok = () => {
           >
             추가할 음식
           </button>
-          <button
-            className={`tab-btn ${activeTab === 'dislike' ? 'active' : ''}`}
-            onClick={() => setActiveTab('dislike')}
-          >
-            싫어하는 음식
-          </button>
         </div>
 
         <div className="momok-content">
@@ -244,52 +238,6 @@ const Momok = () => {
                     );
                   })}
                 </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'dislike' && (
-            <div className="dislike-section">
-              <div className="dislike-input-wrapper">
-                <input
-                  type="text"
-                  value={inputFood}
-                  onChange={(e) => setInputFood(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && addDislikedFood()}
-                  placeholder="싫어하는 음식 입력 (예: 중식, 밥플러스)"
-                  className="dislike-input"
-                />
-                <button onClick={addDislikedFood} className="add-dislike-btn">
-                  추가
-                </button>
-              </div>
-
-              <div className="dislike-list">
-                <h3>싫어하는 음식 목록 ({dislikedFoods.length}개)</h3>
-                {dislikedFoods.length > 0 ? (
-                  <div className="dislike-items">
-                    {dislikedFoods.map((food, idx) => (
-                      <div key={idx} className="dislike-item">
-                        <span>{food}</span>
-                        <button onClick={() => removeDislikedFood(food)} className="remove-btn">
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="no-dislike">싫어하는 음식을 등록해보세요</p>
-                )}
-              </div>
-
-              <div className="info-box">
-                <h4>💡 팁</h4>
-                <ul>
-                  <li>카테고리 이름을 입력하면 해당 카테고리 전체가 제외됩니다</li>
-                  <li>특정 식당명을 입력하면 해당 식당만 제외됩니다</li>
-                  <li>예시: "중식" 입력 → 중식 카테고리 전체 제외</li>
-                  <li>예시: "밥플러스" 입력 → 밥플러스만 제외</li>
-                </ul>
               </div>
             </div>
           )}

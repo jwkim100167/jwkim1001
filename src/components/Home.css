@@ -40,13 +40,13 @@
 .nav-card {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  padding: 30px;
+  border-radius: 15px;
+  padding: 15px 20px;
   text-decoration: none;
   color: white;
   display: flex;
   align-items: center;
-  gap: 25px;
+  gap: 15px;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
   position: relative;
@@ -54,9 +54,9 @@
 }
 
 .nav-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
   background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
 .nav-card::before {
@@ -75,7 +75,7 @@
 }
 
 .card-icon {
-  font-size: 3.5rem;
+  font-size: 2.5rem;
   flex-shrink: 0;
 }
 
@@ -85,8 +85,8 @@
 }
 
 .card-content h2 {
-  font-size: 1.8rem;
-  margin-bottom: 10px;
+  font-size: 1.3rem;
+  margin: 0;
   font-weight: bold;
 }
 
@@ -110,7 +110,7 @@
 }
 
 .card-arrow {
-  font-size: 2rem;
+  font-size: 1.5rem;
   flex-shrink: 0;
   transition: transform 0.3s ease;
 }
