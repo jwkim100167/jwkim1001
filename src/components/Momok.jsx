@@ -16,6 +16,7 @@ const Momok = () => {
   const [newCategoryIcon, setNewCategoryIcon] = useState('🍴');
   const [showAddCategory, setShowAddCategory] = useState(false);
   const [excludedCategories, setExcludedCategories] = useState([]);
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
   // 메뉴 데이터 로드
   useEffect(() => {
@@ -106,11 +107,22 @@ const Momok = () => {
     return restaurants.sort();
   };
 
-  // 네이버 지도로 검색
-  const searchOnNaverMap = () => {
-    if (selectedMenu) {
-      const query = encodeURIComponent(selectedMenu.name + ' 맛집');
-      window.open(`https://map.naver.com/v5/search/${query}`, '_blank');
+  // 네이버 지도로 검색 (식당명 직접 검색)
+  const searchOnNaverMap = (restaurantName) => {
+    const query = encodeURIComponent(restaurantName);
+    window.open(`https://map.naver.com/v5/search/${query}`, '_blank');
+  };
+
+  // 식당 태그 클릭 핸들러
+  const handleRestaurantClick = (e, restaurant) => {
+    e.stopPropagation();
+    if (selectedRestaurant === restaurant) {
+      // 같은 식당을 다시 클릭하면 네이버 지도 검색
+      searchOnNaverMap(restaurant);
+      setSelectedRestaurant(null);
+    } else {
+      // 새로운 식당 선택
+      setSelectedRestaurant(restaurant);
     }
   };
 
@@ -204,18 +216,21 @@ const Momok = () => {
               </button>
 
               {selectedMenu && (
-                <div className="menu-result">
-                  <div className="menu-card">
+                <div className="menu-result" onClick={() => setSelectedRestaurant(null)}>
+                  <div className="menu-card" onClick={(e) => e.stopPropagation()}>
                     <div className="menu-image">{selectedMenu.image}</div>
                     <h2>{selectedMenu.name}</h2>
                     <div className="menu-keywords">
                       {selectedMenu.restaurants.map((restaurant, idx) => (
-                        <span key={idx} className="keyword-tag">#{restaurant}</span>
+                        <span
+                          key={idx}
+                          className={`keyword-tag ${selectedRestaurant === restaurant ? 'selected' : ''}`}
+                          onClick={(e) => handleRestaurantClick(e, restaurant)}
+                        >
+                          {selectedRestaurant === restaurant ? '📍 네이버 지도에서 찾기' : `#${restaurant}`}
+                        </span>
                       ))}
                     </div>
-                    <button className="map-btn" onClick={searchOnNaverMap}>
-                      📍 네이버 지도에서 찾기
-                    </button>
                   </div>
                 </div>
               )}
