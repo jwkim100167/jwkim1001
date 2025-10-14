@@ -130,12 +130,12 @@
 }
 
 .menu-image {
-  font-size: 5rem;
-  margin-bottom: 20px;
+  font-size: 4rem;
+  margin-bottom: 15px;
 }
 
 .menu-card h2 {
-  font-size: 2.5rem;
+  font-size: 2rem;
   margin-bottom: 10px;
   font-weight: bold;
 }
@@ -194,18 +194,18 @@
 
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 8px;
 }
 
 .menu-item {
   background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  padding: 10px;
-  border-radius: 12px;
+  padding: 8px;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   color: white;
   font-weight: bold;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
@@ -230,11 +230,11 @@
 }
 
 .menu-icon {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .menu-name {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
 }
 
 /* 싫어하는 음식 섹션 */

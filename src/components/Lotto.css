@@ -1105,14 +1105,14 @@
 
 .winning-ball {
   display: inline-block;
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
   background: linear-gradient(135deg, #4CAF50, #45a049);
   color: white;
   border-radius: 50%;
   font-weight: bold;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   flex-shrink: 0;
 }
@@ -1132,13 +1132,13 @@
 
 .bonus-ball {
   display: inline-block;
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
   background: linear-gradient(135deg, #FF9800, #F57C00);
   color: white;
   border-radius: 50%;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: bold;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   flex-shrink: 0;
