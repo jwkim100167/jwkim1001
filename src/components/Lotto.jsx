@@ -39,6 +39,10 @@ const Lotto = () => {
   const [excludeLastDigitRanges, setExcludeLastDigitRanges] = useState(false); // 저번주 1의 자리 수 대역 전체 제외
   const [excludeTensDigitRanges, setExcludeTensDigitRanges] = useState(false); // 저번주 10의 자리 수 대역 전체 제외
   const [preventConsecutiveFour, setPreventConsecutiveFour] = useState(false); // 연속된 번호 4개 제외
+  const [showHelp, setShowHelp] = useState(null); // 도움말 표시 상태 ('generate', 'exclude', 'include', 'pattern' 등)
+  const [showExcludeOptions, setShowExcludeOptions] = useState(false); // 제외할 번호 옵션 표시 상태
+  const [showIncludeOptions, setShowIncludeOptions] = useState(false); // 필수 포함 번호 옵션 표시 상태
+  const [showPatternOptions, setShowPatternOptions] = useState(false); // 제외 패턴 옵션 표시 상태
 
   // 함수 참조를 위한 ref
   const downloadLatestLottoDataRef = useRef(null);
@@ -1421,6 +1425,12 @@ const Lotto = () => {
           // 새로 추가하거나 다른 타입 추가
           console.log(`➕ 번호 ${input}에 타입 ${type} 추가`);
 
+          // 필수 포함 번호와 충돌하면 제거
+          if (mustIncludeNumbers.includes(input)) {
+            setMustIncludeNumbers(mustIncludeNumbers.filter(num => num !== input));
+            alert(`번호 ${input}이(가) 필수 포함 번호에서 제거되었습니다. (제외 번호와 충돌)`);
+          }
+
           // excludeNumbers에 추가 (중복 방지)
           if (!excludeNumbers.includes(input)) {
             setExcludeNumbers([...excludeNumbers, input].sort((a, b) => a - b));
@@ -1519,6 +1529,13 @@ const Lotto = () => {
 
       // 추가할 번호들 처리
       if (numbersToAdd.length > 0) {
+        // 필수 포함 번호와 충돌하는 번호 찾기
+        const conflictingWithInclude = numbersToAdd.filter(num => mustIncludeNumbers.includes(num));
+        if (conflictingWithInclude.length > 0) {
+          setMustIncludeNumbers(mustIncludeNumbers.filter(num => !conflictingWithInclude.includes(num)));
+          alert(`필수 포함 번호에서 제거됨: ${conflictingWithInclude.join(', ')} (제외 번호와 충돌)`);
+        }
+
         // excludeNumbers 업데이트
         const uniqueNumbers = [...new Set([...excludeNumbers, ...numbersToAdd])].sort((a, b) => a - b);
         setExcludeNumbers(uniqueNumbers);
@@ -1556,23 +1573,39 @@ const Lotto = () => {
     if (typeof input === 'number') {
       // 단일 번호
       if (input >= 1 && input <= 45 && !mustIncludeNumbers.includes(input)) {
+        // 제외 번호와 충돌 검사
+        if (excludeNumbers.includes(input)) {
+          alert(`번호 ${input}은(는) 제외 번호에 포함되어 있어 추가할 수 없습니다.`);
+          return;
+        }
         setMustIncludeNumbers([...mustIncludeNumbers, input].sort((a, b) => a - b));
         setNumberGameCounts(prev => ({...prev, [input]: 5})); // 기본값 5게임
       }
     } else if (typeof input === 'string') {
       // 범위 문자열
       const newNumbers = parseRangeString(input);
-      const uniqueNumbers = [...new Set([...mustIncludeNumbers, ...newNumbers])].sort((a, b) => a - b);
-      setMustIncludeNumbers(uniqueNumbers);
-      
-      // 새로 추가된 번호들에 대해 기본 게임 수 설정
-      const newCounts = {...numberGameCounts};
-      newNumbers.forEach(num => {
-        if (!newCounts[num]) {
-          newCounts[num] = 5;
-        }
-      });
-      setNumberGameCounts(newCounts);
+
+      // 제외 번호와 충돌하는 번호 찾기
+      const conflictNumbers = newNumbers.filter(num => excludeNumbers.includes(num));
+      const validNumbers = newNumbers.filter(num => !excludeNumbers.includes(num));
+
+      if (conflictNumbers.length > 0) {
+        alert(`제외 번호와 충돌: ${conflictNumbers.join(', ')}은(는) 추가할 수 없습니다.`);
+      }
+
+      if (validNumbers.length > 0) {
+        const uniqueNumbers = [...new Set([...mustIncludeNumbers, ...validNumbers])].sort((a, b) => a - b);
+        setMustIncludeNumbers(uniqueNumbers);
+
+        // 새로 추가된 번호들에 대해 기본 게임 수 설정
+        const newCounts = {...numberGameCounts};
+        validNumbers.forEach(num => {
+          if (!newCounts[num]) {
+            newCounts[num] = 5;
+          }
+        });
+        setNumberGameCounts(newCounts);
+      }
     }
   };
 
@@ -1871,51 +1904,50 @@ const Lotto = () => {
 
   // 로또 번호 생성 (1-45 중 6개, 제외번호 제외, 필수포함번호 모두 포함, 이전 회차와 겹치지 않음)
   const generateLottoNumbers = () => {
-    // 필수 포함 번호 검증
-    const validMustInclude = mustIncludeNumbers.filter(num => !excludeNumbers.includes(num));
-    
-    if (validMustInclude.length > 6) {
+    // 필수 포함 번호 검증 (제외 번호와 겹칠 수 없도록 이미 방지됨)
+    if (mustIncludeNumbers.length > 6) {
       alert('필수 포함 번호가 6개를 초과할 수 없습니다.');
       return;
-    }
-    
-    if (mustIncludeNumbers.length > 0 && validMustInclude.length < mustIncludeNumbers.length) {
-      alert(`필수 포함 번호 중 ${mustIncludeNumbers.length - validMustInclude.length}개가 제외된 번호와 겹칩니다.`);
     }
 
     // 1의 자리 수 기반 제외 번호 생성
     const lastDigitRangeExcludeNumbers = excludeLastDigitRanges ? getExcludeRangesByLastDigit() : [];
     const tensDigitRangeExcludeNumbers = excludeTensDigitRanges ? getExcludeRangesByTensDigit() : [];
 
-    // 사용 가능한 번호 풀 생성
+    // 사용 가능한 번호 풀 생성 (필수 포함 번호 제외한 전체)
     const availableNumbers = [];
     for (let i = 1; i <= 45; i++) {
-      if (!excludeNumbers.includes(i) &&
-          !lastDigitRangeExcludeNumbers.includes(i) &&
-          !tensDigitRangeExcludeNumbers.includes(i) &&
-          !validMustInclude.includes(i)) {
+      if (!mustIncludeNumbers.includes(i)) {
         availableNumbers.push(i);
       }
     }
-    
-    if (availableNumbers.length + validMustInclude.length < 6) {
-      alert('사용 가능한 번호가 부족합니다. 최소 6개의 번호가 필요합니다.');
-      return;
-    }
-    
+
+    // 제외 옵션 적용 (가능한 경우에만)
+    let filteredNumbers = availableNumbers.filter(num =>
+      !excludeNumbers.includes(num) &&
+      !lastDigitRangeExcludeNumbers.includes(num) &&
+      !tensDigitRangeExcludeNumbers.includes(num)
+    );
+
+    // 제외 후 번호가 부족하면 제외 옵션 무시하고 전체 사용
+    const finalAvailableNumbers = (filteredNumbers.length + mustIncludeNumbers.length < 6)
+      ? availableNumbers
+      : filteredNumbers;
+
     // 겹침 방지 옵션이 모두 꺼져있으면 바로 생성
     if (!preventExactDuplicates && !preventPartialDuplicates) {
       // 1게임 생성시에는 모든 필수 포함 번호를 포함
-      const numbers = [...validMustInclude];
-      
+      const numbers = [...mustIncludeNumbers];
+
       // 나머지 번호를 랜덤으로 추가
-      while (numbers.length < 6 && availableNumbers.length > 0) {
-        const randomIndex = Math.floor(Math.random() * availableNumbers.length);
-        const num = availableNumbers[randomIndex];
+      const tempAvailable = [...finalAvailableNumbers];
+      while (numbers.length < 6 && tempAvailable.length > 0) {
+        const randomIndex = Math.floor(Math.random() * tempAvailable.length);
+        const num = tempAvailable[randomIndex];
         numbers.push(num);
-        availableNumbers.splice(randomIndex, 1);
+        tempAvailable.splice(randomIndex, 1);
       }
-      
+
       setGeneratedNumbers(numbers.sort((a, b) => a - b));
       return;
     }
@@ -1932,18 +1964,13 @@ const Lotto = () => {
     do {
       numbers = [];
       attempts++;
-      
+
       // 1게임 생성시에는 모든 필수 포함 번호를 포함
-      numbers.push(...validMustInclude);
-      
+      numbers.push(...mustIncludeNumbers);
+
       // 사용 가능한 번호 풀 재설정 (매 시도마다)
-      const currentAvailable = [];
-      for (let i = 1; i <= 45; i++) {
-        if (!excludeNumbers.includes(i) && !validMustInclude.includes(i)) {
-          currentAvailable.push(i);
-        }
-      }
-      
+      const currentAvailable = [...finalAvailableNumbers];
+
       // 나머지 번호를 랜덤으로 추가
       while (numbers.length < 6 && currentAvailable.length > 0) {
         const randomIndex = Math.floor(Math.random() * currentAvailable.length);
@@ -1989,101 +2016,52 @@ const Lotto = () => {
     const lastDigitRangeExcludeNumbers = excludeLastDigitRanges ? getExcludeRangesByLastDigit() : [];
     const tensDigitRangeExcludeNumbers = excludeTensDigitRanges ? getExcludeRangesByTensDigit() : [];
 
-    // 필수 포함 번호 검증
-    const validMustInclude = mustIncludeNumbers.filter(num =>
+    // 필수 포함 번호 검증 (제외 번호와 겹칠 수 없도록 이미 방지됨)
+    if (mustIncludeNumbers.length > 6) {
+      alert('필수 포함 번호가 6개를 초과할 수 없습니다.');
+      return;
+    }
+
+    // 사용 가능한 번호 풀 생성 (필수 포함 번호 제외한 전체)
+    const availableNumbers = [];
+    for (let i = 1; i <= 45; i++) {
+      if (!mustIncludeNumbers.includes(i)) {
+        availableNumbers.push(i);
+      }
+    }
+
+    // 제외 옵션 적용 (가능한 경우에만)
+    let filteredNumbers = availableNumbers.filter(num =>
       !excludeNumbers.includes(num) &&
       !lastDigitRangeExcludeNumbers.includes(num) &&
       !tensDigitRangeExcludeNumbers.includes(num)
     );
-    const actualMustIncludeCount = Math.min(mustIncludeCount, validMustInclude.length, 6);
 
-    if (mustIncludeNumbers.length > 0 && validMustInclude.length < Math.min(mustIncludeCount, mustIncludeNumbers.length)) {
-      const targetCount = Math.min(mustIncludeCount, mustIncludeNumbers.length);
-      alert(`필수 포함 번호 중 ${targetCount - validMustInclude.length}개가 제외된 번호와 겹칩니다.`);
-    }
-
-    // 사용 가능한 번호 풀 생성
-    const availableNumbers = [];
-    for (let i = 1; i <= 45; i++) {
-      if (!excludeNumbers.includes(i) &&
-          !lastDigitRangeExcludeNumbers.includes(i) &&
-          !tensDigitRangeExcludeNumbers.includes(i) &&
-          !validMustInclude.includes(i)) {
-        availableNumbers.push(i);
-      }
-    }
-    
-    if (availableNumbers.length + validMustInclude.length < 6) {
-      alert('사용 가능한 번호가 부족합니다. 최소 6개의 번호가 필요합니다.');
-      return;
-    }
-    
-    // 사전 검증: 총 필수 포함 요청이 30개(5게임 × 6개)를 초과하는지 확인
-    const totalRequests = validMustInclude.reduce((sum, num) => {
-      return sum + (numberGameCounts[num] || 0);
-    }, 0);
-    
-    if (totalRequests > 30) {
-      alert(`필수 포함 번호 요청이 너무 많습니다. 총 ${totalRequests}개 요청했지만 최대 30개(5게임 × 6개)만 가능합니다.`);
-    }
+    // 제외 후 번호가 부족하면 제외 옵션 무시하고 전체 사용
+    const finalAvailableNumbers = (filteredNumbers.length + mustIncludeNumbers.length < 6)
+      ? availableNumbers
+      : filteredNumbers;
     
     const games = [];
-    
-    // 각 번호별로 어느 게임에 포함될지 결정
-    const gameAssignments = [[], [], [], [], []]; // 5게임의 포함될 번호들
-    const warnings = [];
-    
-    for (const num of validMustInclude) {
-      const gameCount = numberGameCounts[num] || 0;
-      if (gameCount > 0) {
-        // 이 번호가 포함될 게임들을 랜덤하게 선택 (게임당 최대 6개 제한 고려)
-        const availableGames = [0, 1, 2, 3, 4];
-        const selectedGames = [];
-        
-        for (let i = 0; i < Math.min(gameCount, 5); i++) {
-          // 아직 6개 미만인 게임들만 선택 가능
-          const validGames = availableGames.filter(gameIndex => gameAssignments[gameIndex].length < 6);
-          
-          if (validGames.length > 0) {
-            const randomIndex = Math.floor(Math.random() * validGames.length);
-            const selectedGame = validGames[randomIndex];
-            selectedGames.push(selectedGame);
-            
-            // 선택된 게임을 availableGames에서 제거
-            const removeIndex = availableGames.indexOf(selectedGame);
-            availableGames.splice(removeIndex, 1);
-          } else {
-            // 모든 게임이 6개씩 찼으면 중단
-            break;
-          }
-        }
-        
-        // 선택된 게임들에 이 번호 추가
-        selectedGames.forEach(gameIndex => {
-          gameAssignments[gameIndex].push(num);
-        });
-        
-        // 이 번호가 설정된 게임 수만큼 배치되지 못했으면 경고 수집
-        if (selectedGames.length < gameCount) {
-          warnings.push(`번호 ${num}: ${gameCount}게임 → ${selectedGames.length}게임으로 조정`);
-        }
-      }
-    }
-    
-    // 경고 메시지가 있으면 사용자에게 알림
-    if (warnings.length > 0) {
-      alert(`게임당 최대 6개 제한으로 일부 조정되었습니다:\n${warnings.join('\n')}`);
-    }
+
+    // 모든 필수 포함 번호를 모든 게임에 포함
+    const gameAssignments = [
+      [...mustIncludeNumbers],
+      [...mustIncludeNumbers],
+      [...mustIncludeNumbers],
+      [...mustIncludeNumbers],
+      [...mustIncludeNumbers]
+    ];
 
     // 겹침 방지 옵션이 모두 꺼져있으면 바로 생성
     if (!preventExactDuplicates && !preventPartialDuplicates) {
       for (let i = 0; i < 5; i++) {
-        const gameAvailable = [...availableNumbers]; // 복사본 생성
+        const gameAvailable = [...finalAvailableNumbers]; // 복사본 생성
         const numbers = [];
-        
+
         // 이 게임에 할당된 필수 포함 번호들 추가
         numbers.push(...gameAssignments[i]);
-        
+
         // 나머지 번호를 랜덤으로 추가
         while (numbers.length < 6) {
           const randomIndex = Math.floor(Math.random() * gameAvailable.length);
@@ -2091,10 +2069,10 @@ const Lotto = () => {
           numbers.push(num);
           gameAvailable.splice(randomIndex, 1);
         }
-        
+
         games.push(numbers.sort((a, b) => a - b));
       }
-      
+
       setGeneratedNumbers(games);
       return;
     }
@@ -2116,15 +2094,10 @@ const Lotto = () => {
         
         // 이 게임에 할당된 필수 포함 번호들 추가
         numbers.push(...gameAssignments[i]);
-        
+
         // 사용 가능한 번호 풀 재설정 (매 시도마다)
-        const gameAvailable = [];
-        for (let j = 1; j <= 45; j++) {
-          if (!excludeNumbers.includes(j) && !validMustInclude.includes(j)) {
-            gameAvailable.push(j);
-          }
-        }
-        
+        const gameAvailable = [...finalAvailableNumbers];
+
         // 나머지 번호를 랜덤으로 추가
         while (numbers.length < 6 && gameAvailable.length > 0) {
           const randomIndex = Math.floor(Math.random() * gameAvailable.length);
@@ -2344,13 +2317,15 @@ const Lotto = () => {
       <div className="lotto-container">
         <div className="lotto-header">
           <h1>🎰 로또 서비스</h1>
-          <p>번호 생성 및 당첨번호 확인</p>
         </div>
         
         <div className="lotto-tabs">
           <button
             className={`tab-btn ${activeTab === 'generator' ? 'active' : ''}`}
-            onClick={() => setActiveTab('generator')}
+            onClick={() => {
+              setActiveTab('generator');
+              setGeneratedNumbers([]); // 생성된 번호 초기화
+            }}
           >
             🎲 번호 생성기
           </button>
@@ -2371,9 +2346,96 @@ const Lotto = () => {
         <div className="lotto-content">
           {activeTab === 'generator' && (
             <div className="generator-section">
+              {/* 게임 생성 버튼을 맨 위로 */}
+              <div className="generator-controls-top">
+                <div className="section-title-with-help">
+                  <h2 className="main-title">🎲 게임 생성</h2>
+                  <button
+                    className="help-btn"
+                    onClick={() => setShowHelp(showHelp === 'generate' ? null : 'generate')}
+                  >
+                    ❓
+                  </button>
+                </div>
+                {showHelp === 'generate' && (
+                  <div className="help-tooltip" onClick={() => setShowHelp(null)}>
+                    <p><strong>필수</strong> - 로또 번호를 생성합니다</p>
+                    <p>• 1게임: 6개 번호 1세트 생성</p>
+                    <p>• 5게임: 6개 번호 5세트 생성</p>
+                    <p>• 아래 옵션을 설정하면 조건에 맞는 번호만 생성됩니다</p>
+                  </div>
+                )}
+                <div className="generator-buttons">
+                  <button onClick={generateLottoNumbers} className="generate-btn-large">
+                    🎲 1게임 생성
+                  </button>
+                  <button onClick={generate5Games} className="generate-btn-large">
+                    🎯 5게임 생성
+                  </button>
+                </div>
+              </div>
+
+              {/* 생성된 번호 표시 */}
+              <div className="generated-numbers">
+                {Array.isArray(generatedNumbers[0]) ? (
+                  // 5게임
+                  generatedNumbers.map((game, index) => (
+                    <div key={index} className="number-row">
+                      <span className="game-label">게임 {index + 1}</span>
+                      <div className="number-balls">
+                        {game.map(num => (
+                          <span key={num} className="number-ball">{num}</span>
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                ) : generatedNumbers.length > 0 ? (
+                  // 1게임
+                  <div className="number-row">
+                    <span className="game-label">추천번호</span>
+                    <div className="number-balls">
+                      {generatedNumbers.map(num => (
+                        <span key={num} className="number-ball">{num}</span>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="no-numbers">위 버튼을 눌러 번호를 생성하세요</div>
+                )}
+              </div>
+
+              <div className="options-divider">선택 옵션</div>
+
+              <div className="sub-options-divider">번호 옵션</div>
+
               <div className="exclude-section">
-                <h3>제외할 번호</h3>
-                
+                <div className="section-title-with-help">
+                  <h3
+                    className="option-title"
+                    onClick={() => setShowExcludeOptions(!showExcludeOptions)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {showExcludeOptions ? '▼' : '▶'} 🚫 제외할 번호
+                  </h3>
+                  <button
+                    className="help-btn-small"
+                    onClick={() => setShowHelp(showHelp === 'exclude' ? null : 'exclude')}
+                  >
+                    ❓
+                  </button>
+                </div>
+                {showHelp === 'exclude' && (
+                  <div className="help-tooltip" onClick={() => setShowHelp(null)}>
+                    <p><strong>선택</strong> - 생성에서 제외할 번호를 선택합니다</p>
+                    <p>• 빠른 버튼: 자주 사용하는 패턴 즉시 제외</p>
+                    <p>• 직접 입력: 원하는 번호나 범위 지정 가능</p>
+                    <p>• 예시: 1,2,3 또는 10-20</p>
+                  </div>
+                )}
+
+                {showExcludeOptions && (
+                  <>
+
                 {/* 빠른 제외 번호 추가 버튼들 */}
                 <div className="quick-exclude-buttons">
                   {/* 첫 번째 줄: 메인 버튼들 (큰 크기) */}
@@ -2386,14 +2448,10 @@ const Lotto = () => {
                       console.log('🔗 join된 문자열:', joinedNumbers);
                       addExcludeNumber(joinedNumbers, 'last-week-winning');
                     }} className="quick-exclude-btn last-week-winning">
-                      🎰 지난주당첨
+                      🎰 지난주당첨번호
                     </button>
                     <button onClick={() => addExcludeNumber(getThisWeekDateNumbers().join(','), 'this-week-date')} className="quick-exclude-btn this-week-date">
-                      📅 이번주날짜
-                    </button>
-                    <button onClick={() => addExcludeNumber(getAnniversaryNumbers().join(','), 'anniversary')} className="quick-exclude-btn anniversary">
-                      🎉 기념일
-                      <div className="anniversary-numbers">(10,1,9,24,7,11,6)</div>
+                      📅 이번주추첨날짜
                     </button>
                   </div>
                   
@@ -2423,7 +2481,9 @@ const Lotto = () => {
                   </div>
 
                 </div>
-                
+
+                <div className="input-divider"></div>
+
                 <div className="exclude-input">
                   <input
                     type="text"
@@ -2524,10 +2584,37 @@ const Lotto = () => {
                     <div className="no-excludes">제외할 번호를 추가해보세요</div>
                   )}
                 </div>
+                  </>
+                )}
               </div>
 
               <div className="include-section">
-                <h3>필수 포함 번호</h3>
+                <div className="section-title-with-help">
+                  <h3
+                    className="option-title"
+                    onClick={() => setShowIncludeOptions(!showIncludeOptions)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {showIncludeOptions ? '▼' : '▶'} ✅ 포함할 번호
+                  </h3>
+                  <button
+                    className="help-btn-small"
+                    onClick={() => setShowHelp(showHelp === 'include' ? null : 'include')}
+                  >
+                    ❓
+                  </button>
+                </div>
+                {showHelp === 'include' && (
+                  <div className="help-tooltip" onClick={() => setShowHelp(null)}>
+                    <p><strong>선택</strong> - 반드시 포함할 번호를 선택합니다</p>
+                    <p>• 생성되는 모든 게임에 이 번호들이 포함됩니다</p>
+                    <p>• 최대 6개까지 선택 가능</p>
+                    <p>• 예시: 7,11,23 또는 1-5</p>
+                  </div>
+                )}
+
+                {showIncludeOptions && (
+                  <>
                 <div className="include-input">
                   <input
                     type="text"
@@ -2585,20 +2672,6 @@ const Lotto = () => {
                             >
                               {num} ✕
                             </span>
-                            <div className="game-count-setting">
-                              <label>
-                                5게임 중:
-                                <input
-                                  type="number"
-                                  min="0"
-                                  max="5"
-                                  value={numberGameCounts[num] || 5}
-                                  onChange={(e) => updateNumberGameCount(num, parseInt(e.target.value) || 0)}
-                                  className="game-count-input"
-                                />
-                                게임
-                              </label>
-                            </div>
                           </div>
                         ))}
                       </div>
@@ -2610,10 +2683,39 @@ const Lotto = () => {
                     <div className="no-includes">필수 포함할 번호를 추가해보세요</div>
                   )}
                 </div>
+                  </>
+                )}
               </div>
 
+              <div className="sub-options-divider">패턴 옵션</div>
+
               <div className="overlap-prevention-section">
-                <h3>제외 패턴 설정</h3>
+                <div className="section-title-with-help">
+                  <h3
+                    className="option-title"
+                    onClick={() => setShowPatternOptions(!showPatternOptions)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {showPatternOptions ? '▼' : '▶'} 이전 회차와의 중복 방지
+                  </h3>
+                  <button
+                    className="help-btn-small"
+                    onClick={() => setShowHelp(showHelp === 'pattern' ? null : 'pattern')}
+                  >
+                    ❓
+                  </button>
+                </div>
+                {showHelp === 'pattern' && (
+                  <div className="help-tooltip" onClick={() => setShowHelp(null)}>
+                    <p><strong>선택</strong> - 고급 제외 패턴을 설정합니다</p>
+                    <p>• 완전 겹침: 이전 회차와 6개 모두 같은 조합 방지</p>
+                    <p>• 부분 겹침: 5개 이상 같은 조합 방지</p>
+                    <p>• 연속 번호: 4개 이상 연속된 번호 방지</p>
+                  </div>
+                )}
+
+                {showPatternOptions && (
+                  <>
                 <div className="overlap-options">
                   <label className="overlap-option">
                     <input
@@ -2644,7 +2746,7 @@ const Lotto = () => {
                       onChange={(e) => setExcludeLastDigitRanges(e.target.checked)}
                     />
                     <span className="overlap-label">
-                      🔢 저번주 1의 자리 수 제외
+                      🔢 지난주 최다 1의 자리 수 제외
                       <small>가장 많이 나온 1의 자리 수의 모든 대역 번호 제외 (예: 7이면 7,17,27,37 제외)</small>
                     </span>
                   </label>
@@ -2655,7 +2757,7 @@ const Lotto = () => {
                       onChange={(e) => setExcludeTensDigitRanges(e.target.checked)}
                     />
                     <span className="overlap-label">
-                      🔟 저번주 10의 자리 수 대역 전체 제외
+                      🔟 지난주 최다 10의 자리 수 대역 전체 제외
                       <small>가장 많이 나온 10의 자리 수 대역 제외 (0→1~10, 1→11~20, 2→21~30, 3→31~40, 4→41~45)</small>
                     </span>
                   </label>
@@ -2691,7 +2793,7 @@ const Lotto = () => {
                           ? `${analysis.checkedRounds.length}회차(${analysis.checkedRounds.join(',')})`
                           : `${analysis.checkedRounds[0]}회차`;
                         const tieInfo = analysis.hasMultipleTies ? ' (동점으로 첫 번째 선택)' : '';
-                        return `${roundInfo} 분석: 1의 자리 ${analysis.mostFrequentDigit} → ${excludeNums.join(', ')} 제외${tieInfo}`;
+                        return `${roundInfo} 분석: 1의 자리 ${analysis.mostFrequentDigit} 대역 ${excludeNums.length}개 번호 제외 (${excludeNums.join(', ')})${tieInfo}`;
                       }
                       return '로또 데이터를 불러와주세요';
                     })()}
@@ -2713,44 +2815,10 @@ const Lotto = () => {
                     })()}
                   </div>
                 )}
-              </div>
-
-              <div className="generator-controls">
-                <button onClick={generateLottoNumbers} className="generate-btn">
-                  🎲 1게임 생성
-                </button>
-                <button onClick={generate5Games} className="generate-btn">
-                  🎯 5게임 생성
-                </button>
-              </div>
-              
-              <div className="generated-numbers">
-                {Array.isArray(generatedNumbers[0]) ? (
-                  // 5게임
-                  generatedNumbers.map((game, index) => (
-                    <div key={index} className="number-row">
-                      <span className="game-label">게임 {index + 1}</span>
-                      <div className="number-balls">
-                        {game.map(num => (
-                          <span key={num} className="number-ball">{num}</span>
-                        ))}
-                      </div>
-                    </div>
-                  ))
-                ) : generatedNumbers.length > 0 ? (
-                  // 1게임
-                  <div className="number-row">
-                    <span className="game-label">추천번호</span>
-                    <div className="number-balls">
-                      {generatedNumbers.map(num => (
-                        <span key={num} className="number-ball">{num}</span>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="no-numbers">번호 생성 버튼을 눌러주세요</div>
+                  </>
                 )}
               </div>
+
             </div>
           )}
 
@@ -3106,9 +3174,6 @@ const Lotto = () => {
         <div className="navigation">
           <Link to="/" className="back-btn">
             ← 홈으로 돌아가기
-          </Link>
-          <Link to="/dashboard" className="dashboard-btn">
-            📊 대시보드 보기
           </Link>
         </div>
         

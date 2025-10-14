@@ -1,0 +1,427 @@
+.momok {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffa751 0%, #ffe259 100%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.momok-container {
+  max-width: 800px;
+  min-width: 800px;
+  width: 800px;
+  text-align: center;
+}
+
+.momok-header {
+  color: white;
+  margin-bottom: 30px;
+}
+
+.momok-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+}
+
+.momok-header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* 탭 스타일 */
+.momok-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 25px;
+  padding: 5px;
+}
+
+.momok-tabs .tab-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.momok-tabs .tab-btn.active {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.momok-tabs .tab-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* 컨텐츠 영역 */
+.momok-content {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 25px;
+  padding: 30px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  min-height: 400px;
+}
+
+/* 추천 섹션 */
+.recommend-section {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.recommend-btn {
+  padding: 20px 40px;
+  font-size: 1.3rem;
+  background: linear-gradient(135deg, #ff9a56 0%, #ff6b6b 100%);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+  transition: all 0.3s ease;
+}
+
+.recommend-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(255, 107, 107, 0.4);
+}
+
+.recommend-btn:active {
+  transform: translateY(-1px);
+}
+
+/* 메뉴 결과 */
+.menu-result {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 40px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.menu-image {
+  font-size: 5rem;
+  margin-bottom: 20px;
+}
+
+.menu-card h2 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.menu-category {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 20px;
+}
+
+.menu-keywords {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 25px;
+}
+
+.keyword-tag {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  backdrop-filter: blur(10px);
+}
+
+.map-btn {
+  padding: 12px 30px;
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  border: 2px solid white;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.map-btn:hover {
+  background: white;
+  color: #667eea;
+  transform: translateY(-2px);
+}
+
+/* 사용 가능한 메뉴 */
+.available-menus {
+  text-align: left;
+}
+
+.available-menus h3 {
+  color: #333;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.menu-item {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  padding: 15px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.menu-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.menu-icon {
+  font-size: 2rem;
+}
+
+.menu-name {
+  font-size: 0.95rem;
+}
+
+/* 싫어하는 음식 섹션 */
+.dislike-section {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.dislike-input-wrapper {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.dislike-input {
+  flex: 1;
+  padding: 12px 20px;
+  border: 2px solid #ffa751;
+  border-radius: 25px;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.dislike-input:focus {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+.add-dislike-btn {
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #ff9a56 0%, #ff6b6b 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-dislike-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
+}
+
+/* 싫어하는 음식 리스트 */
+.dislike-list {
+  text-align: left;
+}
+
+.dislike-list h3 {
+  color: #333;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.dislike-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dislike-item {
+  background: #ff6b6b;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  animation: fadeIn 0.3s ease;
+}
+
+.dislike-item .remove-btn {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.dislike-item .remove-btn:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+.no-dislike {
+  color: #999;
+  text-align: center;
+  padding: 30px;
+  font-size: 1rem;
+}
+
+/* 정보 박스 */
+.info-box {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  border-radius: 15px;
+  padding: 20px;
+  text-align: left;
+}
+
+.info-box h4 {
+  color: #333;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.info-box ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.info-box li {
+  color: #555;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+/* 네비게이션 */
+.navigation {
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  display: inline-block;
+  padding: 12px 25px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: bold;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* 푸터 */
+.momok-footer {
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.momok-footer p {
+  margin: 0;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+  .momok-container {
+    min-width: 100vw;
+    width: 100vw;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
+  .momok-content {
+    padding: 20px;
+  }
+
+  .menu-card {
+    padding: 30px 20px;
+  }
+
+  .menu-card h2 {
+    font-size: 2rem;
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+  }
+
+  .menu-item {
+    padding: 12px;
+  }
+
+  .dislike-input-wrapper {
+    flex-direction: column;
+  }
+
+  .recommend-btn {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+  }
+}

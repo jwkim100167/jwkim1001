@@ -129,9 +129,37 @@
   box-shadow: 0 20px 40px rgba(255, 193, 7, 0.1);
 }
 
+.momok-card:hover {
+  border-color: rgba(255, 167, 81, 0.5);
+  box-shadow: 0 20px 40px rgba(255, 167, 81, 0.1);
+}
+
 .jobs-card:hover {
   border-color: rgba(102, 126, 234, 0.5);
   box-shadow: 0 20px 40px rgba(102, 126, 234, 0.1);
+}
+
+.disabled-card {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.disabled-card:hover {
+  transform: none;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
+}
+
+.service-status {
+  margin-top: 15px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  display: inline-block;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .home-footer {
