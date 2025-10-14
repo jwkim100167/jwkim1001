@@ -1,0 +1,42 @@
+name: Update Lotto Data
+
+on:
+  schedule:
+    # 매주 일요일 07:00 KST (22:00 UTC 토요일)
+    - cron: '0 22 * * 6'
+  workflow_dispatch: # 수동 실행 가능
+
+permissions:
+  contents: write
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch latest lotto data
+        run: node scripts/fetch-lotto-data.js
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --exit-code public/lotto-data.json || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push if changed
+        if: steps.git-check.outputs.changed == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add public/lotto-data.json
+          git commit -m "자동 업데이트: 로또 당첨번호 데이터 $(date +'%Y-%m-%d %H:%M:%S')"
+          git push
