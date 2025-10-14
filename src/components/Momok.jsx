@@ -65,6 +65,7 @@ const Momok = () => {
     }
     const randomIndex = Math.floor(Math.random() * availableMenus.length);
     setSelectedMenu(availableMenus[randomIndex]);
+    setSelectedRestaurant(null); // 추천받을 때마다 선택 초기화
   };
 
   // 싫어하는 음식 추가
