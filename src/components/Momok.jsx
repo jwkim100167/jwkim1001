@@ -22,7 +22,10 @@ const Momok = () => {
   // 식당별 후기 링크 매핑
   const reviewLinks = {
     "피자파쪼": "https://blog.naver.com/jwkim_1001/224025105327",
-    "빙고선술집": "https://blog.naver.com/jwkim_1001/223865410201"
+    "빙고선술집": "https://blog.naver.com/jwkim_1001/223865410201",
+    "감동식당": "https://m.blog.naver.com/parasa_924/224039798489",
+    "백합칼국수": "https://m.blog.naver.com/parasa_924/223814989777",
+    "바다수다": "https://m.blog.naver.com/parasa_924/223810745255"
   };
 
   // 메뉴 데이터 로드
