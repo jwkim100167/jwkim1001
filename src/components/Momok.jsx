@@ -18,6 +18,12 @@ const Momok = () => {
   const [excludedCategories, setExcludedCategories] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
+  // 식당별 후기 링크 매핑
+  const reviewLinks = {
+    "피자파쪼": "https://blog.naver.com/jwkim_1001/224025105327",
+    "빙고선술집": "https://blog.naver.com/jwkim_1001/223865410201"
+  };
+
   // 메뉴 데이터 로드
   useEffect(() => {
     const basePath = import.meta.env.BASE_URL;
@@ -54,6 +60,16 @@ const Momok = () => {
     } else {
       setExcludedCategories([...excludedCategories, categoryId]);
     }
+  };
+
+  // 전체 선택
+  const selectAllCategories = () => {
+    setExcludedCategories([]);
+  };
+
+  // 전체 선택 해제
+  const deselectAllCategories = () => {
+    setExcludedCategories(menuData.map(menu => menu.id));
   };
 
   // 랜덤 메뉴 추천
@@ -114,12 +130,19 @@ const Momok = () => {
     window.open(`https://map.naver.com/v5/search/${query}`, '_blank');
   };
 
+  // 후기 링크 열기
+  const openReview = (restaurantName) => {
+    const reviewLink = reviewLinks[restaurantName];
+    if (reviewLink) {
+      window.open(reviewLink, '_blank');
+    }
+  };
+
   // 식당 태그 클릭 핸들러
   const handleRestaurantClick = (e, restaurant) => {
     e.stopPropagation();
     if (selectedRestaurant === restaurant) {
-      // 같은 식당을 다시 클릭하면 네이버 지도 검색
-      searchOnNaverMap(restaurant);
+      // 같은 식당을 다시 클릭하면 선택 해제
       setSelectedRestaurant(null);
     } else {
       // 새로운 식당 선택
@@ -223,13 +246,38 @@ const Momok = () => {
                     <h2>{selectedMenu.name}</h2>
                     <div className="menu-keywords">
                       {selectedMenu.restaurants.map((restaurant, idx) => (
-                        <span
-                          key={idx}
-                          className={`keyword-tag ${selectedRestaurant === restaurant ? 'selected' : ''}`}
-                          onClick={(e) => handleRestaurantClick(e, restaurant)}
-                        >
-                          {selectedRestaurant === restaurant ? '📍 네이버 지도에서 찾기' : `#${restaurant}`}
-                        </span>
+                        <div key={idx} className="restaurant-item-wrapper">
+                          <span
+                            className={`keyword-tag ${selectedRestaurant === restaurant ? 'selected' : ''}`}
+                            onClick={(e) => handleRestaurantClick(e, restaurant)}
+                          >
+                            {`#${restaurant}`}
+                          </span>
+                          {selectedRestaurant === restaurant && (
+                            <div className="action-buttons">
+                              <button
+                                className="map-action-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  searchOnNaverMap(restaurant);
+                                }}
+                              >
+                                📍 지도
+                              </button>
+                              {reviewLinks[restaurant] && (
+                                <button
+                                  className="review-action-btn"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    openReview(restaurant);
+                                  }}
+                                >
+                                  ✍️ 후기
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -237,7 +285,17 @@ const Momok = () => {
               )}
 
               <div className="available-menus">
-                <h3>추천 가능한 카테고리 ({getAvailableMenus().length}개)</h3>
+                <div className="available-menus-header">
+                  <h3>추천 가능한 카테고리 ({getAvailableMenus().length}개)</h3>
+                  <div className="category-select-buttons">
+                    <button onClick={selectAllCategories} className="select-all-btn">
+                      전체 선택
+                    </button>
+                    <button onClick={deselectAllCategories} className="deselect-all-btn">
+                      전체 해제
+                    </button>
+                  </div>
+                </div>
                 <div className="menu-grid">
                   {menuData.map(menu => {
                     const isExcluded = excludedCategories.includes(menu.id);

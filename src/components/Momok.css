@@ -153,6 +153,13 @@
   margin-bottom: 25px;
 }
 
+.restaurant-item-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
 .keyword-tag {
   background: rgba(255, 255, 255, 0.2);
   padding: 8px 16px;
@@ -170,9 +177,46 @@
 
 .keyword-tag.selected {
   background: rgba(255, 255, 255, 0.9);
-  color: #ff6b6b;
+  color: #667eea;
   font-weight: bold;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  animation: fadeIn 0.3s ease;
+}
+
+.map-action-btn,
+.review-action-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.map-action-btn {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+}
+
+.map-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+.review-action-btn {
+  background: linear-gradient(135deg, #ff9a56 0%, #ff6b6b 100%);
+}
+
+.review-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
 }
 
 .map-btn {
@@ -184,10 +228,55 @@
   text-align: left;
 }
 
+.available-menus-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .available-menus h3 {
   color: #333;
   font-size: 1.2rem;
-  margin-bottom: 15px;
+  margin: 0;
+}
+
+.category-select-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.select-all-btn,
+.deselect-all-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.select-all-btn {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+}
+
+.select-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.deselect-all-btn {
+  background: linear-gradient(135deg, #9e9e9e 0%, #757575 100%);
+}
+
+.deselect-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(158, 158, 158, 0.3);
 }
 
 .menu-grid {
