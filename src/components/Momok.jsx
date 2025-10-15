@@ -17,6 +17,7 @@ const Momok = () => {
   const [showAddCategory, setShowAddCategory] = useState(false);
   const [excludedCategories, setExcludedCategories] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // 식당별 후기 링크 매핑
   const reviewLinks = {
@@ -31,11 +32,19 @@ const Momok = () => {
       .then(response => response.json())
       .then(data => {
         setMenuData(data.categories);
+
+        // 초기 로드 시 "종웅 추천"만 선택되도록 설정
+        if (!isInitialized) {
+          const jongWoongCategory = data.categories.find(cat => cat.name === "종웅 추천");
+          const otherCategories = data.categories.filter(cat => cat.name !== "종웅 추천");
+          setExcludedCategories(otherCategories.map(cat => cat.id));
+          setIsInitialized(true);
+        }
       })
       .catch(error => {
         console.error('메뉴 데이터 로드 실패:', error);
       });
-  }, []);
+  }, [isInitialized]);
 
   // 싫어하는 음식 필터링 후 메뉴 추천
   const getAvailableMenus = () => {

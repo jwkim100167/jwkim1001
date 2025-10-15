@@ -10,9 +10,10 @@
 }
 
 .momok-container {
-  max-width: 100%;
+  max-width: 1200px;
   width: 100%;
   text-align: center;
+  margin: 0 auto;
 }
 
 .momok-header {
@@ -767,6 +768,17 @@
   font-size: 0.9rem;
 }
 
+/* 태블릿 반응형 */
+@media (max-width: 1024px) {
+  .momok-container {
+    max-width: 90%;
+  }
+
+  .momok-content {
+    padding: 25px;
+  }
+}
+
 /* 모바일 반응형 */
 @media (max-width: 768px) {
   .momok {
@@ -774,18 +786,22 @@
   }
 
   .momok-container {
-    min-width: 100%;
-    width: 100%;
     max-width: 100%;
+    width: 100%;
     padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+  }
+
+  .momok-header h1 {
+    font-size: 2rem;
+  }
+
+  .momok-header p {
+    font-size: 1rem;
   }
 
   .momok-content {
     padding: 20px;
-    margin: 0;
-    box-sizing: border-box;
+    border-radius: 20px;
   }
 
   .menu-card {
@@ -793,16 +809,24 @@
   }
 
   .menu-card h2 {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .menu-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
   }
 
   .menu-item {
-    padding: 12px;
+    padding: 12px 8px;
+  }
+
+  .menu-icon {
+    font-size: 1.2rem;
+  }
+
+  .menu-name {
+    font-size: 0.7rem;
   }
 
   .dislike-input-wrapper,
@@ -823,5 +847,14 @@
   .recommend-btn {
     padding: 15px 30px;
     font-size: 1.1rem;
+  }
+
+  .category-select-buttons {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .categories-container {
+    grid-template-columns: 1fr;
   }
 }
