@@ -36,10 +36,11 @@ const Momok = () => {
       .then(data => {
         setMenuData(data.categories);
 
-        // 초기 로드 시 "종웅 추천"만 선택되도록 설정
+        // 초기 로드 시 "종웅 추천"과 "숑숑 추천"만 선택되도록 설정
         if (!isInitialized) {
-          const jongWoongCategory = data.categories.find(cat => cat.name === "종웅 추천");
-          const otherCategories = data.categories.filter(cat => cat.name !== "종웅 추천");
+          const otherCategories = data.categories.filter(
+            cat => cat.name !== "종웅 추천" && cat.name !== "숑숑 추천"
+          );
           setExcludedCategories(otherCategories.map(cat => cat.id));
           setIsInitialized(true);
         }
