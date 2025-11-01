@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2025-10-25T22:26:23.634Z",
-  "totalRounds": 1195,
+  "lastUpdated": "2025-11-01T22:30:33.679Z",
+  "totalRounds": 1196,
   "format": "static_json",
   "data": [
     {
@@ -13147,6 +13147,17 @@
       "num5": 34,
       "num6": 36,
       "bonus": 37
+    },
+    {
+      "round": 1196,
+      "date": "2025-11-01",
+      "num1": 8,
+      "num2": 12,
+      "num3": 15,
+      "num4": 29,
+      "num5": 40,
+      "num6": 45,
+      "bonus": 14
     }
   ]
 }
