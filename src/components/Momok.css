@@ -7,6 +7,7 @@
   padding: 20px;
   overflow-y: auto;
   overflow-x: hidden;
+  position: relative;
 }
 
 .momok-container {
@@ -766,6 +767,17 @@
   margin: 0;
   opacity: 0.8;
   font-size: 0.9rem;
+}
+
+/* Auth buttons */
+.auth-buttons {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1000;
 }
 
 /* 태블릿 반응형 */

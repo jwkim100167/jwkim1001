@@ -1,0 +1,179 @@
+.mypage {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.mypage-container {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  max-width: 800px !important;
+  width: 100%;
+}
+
+.mypage-container h1 {
+  text-align: center;
+  color: #667eea;
+  margin-bottom: 30px;
+  font-size: 2rem;
+}
+
+.user-info-card {
+  background: #f8f9ff;
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 30px;
+}
+
+.user-info-card h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-item .label {
+  font-weight: 600;
+  color: #555;
+}
+
+.info-item .value {
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-buttons button {
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.home-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.home-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.lotto-btn {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.lotto-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(240, 147, 251, 0.3);
+}
+
+.logout-btn {
+  background: white;
+  color: #e74c3c;
+  border: 2px solid #e74c3c;
+}
+
+.logout-btn:hover {
+  background: #fee;
+}
+/* Responsive styles */
+@media (max-width: 768px) {
+  .mypage-container {
+    padding: 30px 25px;
+  }
+
+  .mypage-container h1 {
+    font-size: 1.7rem;
+    margin-bottom: 25px;
+  }
+
+  .user-info-card {
+    padding: 20px;
+    margin-bottom: 25px;
+  }
+
+  .user-info-card h2 {
+    font-size: 1.2rem;
+  }
+
+  .action-buttons button {
+    padding: 12px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .mypage {
+    padding: 15px;
+  }
+
+  .mypage-container {
+    padding: 25px 20px;
+    border-radius: 15px;
+  }
+
+  .mypage-container h1 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+  .user-info-card {
+    padding: 18px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+  }
+
+  .user-info-card h2 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+  }
+
+  .info-item {
+    padding: 10px 0;
+    font-size: 0.9rem;
+  }
+
+  .info-item .label {
+    font-size: 0.9rem;
+  }
+
+  .info-item .value {
+    font-size: 0.9rem;
+  }
+
+  .action-buttons {
+    gap: 10px;
+  }
+
+  .action-buttons button {
+    padding: 11px;
+    font-size: 0.95rem;
+  }
+}

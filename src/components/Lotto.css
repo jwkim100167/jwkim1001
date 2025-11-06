@@ -7,6 +7,7 @@
   padding: 20px;
   overflow-y: auto;
   overflow-x: hidden;
+  position: relative;
 }
 
 .lotto-container {
@@ -984,6 +985,7 @@
   padding: 15px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
+  flex-wrap: wrap;
 }
 
 .game-label {
@@ -1010,6 +1012,30 @@
   font-weight: bold;
   font-size: 1.1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.game-actions {
+  display: flex;
+  gap: 5px;
+  margin-left: 10px;
+}
+
+.save-game-btn,
+.delete-game-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.2s;
+}
+
+.save-game-btn:hover {
+  transform: scale(1.2);
+}
+
+.delete-game-btn:hover {
+  transform: scale(1.2);
 }
 
 .no-numbers {
@@ -1225,6 +1251,17 @@
 .lotto-footer p {
   margin: 0;
   font-size: 1rem;
+}
+
+/* Auth buttons */
+.auth-buttons {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1000;
 }
 
 /* 반응형 디자인 */
@@ -2886,4 +2923,42 @@
   border: 2px solid #fff !important;
   box-shadow: 0 0 10px rgba(255, 71, 87, 0.5), 0 2px 5px rgba(0, 0, 0, 0.2) !important;
   font-weight: bold;
+}
+
+/* 로그인 필요 화면 */
+.login-required {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.login-required h2 {
+  color: #667eea;
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+}
+
+.login-required p {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+}
+
+.login-required-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 14px 30px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-required-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
 }

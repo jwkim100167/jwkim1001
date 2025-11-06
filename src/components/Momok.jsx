@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import './Momok.css';
 
 const Momok = () => {
@@ -18,6 +19,15 @@ const Momok = () => {
   const [excludedCategories, setExcludedCategories] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  // Auth hooks
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  // Logout handler
+  const handleLogout = () => {
+    logout();
+  };
+
 
   // 식당별 후기 링크 매핑
   const reviewLinks = {
@@ -225,6 +235,24 @@ const Momok = () => {
   return (
     <div className="momok">
       <div className="momok-container">
+        <div className="auth-buttons">
+          {isAuthenticated ? (
+            <>
+              <span className="user-greeting">👋 {user.loginId}님</span>
+              <button className="auth-btn mypage-btn" onClick={() => navigate('/mypage')}>
+                마이페이지
+              </button>
+              <button className="auth-btn logout-btn" onClick={handleLogout}>
+                로그아웃
+              </button>
+            </>
+          ) : (
+            <button className="auth-btn login-btn" onClick={() => navigate('/login')}>
+              로그인
+            </button>
+          )}
+        </div>
+
         <div className="momok-header">
           <h1>🍽️ MOMOK</h1>
           <p>오늘 점심 뭐 먹지? 고민 끝!</p>

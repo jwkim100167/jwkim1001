@@ -1,13 +1,38 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import './Home.css';
 
 const Home = () => {
   console.log('Home 컴포넌트 렌더링됨');
-  
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <div className="home">
       <div className="home-container">
+        <div className="auth-buttons">
+          {isAuthenticated ? (
+            <>
+              <span className="user-greeting">👋 {user.loginId}님</span>
+              <button className="auth-btn mypage-btn" onClick={() => navigate('/mypage')}>
+                마이페이지
+              </button>
+              <button className="auth-btn logout-btn" onClick={handleLogout}>
+                로그아웃
+              </button>
+            </>
+          ) : (
+            <button className="auth-btn login-btn" onClick={() => navigate('/login')}>
+              로그인
+            </button>
+          )}
+        </div>
+
         <div className="home-header">
           <h1>🎯 미니게임천국(등대지기)</h1>
           <p>다양한 웹 서비스를 한 곳에서</p>
@@ -62,7 +87,7 @@ const Home = () => {
               <div className="stat-label">서비스</div>
             </div>
           </div>
-          
+
           <p className="creator">made by jwkim1001</p>
         </div>
       </div>

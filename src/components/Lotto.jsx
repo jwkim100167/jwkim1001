@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { Link, useNavigate } from 'react-router-dom';
 import { getAllLottoNumbers, getLatestLottoNumbers, saveLottoDataToStorage, loadLottoDataFromStorage, getLottoNumberByRound, clearLottoDataFromStorage, downloadAllLottoData } from '../utils/lottoAPI';
 import { 
   initDatabase, 
@@ -47,6 +48,15 @@ const Lotto = () => {
   const [showPatternOptions, setShowPatternOptions] = useState(false); // 제외 패턴 옵션 표시 상태
 
   // 함수 참조를 위한 ref
+  // Auth hooks
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  // Logout handler
+  const handleLogout = () => {
+    logout();
+  };
+
   const downloadLatestLottoDataRef = useRef(null);
 
   // 저번주 당첨번호 가져오기
@@ -1912,6 +1922,16 @@ const Lotto = () => {
       return;
     }
 
+    
+    // 이미 5게임이 생성되어 있는지 확인
+    if (Array.isArray(generatedNumbers[0]) && generatedNumbers.length === 5) {
+      alert('게임을 이미 5개 다 생성했습니다.');
+      return;
+    }
+
+    // 1-4게임이 이미 있는 경우, 추가 생성
+    const isAddingToExisting = Array.isArray(generatedNumbers[0]) && generatedNumbers.length > 0 && generatedNumbers.length < 5;
+
     // 1의 자리 수 기반 제외 번호 생성
     const lastDigitRangeExcludeNumbers = excludeLastDigitRanges ? getExcludeRangesByLastDigit() : [];
     const tensDigitRangeExcludeNumbers = excludeTensDigitRanges ? getExcludeRangesByTensDigit() : [];
@@ -2009,7 +2029,15 @@ const Lotto = () => {
       }
     } while (true);
     
-    setGeneratedNumbers(numbers.sort((a, b) => a - b));
+    
+    // 게임 저장
+    if (isAddingToExisting) {
+      // 기존 게임에 추가
+      setGeneratedNumbers([...generatedNumbers, numbers.sort((a, b) => a - b)]);
+    } else {
+      // 새로 생성
+      setGeneratedNumbers(numbers.sort((a, b) => a - b));
+    }
   };
 
   // 5게임 생성 (제외번호 제외, 필수포함번호 포함, 이전 회차와 겹치지 않음)
@@ -2140,6 +2168,29 @@ const Lotto = () => {
     }
     
     setGeneratedNumbers(games);
+  };
+
+  // 게임 저장 핸들러
+  const handleSaveGame = (game) => {
+    if (!isAuthenticated) {
+      alert("로그인이 필요한 기능입니다.");
+      navigate("/login");
+      return;
+    }
+    console.log("Saving game:", game);
+    alert("게임이 저장되었습니다!");
+  };
+
+  // 게임 삭제 핸들러
+  const handleDeleteGame = (index) => {
+    if (Array.isArray(generatedNumbers[0])) {
+      // 5게임인 경우
+      const newNumbers = generatedNumbers.filter((_, i) => i !== index);
+      setGeneratedNumbers(newNumbers);
+    } else {
+      // 1게임인 경우
+      setGeneratedNumbers([]);
+    }
   };
 
   // 특정 회차 당첨번호 조회 (수동 조회용)
@@ -2317,6 +2368,24 @@ const Lotto = () => {
   return (
     <div className="lotto">
       <div className="lotto-container">
+        <div className="auth-buttons">
+          {isAuthenticated ? (
+            <>
+              <span className="user-greeting">👋 {user.loginId}님</span>
+              <button className="auth-btn mypage-btn" onClick={() => navigate('/mypage')}>
+                마이페이지
+              </button>
+              <button className="auth-btn logout-btn" onClick={handleLogout}>
+                로그아웃
+              </button>
+            </>
+          ) : (
+            <button className="auth-btn login-btn" onClick={() => navigate('/login')}>
+              로그인
+            </button>
+          )}
+        </div>
+
         <div className="lotto-header">
           <h1>🎰 로또 서비스</h1>
         </div>
@@ -2368,11 +2437,11 @@ const Lotto = () => {
                   </div>
                 )}
                 <div className="generator-buttons">
-                  <button onClick={generateLottoNumbers} className="generate-btn-large">
-                    🎲 1게임 생성
-                  </button>
                   <button onClick={generate5Games} className="generate-btn-large">
                     🎯 5게임 생성
+                  </button>
+                  <button onClick={generateLottoNumbers} className="generate-btn-large">
+                    🎲 1게임 생성
                   </button>
                 </div>
               </div>
@@ -2389,6 +2458,10 @@ const Lotto = () => {
                           <span key={num} className="number-ball">{num}</span>
                         ))}
                       </div>
+                      <div className="game-actions">
+                        <button className="save-game-btn" onClick={() => handleSaveGame(game)} title="저장">💾</button>
+                        <button className="delete-game-btn" onClick={() => handleDeleteGame(index)} title="삭제">❌</button>
+                      </div>
                     </div>
                   ))
                 ) : generatedNumbers.length > 0 ? (
@@ -2399,6 +2472,10 @@ const Lotto = () => {
                       {generatedNumbers.map(num => (
                         <span key={num} className="number-ball">{num}</span>
                       ))}
+                    </div>
+                    <div className="game-actions">
+                      <button className="save-game-btn" onClick={() => handleSaveGame(generatedNumbers)} title="저장">💾</button>
+                      <button className="delete-game-btn" onClick={() => handleDeleteGame(0)} title="삭제">❌</button>
                     </div>
                   </div>
                 ) : (
@@ -3007,7 +3084,8 @@ const Lotto = () => {
           )}
 
           {activeTab === 'analysis' && (
-            <div className="analysis-section">
+            isAuthenticated ? (
+              <div className="analysis-section">
               <div className="analysis-container">
                 <h2>당첨번호 분석</h2>
 
@@ -3269,7 +3347,21 @@ const Lotto = () => {
                 )}
               </div>
             </div>
+              ) : (
+                <div className="login-required">
+                  <h2>🔒 로그인이 필요합니다</h2>
+                  <p>분석 기능은 로그인 후 이용하실 수 있습니다.</p>
+                  <button className="login-required-btn" onClick={() => navigate('/login')}>
+                    로그인하러 가기
+                  </button>
+                </div>
+              )
+            )}
           )}
+        </div>
+
+
+        <div className="navigation">
         </div>
 
 
