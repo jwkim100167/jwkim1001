@@ -11,6 +11,7 @@ import {
   getDatabaseStats,
   isDatabaseInitialized
 } from '../services/database';
+import { getAllLottoDataFromSupabase, getLottoNumberByRoundFromSupabase, getLatestLottoNumberFromSupabase } from '../services/supabaseLotto';
 import './Lotto.css';
 
 const Lotto = () => {
@@ -22,6 +23,7 @@ const Lotto = () => {
   const [lottoData, setLottoData] = useState(null);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [checkRound, setCheckRound] = useState('');
+  const [analysisRound, setAnalysisRound] = useState(''); // 분석 탭 회차 선택
   const [winningNumbers, setWinningNumbers] = useState(null);
   const [excludeNumbers, setExcludeNumbers] = useState([]);
   const [excludeNumbersWithType, setExcludeNumbersWithType] = useState([]); // {number, types: []} 형태
@@ -2291,7 +2293,7 @@ const Lotto = () => {
     const exactMatches = overlaps.filter(o => o.overlapCount === 6).length;
     const fiveMatches = overlaps.filter(o => o.overlapCount === 5).length;
     
-    console.log('\n📊 통계:');
+    console.log('\n🔍 분석:');
     console.log(`   완전히 동일한 조합 (6개 일치): ${exactMatches}건`);
     console.log(`   5개 일치: ${fiveMatches}건`);
     console.log(`   총 겹치는 경우: ${overlaps.length}건`);
@@ -2336,10 +2338,10 @@ const Lotto = () => {
             🔍 당첨번호 확인
           </button>
           <button
-            className={`tab-btn ${activeTab === 'statistics' ? 'active' : ''}`}
-            onClick={() => setActiveTab('statistics')}
+            className={`tab-btn ${activeTab === 'analysis' ? 'active' : ''}`}
+            onClick={() => setActiveTab('analysis')}
           >
-            📊 통계
+            📊 분석
           </button>
         </div>
 
@@ -3004,168 +3006,268 @@ const Lotto = () => {
             </div>
           )}
 
-          {activeTab === 'statistics' && (
-            <div className="statistics-section">
-              {lottoData && lottoData.data ? (
-                (() => {
-                  const stats = calculateStatistics();
-                  if (!stats) {
-                    return <div className="no-data">통계 데이터를 계산할 수 없습니다.</div>;
-                  }
+          {activeTab === 'analysis' && (
+            <div className="analysis-section">
+              <div className="analysis-container">
+                <h2>당첨번호 분석</h2>
 
-                  return (
-                    <>
-                      {/* 기본 정보 */}
-                      <div className="stats-header">
-                        <h2>📊 로또 번호 통계</h2>
-                        <p>총 {stats.totalRounds}회차 데이터 기반</p>
-                        <button
-                          onClick={analyzeOverlapCombinations}
-                          disabled={isLoading}
-                          className="download-btn"
-                          style={{backgroundColor: '#ffa726', marginTop: '15px'}}
-                        >
-                          🔍 겹침 분석
-                        </button>
-                      </div>
-
-                      {/* 가장 많이 나온 번호 TOP 10 */}
-                      <div className="stats-card">
-                        <h3>🏆 가장 많이 나온 번호 TOP 10</h3>
-                        <div className="stats-number-list">
-                          {stats.mostFrequent.map((item, index) => (
-                            <div key={item.number} className="stats-number-item">
-                              <span className="rank">#{index + 1}</span>
-                              <span className="number-ball-stat">{item.number}</span>
-                              <span className="count">{item.count}회</span>
-                              <div className="progress-bar">
-                                <div
-                                  className="progress-fill"
-                                  style={{ width: `${(item.count / stats.mostFrequent[0].count) * 100}%` }}
-                                ></div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* 가장 적게 나온 번호 TOP 10 */}
-                      <div className="stats-card">
-                        <h3>⚡ 가장 적게 나온 번호 TOP 10</h3>
-                        <div className="stats-number-list">
-                          {stats.leastFrequent.map((item, index) => (
-                            <div key={item.number} className="stats-number-item">
-                              <span className="rank">#{index + 1}</span>
-                              <span className="number-ball-stat least">{item.number}</span>
-                              <span className="count">{item.count}회</span>
-                              <div className="progress-bar">
-                                <div
-                                  className="progress-fill least"
-                                  style={{ width: `${(item.count / stats.leastFrequent[0].count) * 100}%` }}
-                                ></div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* 홀수/짝수 통계 */}
-                      <div className="stats-card">
-                        <h3>🔢 홀수/짝수 통계</h3>
-                        <div className="stats-grid">
-                          <div className="stats-item">
-                            <div className="stats-label">홀수</div>
-                            <div className="stats-value">{stats.oddCount}회 ({stats.oddRatio}%)</div>
-                            <div className="progress-bar">
-                              <div className="progress-fill odd" style={{ width: `${stats.oddRatio}%` }}></div>
-                            </div>
-                          </div>
-                          <div className="stats-item">
-                            <div className="stats-label">짝수</div>
-                            <div className="stats-value">{stats.evenCount}회 ({stats.evenRatio}%)</div>
-                            <div className="progress-bar">
-                              <div className="progress-fill even" style={{ width: `${stats.evenRatio}%` }}></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* 연속 번호 통계 */}
-                      <div className="stats-card">
-                        <h3>🔗 연속 번호 출현</h3>
-                        <div className="stats-item">
-                          <div className="stats-value-large">
-                            {stats.consecutiveCount}회
-                            <span className="stats-ratio">({stats.consecutiveRatio}%)</span>
-                          </div>
-                          <div className="stats-description">
-                            전체 {stats.totalRounds * 5}개 인접 번호 쌍 중 연속 번호 출현 횟수
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* 구간별 통계 */}
-                      <div className="stats-card">
-                        <h3>📍 구간별 출현 빈도</h3>
-                        <div className="range-stats">
-                          {Object.entries(stats.rangeStats).map(([range, count]) => {
-                            const maxCount = Math.max(...Object.values(stats.rangeStats));
-                            return (
-                              <div key={range} className="range-item">
-                                <div className="range-label">{range}</div>
-                                <div className="range-bar">
-                                  <div
-                                    className="range-fill"
-                                    style={{ width: `${(count / maxCount) * 100}%` }}
-                                  ></div>
-                                </div>
-                                <div className="range-count">{count}회</div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* 전체 번호 빈도표 */}
-                      <div className="stats-card">
-                        <h3>📋 전체 번호 빈도 (1~45)</h3>
-                        <div className="all-numbers-grid">
-                          {stats.frequency.map(item => (
-                            <div key={item.number} className="number-frequency-item">
-                              <div className="number-badge">{item.number}</div>
-                              <div className="frequency-count">{item.count}</div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </>
-                  );
-                })()
-              ) : (
-                <div className="no-data-section">
-                  <div className="data-status">
-                    ⚠️ 로또 데이터가 없습니다
-                  </div>
-                  <div className="data-management">
-                    <button
-                      onClick={() => {
-                        setActiveTab('checker');
-                        setTimeout(() => {
-                          if (downloadLatestLottoDataRef.current) {
-                            downloadLatestLottoDataRef.current();
-                          }
-                        }, 100);
-                      }}
-                      className="download-btn"
+                {/* 회차 선택 */}
+                <div className="round-selector">
+                  <label htmlFor="analysis-round-select">분석할 회차 선택:</label>
+                  {(() => {
+                    console.log('🔍 분석 탭 디버그:', {
+                      lottoData존재: !!lottoData,
+                      data존재: !!lottoData?.data,
+                      데이터길이: lottoData?.data?.length,
+                      analysisRound: analysisRound
+                    });
+                    return null;
+                  })()}
+                  {lottoData && lottoData.data && lottoData.data.length > 0 ? (
+                    <select
+                      id="analysis-round-select"
+                      value={analysisRound}
+                      onChange={(e) => setAnalysisRound(e.target.value)}
+                      className="round-select"
                     >
-                      📥 데이터 다운로드하기
-                    </button>
-                  </div>
-                  <p style={{ color: 'rgba(255,255,255,0.7)', marginTop: '15px' }}>
-                    통계를 보려면 먼저 로또 데이터를 다운로드해주세요
-                  </p>
+                      <option value="">최신 회차</option>
+                      {[...lottoData.data]
+                        .sort((a, b) => b.round - a.round)
+                        .map(item => (
+                          <option key={item.round} value={item.round}>
+                            {item.round === Math.max(...lottoData.data.map(d => d.round)) ? '✨ ' : ''}
+                            {item.round}회차
+                            {item.date ? ` (${item.date})` : ''}
+                          </option>
+                        ))}
+                    </select>
+                  ) : (
+                    <p>데이터 로딩 중...</p>
+                  )}
                 </div>
-              )}
+
+                {lottoData && lottoData.data && lottoData.data.length > 0 ? (
+                  (() => {
+                    const sortedData = [...lottoData.data].sort((a, b) => b.round - a.round);
+                    const selectedRoundData = analysisRound
+                      ? sortedData.find(r => r.round === parseInt(analysisRound))
+                      : sortedData[0];
+
+                    if (!selectedRoundData) {
+                      return <div className="no-data">선택한 회차를 찾을 수 없습니다</div>;
+                    }
+
+                    const latestRound = selectedRoundData;
+                    const selectedIndex = sortedData.findIndex(r => r.round === latestRound.round);
+                    const lastWeekRound = sortedData[selectedIndex + 1];
+                    const twoWeeksAgoRound = sortedData[selectedIndex + 2];
+
+                    if (!latestRound || !lastWeekRound || !twoWeeksAgoRound) {
+                      return <div className="no-data">분석할 데이터가 부족합니다</div>;
+                    }
+
+                    // 각 회차의 당첨번호 (보너스 제외)
+                    const latestNumbers = [latestRound.num1, latestRound.num2, latestRound.num3,
+                                          latestRound.num4, latestRound.num5, latestRound.num6];
+                    const lastWeekNumbers = [lastWeekRound.num1, lastWeekRound.num2, lastWeekRound.num3,
+                                            lastWeekRound.num4, lastWeekRound.num5, lastWeekRound.num6];
+                    const twoWeeksAgoNumbers = [twoWeeksAgoRound.num1, twoWeeksAgoRound.num2, twoWeeksAgoRound.num3,
+                                               twoWeeksAgoRound.num4, twoWeeksAgoRound.num5, twoWeeksAgoRound.num6];
+
+                    // 선택 회차와 이전 회차들의 겹침 계산 (당첨번호끼리 비교)
+                    const overlapWith1 = latestNumbers.filter(num => lastWeekNumbers.includes(num));
+                    const overlapWith2 = latestNumbers.filter(num => twoWeeksAgoNumbers.includes(num));
+
+                    // 선택 회차 기준 이전 15회
+                    const recent15Rounds = sortedData.slice(selectedIndex + 1, selectedIndex + 16);
+
+                    const recentFreq = {};
+                    recent15Rounds.forEach(round => {
+                      [round.num1, round.num2, round.num3, round.num4, round.num5, round.num6, round.bonus]
+                        .filter(num => num)
+                        .forEach(num => {
+                          recentFreq[num] = (recentFreq[num] || 0) + 1;
+                        });
+                    });
+                    const sortedRecentFreq = Object.entries(recentFreq).sort((a, b) => b[1] - a[1]);
+                    const maxRecentFreq = sortedRecentFreq[0]?.[1] || 0;
+                    const recentTop10 = sortedRecentFreq
+                      .filter(([, freq]) => freq === maxRecentFreq)
+                      .map(([num]) => parseInt(num))
+                      .sort((a, b) => a - b);
+
+                    const recent15Numbers = new Set();
+                    recent15Rounds.forEach(round => {
+                      [round.num1, round.num2, round.num3, round.num4, round.num5, round.num6, round.bonus]
+                        .filter(num => num)
+                        .forEach(num => recent15Numbers.add(num));
+                    });
+                    const notDrawnRecently = [];
+                    for (let i = 1; i <= 45; i++) {
+                      if (!recent15Numbers.has(i)) notDrawnRecently.push(i);
+                    }
+
+                    const top10Numbers = getAllTimeMostDrawnNumbers();
+                    const bottom10Numbers = getAllTimeLeastDrawnNumbers();
+
+                    // 선택 회차와의 겹침 계산 (보너스 제외)
+                    const latestNumbersSet = new Set(latestNumbers);
+                    const excludedSet = new Set(excludeNumbers);
+
+                    const latestInExcluded = [...latestNumbers, latestRound.bonus]
+                                              .filter(num => excludedSet.has(num));
+                    const lastWeekOverlap = [...lastWeekNumbers, lastWeekRound.bonus]
+                                           .filter(num => excludedSet.has(num));
+                    const twoWeeksAgoOverlap = [...twoWeeksAgoNumbers, twoWeeksAgoRound.bonus]
+                                              .filter(num => excludedSet.has(num));
+
+                    // 통계 데이터와 선택 회차의 겹침 (보너스 제외)
+                    const recentTop10Overlap = recentTop10.filter(num => latestNumbersSet.has(num));
+                    const notDrawnOverlap = notDrawnRecently.filter(num => latestNumbersSet.has(num));
+                    const top10Overlap = top10Numbers.filter(num => latestNumbersSet.has(num));
+                    const bottom10Overlap = bottom10Numbers.filter(num => latestNumbersSet.has(num));
+
+                    // 선택 회차 번호 중 통계와 겹치는 번호들
+                    const allOverlappingNumbers = new Set([
+                      ...overlapWith1,
+                      ...overlapWith2,
+                      ...recentTop10Overlap,
+                      ...notDrawnOverlap,
+                      ...top10Overlap,
+                      ...bottom10Overlap
+                    ]);
+
+                    return (
+                      <div className="analysis-content">
+                        <div className="this-week-card">
+                          <h3>🎯 선택 회차 ({latestRound.round}회 - {latestRound.date})</h3>
+                          <div className="winning-numbers-large">
+                            {[latestRound.num1, latestRound.num2, latestRound.num3, latestRound.num4, latestRound.num5, latestRound.num6].map((num, idx) => (
+                              <span key={idx} className={`number-ball large ${allOverlappingNumbers.has(num) ? 'overlap' : ''}`}>{num}</span>
+                            ))}
+                            <span className="bonus-label">+</span>
+                            <span className="number-ball large bonus">
+                              {latestRound.bonus}
+                            </span>
+                          </div>
+
+                        </div>
+
+                        <div className="comparison-card compact">
+                          <h3>📅 선택 -1회차 ({lastWeekRound.round}회 - {lastWeekRound.date})</h3>
+                          <div className="winning-numbers">
+                            {lastWeekNumbers.map((num, idx) => (
+                              <span key={idx} className={`number-ball ${overlapWith1.includes(num) ? 'overlap' : ''}`}>{num}</span>
+                            ))}
+                            <span className="bonus-label">+</span>
+                            <span className="number-ball bonus">
+                              {lastWeekRound.bonus}
+                            </span>
+                          </div>
+                          <div className="overlap-result">
+                            {overlapWith1.length > 0 ? (
+                              <p className="warning">⚠️ 선택 회차와 겹침: {overlapWith1.join(', ')} ({overlapWith1.length}개)</p>
+                            ) : (
+                              <p className="success">✅ 선택 회차와 겹치지 않음</p>
+                            )}
+                          </div>
+                          {lastWeekOverlap.length > 0 && (
+                            <p className="exclude-note" style={{fontSize: '0.9em', color: '#888', marginTop: '5px'}}>
+                              (제외 옵션과 겹침: {lastWeekOverlap.join(', ')})
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="comparison-card compact">
+                          <h3>📅 선택 -2회차 ({twoWeeksAgoRound.round}회 - {twoWeeksAgoRound.date})</h3>
+                          <div className="winning-numbers">
+                            {twoWeeksAgoNumbers.map((num, idx) => (
+                              <span key={idx} className={`number-ball ${overlapWith2.includes(num) ? 'overlap' : ''}`}>{num}</span>
+                            ))}
+                            <span className="bonus-label">+</span>
+                            <span className="number-ball bonus">
+                              {twoWeeksAgoRound.bonus}
+                            </span>
+                          </div>
+                          <div className="overlap-result">
+                            {overlapWith2.length > 0 ? (
+                              <p className="warning">⚠️ 선택 회차와 겹침: {overlapWith2.join(', ')} ({overlapWith2.length}개)</p>
+                            ) : (
+                              <p className="success">✅ 선택 회차와 겹치지 않음</p>
+                            )}
+                          </div>
+                          {twoWeeksAgoOverlap.length > 0 && (
+                            <p className="exclude-note" style={{fontSize: '0.9em', color: '#888', marginTop: '5px'}}>
+                              (제외 옵션과 겹침: {twoWeeksAgoOverlap.join(', ')})
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="stats-comparison-grid">
+                          <div className="stat-card">
+                            <h4>🔥 최신 최다 (이전 15회)</h4>
+                            <div className="number-chips">
+                              {recentTop10.map(num => (
+                                <span key={num} className={`chip ${recentTop10Overlap.includes(num) ? 'overlap' : ''}`}>{num}</span>
+                              ))}
+                            </div>
+                            <p className="overlap-count">
+                              선택 회차와 겹침: <strong>{recentTop10Overlap.length}개</strong>
+                              {recentTop10Overlap.length > 0 && ` (${recentTop10Overlap.join(', ')})`}
+                            </p>
+                          </div>
+
+                          <div className="stat-card">
+                            <h4>❄️ 최신 미추첨 (이전 15회)</h4>
+                            <div className="number-chips">
+                              {notDrawnRecently.slice(0, 10).map(num => (
+                                <span key={num} className={`chip ${notDrawnOverlap.includes(num) ? 'overlap' : ''}`}>{num}</span>
+                              ))}
+                              {notDrawnRecently.length > 10 && <span className="more">+{notDrawnRecently.length - 10}</span>}
+                            </div>
+                            <p className="overlap-count">
+                              선택 회차와 겹침: <strong>{notDrawnOverlap.length}개</strong>
+                              {notDrawnOverlap.length > 0 && ` (${notDrawnOverlap.join(', ')})`}
+                            </p>
+                          </div>
+
+                          <div className="stat-card">
+                            <h4>👑 전체 최다</h4>
+                            <div className="number-chips">
+                              {top10Numbers.map(num => (
+                                <span key={num} className={`chip ${top10Overlap.includes(num) ? 'overlap' : ''}`}>{num}</span>
+                              ))}
+                            </div>
+                            <p className="overlap-count">
+                              선택 회차와 겹침: <strong>{top10Overlap.length}개</strong>
+                              {top10Overlap.length > 0 && ` (${top10Overlap.join(', ')})`}
+                            </p>
+                          </div>
+
+                          <div className="stat-card">
+                            <h4>🎲 전체 최소</h4>
+                            <div className="number-chips">
+                              {bottom10Numbers.map(num => (
+                                <span key={num} className={`chip ${bottom10Overlap.includes(num) ? 'overlap' : ''}`}>{num}</span>
+                              ))}
+                            </div>
+                            <p className="overlap-count">
+                              선택 회차와 겹침: <strong>{bottom10Overlap.length}개</strong>
+                              {bottom10Overlap.length > 0 && ` (${bottom10Overlap.join(', ')})`}
+                            </p>
+                          </div>
+                        </div>
+
+
+                      </div>
+                    );
+                  })()
+                ) : (
+                  <div className="no-data">
+                    분석을 보려면 먼저 로또 데이터를 로드해주세요
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
