@@ -126,3 +126,44 @@
   margin: 0;
   font-size: 1rem;
 }
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 15px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 2rem;
+  }
+
+  .home-btn,
+  .manual-update-btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .dashboard-footer p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-container {
+    padding: 10px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .home-btn,
+  .manual-update-btn {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+
+  .dashboard-footer p {
+    font-size: 0.85rem;
+  }
+}

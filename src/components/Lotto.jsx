@@ -3346,17 +3346,15 @@ const Lotto = () => {
                   </div>
                 )}
               </div>
-            </div>
-              ) : (
-                <div className="login-required">
-                  <h2>🔒 로그인이 필요합니다</h2>
-                  <p>분석 기능은 로그인 후 이용하실 수 있습니다.</p>
-                  <button className="login-required-btn" onClick={() => navigate('/login')}>
-                    로그인하러 가기
-                  </button>
-                </div>
-              )
-            )}
+            ) : (
+              <div className="login-required">
+                <h2>🔒 로그인이 필요합니다</h2>
+                <p>분석 기능은 로그인 후 이용하실 수 있습니다.</p>
+                <button className="login-required-btn" onClick={() => navigate('/login')}>
+                  로그인하러 가기
+                </button>
+              </div>
+            )
           )}
         </div>
 
