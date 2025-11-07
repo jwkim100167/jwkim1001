@@ -33,6 +33,19 @@ export async function login(loginId, password) {
 
     localStorage.setItem('user', JSON.stringify(user));
 
+    // 로그인 히스토리 저장 (admin 제외)
+    if (loginId !== 'admin') {
+      try {
+        await supabase.from('loginHistoryTable').insert({
+          u_id: data.id,
+          ip: null
+        });
+      } catch (historyError) {
+        console.error('로그인 히스토리 저장 실패:', historyError);
+        // 히스토리 저장 실패해도 로그인은 성공으로 처리
+      }
+    }
+
     return { success: true, user };
   } catch (err) {
     console.error('로그인 예외:', err);
