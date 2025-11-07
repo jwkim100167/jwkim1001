@@ -3346,6 +3346,7 @@ const Lotto = () => {
                   </div>
                 )}
               </div>
+            </div>
             ) : (
               <div className="login-required">
                 <h2>🔒 로그인이 필요합니다</h2>
