@@ -12,14 +12,17 @@ import {
   getDatabaseStats,
   isDatabaseInitialized
 } from '../services/database';
-import { getAllLottoDataFromSupabase, getLottoNumberByRoundFromSupabase, getLatestLottoNumberFromSupabase } from '../services/supabaseLotto';
+import { getAllLottoDataFromSupabase, getLottoNumberByRoundFromSupabase, getLatestLottoNumberFromSupabase, saveGeneratedGames, getSavedGames } from '../services/supabaseLotto';
 import './Lotto.css';
 
 const Lotto = () => {
   // console.log('Lotto 컴포넌트 렌더링됨'); // 무한 렌더링 디버깅용 제거
   
   const [activeTab, setActiveTab] = useState('generator');
-  const [generatedNumbers, setGeneratedNumbers] = useState([]);
+  // 5개 슬롯을 항상 유지 (빈 슬롯은 null)
+  const [generatedNumbers, setGeneratedNumbers] = useState([null, null, null, null, null]);
+  // 각 게임이 수정되었는지 추적 (true면 저장 버튼 표시)
+  const [gameModified, setGameModified] = useState([false, false, false, false, false]);
   const [isLoading, setIsLoading] = useState(false);
   const [lottoData, setLottoData] = useState(null);
   const [downloadProgress, setDownloadProgress] = useState(0);
@@ -51,6 +54,133 @@ const Lotto = () => {
   // Auth hooks
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
+
+  // 디버깅: Supabase auth UUID 확인
+  useEffect(() => {
+    if (user) {
+      console.log('🔑 현재 로그인한 사용자 전체 정보:', user);
+      // Supabase 세션에서 auth.uid() 값 확인
+      import('../supabaseClient').then(({ supabase }) => {
+        supabase.auth.getUser().then(({ data, error }) => {
+          if (data?.user) {
+            console.log('🔐 Supabase Auth UUID (auth.uid()):', data.user.id);
+            console.log('📋 이 UUID를 복사해서 userTable의 uuid 컬럼에 넣으세요!');
+          }
+        });
+      });
+    }
+  }, [user]);
+
+  // 저장된 게임 불러오기 함수
+  const loadSavedGamesFromDB = async () => {
+    if (!user?.id) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    if (!lottoData?.data || lottoData.data.length === 0) {
+      alert("로또 데이터가 로드되지 않았습니다.");
+      return;
+    }
+
+    try {
+      // 현재 회차 계산 (최신 회차 + 1)
+      const latestRound = lottoData.data[lottoData.data.length - 1].drwNo;
+      const currentRound = latestRound + 1;
+
+      console.log(`📥 저장된 게임 불러오기 시도 - ${currentRound}회차`);
+
+      // 현재 회차의 저장된 게임 가져오기
+      const savedGames = await getSavedGames(user.id, currentRound);
+
+      if (savedGames && savedGames.length > 0) {
+        console.log(`✅ ${savedGames.length}개의 저장된 게임을 찾았습니다.`);
+
+        // 5개 슬롯 배열 초기화
+        const loadedGames = [null, null, null, null, null];
+
+        // 저장된 게임을 g_number에 맞춰 배치
+        savedGames.forEach(game => {
+          const slotIndex = game.g_number - 1; // g_number는 1부터 시작
+          if (slotIndex >= 0 && slotIndex < 5) {
+            loadedGames[slotIndex] = [
+              game.count1,
+              game.count2,
+              game.count3,
+              game.count4,
+              game.count5,
+              game.count6
+            ];
+          }
+        });
+
+        setGeneratedNumbers(loadedGames);
+        // 불러온 게임은 수정되지 않은 상태로 표시 (저장 버튼 숨김)
+        setGameModified([false, false, false, false, false]);
+        alert(`${savedGames.length}개의 저장된 게임을 불러왔습니다.`);
+        console.log('✅ 저장된 게임을 불러왔습니다:', loadedGames);
+      } else {
+        alert('저장된 게임이 없습니다.');
+        console.log('ℹ️ 저장된 게임이 없습니다.');
+      }
+    } catch (error) {
+      console.error('❌ 저장된 게임 불러오기 실패:', error);
+      alert('게임 불러오기에 실패했습니다.');
+    }
+  };
+
+  // 로또 페이지 진입 시 저장된 게임 자동 불러오기
+  useEffect(() => {
+    const loadSavedGamesOnMount = async () => {
+      if (!user?.id || !lottoData?.data || lottoData.data.length === 0) {
+        return;
+      }
+
+      try {
+        // 현재 회차 계산 (최신 회차 + 1)
+        const latestRound = lottoData.data[lottoData.data.length - 1].drwNo;
+        const currentRound = latestRound + 1;
+
+        console.log(`📥 저장된 게임 자동 불러오기 시도 - ${currentRound}회차`);
+
+        // 현재 회차의 저장된 게임 가져오기
+        const savedGames = await getSavedGames(user.id, currentRound);
+
+        if (savedGames && savedGames.length > 0) {
+          console.log(`✅ ${savedGames.length}개의 저장된 게임을 찾았습니다.`);
+
+          // 5개 슬롯 배열 초기화
+          const loadedGames = [null, null, null, null, null];
+
+          // 저장된 게임을 g_number에 맞춰 배치
+          savedGames.forEach(game => {
+            const slotIndex = game.g_number - 1; // g_number는 1부터 시작
+            if (slotIndex >= 0 && slotIndex < 5) {
+              loadedGames[slotIndex] = [
+                game.count1,
+                game.count2,
+                game.count3,
+                game.count4,
+                game.count5,
+                game.count6
+              ];
+            }
+          });
+
+          setGeneratedNumbers(loadedGames);
+          // 불러온 게임은 수정되지 않은 상태로 표시 (저장 버튼 숨김)
+          setGameModified([false, false, false, false, false]);
+          console.log('✅ 저장된 게임을 자동으로 불러왔습니다:', loadedGames);
+        } else {
+          console.log('ℹ️ 저장된 게임이 없습니다.');
+        }
+      } catch (error) {
+        console.error('❌ 저장된 게임 불러오기 실패:', error);
+      }
+    };
+
+    loadSavedGamesOnMount();
+  }, [user, lottoData]);
 
   // Logout handler
   const handleLogout = () => {
@@ -1914,134 +2044,111 @@ const Lotto = () => {
     return false;
   };
 
-  // 로또 번호 생성 (1-45 중 6개, 제외번호 제외, 필수포함번호 모두 포함, 이전 회차와 겹치지 않음)
-  const generateLottoNumbers = () => {
-    // 필수 포함 번호 검증 (제외 번호와 겹칠 수 없도록 이미 방지됨)
+  // 특정 게임 슬롯에 번호 생성 (targetSlot: 0-4, null이면 첫 번째 빈 슬롯)
+  const generateSingleGame = (targetSlot = null) => {
+    // 필수 포함 번호 검증
     if (mustIncludeNumbers.length > 6) {
       alert('필수 포함 번호가 6개를 초과할 수 없습니다.');
       return;
     }
 
-    
-    // 이미 5게임이 생성되어 있는지 확인
-    if (Array.isArray(generatedNumbers[0]) && generatedNumbers.length === 5) {
-      alert('게임을 이미 5개 다 생성했습니다.');
-      return;
+    // 대상 슬롯 결정
+    let slotIndex = targetSlot;
+    if (slotIndex === null) {
+      // 첫 번째 빈 슬롯 찾기
+      slotIndex = generatedNumbers.findIndex(game => game === null);
+      if (slotIndex === -1) {
+        alert('모든 게임 슬롯이 차있습니다.');
+        return;
+      }
+    } else {
+      // 지정된 슬롯이 비어있지 않고 번호가 부족한지 확인
+      const currentGame = generatedNumbers[slotIndex];
+      if (currentGame && currentGame.length >= 6) {
+        alert('이미 6개 번호가 모두 생성되었습니다.');
+        return;
+      }
     }
 
-    // 1-4게임이 이미 있는 경우, 추가 생성
-    const isAddingToExisting = Array.isArray(generatedNumbers[0]) && generatedNumbers.length > 0 && generatedNumbers.length < 5;
+    // 현재 슬롯의 기존 번호 가져오기
+    const currentGame = generatedNumbers[slotIndex];
+    const existingNumbers = currentGame || [];
+    const neededCount = 6 - existingNumbers.length;
+
+    if (neededCount <= 0) {
+      alert('이미 6개 번호가 모두 생성되었습니다.');
+      return;
+    }
 
     // 1의 자리 수 기반 제외 번호 생성
     const lastDigitRangeExcludeNumbers = excludeLastDigitRanges ? getExcludeRangesByLastDigit() : [];
     const tensDigitRangeExcludeNumbers = excludeTensDigitRanges ? getExcludeRangesByTensDigit() : [];
 
-    // 사용 가능한 번호 풀 생성 (필수 포함 번호 제외한 전체)
+    // 사용 가능한 번호 풀 생성 (필수 포함 번호 + 기존 번호 제외)
     const availableNumbers = [];
     for (let i = 1; i <= 45; i++) {
-      if (!mustIncludeNumbers.includes(i)) {
+      if (!existingNumbers.includes(i) && !mustIncludeNumbers.includes(i)) {
         availableNumbers.push(i);
       }
     }
 
-    // 제외 옵션 적용 (가능한 경우에만)
+    // 제외 옵션 적용
     let filteredNumbers = availableNumbers.filter(num =>
       !excludeNumbers.includes(num) &&
       !lastDigitRangeExcludeNumbers.includes(num) &&
       !tensDigitRangeExcludeNumbers.includes(num)
     );
 
-    // 제외 후 번호가 부족하면 제외 옵션 무시하고 전체 사용
-    const finalAvailableNumbers = (filteredNumbers.length + mustIncludeNumbers.length < 6)
+    // 제외 후 번호가 부족하면 제외 옵션 무시
+    const finalAvailableNumbers = (filteredNumbers.length + mustIncludeNumbers.length < neededCount)
       ? availableNumbers
       : filteredNumbers;
 
-    // 겹침 방지 옵션이 모두 꺼져있으면 바로 생성
-    if (!preventExactDuplicates && !preventPartialDuplicates) {
-      // 1게임 생성시에는 모든 필수 포함 번호를 포함
-      const numbers = [...mustIncludeNumbers];
+    // 새 번호 생성
+    const newNumbers = [...existingNumbers, ...mustIncludeNumbers];
+    const tempAvailable = [...finalAvailableNumbers];
 
-      // 나머지 번호를 랜덤으로 추가
-      const tempAvailable = [...finalAvailableNumbers];
-      while (numbers.length < 6 && tempAvailable.length > 0) {
-        const randomIndex = Math.floor(Math.random() * tempAvailable.length);
-        const num = tempAvailable[randomIndex];
-        numbers.push(num);
-        tempAvailable.splice(randomIndex, 1);
-      }
-
-      setGeneratedNumbers(numbers.sort((a, b) => a - b));
-      return;
+    while (newNumbers.length < 6 && tempAvailable.length > 0) {
+      const randomIndex = Math.floor(Math.random() * tempAvailable.length);
+      const num = tempAvailable[randomIndex];
+      newNumbers.push(num);
+      tempAvailable.splice(randomIndex, 1);
     }
-    
-    // 이전 회차 당첨번호 조합들 가져오기
-    const previousCombinations = getPreviousWinningCombinations();
-    console.log('🔍 이전 회차 조합 개수:', previousCombinations.length);
-    console.log(`⚙️ 겹침 방지 설정: 완전겹침=${preventExactDuplicates}, 부분겹침=${preventPartialDuplicates}`);
-    
-    let attempts = 0;
-    const maxAttempts = 1000; // 최대 시도 횟수
-    let numbers = [];
-    
-    do {
-      numbers = [];
-      attempts++;
 
-      // 1게임 생성시에는 모든 필수 포함 번호를 포함
-      numbers.push(...mustIncludeNumbers);
+    // 슬롯에 저장
+    const newSlots = [...generatedNumbers];
+    newSlots[slotIndex] = newNumbers.sort((a, b) => a - b);
+    setGeneratedNumbers(newSlots);
 
-      // 사용 가능한 번호 풀 재설정 (매 시도마다)
-      const currentAvailable = [...finalAvailableNumbers];
-
-      // 나머지 번호를 랜덤으로 추가
-      while (numbers.length < 6 && currentAvailable.length > 0) {
-        const randomIndex = Math.floor(Math.random() * currentAvailable.length);
-        const num = currentAvailable[randomIndex];
-        numbers.push(num);
-        currentAvailable.splice(randomIndex, 1);
-      }
-      
-      // 설정에 따른 중복 검사
-      const isDuplicate = isDuplicateCombination(numbers, previousCombinations);
-
-      // 연속된 번호 4개 방지 검사
-      const hasConsecutive = preventConsecutiveFour && hasConsecutiveFour(numbers);
-
-      if (!isDuplicate && !hasConsecutive) {
-        console.log(`✅ 유니크한 조합 생성 완료 (${attempts}번 시도)`);
-        break;
-      } else {
-        if (isDuplicate) {
-          console.log(`⚠️ 겹침 발견, 재시도 중... (${attempts}/${maxAttempts})`);
-        }
-        if (hasConsecutive) {
-          console.log(`⚠️ 연속 4개 번호 발견, 재시도 중... (${attempts}/${maxAttempts})`);
-        }
-      }
-      
-      if (attempts >= maxAttempts) {
-        console.log('❌ 최대 시도 횟수 초과, 현재 조합으로 진행');
-        const warningMessage = preventPartialDuplicates ? 
-          '이전 회차와 5개 이상 겹치지 않는 새로운 조합을 찾기 어렵습니다. 현재 조합으로 진행합니다.' :
-          '이전 회차와 완전히 겹치지 않는 새로운 조합을 찾기 어렵습니다. 현재 조합으로 진행합니다.';
-        alert(warningMessage);
-        break;
-      }
-    } while (true);
-    
-    
-    // 게임 저장
-    if (isAddingToExisting) {
-      // 기존 게임에 추가
-      setGeneratedNumbers([...generatedNumbers, numbers.sort((a, b) => a - b)]);
-    } else {
-      // 새로 생성
-      setGeneratedNumbers(numbers.sort((a, b) => a - b));
-    }
+    // 수정됨으로 표시
+    const newModified = [...gameModified];
+    newModified[slotIndex] = true;
+    setGameModified(newModified);
   };
 
-  // 5게임 생성 (제외번호 제외, 필수포함번호 포함, 이전 회차와 겹치지 않음)
-  const generate5Games = () => {
+  // 전체게임 생성 (5게임 모두 생성)
+  const generate5Games = async () => {
+    // 저장된 게임 확인
+    if (user?.id && lottoData?.data && lottoData.data.length > 0) {
+      try {
+        const latestRound = lottoData.data[lottoData.data.length - 1].drwNo;
+        const currentRound = latestRound + 1;
+        const savedGames = await getSavedGames(user.id, currentRound);
+
+        if (savedGames && savedGames.length > 0) {
+          const savedGameNumbers = savedGames.map(g => g.g_number).join(', ');
+          const confirmed = window.confirm(
+            `게임 ${savedGameNumbers}번은 이미 저장되어있습니다.\n계속 하시겠습니까?\n\n(새로 생성된 게임으로 덮어씌워집니다)`
+          );
+          if (!confirmed) {
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('저장된 게임 확인 실패:', error);
+      }
+    }
+
     // 1의 자리 수 기반 제외 번호 생성
     const lastDigitRangeExcludeNumbers = excludeLastDigitRanges ? getExcludeRangesByLastDigit() : [];
     const tensDigitRangeExcludeNumbers = excludeTensDigitRanges ? getExcludeRangesByTensDigit() : [];
@@ -2104,6 +2211,8 @@ const Lotto = () => {
       }
 
       setGeneratedNumbers(games);
+      // 모든 슬롯을 수정됨으로 표시 (저장 버튼 보이기)
+      setGameModified([true, true, true, true, true]);
       return;
     }
     
@@ -2166,31 +2275,145 @@ const Lotto = () => {
       
       games.push(numbers.sort((a, b) => a - b));
     }
-    
+
+    // 5개 슬롯에 맞춰서 저장 (부족하면 null로 채움)
+    while (games.length < 5) {
+      games.push(null);
+    }
     setGeneratedNumbers(games);
+    // 모든 슬롯을 수정됨으로 표시 (저장 버튼 보이기)
+    setGameModified([true, true, true, true, true]);
   };
 
-  // 게임 저장 핸들러
-  const handleSaveGame = (game) => {
+  // 개별 게임 저장 핸들러
+  const handleSaveGame = async (game, gameIndex) => {
     if (!isAuthenticated) {
       alert("로그인이 필요한 기능입니다.");
       navigate("/login");
       return;
     }
-    console.log("Saving game:", game);
-    alert("게임이 저장되었습니다!");
+
+    console.log('👤 현재 사용자 정보:', user);
+    console.log('👤 user.id:', user?.id);
+
+    if (!user?.id) {
+      alert("사용자 정보를 찾을 수 없습니다. user.id가 없습니다.");
+      return;
+    }
+
+    // 저장된 게임 확인
+    if (lottoData?.data && lottoData.data.length > 0) {
+      try {
+        const latestRound = lottoData.data[lottoData.data.length - 1].drwNo;
+        const currentRound = latestRound + 1;
+        const savedGames = await getSavedGames(user.id, currentRound);
+
+        // 해당 게임 번호가 이미 저장되어 있는지 확인
+        const isGameSaved = savedGames.some(g => g.g_number === gameIndex + 1);
+        if (isGameSaved) {
+          const confirmed = window.confirm(
+            `게임 ${gameIndex + 1}번은 이미 저장되어있습니다.\n계속 하시겠습니까?\n\n(기존 게임을 덮어씌웁니다)`
+          );
+          if (!confirmed) {
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('저장된 게임 확인 실패:', error);
+      }
+    }
+
+    try {
+      console.log('💾 저장 시도:', { userId: user.id, game });
+      const result = await saveGeneratedGames(user.id, 1197, [game]);
+      if (result.success) {
+        alert("게임이 저장되었습니다!");
+      } else {
+        alert(`저장 실패: ${result.error}`);
+      }
+    } catch (error) {
+      console.error("게임 저장 중 오류:", error);
+      alert("게임 저장 중 오류가 발생했습니다.");
+    }
+  };
+
+  // 전체 게임 저장 핸들러
+  const handleSaveAllGames = async () => {
+    if (!isAuthenticated) {
+      alert("로그인이 필요한 기능입니다.");
+      navigate("/login");
+      return;
+    }
+
+    if (!user?.id) {
+      alert("사용자 정보를 찾을 수 없습니다.");
+      return;
+    }
+
+    // null이 아닌 게임만 필터링
+    const validGames = generatedNumbers.filter(game => game !== null);
+
+    if (validGames.length === 0) {
+      alert("저장할 게임이 없습니다.");
+      return;
+    }
+
+    // 저장된 게임 확인
+    if (lottoData?.data && lottoData.data.length > 0) {
+      try {
+        const latestRound = lottoData.data[lottoData.data.length - 1].drwNo;
+        const currentRound = latestRound + 1;
+        const savedGames = await getSavedGames(user.id, currentRound);
+
+        if (savedGames && savedGames.length > 0) {
+          const savedGameNumbers = savedGames.map(g => g.g_number).join(', ');
+          const confirmed = window.confirm(
+            `게임 ${savedGameNumbers}번은 이미 저장되어있습니다.\n계속 하시겠습니까?\n\n(기존 게임을 덮어씌웁니다)`
+          );
+          if (!confirmed) {
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('저장된 게임 확인 실패:', error);
+      }
+    }
+
+    try {
+      const result = await saveGeneratedGames(user.id, 1197, generatedNumbers);
+      if (result.success) {
+        alert(`${result.savedCount}개 게임이 저장되었습니다!`);
+      } else {
+        alert(`저장 실패: ${result.error}`);
+      }
+    } catch (error) {
+      console.error("전체 게임 저장 중 오류:", error);
+      alert("전체 게임 저장 중 오류가 발생했습니다.");
+    }
   };
 
   // 게임 삭제 핸들러
   const handleDeleteGame = (index) => {
-    if (Array.isArray(generatedNumbers[0])) {
-      // 5게임인 경우
-      const newNumbers = generatedNumbers.filter((_, i) => i !== index);
-      setGeneratedNumbers(newNumbers);
-    } else {
-      // 1게임인 경우
-      setGeneratedNumbers([]);
-    }
+    const newNumbers = [...generatedNumbers];
+    newNumbers[index] = null;
+    setGeneratedNumbers(newNumbers);
+    // 삭제하면 수정됨으로 표시
+    const newModified = [...gameModified];
+    newModified[index] = true;
+    setGameModified(newModified);
+  };
+
+  // 게임 내 번호 개별 삭제 핸들러
+  const handleRemoveNumber = (gameIndex, numberIndex) => {
+    const newNumbers = [...generatedNumbers];
+    const currentGame = [...newNumbers[gameIndex]];
+    currentGame.splice(numberIndex, 1);
+    newNumbers[gameIndex] = currentGame.length > 0 ? currentGame : null;
+    setGeneratedNumbers(newNumbers);
+    // 번호를 수정하면 수정됨으로 표시
+    const newModified = [...gameModified];
+    newModified[gameIndex] = true;
+    setGameModified(newModified);
   };
 
   // 특정 회차 당첨번호 조회 (수동 조회용)
@@ -2437,50 +2660,62 @@ const Lotto = () => {
                   </div>
                 )}
                 <div className="generator-buttons">
-                  <button onClick={generate5Games} className="generate-btn-large">
-                    🎯 5게임 생성
+                  <button onClick={generate5Games} className="generate-btn-full">
+                    🎯 전체게임 생성
                   </button>
-                  <button onClick={generateLottoNumbers} className="generate-btn-large">
-                    🎲 1게임 생성
-                  </button>
+                  <div className="individual-game-buttons">
+                    <button onClick={() => generateSingleGame(0)} className="generate-btn-small">게임 1</button>
+                    <button onClick={() => generateSingleGame(1)} className="generate-btn-small">게임 2</button>
+                    <button onClick={() => generateSingleGame(2)} className="generate-btn-small">게임 3</button>
+                    <button onClick={() => generateSingleGame(3)} className="generate-btn-small">게임 4</button>
+                    <button onClick={() => generateSingleGame(4)} className="generate-btn-small">게임 5</button>
+                  </div>
                 </div>
               </div>
 
-              {/* 생성된 번호 표시 */}
+              {/* 내 게임 불러오기 / 전체 저장 버튼 */}
+              <div className="game-management-buttons">
+                <button className="load-games-btn" onClick={loadSavedGamesFromDB}>
+                  📥 내 게임 불러오기
+                </button>
+                <button className="save-all-btn" onClick={handleSaveAllGames}>
+                  💾 전체 게임 저장
+                </button>
+              </div>
+
+              {/* 생성된 번호 표시 - 항상 5개 슬롯 표시 */}
               <div className="generated-numbers">
-                {Array.isArray(generatedNumbers[0]) ? (
-                  // 5게임
-                  generatedNumbers.map((game, index) => (
-                    <div key={index} className="number-row">
-                      <span className="game-label">게임 {index + 1}</span>
-                      <div className="number-balls">
-                        {game.map(num => (
-                          <span key={num} className="number-ball">{num}</span>
-                        ))}
-                      </div>
-                      <div className="game-actions">
-                        <button className="save-game-btn" onClick={() => handleSaveGame(game)} title="저장">💾</button>
-                        <button className="delete-game-btn" onClick={() => handleDeleteGame(index)} title="삭제">❌</button>
-                      </div>
-                    </div>
-                  ))
-                ) : generatedNumbers.length > 0 ? (
-                  // 1게임
-                  <div className="number-row">
-                    <span className="game-label">추천번호</span>
-                    <div className="number-balls">
-                      {generatedNumbers.map(num => (
-                        <span key={num} className="number-ball">{num}</span>
-                      ))}
-                    </div>
-                    <div className="game-actions">
-                      <button className="save-game-btn" onClick={() => handleSaveGame(generatedNumbers)} title="저장">💾</button>
-                      <button className="delete-game-btn" onClick={() => handleDeleteGame(0)} title="삭제">❌</button>
-                    </div>
+                {generatedNumbers.map((game, gameIndex) => (
+                  <div key={gameIndex} className="number-row">
+                    <span className="game-label">게임 {gameIndex + 1}</span>
+                    {game ? (
+                      <>
+                        <div className="number-balls">
+                          {game.map((num, numIndex) => (
+                            <span key={numIndex} className="number-ball-wrapper">
+                              <span className="number-ball">{num}</span>
+                              <button
+                                className="remove-number-btn"
+                                onClick={() => handleRemoveNumber(gameIndex, numIndex)}
+                                title="번호 제거"
+                              >
+                                ×
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                        <div className="game-actions">
+                          {gameModified[gameIndex] && (
+                            <button className="save-game-btn" onClick={() => handleSaveGame(game, gameIndex)} title="저장">💾</button>
+                          )}
+                          <button className="delete-game-btn" onClick={() => handleDeleteGame(gameIndex)} title="삭제">❌</button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="empty-slot">빈 슬롯</div>
+                    )}
                   </div>
-                ) : (
-                  <div className="no-numbers">위 버튼을 눌러 번호를 생성하세요</div>
-                )}
+                ))}
               </div>
 
               <div className="options-divider">선택 옵션</div>

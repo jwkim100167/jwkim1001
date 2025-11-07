@@ -177,3 +177,151 @@
     font-size: 0.95rem;
   }
 }
+
+/* 저장된 게임 섹션 */
+.saved-games-section {
+  background: #f8f9ff;
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 30px;
+}
+
+.saved-games-section h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #667eea;
+  font-size: 1.1rem;
+}
+
+.no-saved-games {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-size: 1rem;
+}
+
+.saved-games-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.round-games-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.round-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.round-header h3 {
+  color: #667eea;
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.delete-round-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.delete-round-btn:hover {
+  background: #c0392b;
+  transform: scale(1.1);
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.saved-game-item {
+  background: #f8f9ff;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.game-number {
+  color: #667eea;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.game-balls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ball {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .saved-games-section {
+    padding: 20px;
+  }
+
+  .games-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .round-header h3 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .saved-games-section {
+    padding: 15px;
+  }
+
+  .round-games-card {
+    padding: 15px;
+  }
+
+  .game-balls {
+    gap: 5px;
+  }
+
+  .ball {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+  }
+}

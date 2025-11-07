@@ -954,6 +954,58 @@
   margin-bottom: 30px;
 }
 
+.generator-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+.generate-btn-full {
+  width: 100%;
+  padding: 18px 24px;
+  border: none;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.3rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.generate-btn-full:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.individual-game-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.generate-btn-small {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.generate-btn-small:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
 .generate-btn {
   padding: 12px 24px;
   border: none;
@@ -1002,6 +1054,11 @@
   flex-wrap: wrap;
 }
 
+.number-ball-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
 .number-ball {
   display: inline-block;
   width: 40px;
@@ -1013,6 +1070,34 @@
   font-weight: bold;
   font-size: 1.1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.remove-number-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ff4444;
+  color: white;
+  border: 2px solid white;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.remove-number-btn:hover {
+  background: #cc0000;
+  transform: scale(1.1);
 }
 
 .game-actions {
@@ -1037,6 +1122,63 @@
 
 .delete-game-btn:hover {
   transform: scale(1.2);
+}
+
+/* 게임 관리 버튼 그룹 */
+.game-management-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin: 20px 0;
+  padding: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.load-games-btn,
+.save-all-btn {
+  padding: 12px 30px;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.load-games-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.load-games-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.save-all-btn {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+}
+
+.save-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #45a049 0%, #4CAF50 100%);
+}
+
+.load-games-btn:active,
+.save-all-btn:active {
+  transform: translateY(0);
+}
+
+/* 빈 슬롯 스타일 */
+.empty-slot {
+  flex: 1;
+  padding: 15px;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  text-align: center;
 }
 
 .no-numbers {
