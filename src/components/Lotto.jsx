@@ -916,205 +916,29 @@ const Lotto = () => {
     downloadLatestLottoDataRef.current = downloadLatestLottoData;
   }, [downloadLatestLottoData]);
 
-  // 데이터베이스 초기화
+  // Supabase에서 데이터 로드
   useEffect(() => {
-    const initializeDatabase = async () => {
-      console.log('🔄 SQLite 데이터베이스 초기화 시작...');
+    const loadFromSupabase = async () => {
+      console.log('🔄 Supabase에서 로또 데이터 로드 시작...');
       setIsLoading(true);
-      
+
       try {
-        const dbInitialized = await initDatabase();
-        if (dbInitialized) {
-          setDatabaseInitialized(true);
-          console.log('✅ 데이터베이스 초기화 완료');
-          
-          // 기존 localStorage 데이터 마이그레이션
-          const localData = loadLottoDataFromStorage();
-          if (localData && localData.data && localData.data.length > 0) {
-            console.log('📤 localStorage에서 데이터베이스로 마이그레이션...');
-            const migrated = await saveLottoResults(localData);
-            if (migrated) {
-              console.log('✅ 마이그레이션 완료:', localData.data.length, '개 회차');
-            }
-          }
-          
-          // 데이터베이스에서 데이터 로드
-          const dbData = await getLottoResults();
-          if (dbData) {
-            setLottoData(dbData);
-            console.log('📊 데이터베이스에서 로드:', dbData.data.length, '개 회차');
-          }
-          
-          const stats = await getDatabaseStats();
-          setDatabaseStats(stats);
+        const supabaseData = await getAllLottoDataFromSupabase();
+        if (supabaseData && supabaseData.data && supabaseData.data.length > 0) {
+          console.log(`✅ Supabase에서 ${supabaseData.data.length}개 회차 로드 완료`);
+          setLottoData(supabaseData);
         } else {
-          console.error('❌ 데이터베이스 초기화 실패 - localStorage 사용');
-          setDatabaseInitialized(false);
+          console.error('❌ Supabase에서 데이터를 가져올 수 없습니다.');
         }
       } catch (error) {
-        console.error('❌ 데이터베이스 초기화 오류:', error);
-        setDatabaseInitialized(false);
+        console.error('❌ Supabase 로드 오류:', error);
       } finally {
         setIsLoading(false);
       }
     };
-    
-    initializeDatabase();
+
+    loadFromSupabase();
   }, []);
-
-
-  // 컴포넌트 마운트 시 저장된 로또 데이터 로드 및 일회성 자동 업데이트
-  useEffect(() => {
-    // 데이터베이스가 초기화된 경우 데이터베이스 초기화에서 처리됨
-    if (databaseInitialized) {
-      console.log('🗄️ 데이터베이스가 초기화되어 있어 로직 스킵');
-      return;
-    }
-
-    // 1. 먼저 정적 JSON 파일에서 로드 시도
-    const loadStaticData = async () => {
-      try {
-        console.log('📂 정적 JSON 파일에서 데이터 로드 시도...');
-        // GitHub Pages base path 고려
-        const basePath = import.meta.env.MODE === 'production' ? '/jwkim1001' : '';
-        const response = await fetch(`${basePath}/lotto-data.json`);
-        if (response.ok) {
-          const jsonData = await response.json();
-          console.log(`✅ 정적 JSON 파일 로드 성공: ${jsonData.totalRounds}회차`);
-          setLottoData(jsonData);
-          // localStorage에도 저장
-          saveLottoDataToStorage(jsonData.data);
-          return true;
-        }
-      } catch (error) {
-        console.log('⚠️ 정적 JSON 파일 로드 실패:', error.message);
-      }
-      return false;
-    };
-
-    // 2. 정적 파일 로드 실패 시 localStorage 확인
-    const loadFromStorage = () => {
-      const stored = loadLottoDataFromStorage();
-      console.log('💾 localStorage에서 데이터 로드:', stored);
-      if (stored) {
-        console.log(`📊 로드된 데이터: ${stored.totalRounds}회차, 데이터 배열 길이: ${stored.data?.length}`);
-        console.log('🔍 데이터 샘플 (처음 3개):', stored.data?.slice(0, 3));
-        setLottoData(stored);
-        return true;
-      } else {
-        console.log('❌ 저장된 데이터 없음');
-        return false;
-      }
-    };
-
-    // 데이터 로드 순서: 정적 JSON -> localStorage -> 필요시 다운로드
-    (async () => {
-      const loadedFromStatic = await loadStaticData();
-      if (!loadedFromStatic) {
-        const loadedFromStorage = loadFromStorage();
-        // 정적 파일도 없고 localStorage도 없을 때만 다운로드
-        if (!loadedFromStorage) {
-          console.log('⚠️ 정적 데이터와 저장된 데이터 모두 없음. 다운로드 시작...');
-          runCompleteDownloadWithRetry();
-        } else {
-          console.log('✅ localStorage에서 데이터 로드 완료. 다운로드 건너뜀.');
-        }
-      } else {
-        console.log('✅ 정적 JSON 파일에서 데이터 로드 완료. 다운로드 건너뜀.');
-      }
-    })();
-
-    // 1회차부터 최신회차까지 완전 다운로드 실행 (반복 시도)
-    const runCompleteDownloadWithRetry = async () => {
-      // 최신 회차 추정 계산
-      const firstLottoDate = new Date('2002-12-07');
-      const today = new Date();
-      const diffTime = Math.abs(today - firstLottoDate);
-      const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
-      const targetRound = diffWeeks + 1;
-      
-      let attempts = 0;
-      const maxAttempts = 5;
-      
-      console.log(`🔥 1회차 ~ ${targetRound}회차(최신)까지 완전 다운로드 시작!`);
-      
-      const checkAndDownload = async () => {
-        attempts++;
-        console.log(`\n🔄 ${attempts}번째 다운로드 시도 중...`);
-        
-        // 기존 데이터 확인
-        let currentData;
-        if (databaseInitialized && isDatabaseInitialized()) {
-          currentData = await getLottoResults();
-        } else {
-          currentData = loadLottoDataFromStorage();
-        }
-        let missingRounds = [];
-        
-        if (!currentData || !currentData.data) {
-          console.log('📥 저장된 데이터 없음 - 전체 다운로드 필요');
-          missingRounds = Array.from({length: targetRound}, (_, i) => i + 1);
-        } else {
-          const existingRounds = currentData.data.map(item => item.round);
-          const maxRound = Math.max(...existingRounds);
-          
-          // 1회차부터 1180회차까지 누락된 회차 찾기
-          for (let i = 1; i <= targetRound; i++) {
-            if (!existingRounds.includes(i)) {
-              missingRounds.push(i);
-            }
-          }
-          
-          console.log(`📊 현재 저장됨: ${existingRounds.length}개 회차 (최고: ${maxRound}회차)`);
-          console.log(`🔍 누락된 회차: ${missingRounds.length}개`);
-          
-          if (missingRounds.length > 0) {
-            console.log(`❌ 누락 회차 일부: ${missingRounds.slice(0, 10).join(', ')}${missingRounds.length > 10 ? '...' : ''}`);
-          }
-        }
-        
-        if (missingRounds.length === 0) {
-          console.log(`✅ 1회차부터 ${targetRound}회차(최신)까지 모든 데이터가 완벽하게 저장됨!`);
-          return true; // 완료
-        }
-        
-        if (attempts <= maxAttempts) {
-          console.log(`🚀 ${missingRounds.length}개 누락 회차만 다운로드 시작... (기존 데이터 유지)`);
-          
-          try {
-            // 기존 데이터는 유지하고 누락된 회차만 다운로드
-            await downloadMissingRounds(missingRounds, (progress, current, status) => {
-              setDownloadProgress(progress);
-            });
-            
-            // 다운로드 완료 후 2초 대기 후 재확인
-            setTimeout(() => {
-              checkAndDownload();
-            }, 2000);
-            
-          } catch (error) {
-            console.error(`❌ ${attempts}번째 다운로드 실패:`, error);
-            
-            if (attempts < maxAttempts) {
-              console.log(`⏳ 5초 후 ${attempts + 1}번째 시도...`);
-              setTimeout(() => {
-                checkAndDownload();
-              }, 5000);
-            } else {
-              console.error(`❌ ${maxAttempts}회 시도 모두 실패`);
-            }
-          }
-        }
-        
-        return false;
-      };
-      
-      // 1.5초 후 시작
-      setTimeout(() => {
-        checkAndDownload();
-      }, 1500);
-    };
-  }, [databaseInitialized]); // databaseInitialized 의존성
 
   // 추가 제외 번호 함수들
   const getMostDrawnNumbers = () => {
