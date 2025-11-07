@@ -12,6 +12,17 @@ export function AuthProvider({ children }) {
     const currentUser = getCurrentUser();
     setUser(currentUser);
     setLoading(false);
+
+    // 1분마다 로그인 시간 체크
+    const intervalId = setInterval(() => {
+      const user = getCurrentUser();
+      if (!user && currentUser) {
+        // 세션 만료로 로그아웃된 경우
+        setUser(null);
+      }
+    }, 60000); // 1분마다 체크
+
+    return () => clearInterval(intervalId);
   }, []);
 
   const login = async (loginId, password) => {

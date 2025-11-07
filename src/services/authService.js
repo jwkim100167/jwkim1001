@@ -24,11 +24,13 @@ export async function login(loginId, password) {
       return { success: false, error: '아이디 또는 비밀번호가 일치하지 않습니다.' };
     }
 
-    // 로그인 성공 - localStorage에 저장
+    // 로그인 성공 - localStorage에 저장 (1시간 만료 시간 포함)
+    const loginTime = Date.now();
     const user = {
       id: data.id,
       loginId: data.login_id,
-      createdAt: data.created_at
+      createdAt: data.created_at,
+      loginTime: loginTime
     };
 
     localStorage.setItem('user', JSON.stringify(user));
@@ -69,7 +71,21 @@ export function getCurrentUser() {
   if (!userStr) return null;
 
   try {
-    return JSON.parse(userStr);
+    const user = JSON.parse(userStr);
+
+    // 로그인 시간 체크 (1시간 = 3600000ms)
+    if (user.loginTime) {
+      const currentTime = Date.now();
+      const elapsedTime = currentTime - user.loginTime;
+
+      if (elapsedTime > 3600000) {
+        // 1시간 경과 시 자동 로그아웃
+        logout();
+        return null;
+      }
+    }
+
+    return user;
   } catch {
     return null;
   }
