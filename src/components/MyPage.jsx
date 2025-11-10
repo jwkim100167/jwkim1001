@@ -1,20 +1,148 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
-import { getSavedGames, deleteSavedGames } from '../services/supabaseLotto';
+import { getSavedGames, getLottoNumberByRoundFromSupabase } from '../services/supabaseLotto';
 import './MyPage.css';
+
+// 요약 회차 아이템 컴포넌트
+function SummaryRoundItem({ round, games }) {
+  const [winningData, setWinningData] = useState(null);
+  const [bestRank, setBestRank] = useState(null);
+
+  useEffect(() => {
+    // 해당 회차의 당첨번호 가져오기
+    getLottoNumberByRoundFromSupabase(round).then((data) => {
+      setWinningData(data);
+
+      if (data && games) {
+        // 모든 게임의 등수 계산
+        const ranks = games.map((game) => {
+          const gameNumbers = [
+            game.count1,
+            game.count2,
+            game.count3,
+            game.count4,
+            game.count5,
+            game.count6,
+          ];
+          return calculateRankStatic(gameNumbers, data);
+        });
+
+        // 최고 등수 찾기 (1등이 가장 좋음)
+        const numericRanks = ranks.filter((r) => typeof r === 'number');
+        if (numericRanks.length > 0) {
+          setBestRank(Math.min(...numericRanks));
+        } else {
+          setBestRank('낙첨');
+        }
+      }
+    });
+  }, [round, games]);
+
+  return (
+    <div className="summary-item">
+      <span className="summary-round">{round}회</span>
+      {!winningData ? (
+        <span className="summary-result no-data">당첨번호 없음</span>
+      ) : bestRank === null ? (
+        <span className="summary-result loading">계산 중...</span>
+      ) : (
+        <span className={`summary-result rank-${bestRank}`}>
+          {typeof bestRank === 'number' ? `${bestRank}등` : bestRank}
+        </span>
+      )}
+    </div>
+  );
+}
+
+// 정적 등수 계산 함수
+function calculateRankStatic(gameNumbers, winningData) {
+  if (!winningData) return null;
+
+  const winningNums = [
+    winningData.num1,
+    winningData.num2,
+    winningData.num3,
+    winningData.num4,
+    winningData.num5,
+    winningData.num6,
+  ];
+
+  const matchCount = gameNumbers.filter((num) => winningNums.includes(num)).length;
+  const hasBonus = gameNumbers.includes(winningData.bonus);
+
+  if (matchCount === 6) return 1;
+  if (matchCount === 5 && hasBonus) return 2;
+  if (matchCount === 5) return 3;
+  if (matchCount === 4) return 4;
+  if (matchCount === 3) return 5;
+  return '낙첨';
+}
 
 export default function MyPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [savedGames, setSavedGames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedRound, setSelectedRound] = useState(null);
+  const [winningNumbers, setWinningNumbers] = useState(null);
+  const [roundOptions, setRoundOptions] = useState([]);
 
   useEffect(() => {
     if (user?.id) {
+      // 현재 최신 회차는 1197회 발표, 다음 회차는 1198회
+      const currentRound = 1198;
+      // 요약보기 + 지난 5주 회차 (1197부터 시작, 당첨번호가 있는 회차만)
+      const last5Rounds = Array.from({ length: 5 }, (_, i) => currentRound - 1 - i); // 1197, 1196, 1195, 1194, 1193
+      setRoundOptions(['summary', ...last5Rounds]);
+
+      // 기본값은 요약보기
+      setSelectedRound('summary');
+
       loadSavedGames();
     }
   }, [user]);
+
+  // 선택된 회차 변경 시 당첨번호 가져오기
+  useEffect(() => {
+    if (selectedRound && selectedRound !== 'summary') {
+      loadWinningNumbers(selectedRound);
+    }
+  }, [selectedRound]);
+
+  const loadWinningNumbers = async (round) => {
+    try {
+      const data = await getLottoNumberByRoundFromSupabase(round);
+      setWinningNumbers(data);
+    } catch (error) {
+      console.error('당첨번호 로드 실패:', error);
+      setWinningNumbers(null);
+    }
+  };
+
+  // 당첨 등수 계산 (보너스 번호 제외한 6개 번호만 비교)
+  const calculateRank = (gameNumbers, winningData) => {
+    if (!winningData) return null;
+
+    const winningNums = [
+      winningData.num1,
+      winningData.num2,
+      winningData.num3,
+      winningData.num4,
+      winningData.num5,
+      winningData.num6,
+    ];
+
+    const matchCount = gameNumbers.filter(num => winningNums.includes(num)).length;
+    const hasBonus = gameNumbers.includes(winningData.bonus);
+
+    if (matchCount === 6) return 1;
+    if (matchCount === 5 && hasBonus) return 2;
+    if (matchCount === 5) return 3;
+    if (matchCount === 4) return 4;
+    if (matchCount === 3) return 5;
+    return '낙첨';
+  };
 
   const loadSavedGames = async () => {
     setLoading(true);
@@ -36,24 +164,30 @@ export default function MyPage() {
     }
   };
 
-  const handleDeleteRound = async (lottoNumber) => {
-    if (!window.confirm(`${lottoNumber}회차의 저장된 게임을 모두 삭제하시겠습니까?`)) {
-      return;
-    }
-
-    const result = await deleteSavedGames(user.id, lottoNumber);
-    if (result.success) {
-      alert(`${result.deletedCount}개 게임이 삭제되었습니다.`);
-      loadSavedGames();
-    } else {
-      alert('삭제 실패');
-    }
-  };
-
   const handleLogout = () => {
     logout();
     navigate('/');
   };
+
+  // 번호가 당첨번호에 포함되는지 확인
+  const isWinningNumber = (number) => {
+    if (!winningNumbers) return false;
+    return [
+      winningNumbers.num1,
+      winningNumbers.num2,
+      winningNumbers.num3,
+      winningNumbers.num4,
+      winningNumbers.num5,
+      winningNumbers.num6,
+    ].includes(number);
+  };
+
+  // 선택된 회차의 저장된 게임 가져오기
+  const selectedRoundGames = selectedRound && selectedRound !== 'summary' ? savedGames[selectedRound] : null;
+
+  // 이번주 선택번호 (1198회)
+  const currentRound = 1198;
+  const thisWeekGames = savedGames[currentRound];
 
   if (!user) {
     navigate('/login');
@@ -77,47 +211,137 @@ export default function MyPage() {
           </div>
         </div>
 
-        {/* 저장된 게임 */}
-        <div className="saved-games-section">
-          <h2>💾 저장된 로또 게임</h2>
+        {/* 이번주 선택번호 */}
+        <div className="this-week-section">
+          <h2>🎲 이번주 선택번호 ({currentRound}회)</h2>
           {loading ? (
             <div className="loading">로딩 중...</div>
-          ) : Object.keys(savedGames).length === 0 ? (
-            <div className="no-saved-games">저장된 게임이 없습니다.</div>
+          ) : !thisWeekGames || thisWeekGames.length === 0 ? (
+            <div className="no-selection">이번주는 선택하지 않았습니다.</div>
           ) : (
-            <div className="saved-games-list">
-              {Object.entries(savedGames)
-                .sort(([a], [b]) => b - a)
-                .map(([lottoNumber, games]) => (
-                  <div key={lottoNumber} className="round-games-card">
-                    <div className="round-header">
-                      <h3>🎰 {lottoNumber}회차 ({games.length}게임)</h3>
-                      <button
-                        className="delete-round-btn"
-                        onClick={() => handleDeleteRound(lottoNumber)}
-                        title="전체 삭제"
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                    <div className="games-grid">
-                      {games.map((game, index) => (
-                        <div key={game.id || index} className="saved-game-item">
-                          <span className="game-number">게임 {game.g_number}</span>
-                          <div className="game-balls">
-                            <span className="ball">{game.count1}</span>
-                            <span className="ball">{game.count2}</span>
-                            <span className="ball">{game.count3}</span>
-                            <span className="ball">{game.count4}</span>
-                            <span className="ball">{game.count5}</span>
-                            <span className="ball">{game.count6}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+            <div className="games-grid">
+              {thisWeekGames.map((game, index) => (
+                <div key={game.id || index} className="saved-game-item">
+                  <span className="game-number">게임 {game.g_number}</span>
+                  <div className="game-balls">
+                    <span className="ball">{game.count1}</span>
+                    <span className="ball">{game.count2}</span>
+                    <span className="ball">{game.count3}</span>
+                    <span className="ball">{game.count4}</span>
+                    <span className="ball">{game.count5}</span>
+                    <span className="ball">{game.count6}</span>
                   </div>
-                ))}
+                </div>
+              ))}
             </div>
+          )}
+        </div>
+
+        {/* 회차 선택 */}
+        <div className="round-selector-section">
+          <h2>🎯 당첨 확인</h2>
+          <div className="round-selector">
+            <label htmlFor="round-select">회차 선택:</label>
+            <select
+              id="round-select"
+              value={selectedRound || ''}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSelectedRound(value === 'summary' ? 'summary' : Number(value));
+              }}
+            >
+              {roundOptions.map((round) => (
+                <option key={round} value={round}>
+                  {round === 'summary' ? '📊 요약보기' : `${round}회차`}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* 요약보기 */}
+          {selectedRound === 'summary' ? (
+            <div className="summary-view">
+              <h3>최근 5회차 당첨 요약</h3>
+              {loading ? (
+                <div className="loading">로딩 중...</div>
+              ) : (
+                <div className="summary-list">
+                  {[1197, 1196, 1195, 1194, 1193].map((round) => {
+                    const games = savedGames[round];
+                    if (!games || games.length === 0) {
+                      return (
+                        <div key={round} className="summary-item">
+                          <span className="summary-round">{round}회</span>
+                          <span className="summary-result no-play">선택하지 않음</span>
+                        </div>
+                      );
+                    }
+
+                    // 해당 회차의 당첨번호를 가져와서 등수 계산 필요
+                    return (
+                      <SummaryRoundItem key={round} round={round} games={games} />
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              {/* 선택된 회차의 당첨번호 표시 */}
+              {winningNumbers && (
+                <div className="winning-numbers">
+                  <h3>당첨번호</h3>
+                  <div className="winning-balls">
+                    <span className="ball winning">{winningNumbers.num1}</span>
+                    <span className="ball winning">{winningNumbers.num2}</span>
+                    <span className="ball winning">{winningNumbers.num3}</span>
+                    <span className="ball winning">{winningNumbers.num4}</span>
+                    <span className="ball winning">{winningNumbers.num5}</span>
+                    <span className="ball winning">{winningNumbers.num6}</span>
+                    <span className="plus">+</span>
+                    <span className="ball bonus">{winningNumbers.bonus}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* 선택된 회차의 게임 표시 */}
+              {loading ? (
+                <div className="loading">로딩 중...</div>
+              ) : !selectedRoundGames || selectedRoundGames.length === 0 ? (
+                <div className="no-selection">해당 주는 선택하지 않았습니다.</div>
+              ) : (
+                <div className="selected-round-games">
+                  <h3>{selectedRound}회차 내 게임 ({selectedRoundGames.length}개)</h3>
+                  <div className="games-grid">
+                    {selectedRoundGames.map((game, index) => (
+                      <div key={game.id || index} className="saved-game-item">
+                        <span className="game-number">게임 {game.g_number}</span>
+                        <div className="game-balls">
+                          <span className={`ball ${isWinningNumber(game.count1) ? 'matched' : ''}`}>
+                            {game.count1}
+                          </span>
+                          <span className={`ball ${isWinningNumber(game.count2) ? 'matched' : ''}`}>
+                            {game.count2}
+                          </span>
+                          <span className={`ball ${isWinningNumber(game.count3) ? 'matched' : ''}`}>
+                            {game.count3}
+                          </span>
+                          <span className={`ball ${isWinningNumber(game.count4) ? 'matched' : ''}`}>
+                            {game.count4}
+                          </span>
+                          <span className={`ball ${isWinningNumber(game.count5) ? 'matched' : ''}`}>
+                            {game.count5}
+                          </span>
+                          <span className={`ball ${isWinningNumber(game.count6) ? 'matched' : ''}`}>
+                            {game.count6}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
 

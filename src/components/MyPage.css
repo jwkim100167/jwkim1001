@@ -325,3 +325,320 @@
     font-size: 0.85rem;
   }
 }
+
+/* 이번주 선택번호 섹션 */
+.this-week-section {
+  background: #fff9e6;
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 30px;
+  border: 2px solid #ffd700;
+}
+
+.this-week-section h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+}
+
+/* 회차 선택 섹션 */
+.round-selector-section {
+  background: #f8f9ff;
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 30px;
+}
+
+.round-selector-section h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+}
+
+.round-selector {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.round-selector label {
+  font-weight: 600;
+  color: #555;
+  font-size: 1rem;
+}
+
+.round-selector select {
+  flex: 1;
+  padding: 12px 15px;
+  border: 2px solid #667eea;
+  border-radius: 10px;
+  font-size: 1rem;
+  background: white;
+  color: #2c3e50;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.round-selector select:hover {
+  border-color: #764ba2;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.round-selector select:focus {
+  outline: none;
+  border-color: #764ba2;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* 당첨번호 표시 */
+.winning-numbers {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.winning-numbers h3 {
+  color: #667eea;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+}
+
+.winning-balls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ball.winning {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  box-shadow: 0 3px 6px rgba(245, 87, 108, 0.3);
+}
+
+.ball.bonus {
+  background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+  box-shadow: 0 3px 6px rgba(255, 216, 155, 0.4);
+}
+
+.plus {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #999;
+  margin: 0 5px;
+}
+
+/* 선택된 회차 게임 */
+.selected-round-games {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.selected-round-games h3 {
+  color: #667eea;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+}
+
+.no-selection {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-size: 1rem;
+  background: white;
+  border-radius: 12px;
+}
+
+/* 맞는 번호 강조 */
+.ball.matched {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+  box-shadow: 0 3px 8px rgba(245, 87, 108, 0.5) !important;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .round-selector-section {
+    padding: 20px;
+  }
+
+  .round-selector {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .winning-balls {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .round-selector-section {
+    padding: 15px;
+  }
+
+  .winning-numbers {
+    padding: 15px;
+  }
+
+  .selected-round-games {
+    padding: 15px;
+  }
+
+  .ball.winning,
+  .ball.bonus {
+    width: 30px;
+    height: 30px;
+    font-size: 0.85rem;
+  }
+}
+
+/* 요약보기 */
+.summary-view {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.summary-view h3 {
+  color: #667eea;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9ff;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.summary-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.summary-round {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.summary-result {
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+.summary-result.no-play {
+  background: #e0e0e0;
+  color: #999;
+}
+
+.summary-result.no-data {
+  background: #ffe0e0;
+  color: #e74c3c;
+}
+
+.summary-result.loading {
+  background: #e0e0e0;
+  color: #999;
+}
+
+.summary-result.rank-1 {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #c0392b;
+  animation: winner 1s ease-in-out infinite;
+}
+
+.summary-result.rank-2 {
+  background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+  color: #2c3e50;
+}
+
+.summary-result.rank-3 {
+  background: linear-gradient(135deg, #cd7f32 0%, #e8a87c 100%);
+  color: white;
+}
+
+.summary-result.rank-4 {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.summary-result.rank-5 {
+  background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+  color: white;
+}
+
+.summary-result.rank-낙첨 {
+  background: #f0f0f0;
+  color: #999;
+}
+
+@keyframes winner {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  }
+}
+
+@media (max-width: 768px) {
+  .this-week-section {
+    padding: 20px;
+  }
+
+  .summary-item {
+    padding: 12px 15px;
+  }
+
+  .summary-round {
+    font-size: 0.95rem;
+  }
+
+  .summary-result {
+    font-size: 1rem;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .this-week-section {
+    padding: 15px;
+  }
+
+  .summary-view {
+    padding: 15px;
+  }
+
+  .summary-item {
+    padding: 10px 12px;
+  }
+}
