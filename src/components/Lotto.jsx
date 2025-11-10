@@ -2148,8 +2148,10 @@ const Lotto = () => {
     }
 
     try {
-      console.log('💾 저장 시도:', { userId: user.id, game });
-      const result = await saveGeneratedGames(user.id, 1197, [game]);
+      const latestRound = lottoData.data[lottoData.data.length - 1].drwNo;
+      const currentRound = latestRound + 1;
+      console.log('💾 저장 시도:', { userId: user.id, currentRound, game });
+      const result = await saveGeneratedGames(user.id, currentRound, [game]);
       if (result.success) {
         alert("게임이 저장되었습니다!");
       } else {
@@ -2204,7 +2206,9 @@ const Lotto = () => {
     }
 
     try {
-      const result = await saveGeneratedGames(user.id, 1197, generatedNumbers);
+      const latestRound = lottoData.data[lottoData.data.length - 1].drwNo;
+      const currentRound = latestRound + 1;
+      const result = await saveGeneratedGames(user.id, currentRound, generatedNumbers);
       if (result.success) {
         alert(`${result.savedCount}개 게임이 저장되었습니다!`);
       } else {
