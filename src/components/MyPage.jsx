@@ -220,7 +220,7 @@ export default function MyPage() {
             <div className="no-selection">이번주는 선택하지 않았습니다.</div>
           ) : (
             <div className="games-grid">
-              {thisWeekGames.map((game, index) => (
+              {thisWeekGames.sort((a, b) => a.g_number - b.g_number).map((game, index) => (
                 <div key={game.id || index} className="saved-game-item">
                   <span className="game-number">게임 {game.g_number}</span>
                   <div className="game-balls">
@@ -313,7 +313,7 @@ export default function MyPage() {
                 <div className="selected-round-games">
                   <h3>{selectedRound}회차 내 게임 ({selectedRoundGames.length}개)</h3>
                   <div className="games-grid">
-                    {selectedRoundGames.map((game, index) => (
+                    {selectedRoundGames.sort((a, b) => a.g_number - b.g_number).map((game, index) => (
                       <div key={game.id || index} className="saved-game-item">
                         <span className="game-number">게임 {game.g_number}</span>
                         <div className="game-balls">
