@@ -146,11 +146,11 @@ const Lotto = () => {
         // 현재 회차의 저장된 게임 가져오기
         const savedGames = await getSavedGames(user.id, currentRound);
 
+        // 5개 슬롯 배열 초기화
+        const loadedGames = [null, null, null, null, null];
+
         if (savedGames && savedGames.length > 0) {
           console.log(`✅ ${savedGames.length}개의 저장된 게임을 찾았습니다.`);
-
-          // 5개 슬롯 배열 초기화
-          const loadedGames = [null, null, null, null, null];
 
           // 저장된 게임을 g_number에 맞춰 배치
           savedGames.forEach(game => {
@@ -167,13 +167,15 @@ const Lotto = () => {
             }
           });
 
-          setGeneratedNumbers(loadedGames);
-          // 불러온 게임은 수정되지 않은 상태로 표시 (저장 버튼 숨김)
-          setGameModified([false, false, false, false, false]);
           console.log('✅ 저장된 게임을 자동으로 불러왔습니다:', loadedGames);
         } else {
-          console.log('ℹ️ 저장된 게임이 없습니다.');
+          console.log('ℹ️ 저장된 게임이 없습니다. 빈 슬롯으로 초기화합니다.');
         }
+
+        // 저장된 게임이 있든 없든 슬롯 상태 업데이트
+        setGeneratedNumbers(loadedGames);
+        // 불러온 게임은 수정되지 않은 상태로 표시 (저장 버튼 숨김)
+        setGameModified([false, false, false, false, false]);
       } catch (error) {
         console.error('❌ 저장된 게임 불러오기 실패:', error);
       }
