@@ -104,14 +104,22 @@ const WhatToEat = () => {
 
     if (num === 5) {
       setActiveSelect(activeSelect === 'location' ? null : 'location');
-    } else if (num === 1) {
-      setActiveSelect(activeSelect === 'drinkYN' ? null : 'drinkYN');
-    } else if (num === 2) {
-      setActiveSelect(activeSelect === 'category' ? null : 'category');
-    } else if (num === 3) {
-      setActiveSelect(activeSelect === 'partyNum' ? null : 'partyNum');
-    } else if (num === 4) {
-      setActiveSelect(activeSelect === 'signature' ? null : 'signature');
+    } else if (num === 1 || num === 2 || num === 3 || num === 4) {
+      // 위치가 선택되지 않았으면 경고
+      if (!filters.location) {
+        alert('위치를 먼저 선택해주세요!');
+        return;
+      }
+
+      if (num === 1) {
+        setActiveSelect(activeSelect === 'drinkYN' ? null : 'drinkYN');
+      } else if (num === 2) {
+        setActiveSelect(activeSelect === 'category' ? null : 'category');
+      } else if (num === 3) {
+        setActiveSelect(activeSelect === 'partyNum' ? null : 'partyNum');
+      } else if (num === 4) {
+        setActiveSelect(activeSelect === 'signature' ? null : 'signature');
+      }
     }
   };
 

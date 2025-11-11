@@ -185,12 +185,18 @@
 .grid-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   gap: 15px;
   margin-bottom: 30px;
-  aspect-ratio: 1;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+  min-height: 500px;
+}
+
+.grid-item:nth-child(5) {
+  grid-column: 2 / 4;
+  grid-row: 2 / 4;
 }
 
 .grid-item {
@@ -252,6 +258,22 @@
 
 .grid-item-5 {
   background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+  font-size: 1.2rem;
+  box-shadow: 0 8px 16px rgba(168, 224, 99, 0.4);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.grid-item-5 .grid-number {
+  font-size: 1.5rem;
+}
+
+.grid-item-5 .grid-content {
+  font-size: 1.8rem;
+}
+
+.grid-item-5.clickable:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(168, 224, 99, 0.5);
 }
 
 .back-btn {
