@@ -35,8 +35,8 @@ export async function login(loginId, password) {
 
     localStorage.setItem('user', JSON.stringify(user));
 
-    // 로그인 히스토리 저장 (admin 제외)
-    if (loginId !== 'admin') {
+    // 로그인 히스토리 저장 (admin, test 제외)
+    if (loginId !== 'admin' && loginId !== 'test') {
       try {
         await supabase.from('loginHistoryTable').insert({
           u_id: data.id,

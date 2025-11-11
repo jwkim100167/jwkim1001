@@ -15,28 +15,11 @@ import {
   getFilteredCategories,
   getFilteredSignatures
 } from '../data/restaurantData';
-import './WhatToEat.css';
+import './Momok2.css';
 
-const WhatToEat = () => {
+const Momok2 = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user, logout } = useAuth();
-
-  // 로그인 체크
-  useEffect(() => {
-    if (!isAuthenticated) {
-      const confirmLogin = window.confirm('로그인이 필요한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?');
-      if (confirmLogin) {
-        navigate('/login');
-      } else {
-        navigate('/');
-      }
-    }
-  }, [isAuthenticated, navigate]);
-
-  // 로그인 안 되어 있으면 아무것도 렌더링하지 않음
-  if (!isAuthenticated) {
-    return null;
-  }
 
   // 각 칸의 상태 관리
   const [grid, setGrid] = useState({
@@ -113,22 +96,14 @@ const WhatToEat = () => {
 
     if (num === 5) {
       setActiveSelect(activeSelect === 'location' ? null : 'location');
-    } else if (num === 1 || num === 2 || num === 3 || num === 4) {
-      // 위치가 선택되지 않았으면 경고
-      if (!filters.location) {
-        alert('위치를 먼저 선택해주세요!');
-        return;
-      }
-
-      if (num === 1) {
-        setActiveSelect(activeSelect === 'drinkYN' ? null : 'drinkYN');
-      } else if (num === 2) {
-        setActiveSelect(activeSelect === 'category' ? null : 'category');
-      } else if (num === 3) {
-        setActiveSelect(activeSelect === 'partyNum' ? null : 'partyNum');
-      } else if (num === 4) {
-        setActiveSelect(activeSelect === 'signature' ? null : 'signature');
-      }
+    } else if (num === 1) {
+      setActiveSelect(activeSelect === 'drinkYN' ? null : 'drinkYN');
+    } else if (num === 2) {
+      setActiveSelect(activeSelect === 'category' ? null : 'category');
+    } else if (num === 3) {
+      setActiveSelect(activeSelect === 'partyNum' ? null : 'partyNum');
+    } else if (num === 4) {
+      setActiveSelect(activeSelect === 'signature' ? null : 'signature');
     }
   };
 
@@ -240,21 +215,29 @@ const WhatToEat = () => {
   };
 
   return (
-    <div className="whattoeat">
-      <div className="whattoeat-container">
+    <div className="momok2">
+      <div className="momok2-container">
         <div className="auth-buttons">
-          <span className="user-greeting">👋 {user.loginId}님</span>
-          <button className="auth-btn mypage-btn" onClick={() => navigate('/mypage')}>
-            마이페이지
-          </button>
-          <button className="auth-btn logout-btn" onClick={handleLogout}>
-            로그아웃
-          </button>
+          {isAuthenticated ? (
+            <>
+              <span className="user-greeting">👋 {user.loginId}님</span>
+              <button className="auth-btn mypage-btn" onClick={() => navigate('/mypage')}>
+                마이페이지
+              </button>
+              <button className="auth-btn logout-btn" onClick={handleLogout}>
+                로그아웃
+              </button>
+            </>
+          ) : (
+            <button className="auth-btn login-btn" onClick={() => navigate('/login')}>
+              로그인
+            </button>
+          )}
         </div>
 
-        <div className="whattoeat-header">
-          <h1>🍽️ 오늘 뭐 먹지?</h1>
-          <p>맛있는 선택, 고민 끝!</p>
+        <div className="momok2-header">
+          <h1>🍽️ MOMOK2</h1>
+          <p>오늘 점심 뭐 먹지? 고민 끝!</p>
           <div className="filter-result">
             <div className="result-header">
               <div>필터링된 레스토랑: <span className="count">{filteredCount}</span>개</div>
@@ -289,63 +272,26 @@ const WhatToEat = () => {
         </div>
 
         <div className="grid-container">
-          {/* 위치 선택 박스 - 최상단에 큰 박스로 */}
-          <div
-            className="location-box"
-            onClick={(e) => handleGridClick(5, e)}
-          >
-            <div className="location-icon">📍</div>
-            <div className="location-label">위치를 선택하세요</div>
-            <div className="location-value">
-              {filters.location2 || filters.location || '위치 선택'}
-            </div>
-            {!filters.location && (
-              <div className="location-hint">👆 여기를 클릭하여 시작하세요!</div>
-            )}
-          </div>
-
-          {/* 필터 선택 박스들 */}
-          <div className="filters-grid">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
             <div
-              className={`filter-item ${!filters.location ? 'disabled' : 'clickable'}`}
-              onClick={(e) => !filters.location ? null : handleGridClick(1, e)}
+              key={num}
+              className={`grid-item grid-item-${num} ${
+                [1, 2, 3, 4, 5].includes(num) ? 'clickable' : ''
+              }`}
+              onClick={(e) => handleGridClick(num, e)}
             >
-              <div className="grid-number">1</div>
+              <div className="grid-number">{num}</div>
               <div className="grid-content">
-                {filters.drinkYN ? (filters.drinkYN === 'Y' ? '주류 가능' : '주류 불가') : grid[1]}
+                {num === 1 && (filters.drinkYN || grid[num])}
+                {num === 2 && (filters.category || grid[num])}
+                {num === 3 && (filters.partyNum ? `${filters.partyNum}명` : grid[num])}
+                {num === 4 && (filters.signature || grid[num])}
+                {num === 5 && (filters.location2 || filters.location || grid[num])}
+                {![1, 2, 3, 4, 5].includes(num) && grid[num]}
               </div>
-            </div>
 
-            <div
-              className={`filter-item ${!filters.location ? 'disabled' : 'clickable'}`}
-              onClick={(e) => !filters.location ? null : handleGridClick(2, e)}
-            >
-              <div className="grid-number">2</div>
-              <div className="grid-content">
-                {filters.category || grid[2]}
-              </div>
             </div>
-
-            <div
-              className={`filter-item ${!filters.location ? 'disabled' : 'clickable'}`}
-              onClick={(e) => !filters.location ? null : handleGridClick(3, e)}
-            >
-              <div className="grid-number">3</div>
-              <div className="grid-content">
-                {filters.partyNum ? `${filters.partyNum}명` : grid[3]}
-              </div>
-            </div>
-
-            <div
-              className={`filter-item ${!filters.location ? 'disabled' : 'clickable'}`}
-              onClick={(e) => !filters.location ? null : handleGridClick(4, e)}
-            >
-              <div className="grid-number">4</div>
-              <div className="grid-content">
-                {filters.signature || grid[4]}
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* 위치 select box - 필터링된 데이터 사용 */}
@@ -529,7 +475,7 @@ const WhatToEat = () => {
           ← 홈으로 돌아가기
         </button>
 
-        <div className="whattoeat-footer">
+        <div className="momok2-footer">
           <p>made by jwkim1001</p>
         </div>
       </div>
@@ -537,4 +483,4 @@ const WhatToEat = () => {
   );
 };
 
-export default WhatToEat;
+export default Momok2;

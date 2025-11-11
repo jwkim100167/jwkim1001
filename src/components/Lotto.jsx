@@ -141,6 +141,7 @@ const Lotto = () => {
         const latestRound = lottoData.data[lottoData.data.length - 1].drwNo;
         const currentRound = latestRound + 1;
 
+        console.log(`🔍 DB 최신 회차: ${latestRound}회, 현재 회차: ${currentRound}회`);
         console.log(`📥 저장된 게임 자동 불러오기 시도 - ${currentRound}회차`);
 
         // 현재 회차의 저장된 게임 가져오기

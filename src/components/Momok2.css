@@ -1,10 +1,10 @@
-.whattoeat {
+.momok2 {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px;
 }
 
-.whattoeat-container {
+.momok2-container {
   max-width: 800px;
   margin: 0 auto;
   background: white;
@@ -55,18 +55,18 @@
   background: #fee;
 }
 
-.whattoeat-header {
+.momok2-header {
   text-align: center;
   margin-bottom: 40px;
 }
 
-.whattoeat-header h1 {
+.momok2-header h1 {
   color: #667eea;
   font-size: 2.5rem;
   margin-bottom: 10px;
 }
 
-.whattoeat-header p {
+.momok2-header p {
   color: #666;
   font-size: 1.1rem;
 }
@@ -183,79 +183,20 @@
 }
 
 .grid-container {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
   margin-bottom: 30px;
-  max-width: 900px;
+  aspect-ratio: 1;
+  max-width: 600px;
   margin-left: auto;
   margin-right: auto;
 }
 
-.location-box {
-  width: 100%;
-  background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
-  border-radius: 20px;
-  padding: 50px 40px;
-  color: white;
-  position: relative;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 30px rgba(168, 224, 99, 0.3);
-  cursor: pointer;
-  text-align: center;
-  border: 4px solid rgba(255, 255, 255, 0.2);
-}
-
-.location-box:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(168, 224, 99, 0.4);
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
-.location-box .location-icon {
-  font-size: 3rem;
-  margin-bottom: 15px;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
-
-.location-box .location-label {
-  font-size: 1.2rem;
-  opacity: 0.9;
-  margin-bottom: 10px;
-  font-weight: 500;
-}
-
-.location-box .location-value {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin: 10px 0;
-}
-
-.location-box .location-hint {
-  font-size: 1rem;
-  opacity: 0.8;
-  margin-top: 10px;
-}
-
-.filters-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-}
-
-.filter-item {
+.grid-item {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 15px;
-  padding: 25px 15px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -263,44 +204,54 @@
   color: white;
   position: relative;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: visible;
-  min-height: 140px;
 }
 
-.filter-item.clickable {
+.grid-item.clickable {
   cursor: pointer;
 }
 
-.filter-item.clickable:hover {
+.grid-item.clickable:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
-.filter-item.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.filter-item.disabled:hover {
-  transform: none;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.filter-item .grid-number {
+.grid-number {
   position: absolute;
   top: 10px;
   left: 10px;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: bold;
   opacity: 0.7;
 }
 
-.filter-item .grid-content {
-  font-size: 1.2rem;
+.grid-content {
+  font-size: 1.3rem;
   font-weight: 600;
   text-align: center;
   word-break: keep-all;
+}
+
+/* 특정 칸 색상 */
+.grid-item-1 {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.grid-item-2 {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.grid-item-3 {
+  background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+}
+
+.grid-item-4 {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.grid-item-5 {
+  background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
 }
 
 .back-btn {
@@ -323,7 +274,7 @@
   box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
 }
 
-.whattoeat-footer {
+.momok2-footer {
   text-align: center;
   margin-top: 30px;
   color: #999;
@@ -331,11 +282,11 @@
 }
 
 @media (max-width: 768px) {
-  .whattoeat-container {
+  .momok2-container {
     padding: 20px;
   }
 
-  .whattoeat-header h1 {
+  .momok2-header h1 {
     font-size: 2rem;
   }
 
@@ -386,13 +337,12 @@
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid white;
   color: white;
-  padding: 3px 8px;
+  padding: 4px 12px;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 600;
   transition: all 0.2s ease;
-  white-space: nowrap;
 }
 
 .reset-btn:hover {
@@ -419,11 +369,11 @@
 }
 
 @media (max-width: 480px) {
-  .whattoeat-container {
+  .momok2-container {
     padding: 15px;
   }
 
-  .whattoeat-header h1 {
+  .momok2-header h1 {
     font-size: 1.7rem;
   }
 
