@@ -110,6 +110,12 @@
   line-height: 1.5;
 }
 
+.card-desc {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  margin-top: 5px;
+}
+
 .card-features {
   display: flex;
   flex-direction: column;
@@ -134,6 +140,11 @@
 .lotto-card:hover {
   border-color: rgba(255, 193, 7, 0.5);
   box-shadow: 0 20px 40px rgba(255, 193, 7, 0.1);
+}
+
+.whattoeat-card:hover {
+  border-color: rgba(102, 126, 234, 0.5);
+  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.1);
 }
 
 .momok-card:hover {
