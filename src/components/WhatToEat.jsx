@@ -340,9 +340,9 @@ const WhatToEat = () => {
   // 네이버 지도로 위치 보기
   const handleViewMap = () => {
     if (selectedRestaurantDetail) {
-      const { latitude, longitude, name } = selectedRestaurantDetail;
-      // 네이버 지도 URL로 이동
-      const naverMapUrl = `https://map.naver.com/v5/search/${encodeURIComponent(name)}?c=${longitude},${latitude},15,0,0,0,dh`;
+      const { name } = selectedRestaurantDetail;
+      // 네이버 지도 검색 URL로 이동
+      const naverMapUrl = `https://map.naver.com/v5/search/${encodeURIComponent(name)}`;
       window.open(naverMapUrl, '_blank');
     }
   };
@@ -384,23 +384,25 @@ const WhatToEat = () => {
         <div className="whattoeat-header">
           <h1>🍽️ 오늘 뭐 먹지?</h1>
           <p>맛있는 선택, 고민 끝!</p>
-          <div className="filter-result">
-            <div className="result-header">
-              <div>필터링된 레스토랑: <span className="count">{filteredCount}</span>개</div>
-              <div className="action-buttons">
-                {filteredCount > 0 && filteredCount <= 3 && (
-                  <button className="random-btn" onClick={handleRandomSelect}>
-                    🎲 랜덤 선택
-                  </button>
-                )}
-                {(filters.location || filters.drinkYN || filters.category || filters.partyNum || filters.signature) && (
-                  <button className="reset-all-btn" onClick={handleResetAll}>
-                    🔄 전체 초기화
-                  </button>
-                )}
+          {filters.location2 && (
+            <div className="filter-result">
+              <div className="result-header">
+                <div>필터링된 레스토랑: <span className="count">{filteredCount}</span>개</div>
+                <div className="action-buttons">
+                  {filteredCount > 0 && filteredCount <= 3 && (
+                    <button className="random-btn" onClick={handleRandomSelect}>
+                      🎲 랜덤 선택
+                    </button>
+                  )}
+                  {(filters.location || filters.drinkYN || filters.category || filters.partyNum || filters.signature) && (
+                    <button className="reset-all-btn" onClick={handleResetAll}>
+                      🔄 전체 초기화
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* 레스토랑 모달 팝업 */}
