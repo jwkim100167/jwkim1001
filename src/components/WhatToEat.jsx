@@ -65,6 +65,9 @@ const WhatToEat = () => {
   // 팝업 모달 표시 여부
   const [showRestaurantModal, setShowRestaurantModal] = useState(false);
 
+  // 랜덤 선택 확인 모달 표시 여부
+  const [showRandomConfirmModal, setShowRandomConfirmModal] = useState(false);
+
   // 초기 데이터 로드
   useEffect(() => {
     const loadInitialData = async () => {
@@ -105,6 +108,11 @@ const WhatToEat = () => {
         setFilteredCount(restaurants.length);
         setRandomSelected(null); // 필터 변경 시 랜덤 선택 초기화
         setSelectedRestaurantDetail(null); // 상세 정보 초기화
+
+        // 3개 이하일 때 자동으로 랜덤 선택 모달 표시
+        if (restaurants.length > 0 && restaurants.length <= 3 && filters.location2) {
+          setShowRandomConfirmModal(true);
+        }
 
         // 현재 필터에 맞는 선택 가능한 옵션 업데이트
         // 각 옵션 추출 시 해당 필터는 제외하고 적용
@@ -359,6 +367,17 @@ const WhatToEat = () => {
     setShowRestaurantModal(false);
   };
 
+  // 랜덤 선택 확인 모달 닫기
+  const handleCloseRandomConfirmModal = () => {
+    setShowRandomConfirmModal(false);
+  };
+
+  // 랜덤 선택 확인
+  const handleConfirmRandomSelect = async () => {
+    setShowRandomConfirmModal(false);
+    await handleRandomSelect();
+  };
+
   const handleLogout = () => {
     logout();
   };
@@ -389,11 +408,6 @@ const WhatToEat = () => {
               <div className="result-header">
                 <div>필터링된 레스토랑: <span className="count">{filteredCount}</span>개</div>
                 <div className="action-buttons">
-                  {filteredCount > 0 && filteredCount <= 3 && (
-                    <button className="random-btn" onClick={handleRandomSelect}>
-                      🎲 랜덤 선택
-                    </button>
-                  )}
                   {(filters.location || filters.drinkYN || filters.category || filters.partyNum || filters.signature) && (
                     <button className="reset-all-btn" onClick={handleResetAll}>
                       🔄 전체 초기화
@@ -404,6 +418,37 @@ const WhatToEat = () => {
             </div>
           )}
         </div>
+
+        {/* 랜덤 선택 확인 모달 */}
+        {showRandomConfirmModal && (
+          <div className="modal-overlay" onClick={handleCloseRandomConfirmModal}>
+            <div className="modal-content confirm-modal" onClick={(e) => e.stopPropagation()}>
+              <button className="modal-close-btn" onClick={handleCloseRandomConfirmModal}>×</button>
+              <div className="confirm-modal-content">
+                <p className="confirm-title">🎲 랜덤 선택</p>
+                <p className="confirm-message">{filteredCount}개 이하입니다.<br/>랜덤으로 고르시겠습니까?</p>
+                <div className="restaurant-list">
+                  {filteredRestaurants.map((restaurant, index) => (
+                    <div key={index} className="restaurant-item">
+                      <div className="restaurant-item-name">{index + 1}. {restaurant.signature || restaurant.category}</div>
+                      {restaurant.description && (
+                        <div className="restaurant-item-desc">{restaurant.description}</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="confirm-actions">
+                  <button className="confirm-btn yes" onClick={handleConfirmRandomSelect}>
+                    예
+                  </button>
+                  <button className="confirm-btn no" onClick={handleCloseRandomConfirmModal}>
+                    아니오
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* 레스토랑 모달 팝업 */}
         {showRestaurantModal && selectedRestaurantDetail && (
