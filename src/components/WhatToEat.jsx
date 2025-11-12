@@ -2,53 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
-  getLocations,
-  getLocation2s,
-  getDrinkYNs,
-  getCategories,
-  getSignatures,
-  getFilteredCount,
-  getFilteredRestaurants,
-  getFilteredLocations,
-  getFilteredLocation2s,
-  getFilteredDrinkYNs,
+  getRestaurantCategories,
+  getRestaurantById,
   getFilteredCategories,
-  getFilteredSignatures
-} from '../data/restaurantData';
+  getUniqueValues
+} from '../services/supabaseRestaurant';
 import './WhatToEat.css';
 
 const WhatToEat = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user, logout } = useAuth();
 
-  // 로그인 체크
-  useEffect(() => {
-    if (!isAuthenticated) {
-      const confirmLogin = window.confirm('로그인이 필요한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?');
-      if (confirmLogin) {
-        navigate('/login');
-      } else {
-        navigate('/');
-      }
-    }
-  }, [isAuthenticated, navigate]);
-
-  // 로그인 안 되어 있으면 아무것도 렌더링하지 않음
-  if (!isAuthenticated) {
-    return null;
-  }
-
   // 각 칸의 상태 관리
   const [grid, setGrid] = useState({
     1: '음주 여부',
     2: '카테고리',
-    3: '파티원',
-    4: '대표메뉴',
-    5: '위치',
-    6: '',
-    7: '',
-    8: '',
-    9: ''
+    3: '대표메뉴',
+    4: '파티원'
   });
 
   // 선택된 필터 상태
@@ -77,30 +47,147 @@ const WhatToEat = () => {
   // 랜덤 선택된 레스토랑
   const [randomSelected, setRandomSelected] = useState(null);
 
-  // 필터 변경 시 개수 업데이트
+  // 전체 레스토랑 카테고리 데이터
+  const [allCategories, setAllCategories] = useState([]);
+
+  // 선택 가능한 옵션들
+  const [availableOptions, setAvailableOptions] = useState({
+    locations: [],
+    location2s: [],
+    drinkYNs: [],
+    categories: [],
+    signatures: []
+  });
+
+  // 선택된 레스토랑 상세 정보
+  const [selectedRestaurantDetail, setSelectedRestaurantDetail] = useState(null);
+
+  // 초기 데이터 로드
   useEffect(() => {
-    const restaurants = getFilteredRestaurants(filters);
-    setFilteredRestaurants(restaurants);
-    setFilteredCount(restaurants.length);
-    setRandomSelected(null); // 필터 변경 시 랜덤 선택 초기화
+    const loadInitialData = async () => {
+      try {
+        const categories = await getRestaurantCategories();
+        console.log('📊 전체 카테고리 데이터:', categories);
+        setAllCategories(categories);
 
-    // 필터링 결과가 0개인 경우 알림 및 해당 필터만 취소
-    if (restaurants.length === 0 && lastFilter) {
-      alert('해당 조건의 레스토랑이 없습니다.');
-      // 마지막 선택한 필터만 초기화
-      setFilters(prev => ({
-        ...prev,
-        [lastFilter]: null,
-        ...(lastFilter === 'location' && { location2: null }) // location 초기화 시 location2도 초기화
-      }));
-      setActiveSelect(null);
-      setLastFilter(null);
+        // 초기 옵션 설정 (모든 가능한 값 포함)
+        const uniqueDrinkYNs = getUniqueValues(categories, 'drinkYN');
+        // drinkYN에 true와 false 모두 포함되도록 보장
+        const allDrinkYNs = [...new Set([...uniqueDrinkYNs, true, false])];
+
+        setAvailableOptions({
+          locations: getUniqueValues(categories, 'location'),
+          location2s: getUniqueValues(categories, 'location2'),
+          drinkYNs: allDrinkYNs,
+          categories: getUniqueValues(categories, 'category'),
+          signatures: getUniqueValues(categories, 'signature')
+        });
+      } catch (error) {
+        console.error('Error loading initial data:', error);
+        alert('데이터를 불러오는데 실패했습니다.');
+      }
+    };
+
+    loadInitialData();
+  }, []);
+
+  // 필터 변경 시 개수 업데이트 및 옵션 업데이트
+  useEffect(() => {
+    const fetchFilteredRestaurants = async () => {
+      try {
+        console.log('🔍 현재 필터:', filters);
+        const restaurants = await getFilteredCategories(filters);
+        console.log('✅ 필터링된 레스토랑:', restaurants);
+        setFilteredRestaurants(restaurants);
+        setFilteredCount(restaurants.length);
+        setRandomSelected(null); // 필터 변경 시 랜덤 선택 초기화
+        setSelectedRestaurantDetail(null); // 상세 정보 초기화
+
+        // 현재 필터에 맞는 선택 가능한 옵션 업데이트
+        // 각 옵션 추출 시 해당 필터는 제외하고 적용
+
+        // drinkYN 옵션: drinkYN 필터 제외하고 나머지만 적용
+        const dataForDrinkYN = allCategories.filter(cat => {
+          if (filters.location && cat.location !== filters.location) return false;
+          if (filters.location2 && cat.location2 !== filters.location2) return false;
+          if (filters.category && cat.category !== filters.category) return false;
+          return true;
+        });
+
+        // category 옵션: category 필터 제외하고 나머지만 적용
+        const dataForCategory = allCategories.filter(cat => {
+          if (filters.location && cat.location !== filters.location) return false;
+          if (filters.location2 && cat.location2 !== filters.location2) return false;
+          if (filters.drinkYN !== null && filters.drinkYN !== undefined && cat.drinkYN !== filters.drinkYN) return false;
+          return true;
+        });
+
+        // signature 옵션: signature 필터 제외하고 나머지만 적용
+        const dataForSignature = allCategories.filter(cat => {
+          if (filters.location && cat.location !== filters.location) return false;
+          if (filters.location2 && cat.location2 !== filters.location2) return false;
+          if (filters.drinkYN !== null && filters.drinkYN !== undefined && cat.drinkYN !== filters.drinkYN) return false;
+          if (filters.category && cat.category !== filters.category) return false;
+          return true;
+        });
+
+        console.log('🔍 drinkYN용 데이터:', dataForDrinkYN);
+        console.log('🔍 category용 데이터:', dataForCategory);
+        console.log('🔍 signature용 데이터:', dataForSignature);
+
+        const newOptions = {
+          locations: getUniqueValues(allCategories, 'location'),
+          location2s: getUniqueValues(
+            allCategories.filter(cat => !filters.location || cat.location === filters.location),
+            'location2'
+          ),
+          drinkYNs: getUniqueValues(dataForDrinkYN, 'drinkYN'),
+          categories: getUniqueValues(dataForCategory, 'category'),
+          signatures: getUniqueValues(dataForSignature, 'signature')
+        };
+        console.log('📋 업데이트된 옵션:', newOptions);
+        setAvailableOptions(newOptions);
+
+        // 필터링 결과가 0개인 경우 알림 및 해당 필터만 취소
+        if (restaurants.length === 0 && lastFilter) {
+          alert('해당 조건의 레스토랑이 없습니다.');
+          // 마지막 선택한 필터만 초기화
+          setFilters(prev => ({
+            ...prev,
+            [lastFilter]: null,
+            ...(lastFilter === 'location' && { location2: null }) // location 초기화 시 location2도 초기화
+          }));
+          setActiveSelect(null);
+          setLastFilter(null);
+        } else if (restaurants.length === 1) {
+          // 레스토랑이 1개일 때 상세 정보 자동 로드
+          const detail = await getRestaurantById(restaurants[0].r_id);
+          setSelectedRestaurantDetail(detail);
+        }
+      } catch (error) {
+        console.error('Error fetching filtered restaurants:', error);
+      }
+    };
+
+    if (allCategories.length > 0) {
+      fetchFilteredRestaurants();
     }
-  }, [filters, lastFilter]);
+  }, [filters, lastFilter, allCategories]);
 
-  const handleLogout = () => {
-    logout();
-  };
+  // 로그인 체크 (한 번만 실행)
+  const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
+
+  useEffect(() => {
+    if (!hasCheckedAuth && !isAuthenticated) {
+      setHasCheckedAuth(true);
+      const confirmLogin = window.confirm('로그인이 필요한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?');
+      if (confirmLogin) {
+        navigate('/login');
+      } else {
+        navigate('/');
+      }
+    }
+  }, [isAuthenticated, hasCheckedAuth, navigate]);
 
   // 그리드 클릭 핸들러
   const handleGridClick = (num, event) => {
@@ -113,7 +200,7 @@ const WhatToEat = () => {
 
     if (num === 5) {
       setActiveSelect(activeSelect === 'location' ? null : 'location');
-    } else if (num === 1 || num === 2 || num === 3 || num === 4) {
+    } else if (num === 1 || num === 2 || num === 3) {
       // 위치가 선택되지 않았으면 경고
       if (!filters.location) {
         alert('위치를 먼저 선택해주세요!');
@@ -125,8 +212,6 @@ const WhatToEat = () => {
       } else if (num === 2) {
         setActiveSelect(activeSelect === 'category' ? null : 'category');
       } else if (num === 3) {
-        setActiveSelect(activeSelect === 'partyNum' ? null : 'partyNum');
-      } else if (num === 4) {
         setActiveSelect(activeSelect === 'signature' ? null : 'signature');
       }
     }
@@ -229,7 +314,7 @@ const WhatToEat = () => {
   };
 
   // 랜덤 선택 핸들러
-  const handleRandomSelect = () => {
+  const handleRandomSelect = async () => {
     if (filteredRestaurants.length === 0) {
       alert('선택 가능한 레스토랑이 없습니다.');
       return;
@@ -237,7 +322,41 @@ const WhatToEat = () => {
     const randomIndex = Math.floor(Math.random() * filteredRestaurants.length);
     const selected = filteredRestaurants[randomIndex];
     setRandomSelected(selected);
+
+    // 랜덤 선택된 레스토랑의 상세 정보 로드
+    try {
+      const detail = await getRestaurantById(selected.r_id);
+      setSelectedRestaurantDetail(detail);
+    } catch (error) {
+      console.error('Error fetching restaurant detail:', error);
+    }
   };
+
+  // 네이버 지도로 위치 보기
+  const handleViewMap = () => {
+    if (selectedRestaurantDetail) {
+      const { latitude, longitude, name } = selectedRestaurantDetail;
+      // 네이버 지도 URL로 이동
+      const naverMapUrl = `https://map.naver.com/v5/search/${encodeURIComponent(name)}?c=${longitude},${latitude},15,0,0,0,dh`;
+      window.open(naverMapUrl, '_blank');
+    }
+  };
+
+  // 후기 보기
+  const handleViewReview = () => {
+    if (selectedRestaurantDetail && selectedRestaurantDetail.link) {
+      window.open(selectedRestaurantDetail.link, '_blank');
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  // 로그인 안 되어 있으면 아무것도 렌더링하지 않음
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="whattoeat">
@@ -271,18 +390,38 @@ const WhatToEat = () => {
                 )}
               </div>
             </div>
-            {filteredCount === 1 && filteredRestaurants.length > 0 && !randomSelected && (
+            {filteredCount === 1 && filteredRestaurants.length > 0 && !randomSelected && selectedRestaurantDetail && (
               <div className="single-restaurant">
                 <p>🎉 선택된 레스토랑:</p>
-                <p className="restaurant-name">{filteredRestaurants[0].name}</p>
-                <p className="restaurant-id">ID: {filteredRestaurants[0].r_id}</p>
+                <p className="restaurant-name">{selectedRestaurantDetail.name}</p>
+                <p className="restaurant-address">📍 {selectedRestaurantDetail.address}</p>
+                <div className="restaurant-actions">
+                  <button className="map-btn" onClick={handleViewMap}>
+                    🗺️ 네이버 지도로 보기
+                  </button>
+                  {selectedRestaurantDetail.link && (
+                    <button className="review-btn" onClick={handleViewReview}>
+                      ⭐ 후기 보기
+                    </button>
+                  )}
+                </div>
               </div>
             )}
-            {randomSelected && (
+            {randomSelected && selectedRestaurantDetail && (
               <div className="single-restaurant random">
                 <p>🎲 랜덤 선택된 레스토랑:</p>
-                <p className="restaurant-name">{randomSelected.name}</p>
-                <p className="restaurant-id">ID: {randomSelected.r_id}</p>
+                <p className="restaurant-name">{selectedRestaurantDetail.name}</p>
+                <p className="restaurant-address">📍 {selectedRestaurantDetail.address}</p>
+                <div className="restaurant-actions">
+                  <button className="map-btn" onClick={handleViewMap}>
+                    🗺️ 네이버 지도로 보기
+                  </button>
+                  {selectedRestaurantDetail.link && (
+                    <button className="review-btn" onClick={handleViewReview}>
+                      ⭐ 후기 보기
+                    </button>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -312,7 +451,7 @@ const WhatToEat = () => {
             >
               <div className="grid-number">1</div>
               <div className="grid-content">
-                {filters.drinkYN ? (filters.drinkYN === 'Y' ? '주류 가능' : '주류 불가') : grid[1]}
+                {filters.drinkYN !== null ? (filters.drinkYN ? '주류 가능' : '주류 불가') : grid[1]}
               </div>
             </div>
 
@@ -332,23 +471,23 @@ const WhatToEat = () => {
             >
               <div className="grid-number">3</div>
               <div className="grid-content">
-                {filters.partyNum ? `${filters.partyNum}명` : grid[3]}
+                {filters.signature || grid[3]}
               </div>
             </div>
+          </div>
 
-            <div
-              className={`filter-item ${!filters.location ? 'disabled' : 'clickable'}`}
-              onClick={(e) => !filters.location ? null : handleGridClick(4, e)}
-            >
+          {/* 파티원 비활성화 영역 */}
+          <div className="party-disabled">
+            <div className="filter-item disabled">
               <div className="grid-number">4</div>
               <div className="grid-content">
-                {filters.signature || grid[4]}
+                {grid[4]} (준비중)
               </div>
             </div>
           </div>
         </div>
 
-        {/* 위치 select box - 필터링된 데이터 사용 */}
+        {/* 위치 select box */}
         {activeSelect === 'location' && (
           <div
             className="select-dropdown"
@@ -363,10 +502,7 @@ const WhatToEat = () => {
               위치 선택
               <button className="reset-btn" onClick={handleResetLocation}>🔄 초기화</button>
             </div>
-            {(filters.location || filters.drinkYN || filters.category || filters.partyNum
-              ? getFilteredLocations({ ...filters, location: null })
-              : getLocations()
-            ).map((loc) => (
+            {availableOptions.locations.map((loc) => (
               <div
                 key={loc}
                 className="select-option"
@@ -378,7 +514,7 @@ const WhatToEat = () => {
           </div>
         )}
 
-        {/* location2 select box - 필터링된 데이터 사용 */}
+        {/* location2 select box */}
         {activeSelect === 'location2' && filters.location && (
           <div
             className="select-dropdown"
@@ -393,22 +529,24 @@ const WhatToEat = () => {
               상세 위치 선택
               <button className="reset-btn" onClick={handleResetLocation}>🔄 초기화</button>
             </div>
-            {(filters.drinkYN || filters.category || filters.partyNum
-              ? getFilteredLocation2s({ ...filters, location2: null })
-              : getLocation2s(filters.location)
-            ).map((loc2) => (
-              <div
-                key={loc2}
-                className="select-option"
-                onClick={() => handleLocation2Select(loc2)}
-              >
-                {loc2}
-              </div>
-            ))}
+            {allCategories
+              .filter(cat => cat.location === filters.location)
+              .map(cat => cat.location2)
+              .filter((v, i, a) => a.indexOf(v) === i)
+              .sort()
+              .map((loc2) => (
+                <div
+                  key={loc2}
+                  className="select-option"
+                  onClick={() => handleLocation2Select(loc2)}
+                >
+                  {loc2}
+                </div>
+              ))}
           </div>
         )}
 
-        {/* 음주 여부 select box - 필터링된 데이터 사용 */}
+        {/* 음주 여부 select box */}
         {activeSelect === 'drinkYN' && (
           <div
             className="select-dropdown"
@@ -423,22 +561,26 @@ const WhatToEat = () => {
               음주 여부 선택
               <button className="reset-btn" onClick={handleResetDrinkYN}>🔄 초기화</button>
             </div>
-            {(filters.location || filters.category || filters.partyNum
-              ? getFilteredDrinkYNs({ ...filters, drinkYN: null })
-              : getDrinkYNs()
-            ).map((drink) => (
+            {availableOptions.drinkYNs.includes(true) && (
               <div
-                key={drink}
                 className="select-option"
-                onClick={() => handleDrinkYNSelect(drink)}
+                onClick={() => handleDrinkYNSelect(true)}
               >
-                {drink === 'Y' ? '주류 가능' : '주류 불가'}
+                주류 가능
               </div>
-            ))}
+            )}
+            {availableOptions.drinkYNs.includes(false) && (
+              <div
+                className="select-option"
+                onClick={() => handleDrinkYNSelect(false)}
+              >
+                주류 불가
+              </div>
+            )}
           </div>
         )}
 
-        {/* 카테고리 select box - 필터링된 데이터 사용 */}
+        {/* 카테고리 select box */}
         {activeSelect === 'category' && (
           <div
             className="select-dropdown"
@@ -453,10 +595,7 @@ const WhatToEat = () => {
               카테고리 선택
               <button className="reset-btn" onClick={handleResetCategory}>🔄 초기화</button>
             </div>
-            {(filters.location || filters.drinkYN || filters.partyNum
-              ? getFilteredCategories({ ...filters, category: null })
-              : getCategories()
-            ).map((cat) => (
+            {availableOptions.categories.map((cat) => (
               <div
                 key={cat}
                 className="select-option"
@@ -495,7 +634,7 @@ const WhatToEat = () => {
           </div>
         )}
 
-        {/* 대표메뉴 select box - 필터링된 데이터 사용 */}
+        {/* 대표메뉴 select box */}
         {activeSelect === 'signature' && (
           <div
             className="select-dropdown"
@@ -510,10 +649,7 @@ const WhatToEat = () => {
               대표메뉴 선택
               <button className="reset-btn" onClick={handleResetSignature}>🔄 초기화</button>
             </div>
-            {(filters.location || filters.drinkYN || filters.category || filters.partyNum
-              ? getFilteredSignatures({ ...filters, signature: null })
-              : getSignatures()
-            ).map((sig) => (
+            {availableOptions.signatures.map((sig) => (
               <div
                 key={sig}
                 className="select-option"

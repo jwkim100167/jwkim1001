@@ -1,21 +1,46 @@
-// 샘플 레스토랑 데이터
-export const restaurantData = [
-  { r_id: 1, name: '봉천 한정식', location: '서울', location2: '봉천', drinkYN: 'Y', category: '한식', signature: '불고기', partyNumMin: 2, partyNumMax: 6 },
-  { r_id: 2, name: '봉천 스시바', location: '서울', location2: '봉천', drinkYN: 'N', category: '일식', signature: '초밥', partyNumMin: 1, partyNumMax: 4 },
-  { r_id: 3, name: '봉천 차이나', location: '서울', location2: '봉천', drinkYN: 'Y', category: '중식', signature: '짜장면', partyNumMin: 3, partyNumMax: 10 },
-  { r_id: 4, name: '군자 이탈리안', location: '서울', location2: '군자', drinkYN: 'N', category: '양식', signature: '파스타', partyNumMin: 2, partyNumMax: 4 },
-  { r_id: 5, name: '군자 갈비집', location: '서울', location2: '군자', drinkYN: 'Y', category: '한식', signature: '갈비', partyNumMin: 2, partyNumMax: 8 },
-  { r_id: 6, name: '연수 오마카세', location: '인천', location2: '연수', drinkYN: 'N', category: '일식', signature: '초밥', partyNumMin: 1, partyNumMax: 3 },
-  { r_id: 7, name: '연수 중화요리', location: '인천', location2: '연수', drinkYN: 'Y', category: '중식', signature: '탕수육', partyNumMin: 4, partyNumMax: 10 },
-  { r_id: 8, name: '연수 브런치카페', location: '인천', location2: '연수', drinkYN: 'N', category: '카페', signature: '샌드위치', partyNumMin: 1, partyNumMax: 6 },
-  { r_id: 9, name: '청라 스테이크', location: '인천', location2: '청라', drinkYN: 'Y', category: '양식', signature: '스테이크', partyNumMin: 2, partyNumMax: 4 },
-  { r_id: 10, name: '정자 한식뷔페', location: '분당', location2: '정자동', drinkYN: 'N', category: '한식', signature: '비빔밥', partyNumMin: 2, partyNumMax: 6 },
-  { r_id: 11, name: '정자 이자카야', location: '분당', location2: '정자동', drinkYN: 'Y', category: '일식', signature: '라멘', partyNumMin: 2, partyNumMax: 8 },
-  { r_id: 12, name: '정자 딤섬', location: '분당', location2: '정자동', drinkYN: 'N', category: '중식', signature: '딤섬', partyNumMin: 3, partyNumMax: 6 },
-  { r_id: 13, name: '양재 디저트카페', location: '안성', location2: '양재동', drinkYN: 'Y', category: '카페', signature: '케이크', partyNumMin: 1, partyNumMax: 4 },
-  { r_id: 14, name: '가락 파스타집', location: '안성', location2: '가락동', drinkYN: 'N', category: '양식', signature: '파스타', partyNumMin: 2, partyNumMax: 4 },
-  { r_id: 15, name: '기장 프리미엄한우', location: '부산', location2: '기장동', drinkYN: 'Y', category: '한식', signature: '한우', partyNumMin: 4, partyNumMax: 10 },
+// 레스토랑 상세 정보 테이블
+export const restaurantDataTable = [
+  { r_id: 1, name: '봉천 한정식', address: '서울시 관악구 봉천동 123-45', latitude: 37.4820, longitude: 126.9520, link: 'https://example.com/review1' },
+  { r_id: 2, name: '봉천 스시바', address: '서울시 관악구 봉천동 234-56', latitude: 37.4825, longitude: 126.9525, link: 'https://example.com/review2' },
+  { r_id: 3, name: '봉천 차이나', address: '서울시 관악구 봉천동 345-67', latitude: 37.4830, longitude: 126.9530, link: '' },
+  { r_id: 4, name: '군자 이탈리안', address: '서울시 광진구 군자동 456-78', latitude: 37.5565, longitude: 127.0735, link: 'https://example.com/review4' },
+  { r_id: 5, name: '군자 갈비집', address: '서울시 광진구 군자동 567-89', latitude: 37.5570, longitude: 127.0740, link: '' },
+  { r_id: 6, name: '연수 오마카세', address: '인천시 연수구 송도동 678-90', latitude: 37.3895, longitude: 126.6420, link: 'https://example.com/review6' },
+  { r_id: 7, name: '연수 중화요리', address: '인천시 연수구 송도동 789-01', latitude: 37.3900, longitude: 126.6425, link: '' },
+  { r_id: 8, name: '연수 브런치카페', address: '인천시 연수구 송도동 890-12', latitude: 37.3905, longitude: 126.6430, link: 'https://example.com/review8' },
+  { r_id: 9, name: '청라 스테이크', address: '인천시 서구 청라동 901-23', latitude: 37.5390, longitude: 126.6465, link: '' },
+  { r_id: 10, name: '정자 한식뷔페', address: '경기도 성남시 분당구 정자동 012-34', latitude: 37.3595, longitude: 127.1050, link: 'https://example.com/review10' },
+  { r_id: 11, name: '정자 이자카야', address: '경기도 성남시 분당구 정자동 123-45', latitude: 37.3600, longitude: 127.1055, link: '' },
+  { r_id: 12, name: '정자 딤섬', address: '경기도 성남시 분당구 정자동 234-56', latitude: 37.3605, longitude: 127.1060, link: 'https://example.com/review12' },
+  { r_id: 13, name: '양재 디저트카페', address: '경기도 안성시 양재동 345-67', latitude: 37.0085, longitude: 127.2795, link: '' },
+  { r_id: 14, name: '가락 파스타집', address: '경기도 안성시 가락동 456-78', latitude: 37.0090, longitude: 127.2800, link: 'https://example.com/review14' },
+  { r_id: 15, name: '기장 프리미엄한우', address: '부산시 기장군 기장읍 567-89', latitude: 35.2445, longitude: 129.2205, link: '' },
 ];
+
+// 레스토랑 카테고리 정보 테이블
+export const restaurantCategoryTable = [
+  { r_id: 1, location: '서울', location2: '봉천', drinkYN: 'Y', category: '한식', signature: '불고기', partyNumMin: 2, partyNumMax: 6 },
+  { r_id: 2, location: '서울', location2: '봉천', drinkYN: 'N', category: '일식', signature: '초밥', partyNumMin: 1, partyNumMax: 4 },
+  { r_id: 3, location: '서울', location2: '봉천', drinkYN: 'Y', category: '중식', signature: '짜장면', partyNumMin: 3, partyNumMax: 10 },
+  { r_id: 4, location: '서울', location2: '군자', drinkYN: 'N', category: '양식', signature: '파스타', partyNumMin: 2, partyNumMax: 4 },
+  { r_id: 5, location: '서울', location2: '군자', drinkYN: 'Y', category: '한식', signature: '갈비', partyNumMin: 2, partyNumMax: 8 },
+  { r_id: 6, location: '인천', location2: '연수', drinkYN: 'N', category: '일식', signature: '초밥', partyNumMin: 1, partyNumMax: 3 },
+  { r_id: 7, location: '인천', location2: '연수', drinkYN: 'Y', category: '중식', signature: '탕수육', partyNumMin: 4, partyNumMax: 10 },
+  { r_id: 8, location: '인천', location2: '연수', drinkYN: 'N', category: '카페', signature: '샌드위치', partyNumMin: 1, partyNumMax: 6 },
+  { r_id: 9, location: '인천', location2: '청라', drinkYN: 'Y', category: '양식', signature: '스테이크', partyNumMin: 2, partyNumMax: 4 },
+  { r_id: 10, location: '분당', location2: '정자동', drinkYN: 'N', category: '한식', signature: '비빔밥', partyNumMin: 2, partyNumMax: 6 },
+  { r_id: 11, location: '분당', location2: '정자동', drinkYN: 'Y', category: '일식', signature: '라멘', partyNumMin: 2, partyNumMax: 8 },
+  { r_id: 12, location: '분당', location2: '정자동', drinkYN: 'N', category: '중식', signature: '딤섬', partyNumMin: 3, partyNumMax: 6 },
+  { r_id: 13, location: '안성', location2: '양재동', drinkYN: 'Y', category: '카페', signature: '케이크', partyNumMin: 1, partyNumMax: 4 },
+  { r_id: 14, location: '안성', location2: '가락동', drinkYN: 'N', category: '양식', signature: '파스타', partyNumMin: 2, partyNumMax: 4 },
+  { r_id: 15, location: '부산', location2: '기장동', drinkYN: 'Y', category: '한식', signature: '한우', partyNumMin: 4, partyNumMax: 10 },
+];
+
+// 하위 호환성을 위한 기존 데이터 (deprecated)
+export const restaurantData = restaurantCategoryTable.map(cat => {
+  const data = restaurantDataTable.find(d => d.r_id === cat.r_id);
+  return { ...cat, name: data?.name || '' };
+});
 
 // 중복 제거 유틸리티 함수
 export const getUniqueValues = (data, key) => {
