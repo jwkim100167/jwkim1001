@@ -109,8 +109,8 @@ const WhatToEat = () => {
         setRandomSelected(null); // 필터 변경 시 랜덤 선택 초기화
         setSelectedRestaurantDetail(null); // 상세 정보 초기화
 
-        // 3개 이하일 때 자동으로 랜덤 선택 모달 표시
-        if (restaurants.length > 0 && restaurants.length <= 3 && filters.location2) {
+        // 2~3개일 때만 자동으로 랜덤 선택 모달 표시
+        if (restaurants.length >= 2 && restaurants.length <= 3 && filters.location2) {
           setShowRandomConfirmModal(true);
         }
 
@@ -442,7 +442,7 @@ const WhatToEat = () => {
                     예
                   </button>
                   <button className="confirm-btn no" onClick={handleCloseRandomConfirmModal}>
-                    아니오
+                    아니오 (직접 선택)
                   </button>
                 </div>
               </div>
@@ -459,6 +459,11 @@ const WhatToEat = () => {
                 <p className="modal-title">{randomSelected ? '🎲 랜덤 선택된 레스토랑' : '🎉 선택된 레스토랑'}</p>
                 <p className="restaurant-name">{selectedRestaurantDetail.name}</p>
                 <p className="restaurant-address">📍 {selectedRestaurantDetail.address}</p>
+                {(selectedRestaurantDetail.description || selectedRestaurantDetail.signature) && (
+                  <p className="restaurant-description">
+                    💬 {selectedRestaurantDetail.description || selectedRestaurantDetail.signature}
+                  </p>
+                )}
                 <div className={`restaurant-actions ${!selectedRestaurantDetail.link ? 'single-button' : ''}`}>
                   <button className="map-btn" onClick={handleViewMap}>
                     🗺️ 네이버 지도 검색

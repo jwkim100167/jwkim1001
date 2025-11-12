@@ -58,12 +58,14 @@
 .whattoeat-header {
   text-align: center;
   margin-bottom: 40px;
+  margin-top: 20px;
 }
 
 .whattoeat-header h1 {
   color: #667eea;
   font-size: 2.5rem;
   margin-bottom: 10px;
+  margin-top: 0;
 }
 
 .whattoeat-header p {
@@ -384,6 +386,11 @@
     padding: 15px;
   }
 
+  .whattoeat-header {
+    margin-top: 15px;
+    margin-bottom: 30px;
+  }
+
   .whattoeat-header h1 {
     font-size: 1.8rem;
   }
@@ -630,6 +637,16 @@
   margin: 15px 0;
 }
 
+.modal-restaurant .restaurant-description {
+  font-size: 1rem;
+  color: #555;
+  margin: 15px 0;
+  padding: 12px 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border-left: 3px solid #667eea;
+}
+
 .modal-restaurant .restaurant-actions {
   display: flex;
   gap: 10px;
@@ -828,12 +845,22 @@
     padding: 10px;
   }
 
+  .whattoeat-header {
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+
   .whattoeat-header h1 {
     font-size: 1.5rem;
   }
 
   .whattoeat-header p {
     font-size: 0.85rem;
+  }
+
+  .modal-restaurant .restaurant-description {
+    font-size: 0.9rem;
+    padding: 10px 15px;
   }
 
   .filter-result {
