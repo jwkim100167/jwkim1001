@@ -62,6 +62,9 @@ const WhatToEat = () => {
   // 선택된 레스토랑 상세 정보
   const [selectedRestaurantDetail, setSelectedRestaurantDetail] = useState(null);
 
+  // 팝업 모달 표시 여부
+  const [showRestaurantModal, setShowRestaurantModal] = useState(false);
+
   // 초기 데이터 로드
   useEffect(() => {
     const loadInitialData = async () => {
@@ -163,6 +166,7 @@ const WhatToEat = () => {
           // 레스토랑이 1개일 때 상세 정보 자동 로드
           const detail = await getRestaurantById(restaurants[0].r_id);
           setSelectedRestaurantDetail(detail);
+          setShowRestaurantModal(true);
         }
       } catch (error) {
         console.error('Error fetching filtered restaurants:', error);
@@ -327,6 +331,7 @@ const WhatToEat = () => {
     try {
       const detail = await getRestaurantById(selected.r_id);
       setSelectedRestaurantDetail(detail);
+      setShowRestaurantModal(true);
     } catch (error) {
       console.error('Error fetching restaurant detail:', error);
     }
@@ -347,6 +352,11 @@ const WhatToEat = () => {
     if (selectedRestaurantDetail && selectedRestaurantDetail.link) {
       window.open(selectedRestaurantDetail.link, '_blank');
     }
+  };
+
+  // 모달 닫기
+  const handleCloseModal = () => {
+    setShowRestaurantModal(false);
   };
 
   const handleLogout = () => {
@@ -390,42 +400,32 @@ const WhatToEat = () => {
                 )}
               </div>
             </div>
-            {filteredCount === 1 && filteredRestaurants.length > 0 && !randomSelected && selectedRestaurantDetail && (
-              <div className="single-restaurant">
-                <p>🎉 선택된 레스토랑:</p>
-                <p className="restaurant-name">{selectedRestaurantDetail.name}</p>
-                <p className="restaurant-address">📍 {selectedRestaurantDetail.address}</p>
-                <div className="restaurant-actions">
-                  <button className="map-btn" onClick={handleViewMap}>
-                    🗺️ 네이버 지도로 보기
-                  </button>
-                  {selectedRestaurantDetail.link && (
-                    <button className="review-btn" onClick={handleViewReview}>
-                      ⭐ 후기 보기
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-            {randomSelected && selectedRestaurantDetail && (
-              <div className="single-restaurant random">
-                <p>🎲 랜덤 선택된 레스토랑:</p>
-                <p className="restaurant-name">{selectedRestaurantDetail.name}</p>
-                <p className="restaurant-address">📍 {selectedRestaurantDetail.address}</p>
-                <div className="restaurant-actions">
-                  <button className="map-btn" onClick={handleViewMap}>
-                    🗺️ 네이버 지도로 보기
-                  </button>
-                  {selectedRestaurantDetail.link && (
-                    <button className="review-btn" onClick={handleViewReview}>
-                      ⭐ 후기 보기
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
         </div>
+
+        {/* 레스토랑 모달 팝업 */}
+        {showRestaurantModal && selectedRestaurantDetail && (
+          <div className="modal-overlay" onClick={handleCloseModal}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <button className="modal-close-btn" onClick={handleCloseModal}>×</button>
+              <div className={`modal-restaurant ${randomSelected ? 'random' : ''}`}>
+                <p className="modal-title">{randomSelected ? '🎲 랜덤 선택된 레스토랑' : '🎉 선택된 레스토랑'}</p>
+                <p className="restaurant-name">{selectedRestaurantDetail.name}</p>
+                <p className="restaurant-address">📍 {selectedRestaurantDetail.address}</p>
+                <div className="restaurant-actions">
+                  <button className="map-btn" onClick={handleViewMap}>
+                    🗺️ 네이버 지도로 보기
+                  </button>
+                  {selectedRestaurantDetail.link && (
+                    <button className="review-btn" onClick={handleViewReview}>
+                      ⭐ 후기 보기
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="grid-container">
           {/* 위치 선택 박스 - 최상단에 큰 박스로 */}
@@ -529,20 +529,15 @@ const WhatToEat = () => {
               상세 위치 선택
               <button className="reset-btn" onClick={handleResetLocation}>🔄 초기화</button>
             </div>
-            {allCategories
-              .filter(cat => cat.location === filters.location)
-              .map(cat => cat.location2)
-              .filter((v, i, a) => a.indexOf(v) === i)
-              .sort()
-              .map((loc2) => (
-                <div
-                  key={loc2}
-                  className="select-option"
-                  onClick={() => handleLocation2Select(loc2)}
-                >
-                  {loc2}
-                </div>
-              ))}
+            {availableOptions.location2s.map((loc2) => (
+              <div
+                key={loc2}
+                className="select-option"
+                onClick={() => handleLocation2Select(loc2)}
+              >
+                {loc2}
+              </div>
+            ))}
           </div>
         )}
 

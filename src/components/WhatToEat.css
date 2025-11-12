@@ -381,26 +381,88 @@
 
 @media (max-width: 768px) {
   .whattoeat-container {
-    padding: 20px;
-  }
-
-  .whattoeat-header h1 {
-    font-size: 2rem;
-  }
-
-  .grid-container {
-    gap: 10px;
-  }
-
-  .grid-item {
     padding: 15px;
   }
 
-  .grid-content {
+  .whattoeat-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .whattoeat-header p {
+    font-size: 0.95rem;
+  }
+
+  .filter-result {
     font-size: 1rem;
   }
 
-  .grid-number {
+  .filter-result .count {
+    font-size: 1.3rem;
+  }
+
+  .action-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .random-btn, .reset-all-btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+
+  .location-box {
+    padding: 30px 20px;
+  }
+
+  .location-box .location-icon {
+    font-size: 2rem;
+  }
+
+  .location-box .location-label {
+    font-size: 1rem;
+  }
+
+  .location-box .location-value {
+    font-size: 1.8rem;
+  }
+
+  .location-box .location-hint {
+    font-size: 0.85rem;
+  }
+
+  .filters-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .filter-item {
+    padding: 20px 15px;
+    min-height: 100px;
+  }
+
+  .filter-item .grid-content {
+    font-size: 1rem;
+  }
+
+  .filter-item .grid-number {
+    font-size: 0.9rem;
+  }
+
+  .restaurant-name {
+    font-size: 1.3rem;
+  }
+
+  .restaurant-address {
+    font-size: 1rem;
+  }
+
+  .map-btn, .review-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+
+  .back-btn {
+    padding: 12px;
     font-size: 1rem;
   }
 }
@@ -467,39 +529,269 @@
   font-weight: 600;
 }
 
+/* 모달 팝업 스타일 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  z-index: 3000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  position: relative;
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.4s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: #999;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.modal-close-btn:hover {
+  background: #f0f0f0;
+  color: #333;
+  transform: rotate(90deg);
+}
+
+.modal-restaurant {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.modal-restaurant.random {
+  animation: randomPop 0.5s ease-out;
+}
+
+.modal-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #667eea;
+  margin-bottom: 20px;
+}
+
+.modal-restaurant .restaurant-name {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+  margin: 15px 0;
+}
+
+.modal-restaurant .restaurant-address {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 15px 0;
+}
+
+.modal-restaurant .restaurant-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 @media (max-width: 480px) {
+  .modal-content {
+    padding: 20px;
+    max-width: 90%;
+  }
+
+  .modal-close-btn {
+    top: 10px;
+    right: 10px;
+    font-size: 1.8rem;
+    width: 35px;
+    height: 35px;
+  }
+
+  .modal-title {
+    font-size: 1rem;
+  }
+
+  .modal-restaurant .restaurant-name {
+    font-size: 1.4rem;
+  }
+
+  .modal-restaurant .restaurant-address {
+    font-size: 0.95rem;
+  }
+
+  .modal-restaurant .restaurant-actions {
+    flex-direction: column;
+  }
+
+  .modal-restaurant .map-btn,
+  .modal-restaurant .review-btn {
+    width: 100%;
+  }
+
   .whattoeat-container {
-    padding: 15px;
-  }
-
-  .whattoeat-header h1 {
-    font-size: 1.7rem;
-  }
-
-  .grid-container {
-    gap: 8px;
-  }
-
-  .grid-item {
     padding: 10px;
   }
 
-  .grid-content {
+  .whattoeat-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .whattoeat-header p {
+    font-size: 0.85rem;
+  }
+
+  .filter-result {
     font-size: 0.9rem;
   }
 
-  .grid-number {
+  .filter-result .count {
+    font-size: 1.2rem;
+  }
+
+  .result-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .action-buttons {
+    width: 100%;
+  }
+
+  .random-btn, .reset-all-btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    flex: 1;
+  }
+
+  .location-box {
+    padding: 20px 15px;
+  }
+
+  .location-box .location-icon {
+    font-size: 1.5rem;
+  }
+
+  .location-box .location-label {
     font-size: 0.9rem;
+  }
+
+  .location-box .location-value {
+    font-size: 1.5rem;
+  }
+
+  .location-box .location-hint {
+    font-size: 0.75rem;
+  }
+
+  .filters-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .filter-item {
+    padding: 15px 10px;
+    min-height: 80px;
+  }
+
+  .filter-item .grid-content {
+    font-size: 0.9rem;
+  }
+
+  .filter-item .grid-number {
+    font-size: 0.8rem;
     top: 5px;
     left: 5px;
   }
 
+  .single-restaurant {
+    padding: 15px;
+  }
+
+  .restaurant-name {
+    font-size: 1.1rem;
+  }
+
+  .restaurant-address {
+    font-size: 0.9rem;
+  }
+
+  .restaurant-actions {
+    flex-direction: column;
+  }
+
+  .map-btn, .review-btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    width: 100%;
+  }
+
+  .back-btn {
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+
   .select-dropdown {
     max-height: 200px;
+    min-width: 150px;
+  }
+
+  .select-title {
+    padding: 10px 12px;
+    font-size: 0.85rem;
   }
 
   .select-option {
     padding: 10px 12px;
     font-size: 0.85rem;
+  }
+
+  .reset-btn {
+    padding: 2px 6px;
+    font-size: 0.7rem;
   }
 }
