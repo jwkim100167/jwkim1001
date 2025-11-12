@@ -414,9 +414,9 @@ const WhatToEat = () => {
                 <p className="modal-title">{randomSelected ? '🎲 랜덤 선택된 레스토랑' : '🎉 선택된 레스토랑'}</p>
                 <p className="restaurant-name">{selectedRestaurantDetail.name}</p>
                 <p className="restaurant-address">📍 {selectedRestaurantDetail.address}</p>
-                <div className="restaurant-actions">
+                <div className={`restaurant-actions ${!selectedRestaurantDetail.link ? 'single-button' : ''}`}>
                   <button className="map-btn" onClick={handleViewMap}>
-                    🗺️ 네이버 지도로 보기
+                    🗺️ 네이버 지도 검색
                   </button>
                   {selectedRestaurantDetail.link && (
                     <button className="review-btn" onClick={handleViewReview}>

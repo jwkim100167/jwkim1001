@@ -638,6 +638,14 @@
   flex-wrap: wrap;
 }
 
+.modal-restaurant .restaurant-actions.single-button {
+  justify-content: center;
+}
+
+.modal-restaurant .restaurant-actions.single-button .map-btn {
+  min-width: 250px;
+}
+
 @media (max-width: 480px) {
   .modal-content {
     padding: 20px;
@@ -670,6 +678,11 @@
 
   .modal-restaurant .map-btn,
   .modal-restaurant .review-btn {
+    width: 100%;
+  }
+
+  .modal-restaurant .restaurant-actions.single-button .map-btn {
+    min-width: auto;
     width: 100%;
   }
 
