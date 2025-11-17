@@ -9,6 +9,7 @@ import Momok from './components/Momok';
 import WhatToEat from './components/WhatToEat';
 import Login from './components/Login';
 import MyPage from './components/MyPage';
+import Admin from './components/Admin';
 
 function App() {
   // GitHub Pages의 경우 basename 설정
@@ -21,6 +22,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/mypage" element={<MyPage />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/lotto" element={<Lotto />} />
           <Route path="/whattoeat" element={<WhatToEat />} />

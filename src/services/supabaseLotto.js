@@ -110,6 +110,7 @@ export async function getLottoNumberByRoundFromSupabase(round) {
  */
 export async function getLatestLottoNumberFromSupabase() {
   try {
+    console.log('🔍 최신 회차 조회 시작...')
     const { data, error } = await supabase
       .from('lottoTable')
       .select('*')
@@ -117,14 +118,19 @@ export async function getLatestLottoNumberFromSupabase() {
       .limit(1)
       .single()
 
+    console.log('📊 Supabase 응답:', { data, error })
+
     if (error) {
       console.error('❌ 최신 회차 조회 실패:', error)
       return null
     }
 
-    if (!data) return null
+    if (!data) {
+      console.log('⚠️ 데이터 없음')
+      return null
+    }
 
-    return {
+    const result = {
       round: data.number,
       date: data.date,
       num1: data.count1,
@@ -135,6 +141,9 @@ export async function getLatestLottoNumberFromSupabase() {
       num6: data.count6,
       bonus: data.bonus
     }
+
+    console.log('✅ 최신 회차 결과:', result)
+    return result
   } catch (err) {
     console.error('❌ 최신 회차 조회 중 예외 발생:', err)
     return null

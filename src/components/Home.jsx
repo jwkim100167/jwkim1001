@@ -19,9 +19,15 @@ const Home = () => {
           {isAuthenticated ? (
             <>
               <span className="user-greeting">👋 {user.loginId}님</span>
-              <button className="auth-btn mypage-btn" onClick={() => navigate('/mypage')}>
-                마이페이지
-              </button>
+              {user.loginId === 'admin' ? (
+                <button className="auth-btn admin-btn" onClick={() => navigate('/admin')}>
+                  📊 관리자 페이지
+                </button>
+              ) : (
+                <button className="auth-btn mypage-btn" onClick={() => navigate('/mypage')}>
+                  마이페이지
+                </button>
+              )}
               <button className="auth-btn logout-btn" onClick={handleLogout}>
                 로그아웃
               </button>

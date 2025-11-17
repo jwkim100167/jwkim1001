@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
-import { getSavedGames, getLottoNumberByRoundFromSupabase } from '../services/supabaseLotto';
+import { getSavedGames, getLottoNumberByRoundFromSupabase, getLatestLottoNumberFromSupabase } from '../services/supabaseLotto';
 import './MyPage.css';
 
 // 요약 회차 아이템 컴포넌트
@@ -80,26 +80,42 @@ function calculateRankStatic(gameNumbers, winningData) {
 }
 
 export default function MyPage() {
-  const { user, logout } = useAuth();
+  const { user, logout, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [savedGames, setSavedGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedRound, setSelectedRound] = useState(null);
   const [winningNumbers, setWinningNumbers] = useState(null);
   const [roundOptions, setRoundOptions] = useState([]);
+  const [latestRound, setLatestRound] = useState(null);
+  const [nextRound, setNextRound] = useState(null);
 
   useEffect(() => {
+    console.log('🔵 MyPage useEffect 실행됨, user:', user);
     if (user?.id) {
-      // 현재 최신 회차는 1197회 발표, 다음 회차는 1198회
-      const currentRound = 1198;
-      // 요약보기 + 지난 5주 회차 (1197부터 시작, 당첨번호가 있는 회차만)
-      const last5Rounds = Array.from({ length: 5 }, (_, i) => currentRound - 1 - i); // 1197, 1196, 1195, 1194, 1193
-      setRoundOptions(['summary', ...last5Rounds]);
+      console.log('✅ user.id 있음:', user.id);
+      // 최신 회차 가져오기
+      getLatestLottoNumberFromSupabase().then((data) => {
+        console.log('🔍 최신 회차 데이터:', data);
+        if (data) {
+          const latest = data.round;
+          console.log('📊 최신 회차:', latest, '다음 회차:', latest + 1);
+          setLatestRound(latest);
+          setNextRound(latest + 1);
 
-      // 기본값은 요약보기
-      setSelectedRound('summary');
+          // 요약보기 + 최신 5개 회차
+          const last5Rounds = Array.from({ length: 5 }, (_, i) => latest - i);
+          console.log('📋 요약보기 회차:', last5Rounds);
+          setRoundOptions(['summary', ...last5Rounds]);
+
+          // 기본값은 요약보기
+          setSelectedRound('summary');
+        }
+      });
 
       loadSavedGames();
+    } else {
+      console.log('❌ user 또는 user.id 없음');
     }
   }, [user]);
 
@@ -185,12 +201,22 @@ export default function MyPage() {
   // 선택된 회차의 저장된 게임 가져오기
   const selectedRoundGames = selectedRound && selectedRound !== 'summary' ? savedGames[selectedRound] : null;
 
-  // 이번주 선택번호 (1198회)
-  const currentRound = 1198;
-  const thisWeekGames = savedGames[currentRound];
+  // 이번주 선택번호 (최신회차 + 1)
+  const thisWeekGames = nextRound ? savedGames[nextRound] : null;
 
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/login');
+    }
+  }, [user, authLoading, navigate]);
+
+  // 인증 로딩 중이면 로딩 표시
+  if (authLoading) {
+    return <div className="mypage"><div className="loading">로딩 중...</div></div>;
+  }
+
+  // 로딩 완료 후 user가 없으면 null 반환 (useEffect에서 리다이렉트)
   if (!user) {
-    navigate('/login');
     return null;
   }
 
@@ -213,8 +239,8 @@ export default function MyPage() {
 
         {/* 이번주 선택번호 */}
         <div className="this-week-section">
-          <h2>🎲 이번주 선택번호 ({currentRound}회)</h2>
-          {loading ? (
+          <h2>🎲 이번주 선택번호 {nextRound && `(${nextRound}회)`}</h2>
+          {loading || !nextRound ? (
             <div className="loading">로딩 중...</div>
           ) : !thisWeekGames || thisWeekGames.length === 0 ? (
             <div className="no-selection">이번주는 선택하지 않았습니다.</div>
@@ -262,11 +288,11 @@ export default function MyPage() {
           {selectedRound === 'summary' ? (
             <div className="summary-view">
               <h3>최근 5회차 당첨 요약</h3>
-              {loading ? (
+              {loading || !latestRound ? (
                 <div className="loading">로딩 중...</div>
               ) : (
                 <div className="summary-list">
-                  {[1197, 1196, 1195, 1194, 1193].map((round) => {
+                  {Array.from({ length: 5 }, (_, i) => latestRound - i).map((round) => {
                     const games = savedGames[round];
                     if (!games || games.length === 0) {
                       return (

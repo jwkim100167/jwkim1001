@@ -316,6 +316,18 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
+.admin-btn {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
+}
+
+.admin-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(245, 87, 108, 0.5);
+}
+
 .logout-btn {
   background: rgba(231, 76, 60, 0.8);
   color: white;

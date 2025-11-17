@@ -138,7 +138,7 @@ const Lotto = () => {
 
       try {
         // 현재 회차 계산 (최신 회차 + 1)
-        const latestRound = lottoData.data[lottoData.data.length - 1].drwNo;
+        const latestRound = lottoData.data[lottoData.data.length - 1].round;
         const currentRound = latestRound + 1;
 
         console.log(`🔍 DB 최신 회차: ${latestRound}회, 현재 회차: ${currentRound}회`);
