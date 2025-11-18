@@ -10,6 +10,7 @@ import WhatToEat from './components/WhatToEat';
 import Login from './components/Login';
 import MyPage from './components/MyPage';
 import Admin from './components/Admin';
+import LottoAdmin from './components/LottoAdmin';
 
 function App() {
   // GitHub Pages의 경우 basename 설정
@@ -23,6 +24,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/lottoadmin" element={<LottoAdmin />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/lotto" element={<Lotto />} />
           <Route path="/whattoeat" element={<WhatToEat />} />
