@@ -210,10 +210,23 @@ export async function saveGeneratedGames(userId, lottoNumber, games) {
       return { success: false, savedCount: 0, error: '저장할 게임이 없습니다.' }
     }
 
-    let savedCount = 0
-    let allData = []
+    // 먼저 기존 데이터 삭제 (해당 userId + lottoNumber)
+    console.log(`🗑️ 기존 게임 삭제 시도: userId=${userId}, lottoNumber=${lottoNumber}`)
+    const { error: deleteError } = await supabase
+      .from('generateTable')
+      .delete()
+      .eq('u_id', userId)
+      .eq('l_number', lottoNumber)
 
-    // 각 게임을 개별적으로 저장 (UPSERT 방식)
+    if (deleteError) {
+      console.error('❌ 기존 게임 삭제 실패:', deleteError)
+      // 삭제 실패해도 계속 진행 (기존 데이터가 없을 수 있음)
+    } else {
+      console.log('✅ 기존 게임 삭제 완료')
+    }
+
+    // 새로운 게임들 준비
+    const gameRecords = []
     for (let index = 0; index < games.length; index++) {
       const gameNumbers = games[index]
 
@@ -222,7 +235,7 @@ export async function saveGeneratedGames(userId, lottoNumber, games) {
         continue
       }
 
-      const gameRecord = {
+      gameRecords.push({
         u_id: userId,
         l_number: lottoNumber,
         g_number: index + 1,
@@ -233,57 +246,23 @@ export async function saveGeneratedGames(userId, lottoNumber, games) {
         count5: gameNumbers[4],
         count6: gameNumbers[5],
         round_num: lottoNumber
-      }
-
-      console.log(`📝 게임 ${index + 1} 저장 시도:`, gameRecord)
-
-      // 기존 게임이 있는지 확인
-      const { data: existing } = await supabase
-        .from('generateTable')
-        .select('id')
-        .eq('u_id', userId)
-        .eq('l_number', lottoNumber)
-        .eq('g_number', index + 1)
-        .single()
-
-      if (existing) {
-        // UPDATE
-        console.log(`🔄 게임 ${index + 1} 업데이트`)
-        const { data, error } = await supabase
-          .from('generateTable')
-          .update({
-            count1: gameNumbers[0],
-            count2: gameNumbers[1],
-            count3: gameNumbers[2],
-            count4: gameNumbers[3],
-            count5: gameNumbers[4],
-            count6: gameNumbers[5]
-          })
-          .eq('id', existing.id)
-          .select()
-
-        if (error) {
-          console.error(`❌ 게임 ${index + 1} 업데이트 실패:`, error)
-        } else {
-          savedCount++
-          allData.push(data[0])
-        }
-      } else {
-        // INSERT
-        console.log(`➕ 게임 ${index + 1} 새로 저장`)
-        const { data, error } = await supabase
-          .from('generateTable')
-          .insert(gameRecord)
-          .select()
-
-        if (error) {
-          console.error(`❌ 게임 ${index + 1} 저장 실패:`, error)
-        } else {
-          savedCount++
-          allData.push(data[0])
-        }
-      }
+      })
     }
+
+    console.log(`📝 ${gameRecords.length}개 게임 일괄 저장 시도`)
+
+    // 일괄 INSERT
+    const { data: allData, error: insertError } = await supabase
+      .from('generateTable')
+      .insert(gameRecords)
+      .select()
+
+    if (insertError) {
+      console.error('❌ 게임 저장 실패:', insertError)
+      return { success: false, savedCount: 0, error: insertError.message }
+    }
+
+    const savedCount = allData?.length || 0
 
     console.log(`✅ 게임 저장 완료: ${savedCount}개`)
     return { success: true, savedCount, data: allData }
