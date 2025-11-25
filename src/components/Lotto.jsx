@@ -85,8 +85,9 @@ const Lotto = () => {
 
     try {
       // 현재 회차 계산 (최신 회차 + 1)
-      console.log('🔍 lottoData 구조 확인:', lottoData.data[lottoData.data.length - 1]);
-      const latestRound = lottoData.data[lottoData.data.length - 1].round;
+      console.log('🔍 불러오기 - lottoData 총 회차:', lottoData.data.length);
+      // 배열 순서와 무관하게 가장 큰 round 값 찾기
+      const latestRound = Math.max(...lottoData.data.map(item => item.round));
       console.log('🔍 DB 최신 회차:', latestRound, '타입:', typeof latestRound);
       const currentRound = latestRound + 1;
 
@@ -140,7 +141,7 @@ const Lotto = () => {
 
       try {
         // 현재 회차 계산 (최신 회차 + 1)
-        const latestRound = lottoData.data[lottoData.data.length - 1].round;
+        const latestRound = Math.max(...lottoData.data.map(item => item.round));
         const currentRound = latestRound + 1;
 
         console.log(`🔍 DB 최신 회차: ${latestRound}회, 현재 회차: ${currentRound}회`);
@@ -1962,7 +1963,7 @@ const Lotto = () => {
     // 저장된 게임 확인
     if (user?.id && lottoData?.data && lottoData.data.length > 0) {
       try {
-        const latestRound = lottoData.data[lottoData.data.length - 1].round;
+        const latestRound = Math.max(...lottoData.data.map(item => item.round));
         const currentRound = latestRound + 1;
         const savedGames = await getSavedGames(user.id, currentRound);
 
@@ -2135,7 +2136,7 @@ const Lotto = () => {
     // 저장된 게임 확인
     if (lottoData?.data && lottoData.data.length > 0) {
       try {
-        const latestRound = lottoData.data[lottoData.data.length - 1].round;
+        const latestRound = Math.max(...lottoData.data.map(item => item.round));
         const currentRound = latestRound + 1;
         const savedGames = await getSavedGames(user.id, currentRound);
 
@@ -2155,7 +2156,7 @@ const Lotto = () => {
     }
 
     try {
-      const latestRound = lottoData.data[lottoData.data.length - 1].round;
+      const latestRound = Math.max(...lottoData.data.map(item => item.round));
       const currentRound = latestRound + 1;
       console.log('💾 저장 시도:', { userId: user.id, currentRound, game });
       const result = await saveGeneratedGames(user.id, currentRound, [game]);
@@ -2194,7 +2195,7 @@ const Lotto = () => {
     // 저장된 게임 확인
     if (lottoData?.data && lottoData.data.length > 0) {
       try {
-        const latestRound = lottoData.data[lottoData.data.length - 1].round;
+        const latestRound = Math.max(...lottoData.data.map(item => item.round));
         const currentRound = latestRound + 1;
         const savedGames = await getSavedGames(user.id, currentRound);
 
@@ -2213,8 +2214,9 @@ const Lotto = () => {
     }
 
     try {
-      console.log('🔍 전체 게임 저장 - lottoData 구조 확인:', lottoData.data[lottoData.data.length - 1]);
-      const latestRound = lottoData.data[lottoData.data.length - 1].round;
+      console.log('🔍 전체 게임 저장 - lottoData 총 회차:', lottoData.data.length);
+      // 배열 순서와 무관하게 가장 큰 round 값 찾기
+      const latestRound = Math.max(...lottoData.data.map(item => item.round));
       console.log('🔍 전체 게임 저장 - DB 최신 회차:', latestRound, '타입:', typeof latestRound);
       const currentRound = latestRound + 1;
       console.log('🔍 전체 게임 저장 - 저장할 회차:', currentRound);
