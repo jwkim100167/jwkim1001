@@ -85,7 +85,7 @@ const Lotto = () => {
 
     try {
       // 현재 회차 계산 (최신 회차 + 1)
-      const latestRound = lottoData.data[lottoData.data.length - 1].drwNo;
+      const latestRound = lottoData.data[lottoData.data.length - 1].round;
       const currentRound = latestRound + 1;
 
       console.log(`📥 저장된 게임 불러오기 시도 - ${currentRound}회차`);
@@ -1958,7 +1958,7 @@ const Lotto = () => {
     // 저장된 게임 확인
     if (user?.id && lottoData?.data && lottoData.data.length > 0) {
       try {
-        const latestRound = lottoData.data[lottoData.data.length - 1].drwNo;
+        const latestRound = lottoData.data[lottoData.data.length - 1].round;
         const currentRound = latestRound + 1;
         const savedGames = await getSavedGames(user.id, currentRound);
 
@@ -2131,7 +2131,7 @@ const Lotto = () => {
     // 저장된 게임 확인
     if (lottoData?.data && lottoData.data.length > 0) {
       try {
-        const latestRound = lottoData.data[lottoData.data.length - 1].drwNo;
+        const latestRound = lottoData.data[lottoData.data.length - 1].round;
         const currentRound = latestRound + 1;
         const savedGames = await getSavedGames(user.id, currentRound);
 
@@ -2151,7 +2151,7 @@ const Lotto = () => {
     }
 
     try {
-      const latestRound = lottoData.data[lottoData.data.length - 1].drwNo;
+      const latestRound = lottoData.data[lottoData.data.length - 1].round;
       const currentRound = latestRound + 1;
       console.log('💾 저장 시도:', { userId: user.id, currentRound, game });
       const result = await saveGeneratedGames(user.id, currentRound, [game]);
@@ -2190,7 +2190,7 @@ const Lotto = () => {
     // 저장된 게임 확인
     if (lottoData?.data && lottoData.data.length > 0) {
       try {
-        const latestRound = lottoData.data[lottoData.data.length - 1].drwNo;
+        const latestRound = lottoData.data[lottoData.data.length - 1].round;
         const currentRound = latestRound + 1;
         const savedGames = await getSavedGames(user.id, currentRound);
 
@@ -2209,7 +2209,7 @@ const Lotto = () => {
     }
 
     try {
-      const latestRound = lottoData.data[lottoData.data.length - 1].drwNo;
+      const latestRound = lottoData.data[lottoData.data.length - 1].round;
       const currentRound = latestRound + 1;
       const result = await saveGeneratedGames(user.id, currentRound, generatedNumbers);
       if (result.success) {
