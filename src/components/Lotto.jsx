@@ -85,7 +85,9 @@ const Lotto = () => {
 
     try {
       // 현재 회차 계산 (최신 회차 + 1)
+      console.log('🔍 lottoData 구조 확인:', lottoData.data[lottoData.data.length - 1]);
       const latestRound = lottoData.data[lottoData.data.length - 1].round;
+      console.log('🔍 DB 최신 회차:', latestRound, '타입:', typeof latestRound);
       const currentRound = latestRound + 1;
 
       console.log(`📥 저장된 게임 불러오기 시도 - ${currentRound}회차`);
@@ -929,6 +931,8 @@ const Lotto = () => {
         const supabaseData = await getAllLottoDataFromSupabase();
         if (supabaseData && supabaseData.data && supabaseData.data.length > 0) {
           console.log(`✅ Supabase에서 ${supabaseData.data.length}개 회차 로드 완료`);
+          console.log('🔍 첫 번째 데이터:', supabaseData.data[0]);
+          console.log('🔍 마지막 데이터:', supabaseData.data[supabaseData.data.length - 1]);
           setLottoData(supabaseData);
         } else {
           console.error('❌ Supabase에서 데이터를 가져올 수 없습니다.');
