@@ -2213,8 +2213,11 @@ const Lotto = () => {
     }
 
     try {
+      console.log('🔍 전체 게임 저장 - lottoData 구조 확인:', lottoData.data[lottoData.data.length - 1]);
       const latestRound = lottoData.data[lottoData.data.length - 1].round;
+      console.log('🔍 전체 게임 저장 - DB 최신 회차:', latestRound, '타입:', typeof latestRound);
       const currentRound = latestRound + 1;
+      console.log('🔍 전체 게임 저장 - 저장할 회차:', currentRound);
       const result = await saveGeneratedGames(user.id, currentRound, generatedNumbers);
       if (result.success) {
         alert(`${result.savedCount}개 게임이 저장되었습니다!`);
