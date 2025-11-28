@@ -96,7 +96,20 @@ export default function Admin() {
             console.log('categoryIds Set:', categoryIds);
 
             // uncategorized 필터링
-            const uncategorized = dataTable.filter(data => {
+            // admin은 모든 레스토랑, 일반 사용자는 본인이 입력한 레스토랑만
+            let filteredByUser = dataTable;
+            if (user.loginId !== 'admin') {
+              filteredByUser = dataTable.filter(data => {
+                const dataUserId = data.u_id;
+                const userId = user.id;
+                return dataUserId === userId;
+              });
+              console.log(`사용자 ${user.loginId} (ID: ${user.id})가 입력한 레스토랑:`, filteredByUser);
+            } else {
+              console.log('Admin 사용자: 모든 레스토랑 표시');
+            }
+
+            const uncategorized = filteredByUser.filter(data => {
               const dataId = data[dataIdKey];
               const normalizedId = typeof dataId === 'number' ? dataId : parseInt(dataId);
               const hasCategory = categoryIds.has(normalizedId);
@@ -255,6 +268,12 @@ export default function Admin() {
       location2s = restaurantCategoryFromDB.map(item => item.location2).filter(Boolean);
     }
     return [...new Set(location2s)].sort();
+  };
+
+  // 기존 데이터에서 유니크한 category 목록 가져오기
+  const getUniqueCategories = () => {
+    const categories = restaurantCategoryFromDB.map(item => item.category).filter(Boolean);
+    return [...new Set(categories)].sort();
   };
 
   // 저장 핸들러
@@ -539,11 +558,9 @@ export default function Admin() {
                                 className="select-box"
                               >
                                 <option value="">-- 기존 카테고리 선택 --</option>
-                                <option value="한식">한식</option>
-                                <option value="일식">일식</option>
-                                <option value="중식">중식</option>
-                                <option value="양식">양식</option>
-                                <option value="카페">카페</option>
+                                {getUniqueCategories().map(cat => (
+                                  <option key={cat} value={cat}>{cat}</option>
+                                ))}
                               </select>
                               <span className="or-text">또는</span>
                               <input

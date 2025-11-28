@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
 import { getSavedGames, getLottoNumberByRoundFromSupabase, getLatestLottoNumberFromSupabase } from '../services/supabaseLotto';
 import { supabase } from '../supabaseClient';
+import { restaurantDataTable, restaurantCategoryTable } from '../data/restaurantData';
 import './MyPage.css';
 
 // 요약 회차 아이템 컴포넌트
@@ -100,6 +101,32 @@ export default function MyPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMessage, setPasswordMessage] = useState('');
 
+  // 오늘 뭐먹지 상태
+  const [foodSubMenu, setFoodSubMenu] = useState('restaurant'); // 'category' | 'restaurant'
+
+  // 레스토랑 추가 상태
+  const [newRestaurant, setNewRestaurant] = useState({
+    name: '',
+    isOpen: true
+  });
+  const [restaurantSaveMessage, setRestaurantSaveMessage] = useState('');
+
+  // 카테고리 관리 상태
+  const [myRestaurants, setMyRestaurants] = useState([]);
+  const [selectedRestaurantId, setSelectedRestaurantId] = useState('');
+  const [categoryData, setCategoryData] = useState({
+    location: '',
+    location2: '',
+    drinkYN: 'N',
+    category: '',
+    signature: '',
+    partyNumMin: 1,
+    partyNumMax: 10
+  });
+  const [categorySaveMessage, setCategorySaveMessage] = useState('');
+  const [restaurantCategoryFromDB, setRestaurantCategoryFromDB] = useState([]);
+  const [loadingCategory, setLoadingCategory] = useState(false);
+
   useEffect(() => {
     console.log('🔵 MyPage useEffect 실행됨, user:', user);
     if (user?.id) {
@@ -193,6 +220,220 @@ export default function MyPage() {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  // 레스토랑 저장 핸들러
+  const handleSaveRestaurant = async () => {
+    setRestaurantSaveMessage('');
+
+    if (!newRestaurant.name) {
+      setRestaurantSaveMessage('레스토랑 이름은 필수 항목입니다.');
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('restaurantDataTable')
+        .insert([{
+          name: newRestaurant.name,
+          u_id: user.id,
+          approve: false,
+          isOpen: newRestaurant.isOpen
+        }])
+        .select();
+
+      if (error) {
+        setRestaurantSaveMessage('저장에 실패했습니다: ' + error.message);
+        return;
+      }
+
+      setRestaurantSaveMessage('레스토랑이 성공적으로 추가되었습니다!');
+
+      // 추가된 레스토랑의 ID 가져오기
+      const newRestaurantId = data[0].r_id || data[0].id;
+
+      setNewRestaurant({
+        name: '',
+        isOpen: true
+      });
+
+      // 카테고리 관리 탭으로 전환하고 새로 추가된 레스토랑 선택
+      await loadMyRestaurants();
+      setFoodSubMenu('category');
+      setSelectedRestaurantId(newRestaurantId.toString());
+    } catch (error) {
+      console.error('레스토랑 저장 오류:', error);
+      setRestaurantSaveMessage('저장 중 오류가 발생했습니다.');
+    }
+  };
+
+  // 내 레스토랑 목록 로드
+  const loadMyRestaurants = async () => {
+    setLoadingCategory(true);
+    try {
+      // 내가 등록한 레스토랑 가져오기
+      const { data: restaurants, error: restaurantError } = await supabase
+        .from('restaurantDataTable')
+        .select('*')
+        .eq('u_id', user.id);
+
+      if (restaurantError) throw restaurantError;
+
+      // 카테고리 테이블 데이터 가져오기
+      const { data: categories, error: categoryError } = await supabase
+        .from('restaurantCategoryTable')
+        .select('*');
+
+      if (categoryError) throw categoryError;
+
+      setMyRestaurants(restaurants || []);
+      setRestaurantCategoryFromDB(categories || []);
+    } catch (error) {
+      console.error('레스토랑 로드 오류:', error);
+    } finally {
+      setLoadingCategory(false);
+    }
+  };
+
+  // 카테고리 관리 탭 활성화 시 데이터 로드
+  useEffect(() => {
+    if (activeTab === 'food' && foodSubMenu === 'category' && user?.id) {
+      loadMyRestaurants();
+    }
+  }, [activeTab, foodSubMenu, user]);
+
+  // 카테고리 저장 핸들러
+  const handleSaveCategory = async () => {
+    setCategorySaveMessage('');
+
+    if (!selectedRestaurantId) {
+      setCategorySaveMessage('레스토랑을 선택해주세요.');
+      return;
+    }
+
+    if (!categoryData.location || !categoryData.location2 || !categoryData.category) {
+      setCategorySaveMessage('대분류, 소분류, 카테고리는 필수 항목입니다.');
+      return;
+    }
+
+    try {
+      // 선택된 레스토랑의 이름 찾기
+      const selectedRestaurant = myRestaurants.find(r => {
+        const rid = r.r_id || r.id;
+        return rid === parseInt(selectedRestaurantId);
+      });
+
+      if (!selectedRestaurant) {
+        setCategorySaveMessage('레스토랑을 찾을 수 없습니다.');
+        return;
+      }
+
+      const { error } = await supabase
+        .from('restaurantCategoryTable')
+        .insert([{
+          r_id: parseInt(selectedRestaurantId),
+          r_name: selectedRestaurant.name,
+          location: categoryData.location,
+          location2: categoryData.location2,
+          drinkYN: categoryData.drinkYN,
+          category: categoryData.category,
+          signature: categoryData.signature || null,
+          partyNumMin: categoryData.partyNumMin,
+          partyNumMax: categoryData.partyNumMax
+        }]);
+
+      if (error) {
+        setCategorySaveMessage('저장에 실패했습니다: ' + error.message);
+        return;
+      }
+
+      setCategorySaveMessage('카테고리가 성공적으로 추가되었습니다!');
+      setSelectedRestaurantId('');
+      setCategoryData({
+        location: '',
+        location2: '',
+        drinkYN: 'N',
+        category: '',
+        signature: '',
+        partyNumMin: 1,
+        partyNumMax: 10
+      });
+
+      // 데이터 새로고침
+      loadMyRestaurants();
+    } catch (error) {
+      console.error('카테고리 저장 오류:', error);
+      setCategorySaveMessage('저장 중 오류가 발생했습니다.');
+    }
+  };
+
+  // 대분류 선택 시 소분류 초기화
+  const handleLocationChange = (value) => {
+    setCategoryData(prev => ({
+      ...prev,
+      location: value,
+      location2: '' // 대분류 변경 시 소분류 초기화
+    }));
+  };
+
+  // 카테고리 입력 처리
+  const handleCategoryChange = (field, value) => {
+    let processedValue = value;
+    if (field === 'partyNumMin' || field === 'partyNumMax') {
+      processedValue = value === '' ? 1 : parseInt(value);
+      if (isNaN(processedValue)) {
+        processedValue = 1;
+      }
+    }
+    setCategoryData(prev => ({ ...prev, [field]: processedValue }));
+  };
+
+  // 고유 카테고리 추출 함수
+  const getUniqueCategories = () => {
+    const categories = new Set();
+    restaurantCategoryFromDB.forEach(item => {
+      if (item.category) {
+        categories.add(item.category);
+      }
+    });
+    return Array.from(categories).sort();
+  };
+
+  // 대분류 목록 추출
+  const getUniqueLocations = () => {
+    const locations = new Set();
+    restaurantCategoryFromDB.forEach(item => {
+      if (item.location) {
+        locations.add(item.location);
+      }
+    });
+    return Array.from(locations).sort();
+  };
+
+  // 선택된 대분류에 따른 소분류 목록 추출
+  const getLocation2Options = () => {
+    if (!categoryData.location) return [];
+    const location2s = new Set();
+    restaurantCategoryFromDB.forEach(item => {
+      if (item.location === categoryData.location && item.location2) {
+        location2s.add(item.location2);
+      }
+    });
+    return Array.from(location2s).sort();
+  };
+
+  // 카테고리가 이미 있는 레스토랑 ID 목록
+  const getCategorizedRestaurantIds = () => {
+    return new Set(restaurantCategoryFromDB.map(cat => cat.r_id));
+  };
+
+  // 카테고리가 없는 내 레스토랑만 필터링
+  const getUncategorizedMyRestaurants = () => {
+    const categorizedIds = getCategorizedRestaurantIds();
+    return myRestaurants.filter(restaurant => {
+      const rid = restaurant.r_id || restaurant.id;
+      return !categorizedIds.has(rid);
+    });
   };
 
   // 비밀번호 변경 핸들러
@@ -513,10 +754,205 @@ export default function MyPage() {
           {/* 오늘 뭐먹지 탭 */}
           {activeTab === 'food' && (
             <div className="food-tab">
-              <div className="coming-soon">
-                <h2>🍽️ 오늘 뭐먹지</h2>
-                <p>기획 중입니다...</p>
+              {/* 서브메뉴 */}
+              <div className="food-submenu">
+                <button
+                  className={`submenu-btn ${foodSubMenu === 'restaurant' ? 'active' : ''}`}
+                  onClick={() => setFoodSubMenu('restaurant')}
+                >
+                  레스토랑 관리
+                </button>
+                <button
+                  className={`submenu-btn ${foodSubMenu === 'category' ? 'active' : ''}`}
+                  onClick={() => setFoodSubMenu('category')}
+                >
+                  카테고리 관리
+                </button>
               </div>
+
+              {/* 레스토랑 관리 */}
+              {foodSubMenu === 'restaurant' && (
+                <div className="food-admin-card">
+                  <h2>🍽️ 레스토랑 관리</h2>
+                  <p className="description">
+                    새로운 레스토랑을 등록할 수 있습니다. 카테고리까지 등록해야 조회가 가능합니다.
+                  </p>
+
+                  <div className="form-section">
+                    <div className="form-group">
+                      <label>레스토랑 이름 *</label>
+                      <input
+                        type="text"
+                        value={newRestaurant.name}
+                        onChange={(e) => setNewRestaurant(prev => ({ ...prev, name: e.target.value }))}
+                        placeholder="예: 봉천 한정식"
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>공유 여부</label>
+                      <select
+                        value={newRestaurant.isOpen}
+                        onChange={(e) => setNewRestaurant(prev => ({ ...prev, isOpen: e.target.value === 'true' }))}
+                        className="select-box"
+                      >
+                        <option value="true">O (공유함)</option>
+                        <option value="false">X (공유안함)</option>
+                      </select>
+                    </div>
+
+                    <button onClick={handleSaveRestaurant} className="save-btn">
+                      💾 레스토랑 추가하기
+                    </button>
+
+                    {restaurantSaveMessage && (
+                      <div className={`save-message ${restaurantSaveMessage.includes('성공') ? 'success' : 'error'}`}>
+                        {restaurantSaveMessage}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* 카테고리 관리 */}
+              {foodSubMenu === 'category' && (
+                <div className="food-admin-card">
+                  <h2>🏷️ 카테고리 관리</h2>
+                  <p className="description">
+                    내가 등록한 레스토랑에 카테고리를 할당할 수 있습니다.
+                  </p>
+
+                  {loadingCategory ? (
+                    <div className="loading">로딩 중...</div>
+                  ) : (
+                    <div className="form-section">
+                      {/* 레스토랑 선택 */}
+                      <div className="form-group">
+                        <label>레스토랑 선택 *</label>
+                        <select
+                          value={selectedRestaurantId}
+                          onChange={(e) => setSelectedRestaurantId(e.target.value)}
+                          className="select-box"
+                        >
+                          <option value="">레스토랑을 선택하세요</option>
+                          {getUncategorizedMyRestaurants().map(restaurant => {
+                            const rid = restaurant.r_id || restaurant.id;
+                            return (
+                              <option key={rid} value={rid}>
+                                {restaurant.name}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+
+                      {/* 대분류 */}
+                      <div className="form-group">
+                        <label>대분류 *</label>
+                        <select
+                          value={categoryData.location}
+                          onChange={(e) => handleLocationChange(e.target.value)}
+                          className="select-box"
+                        >
+                          <option value="">선택하세요</option>
+                          <option value="추후 입력">추후 입력</option>
+                          {getUniqueLocations().map(loc => (
+                            <option key={loc} value={loc}>{loc}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* 소분류 */}
+                      <div className="form-group">
+                        <label>소분류 *</label>
+                        <select
+                          value={categoryData.location2}
+                          onChange={(e) => handleCategoryChange('location2', e.target.value)}
+                          className="select-box"
+                          disabled={!categoryData.location}
+                        >
+                          <option value="">선택하세요</option>
+                          <option value="추후 입력">추후 입력</option>
+                          {getLocation2Options().map(loc2 => (
+                            <option key={loc2} value={loc2}>{loc2}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* 카테고리 */}
+                      <div className="form-group">
+                        <label>카테고리 *</label>
+                        <select
+                          value={categoryData.category}
+                          onChange={(e) => handleCategoryChange('category', e.target.value)}
+                          className="select-box"
+                        >
+                          <option value="">선택하세요</option>
+                          {getUniqueCategories().map(cat => (
+                            <option key={cat} value={cat}>{cat}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* 주류 여부 */}
+                      <div className="form-group">
+                        <label>주류 가능 여부</label>
+                        <select
+                          value={categoryData.drinkYN}
+                          onChange={(e) => handleCategoryChange('drinkYN', e.target.value)}
+                          className="select-box"
+                        >
+                          <option value="Y">Y (가능)</option>
+                          <option value="N">N (불가능)</option>
+                        </select>
+                      </div>
+
+                      {/* 시그니처 메뉴 */}
+                      <div className="form-group">
+                        <label>시그니처 메뉴</label>
+                        <input
+                          type="text"
+                          value={categoryData.signature}
+                          onChange={(e) => handleCategoryChange('signature', e.target.value)}
+                          placeholder="예: 제육볶음"
+                        />
+                      </div>
+
+                      {/* 인원수 */}
+                      <div className="party-num-group">
+                        <div className="form-group">
+                          <label>최소 인원</label>
+                          <input
+                            type="number"
+                            min="1"
+                            value={categoryData.partyNumMin}
+                            onChange={(e) => handleCategoryChange('partyNumMin', e.target.value)}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>최대 인원</label>
+                          <input
+                            type="number"
+                            min="1"
+                            value={categoryData.partyNumMax}
+                            onChange={(e) => handleCategoryChange('partyNumMax', e.target.value)}
+                          />
+                        </div>
+                      </div>
+
+                      <button onClick={handleSaveCategory} className="save-btn">
+                        💾 카테고리 저장하기
+                      </button>
+
+                      {categorySaveMessage && (
+                        <div className={`save-message ${categorySaveMessage.includes('성공') ? 'success' : 'error'}`}>
+                          {categorySaveMessage}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>
