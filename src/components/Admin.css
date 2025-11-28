@@ -181,6 +181,184 @@
   font-size: 1.1rem;
 }
 
+/* 오늘 뭐먹지 관리 */
+.food-admin-card {
+  background: #f8f9ff;
+  border-radius: 15px;
+  padding: 25px;
+}
+
+.food-admin-card h2 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.food-admin-card .description {
+  color: #666;
+  margin-bottom: 25px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.info-message {
+  text-align: center;
+  padding: 40px 20px;
+  background: #d4edda;
+  color: #155724;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.form-section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.select-box {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+  background: white;
+  cursor: pointer;
+}
+
+.select-box:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.category-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.category-input-group .select-box {
+  flex: 1;
+  min-width: 200px;
+}
+
+.or-text {
+  color: #999;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.new-category-input {
+  flex: 1;
+  min-width: 150px;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.new-category-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.add-category-btn {
+  padding: 12px 20px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.add-category-btn:hover {
+  background: #5568d3;
+  transform: translateY(-2px);
+}
+
+.selected-category {
+  margin-top: 10px;
+  padding: 10px;
+  background: #e8f5e9;
+  border-radius: 6px;
+  color: #2e7d32;
+  font-size: 0.95rem;
+}
+
+.party-num-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.party-num-group input {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.party-num-group input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.party-num-group span {
+  color: #666;
+  font-weight: 600;
+}
+
+.save-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46, 204, 113, 0.4);
+}
+
+.save-message {
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 15px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.save-message.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.save-message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
 .admin-container h1 {
   color: #333;
   margin-bottom: 2rem;
