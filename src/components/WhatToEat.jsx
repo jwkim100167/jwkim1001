@@ -465,14 +465,14 @@ const WhatToEat = () => {
                   </p>
                 )}
                 <div className={`restaurant-actions ${!selectedRestaurantDetail.link ? 'single-button' : ''}`}>
-                  <button className="map-btn" onClick={handleViewMap}>
-                    🗺️ 네이버 지도 검색
-                  </button>
                   {selectedRestaurantDetail.link && (
                     <button className="review-btn" onClick={handleViewReview}>
                       ⭐ 후기 보기
                     </button>
                   )}
+                  <button className="map-btn" onClick={handleViewMap}>
+                    🗺️ 네이버 지도에서 찾기
+                  </button>
                 </div>
               </div>
             </div>
