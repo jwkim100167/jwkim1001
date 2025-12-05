@@ -97,12 +97,15 @@ const Momok = () => {
 
   const filterAndShowResult = (userAnswers) => {
     let filteredMenus = menuDatabase.menus;
+    console.log('전체 메뉴 개수:', filteredMenus.length);
+    console.log('선택한 답변:', userAnswers);
 
     // 위치 필터링
     if (userAnswers.location && userAnswers.location !== '관계 없음') {
       filteredMenus = filteredMenus.filter(menu =>
         menu.location.includes(userAnswers.location)
       );
+      console.log('위치 필터 후:', filteredMenus.length);
     }
 
     // 컨셉 필터링
@@ -110,6 +113,7 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.concept.includes(userAnswers.concept)
       );
+      console.log('컨셉 필터 후:', filteredMenus.length);
     }
 
     // 인원 필터링
@@ -117,6 +121,7 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.people.includes(userAnswers.people)
       );
+      console.log('인원 필터 후:', filteredMenus.length);
     }
 
     // 예산 필터링
@@ -124,6 +129,7 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.budget.includes(userAnswers.budget)
       );
+      console.log('예산 필터 후:', filteredMenus.length);
     }
 
     // 양 필터링
@@ -131,6 +137,7 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.amount.includes(userAnswers.amount)
       );
+      console.log('양 필터 후:', filteredMenus.length);
     }
 
     // 맛 필터링
@@ -138,6 +145,7 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.taste.includes(userAnswers.taste)
       );
+      console.log('맛 필터 후:', filteredMenus.length);
     }
 
     // 음식 종류 필터링 (국물/면/밥)
@@ -145,6 +153,7 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.foodType.includes(userAnswers.foodType)
       );
+      console.log('음식종류 필터 후:', filteredMenus.length);
     }
 
     // 식사 분위기 필터링
@@ -152,6 +161,7 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.atmosphere.includes(userAnswers.atmosphere)
       );
+      console.log('분위기 필터 후:', filteredMenus.length);
     }
 
     // 메뉴 스타일 필터링
@@ -159,6 +169,7 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.menuStyle.includes(userAnswers.menuStyle)
       );
+      console.log('메뉴스타일 필터 후:', filteredMenus.length);
     }
 
     // 카테고리 제외
@@ -166,7 +177,10 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.category !== userAnswers.excludeCategory
       );
+      console.log('카테고리 제외 후:', filteredMenus.length);
     }
+
+    console.log('최종 필터링된 메뉴:', filteredMenus);
 
     // 랜덤으로 하나 선택
     if (filteredMenus.length > 0) {
