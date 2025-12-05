@@ -25,25 +25,25 @@ const Momok = () => {
       id: 'location',
       question: '어느 방향인가요?',
       icon: '📍',
-      options: ['무교동', '명동', '종각', '근처', '멀리도 가능', '관계 없음']
+      options: ['무교동', '명동', '종각', '근처', '관계없음']
     },
     {
       id: 'concept',
       question: '어떤 컨셉인가요?',
       icon: '🎯',
-      options: ['점심회식', '일상', '약속']
+      options: ['일상', '약속', '점심회식']
     },
     {
       id: 'people',
       question: '인원은 몇 명인가요?',
       icon: '👥',
-      options: ['혼밥', '4인이하', '5인이상']
+      options: ['혼밥', '2~4인', '5인이상']
     },
     {
       id: 'budget',
       question: '예산은 어느 정도인가요?',
       icon: '💰',
-      options: ['1만원 이하', '1-2만원', '2-3만원', '3만원 이상']
+      options: ['가성비', '적당', '상관없음']
     },
     {
       id: 'amount',
@@ -67,13 +67,13 @@ const Momok = () => {
       id: 'atmosphere',
       question: '식사 분위기는 어떤 게 좋나요?',
       icon: '⏱️',
-      options: ['빨리', '보통', '느긋', '상관없음']
+      options: ['빨리', '느긋', '상관없음']
     },
     {
       id: 'menuStyle',
       question: '메뉴 스타일은 어떤 게 좋나요?',
       icon: '🍽️',
-      options: ['한 그릇', '나눠 먹기']
+      options: ['나눠 먹기', '한 그릇']
     },
     {
       id: 'excludeCategory',
@@ -97,15 +97,12 @@ const Momok = () => {
 
   const filterAndShowResult = (userAnswers) => {
     let filteredMenus = menuDatabase.menus;
-    console.log('전체 메뉴 개수:', filteredMenus.length);
-    console.log('선택한 답변:', userAnswers);
 
     // 위치 필터링
-    if (userAnswers.location && userAnswers.location !== '관계 없음') {
+    if (userAnswers.location && userAnswers.location !== '관계없음') {
       filteredMenus = filteredMenus.filter(menu =>
         menu.location.includes(userAnswers.location)
       );
-      console.log('위치 필터 후:', filteredMenus.length);
     }
 
     // 컨셉 필터링
@@ -113,7 +110,6 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.concept.includes(userAnswers.concept)
       );
-      console.log('컨셉 필터 후:', filteredMenus.length);
     }
 
     // 인원 필터링
@@ -121,15 +117,13 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.people.includes(userAnswers.people)
       );
-      console.log('인원 필터 후:', filteredMenus.length);
     }
 
     // 예산 필터링
-    if (userAnswers.budget) {
+    if (userAnswers.budget && userAnswers.budget !== '상관없음') {
       filteredMenus = filteredMenus.filter(menu =>
         menu.budget.includes(userAnswers.budget)
       );
-      console.log('예산 필터 후:', filteredMenus.length);
     }
 
     // 양 필터링
@@ -137,7 +131,6 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.amount.includes(userAnswers.amount)
       );
-      console.log('양 필터 후:', filteredMenus.length);
     }
 
     // 맛 필터링
@@ -145,7 +138,6 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.taste.includes(userAnswers.taste)
       );
-      console.log('맛 필터 후:', filteredMenus.length);
     }
 
     // 음식 종류 필터링 (국물/면/밥)
@@ -153,7 +145,6 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.foodType.includes(userAnswers.foodType)
       );
-      console.log('음식종류 필터 후:', filteredMenus.length);
     }
 
     // 식사 분위기 필터링
@@ -161,7 +152,6 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.atmosphere.includes(userAnswers.atmosphere)
       );
-      console.log('분위기 필터 후:', filteredMenus.length);
     }
 
     // 메뉴 스타일 필터링
@@ -169,7 +159,6 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.menuStyle.includes(userAnswers.menuStyle)
       );
-      console.log('메뉴스타일 필터 후:', filteredMenus.length);
     }
 
     // 카테고리 제외
@@ -177,10 +166,7 @@ const Momok = () => {
       filteredMenus = filteredMenus.filter(menu =>
         menu.category !== userAnswers.excludeCategory
       );
-      console.log('카테고리 제외 후:', filteredMenus.length);
     }
-
-    console.log('최종 필터링된 메뉴:', filteredMenus);
 
     // 랜덤으로 하나 선택
     if (filteredMenus.length > 0) {
