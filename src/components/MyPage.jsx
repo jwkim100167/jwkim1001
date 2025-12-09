@@ -140,8 +140,8 @@ export default function MyPage() {
           setLatestRound(latest);
           setNextRound(latest + 1);
 
-          // 요약보기 + 최신 5개 회차
-          const last5Rounds = Array.from({ length: 5 }, (_, i) => latest - i);
+          // 요약보기 + 다음 회차 + 최신 4개 회차
+          const last5Rounds = [latest + 1, ...Array.from({ length: 4 }, (_, i) => latest - i)];
           console.log('📋 요약보기 회차:', last5Rounds);
           setRoundOptions(['summary', ...last5Rounds]);
 
@@ -670,7 +670,7 @@ export default function MyPage() {
                       <div className="loading">로딩 중...</div>
                     ) : (
                       <div className="summary-list">
-                        {Array.from({ length: 5 }, (_, i) => latestRound - i).map((round) => {
+                        {[latestRound + 1, ...Array.from({ length: 4 }, (_, i) => latestRound - i)].map((round) => {
                           const games = savedGames[round];
                           if (!games || games.length === 0) {
                             return (
