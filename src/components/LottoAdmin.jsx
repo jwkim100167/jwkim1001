@@ -150,8 +150,8 @@ export default function LottoAdmin() {
       const latestData = await getLatestLottoNumberFromSupabase();
       if (latestData) {
         const latest = latestData.round;
-        // 최신 5개 회차
-        const rounds = Array.from({ length: 5 }, (_, i) => latest - i);
+        // 다음 회차 + 최신 4개 회차
+        const rounds = [latest + 1, ...Array.from({ length: 4 }, (_, i) => latest - i)];
         setLatestRounds(rounds);
       }
 
