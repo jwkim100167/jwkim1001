@@ -2319,6 +2319,10 @@
   border-radius: 20px;
   padding: 25px;
   margin-bottom: 25px;
+  position: sticky;
+  top: 80px;
+  z-index: 100;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .main-title {
