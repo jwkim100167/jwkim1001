@@ -1,87 +1,145 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import menuDatabase from '../data/menuDatabase.json';
+import {
+  getRestaurantCategories,
+  getRestaurantById,
+  getUniqueValues
+} from '../services/supabaseRestaurant';
 import './Momok.css';
 
 const Momok = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({
-    location: null,
-    concept: null,
-    people: null,
-    budget: null,
-    amount: null,
-    taste: null,
-    foodType: null,
-    atmosphere: null,
-    menuStyle: null,
-    excludeCategory: null
+    mealTime: null,      // 점심/저녁 (데이터 없음)
+    mealKind: null,      // 식사 종류 (데이터 없음)
+    location: null,      // 위치 (대분류)
+    location2: null,     // 위치 (소분류)
+    drinkYN: null,       // 주류가능 여부
+    category: null,      // 카테고리
+    signature: null      // 대표메뉴
   });
   const [result, setResult] = useState(null);
+  const [restaurantData, setRestaurantData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Supabase에서 레스토랑 데이터 가져오기
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getRestaurantCategories();
+        setRestaurantData(data);
+      } catch (error) {
+        console.error('레스토랑 데이터 로드 실패:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // 동적으로 옵션 생성 - 이전 선택에 따라 필터링
+  const getLocationOptions = () => {
+    return [...getUniqueValues(restaurantData, 'location'), '상관없음'];
+  };
+
+  const getLocation2Options = () => {
+    let data = [...restaurantData];
+    if (answers.location && answers.location !== '상관없음') {
+      data = data.filter(r => r.location === answers.location);
+    }
+    return [...getUniqueValues(data, 'location2'), '상관없음'];
+  };
+
+  const getCategoryOptions = () => {
+    let data = [...restaurantData];
+    if (answers.location && answers.location !== '상관없음') {
+      data = data.filter(r => r.location === answers.location);
+    }
+    if (answers.location2 && answers.location2 !== '상관없음') {
+      data = data.filter(r => r.location2 === answers.location2);
+    }
+    if (answers.drinkYN && answers.drinkYN !== '상관없음') {
+      const drinkValue = answers.drinkYN === '예';
+      data = data.filter(r => r.drinkYN === drinkValue);
+    }
+    return [...getUniqueValues(data, 'category'), '상관없음'];
+  };
+
+  const getSignatureOptions = () => {
+    let data = [...restaurantData];
+    if (answers.location && answers.location !== '상관없음') {
+      data = data.filter(r => r.location === answers.location);
+    }
+    if (answers.location2 && answers.location2 !== '상관없음') {
+      data = data.filter(r => r.location2 === answers.location2);
+    }
+    if (answers.drinkYN && answers.drinkYN !== '상관없음') {
+      const drinkValue = answers.drinkYN === '예';
+      data = data.filter(r => r.drinkYN === drinkValue);
+    }
+    if (answers.category && answers.category !== '상관없음') {
+      data = data.filter(r => r.category === answers.category);
+    }
+    return [...getUniqueValues(data, 'signature'), '상관없음'];
+  };
 
   const questions = [
     {
-      id: 'location',
-      question: '어느 방향인가요?',
-      icon: '📍',
-      options: ['무교동', '명동', '종각', '근처', '관계없음']
-    },
-    {
-      id: 'concept',
-      question: '어떤 컨셉인가요?',
-      icon: '🎯',
-      options: ['일상', '약속', '점심회식']
-    },
-    {
-      id: 'people',
-      question: '인원은 몇 명인가요?',
-      icon: '👥',
-      options: ['혼밥', '2~4인', '5인이상']
-    },
-    {
-      id: 'budget',
-      question: '예산은 어느 정도인가요?',
-      icon: '💰',
-      options: ['가성비', '적당', '상관없음']
-    },
-    {
-      id: 'amount',
-      question: '양은 어느 정도가 좋나요?',
-      icon: '🍚',
-      options: ['적음', '적당함', '많음']
-    },
-    {
-      id: 'taste',
-      question: '어떤 맛을 원하시나요?',
-      icon: '👅',
-      options: ['담백', '고소', '감칠', '단짠', '기름진']
-    },
-    {
-      id: 'foodType',
-      question: '국물/면/밥 중 선호하는 게 있나요?',
-      icon: '🍜',
-      options: ['국물', '면', '밥', '상관없음']
-    },
-    {
-      id: 'atmosphere',
-      question: '식사 분위기는 어떤 게 좋나요?',
-      icon: '⏱️',
-      options: ['빨리', '느긋', '상관없음']
-    },
-    {
-      id: 'menuStyle',
-      question: '메뉴 스타일은 어떤 게 좋나요?',
+      id: 'mealTime',
+      question: '점심인가요, 저녁인가요?',
       icon: '🍽️',
-      options: ['나눠 먹기', '한 그릇']
+      options: ['점심', '저녁', '상관없음']
     },
     {
-      id: 'excludeCategory',
-      question: '어제 먹었던 카테고리를 제외해주세요',
-      icon: '🚫',
-      options: ['한식', '중식', '일식', '양식', '분식', '기타', '없음']
+      id: 'mealKind',
+      question: '어떤 종류의 식사를 원하시나요?',
+      icon: '🍴',
+      options: ['상관없음']
+    },
+    {
+      id: 'location',
+      question: '어느 지역이 좋으세요?',
+      icon: '📍',
+      getOptions: getLocationOptions
+    },
+    {
+      id: 'location2',
+      question: '더 구체적인 위치는?',
+      icon: '🗺️',
+      getOptions: getLocation2Options
+    },
+    {
+      id: 'drinkYN',
+      question: '주류가 가능한 곳이 좋나요?',
+      icon: '🍺',
+      options: ['예', '아니오', '상관없음']
+    },
+    {
+      id: 'category',
+      question: '어떤 카테고리가 좋나요?',
+      icon: '🍱',
+      getOptions: getCategoryOptions
+    },
+    {
+      id: 'signature',
+      question: '대표메뉴는 뭐가 좋나요?',
+      icon: '🍜',
+      getOptions: getSignatureOptions
     }
   ];
+
+  // 현재 질문의 옵션 가져오기
+  const getCurrentOptions = () => {
+    const currentQuestion = questions[step];
+    if (currentQuestion.options) {
+      return currentQuestion.options;
+    }
+    if (currentQuestion.getOptions) {
+      return currentQuestion.getOptions();
+    }
+    return [];
+  };
 
   const handleAnswer = (questionId, answer) => {
     const newAnswers = { ...answers, [questionId]: answer };
@@ -95,85 +153,74 @@ const Momok = () => {
     }
   };
 
-  const filterAndShowResult = (userAnswers) => {
-    let filteredMenus = menuDatabase.menus;
+  const filterAndShowResult = async (userAnswers) => {
+    let filteredRestaurants = [...restaurantData];
 
-    // 위치 필터링
-    if (userAnswers.location && userAnswers.location !== '관계없음') {
-      filteredMenus = filteredMenus.filter(menu =>
-        menu.location.includes(userAnswers.location)
+    // 점심/저녁 필터링
+    if (userAnswers.mealTime && userAnswers.mealTime !== '상관없음') {
+      filteredRestaurants = filteredRestaurants.filter(r => r.mealTime === userAnswers.mealTime);
+    }
+
+    // 위치 필터링 (대분류)
+    if (userAnswers.location && userAnswers.location !== '상관없음') {
+      filteredRestaurants = filteredRestaurants.filter(r =>
+        r.location === userAnswers.location
       );
     }
 
-    // 컨셉 필터링
-    if (userAnswers.concept) {
-      filteredMenus = filteredMenus.filter(menu =>
-        menu.concept.includes(userAnswers.concept)
+    // 위치 필터링 (소분류)
+    if (userAnswers.location2 && userAnswers.location2 !== '상관없음') {
+      filteredRestaurants = filteredRestaurants.filter(r =>
+        r.location2 === userAnswers.location2
       );
     }
 
-    // 인원 필터링
-    if (userAnswers.people) {
-      filteredMenus = filteredMenus.filter(menu =>
-        menu.people.includes(userAnswers.people)
+    // 주류가능 필터링
+    if (userAnswers.drinkYN && userAnswers.drinkYN !== '상관없음') {
+      const drinkValue = userAnswers.drinkYN === '예';
+      filteredRestaurants = filteredRestaurants.filter(r =>
+        r.drinkYN === drinkValue
       );
     }
 
-    // 예산 필터링
-    if (userAnswers.budget && userAnswers.budget !== '상관없음') {
-      filteredMenus = filteredMenus.filter(menu =>
-        menu.budget.includes(userAnswers.budget)
+    // 카테고리 필터링
+    if (userAnswers.category && userAnswers.category !== '상관없음') {
+      filteredRestaurants = filteredRestaurants.filter(r =>
+        r.category === userAnswers.category
       );
     }
 
-    // 양 필터링
-    if (userAnswers.amount) {
-      filteredMenus = filteredMenus.filter(menu =>
-        menu.amount.includes(userAnswers.amount)
-      );
-    }
-
-    // 맛 필터링
-    if (userAnswers.taste) {
-      filteredMenus = filteredMenus.filter(menu =>
-        menu.taste.includes(userAnswers.taste)
-      );
-    }
-
-    // 음식 종류 필터링 (국물/면/밥)
-    if (userAnswers.foodType && userAnswers.foodType !== '상관없음') {
-      filteredMenus = filteredMenus.filter(menu =>
-        menu.foodType.includes(userAnswers.foodType)
-      );
-    }
-
-    // 식사 분위기 필터링
-    if (userAnswers.atmosphere && userAnswers.atmosphere !== '상관없음') {
-      filteredMenus = filteredMenus.filter(menu =>
-        menu.atmosphere.includes(userAnswers.atmosphere)
-      );
-    }
-
-    // 메뉴 스타일 필터링
-    if (userAnswers.menuStyle) {
-      filteredMenus = filteredMenus.filter(menu =>
-        menu.menuStyle.includes(userAnswers.menuStyle)
-      );
-    }
-
-    // 카테고리 제외
-    if (userAnswers.excludeCategory && userAnswers.excludeCategory !== '없음') {
-      filteredMenus = filteredMenus.filter(menu =>
-        menu.category !== userAnswers.excludeCategory
+    // 대표메뉴 필터링
+    if (userAnswers.signature && userAnswers.signature !== '상관없음') {
+      filteredRestaurants = filteredRestaurants.filter(r =>
+        r.signature === userAnswers.signature
       );
     }
 
     // 랜덤으로 하나 선택
-    if (filteredMenus.length > 0) {
-      const randomMenu = filteredMenus[Math.floor(Math.random() * filteredMenus.length)];
-      setResult(randomMenu);
+    if (filteredRestaurants.length > 0) {
+      const randomRestaurant = filteredRestaurants[Math.floor(Math.random() * filteredRestaurants.length)];
+
+      try {
+        // Supabase에서 상세 정보 가져오기
+        const restaurantDetails = await getRestaurantById(randomRestaurant.r_id);
+        setResult({
+          ...randomRestaurant,
+          name: restaurantDetails?.name || '이름 없음',
+          address: restaurantDetails?.address || '',
+          link: restaurantDetails?.link || ''
+        });
+      } catch (error) {
+        console.error('레스토랑 상세 정보 가져오기 실패:', error);
+        setResult({
+          ...randomRestaurant,
+          name: '이름 없음',
+          address: '',
+          link: ''
+        });
+      }
     } else {
-      setResult({ name: '조건에 맞는 메뉴가 없습니다', category: '다시 시도해주세요' });
+      setResult({ name: '조건에 맞는 레스토랑이 없습니다', category: '다시 시도해주세요' });
     }
 
     setStep(questions.length); // 결과 화면으로
@@ -182,16 +229,13 @@ const Momok = () => {
   const handleReset = () => {
     setStep(0);
     setAnswers({
+      mealTime: null,
+      mealKind: null,
       location: null,
-      concept: null,
-      people: null,
-      budget: null,
-      amount: null,
-      taste: null,
-      foodType: null,
-      atmosphere: null,
-      menuStyle: null,
-      excludeCategory: null
+      location2: null,
+      drinkYN: null,
+      category: null,
+      signature: null
     });
     setResult(null);
   };
@@ -202,12 +246,25 @@ const Momok = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="momok">
+        <div className="momok-container">
+          <div className="momok-header">
+            <h1>🍽️ MOMOK</h1>
+            <p>데이터 로딩 중...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="momok">
       <div className="momok-container">
         <div className="momok-header">
           <h1>🍽️ MOMOK</h1>
-          <p>오늘 점심 뭐 먹지? 고민 끝!</p>
+          <p>오늘 뭐 먹지? 레스토랑 추천!</p>
         </div>
 
         {step < questions.length ? (
@@ -228,7 +285,7 @@ const Momok = () => {
               <h2 className="question-text">{questions[step].question}</h2>
 
               <div className="options-grid">
-                {questions[step].options.map((option, index) => (
+                {getCurrentOptions().map((option, index) => (
                   <button
                     key={index}
                     className="option-btn"
@@ -250,9 +307,32 @@ const Momok = () => {
           <div className="result-section">
             <div className="result-card">
               <div className="result-icon">🎉</div>
-              <h2 className="result-title">추천 메뉴</h2>
+              <h2 className="result-title">추천 레스토랑</h2>
               <div className="result-menu-name">{result?.name}</div>
               <div className="result-category">{result?.category}</div>
+              {result?.signature && (
+                <div className="result-signature">대표메뉴: {result.signature}</div>
+              )}
+              {result?.address && (
+                <div className="result-address">📍 {result.address}</div>
+              )}
+              <div className="result-links">
+                {result?.link && (
+                  <a href={result.link} target="_blank" rel="noopener noreferrer" className="result-link">
+                    리뷰 보기 →
+                  </a>
+                )}
+                {result?.name && result?.name !== '조건에 맞는 레스토랑이 없습니다' && (
+                  <a
+                    href={`https://map.naver.com/p/search/${encodeURIComponent(result.name + ' ' + (result.address || ''))}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="result-link naver-map-link"
+                  >
+                    네이버 지도 →
+                  </a>
+                )}
+              </div>
 
               <div className="result-actions">
                 <button className="retry-btn" onClick={handleReset}>

@@ -115,6 +115,8 @@ export default function MyPage() {
   const [myRestaurants, setMyRestaurants] = useState([]);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState('');
   const [categoryData, setCategoryData] = useState({
+    mealTime: '',
+    mealKind: '',
     location: '',
     location2: '',
     drinkYN: 'N',
@@ -333,6 +335,8 @@ export default function MyPage() {
         .insert([{
           r_id: parseInt(selectedRestaurantId),
           r_name: selectedRestaurant.name,
+          mealTime: categoryData.mealTime || null,
+          mealKind: categoryData.mealKind || null,
           location: categoryData.location,
           location2: categoryData.location2,
           drinkYN: categoryData.drinkYN,
@@ -350,6 +354,8 @@ export default function MyPage() {
       setCategorySaveMessage('카테고리가 성공적으로 추가되었습니다!');
       setSelectedRestaurantId('');
       setCategoryData({
+        mealTime: '',
+        mealKind: '',
         location: '',
         location2: '',
         drinkYN: 'N',
@@ -843,6 +849,33 @@ export default function MyPage() {
                               </option>
                             );
                           })}
+                        </select>
+                      </div>
+
+                      {/* 점심/저녁 */}
+                      <div className="form-group">
+                        <label>점심/저녁</label>
+                        <select
+                          value={categoryData.mealTime}
+                          onChange={(e) => handleCategoryChange('mealTime', e.target.value)}
+                          className="select-box"
+                        >
+                          <option value="">선택하세요</option>
+                          <option value="점심">점심</option>
+                          <option value="저녁">저녁</option>
+                        </select>
+                      </div>
+
+                      {/* 식사 종류 */}
+                      <div className="form-group">
+                        <label>식사 종류</label>
+                        <select
+                          value={categoryData.mealKind}
+                          onChange={(e) => handleCategoryChange('mealKind', e.target.value)}
+                          className="select-box"
+                        >
+                          <option value="">선택하세요</option>
+                          <option value="상관없음">상관없음</option>
                         </select>
                       </div>
 

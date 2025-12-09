@@ -189,7 +189,53 @@
 .result-category {
   font-size: 1.3rem;
   color: #999;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
+}
+
+.result-signature {
+  font-size: 1.1rem;
+  color: #764ba2;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+.result-address {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.result-links {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.result-link {
+  display: inline-block;
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.result-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.naver-map-link {
+  background: linear-gradient(135deg, #03c75a 0%, #029c47 100%);
+}
+
+.naver-map-link:hover {
+  box-shadow: 0 5px 15px rgba(3, 199, 90, 0.4);
 }
 
 .result-actions {
