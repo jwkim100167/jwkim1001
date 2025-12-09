@@ -53,6 +53,9 @@ const Momok = () => {
 
   const getCategoryOptions = () => {
     let data = [...restaurantData];
+    if (answers.mealTime && answers.mealTime !== '상관없음') {
+      data = data.filter(r => r.mealTime === answers.mealTime);
+    }
     if (answers.location && answers.location !== '상관없음') {
       data = data.filter(r => r.location === answers.location);
     }
@@ -68,6 +71,9 @@ const Momok = () => {
 
   const getSignatureOptions = () => {
     let data = [...restaurantData];
+    if (answers.mealTime && answers.mealTime !== '상관없음') {
+      data = data.filter(r => r.mealTime === answers.mealTime);
+    }
     if (answers.location && answers.location !== '상관없음') {
       data = data.filter(r => r.location === answers.location);
     }
