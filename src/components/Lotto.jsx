@@ -51,9 +51,27 @@ const Lotto = () => {
   const [showPatternOptions, setShowPatternOptions] = useState(false); // 제외 패턴 옵션 표시 상태
 
   // 함수 참조를 위한 ref
+  const controlsRef = useRef(null);
+  const [isControlsFixed, setIsControlsFixed] = useState(false);
+
   // Auth hooks
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
+
+  // 스크롤 이벤트로 게임 생성 버튼 고정
+  useEffect(() => {
+    const handleScroll = () => {
+      if (activeTab !== 'generator' || !controlsRef.current) return;
+
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const triggerPoint = 210; // 탭 아래 위치
+
+      setIsControlsFixed(scrollTop > triggerPoint);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [activeTab]);
 
   // 디버깅: Supabase auth UUID 확인
   useEffect(() => {
@@ -2477,11 +2495,12 @@ const Lotto = () => {
           </button>
         </div>
 
-        <div className="lotto-content">
-          {activeTab === 'generator' && (
-            <div className="generator-section">
-              {/* 게임 생성 버튼을 맨 위로 */}
-              <div className="generator-controls-top">
+        {/* 게임 생성 버튼을 lotto-content 밖으로 - generator 탭일 때만 표시 */}
+        {activeTab === 'generator' && (
+          <div
+            ref={controlsRef}
+            className={`generator-controls-top ${isControlsFixed ? 'fixed' : ''}`}
+          >
                 <div className="section-title-with-help">
                   <h2 className="main-title">🎲 게임 생성</h2>
                   <button
@@ -2511,8 +2530,12 @@ const Lotto = () => {
                     <button onClick={() => generateSingleGame(4)} className="generate-btn-small">게임 5</button>
                   </div>
                 </div>
-              </div>
+          </div>
+        )}
 
+        <div className="lotto-content">
+          {activeTab === 'generator' && (
+            <div className="generator-section">
               {/* 내 게임 불러오기 / 전체 저장 버튼 */}
               <div className="game-management-buttons">
                 <button className="load-games-btn" onClick={loadSavedGamesFromDB}>

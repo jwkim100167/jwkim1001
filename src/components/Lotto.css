@@ -5,7 +5,6 @@
   align-items: flex-start;
   justify-content: center;
   padding: 80px 20px 20px 20px;
-  overflow-y: auto;
   overflow-x: hidden;
   position: relative;
 }
@@ -15,12 +14,15 @@
   min-width: 800px; /* 최소 너비도 설정해서 일관성 유지 */
   width: 800px;
   text-align: center;
+  position: relative;
 }
 
 .lotto-header {
   color: white;
   margin-bottom: 30px;
   margin-top: 0;
+  position: relative;
+  z-index: 2000;
 }
 
 .lotto-header h1 {
@@ -44,6 +46,8 @@
   background: rgba(255, 255, 255, 0.1);
   border-radius: 25px;
   padding: 5px;
+  position: relative;
+  z-index: 1500;
 }
 
 .tab-btn {
@@ -94,6 +98,10 @@
   display: flex;
   flex-direction: column;
   width: 100%; /* 전체 너비 사용 */
+}
+
+.generator-section {
+  padding-top: 260px; /* 고정된 버튼 영역만큼 공간 확보 */
 }
 
 /* 필수 포함 번호 섹션 */
@@ -2314,15 +2322,24 @@
 
 /* 번호 생성기 재배치 스타일 */
 .generator-controls-top {
-  background: linear-gradient(135deg, rgba(103, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+  background: linear-gradient(135deg, rgba(103, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
   border: 2px solid rgba(103, 126, 234, 0.5);
   border-radius: 20px;
   padding: 25px;
   margin-bottom: 25px;
-  position: sticky;
-  top: 80px;
+  margin-top: 10px;
   z-index: 100;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+.generator-controls-top.fixed {
+  position: fixed;
+  top: 210px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 750px;
+  width: 750px;
 }
 
 .main-title {
