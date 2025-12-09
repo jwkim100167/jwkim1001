@@ -20,6 +20,7 @@ const Momok = () => {
     signature: null      // 대표메뉴
   });
   const [result, setResult] = useState(null);
+  const [candidateRestaurants, setCandidateRestaurants] = useState([]); // 3개 이하일 때 선택지
   const [restaurantData, setRestaurantData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -142,7 +143,10 @@ const Momok = () => {
       return currentQuestion.options;
     }
     if (currentQuestion.getOptions) {
-      return currentQuestion.getOptions();
+      const options = currentQuestion.getOptions();
+      // '상관없음' 제외하고 실제 옵션만 확인
+      const realOptions = options.filter(opt => opt !== '상관없음');
+      return realOptions.length > 0 ? options : ['상관없음'];
     }
     return [];
   };
@@ -151,8 +155,33 @@ const Momok = () => {
     const newAnswers = { ...answers, [questionId]: answer };
     setAnswers(newAnswers);
 
+    // 다음 단계로 이동하기 전에 옵션 개수 확인
     if (step < questions.length - 1) {
-      setStep(step + 1);
+      const nextStep = step + 1;
+      setStep(nextStep);
+
+      // 다음 질문의 옵션을 미리 확인
+      setTimeout(() => {
+        const nextQuestion = questions[nextStep];
+        let nextOptions = [];
+
+        if (nextQuestion.options) {
+          nextOptions = nextQuestion.options;
+        } else if (nextQuestion.getOptions) {
+          nextOptions = nextQuestion.getOptions();
+        }
+
+        // '상관없음' 제외한 실제 옵션 개수 확인
+        const realOptions = nextOptions.filter(opt => opt !== '상관없음');
+
+        // 실제 옵션이 1개면 자동으로 선택
+        if (realOptions.length === 1) {
+          handleAnswer(nextQuestion.id, realOptions[0]);
+        } else if (realOptions.length === 0) {
+          // 옵션이 없으면 '상관없음' 자동 선택
+          handleAnswer(nextQuestion.id, '상관없음');
+        }
+      }, 0);
     } else {
       // 마지막 질문까지 답했으면 필터링 시작
       filterAndShowResult(newAnswers);
@@ -203,12 +232,41 @@ const Momok = () => {
       );
     }
 
-    // 랜덤으로 하나 선택
-    if (filteredRestaurants.length > 0) {
+    // 필터링 결과에 따라 처리
+    if (filteredRestaurants.length === 0) {
+      // 데이터가 없으면 이전 단계로 돌아가기
+      alert('조건에 맞는 레스토랑이 없습니다. 다른 옵션을 선택해주세요.');
+      setStep(step - 1);
+      return;
+    } else if (filteredRestaurants.length <= 3) {
+      // 3개 이하면 선택지 보여주기
+      const restaurantsWithDetails = await Promise.all(
+        filteredRestaurants.map(async (restaurant) => {
+          try {
+            const details = await getRestaurantById(restaurant.r_id);
+            return {
+              ...restaurant,
+              name: details?.name || '이름 없음',
+              address: details?.address || '',
+              link: details?.link || ''
+            };
+          } catch (error) {
+            return {
+              ...restaurant,
+              name: '이름 없음',
+              address: '',
+              link: ''
+            };
+          }
+        })
+      );
+      setCandidateRestaurants(restaurantsWithDetails);
+      setStep(questions.length); // 선택 화면으로
+    } else {
+      // 4개 이상이면 랜덤으로 하나 선택
       const randomRestaurant = filteredRestaurants[Math.floor(Math.random() * filteredRestaurants.length)];
 
       try {
-        // Supabase에서 상세 정보 가져오기
         const restaurantDetails = await getRestaurantById(randomRestaurant.r_id);
         setResult({
           ...randomRestaurant,
@@ -225,11 +283,8 @@ const Momok = () => {
           link: ''
         });
       }
-    } else {
-      setResult({ name: '조건에 맞는 레스토랑이 없습니다', category: '다시 시도해주세요' });
+      setStep(questions.length); // 결과 화면으로
     }
-
-    setStep(questions.length); // 결과 화면으로
   };
 
   const handleReset = () => {
@@ -244,6 +299,18 @@ const Momok = () => {
       signature: null
     });
     setResult(null);
+    setCandidateRestaurants([]);
+  };
+
+  const handleSelectRestaurant = (restaurant) => {
+    setResult(restaurant);
+    setCandidateRestaurants([]);
+  };
+
+  const handleRandomSelect = () => {
+    const randomRestaurant = candidateRestaurants[Math.floor(Math.random() * candidateRestaurants.length)];
+    setResult(randomRestaurant);
+    setCandidateRestaurants([]);
   };
 
   const handlePrevious = () => {
@@ -308,6 +375,35 @@ const Momok = () => {
                 ← 이전 질문
               </button>
             )}
+          </div>
+        ) : candidateRestaurants.length > 0 ? (
+          <div className="result-section">
+            <div className="result-card">
+              <div className="result-icon">🤔</div>
+              <h2 className="result-title">레스토랑을 선택해주세요</h2>
+              <p className="result-subtitle">조건에 맞는 레스토랑이 {candidateRestaurants.length}개 있습니다</p>
+
+              <div className="candidate-list">
+                {candidateRestaurants.map((restaurant, index) => (
+                  <div key={index} className="candidate-item" onClick={() => handleSelectRestaurant(restaurant)}>
+                    <div className="candidate-name">{restaurant.name}</div>
+                    <div className="candidate-info">
+                      <span className="candidate-category">{restaurant.category}</span>
+                      {restaurant.signature && <span className="candidate-signature">• {restaurant.signature}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="result-actions">
+                <button className="retry-btn" onClick={handleRandomSelect}>
+                  🎲 랜덤으로 선택
+                </button>
+                <button className="prev-btn" onClick={handlePrevious}>
+                  ← 다시 선택
+                </button>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="result-section">

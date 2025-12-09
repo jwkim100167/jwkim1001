@@ -263,6 +263,59 @@
   box-shadow: 0 8px 30px rgba(245, 87, 108, 0.4);
 }
 
+/* 후보 선택 화면 */
+.result-subtitle {
+  text-align: center;
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+}
+
+.candidate-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.candidate-item {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 20px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.candidate-item:hover {
+  transform: translateX(5px);
+  border-color: #667eea;
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.candidate-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #667eea;
+  margin-bottom: 8px;
+}
+
+.candidate-info {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: #666;
+  font-size: 1rem;
+}
+
+.candidate-category {
+  font-weight: 600;
+}
+
+.candidate-signature {
+  color: #764ba2;
+}
+
 /* 선택한 답변 */
 .selected-answers {
   background: rgba(255, 255, 255, 0.95);
