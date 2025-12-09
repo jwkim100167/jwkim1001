@@ -55,6 +55,12 @@ function UserWinningInfo({ userId, loginId, latestRounds }) {
                 gameCount: roundGames.length,
                 bestRank: bestRank
               };
+            } else {
+              // 당첨번호가 없는 경우 (미래 회차)
+              winningResults[round] = {
+                gameCount: roundGames.length,
+                bestRank: '대기중'
+              };
             }
           }
         }
@@ -112,10 +118,19 @@ function UserWinningInfo({ userId, loginId, latestRounds }) {
 
           return (
             <div key={round} className="round-cell">
-              <span className={`rank rank-${info.bestRank}`}>
-                {typeof info.bestRank === 'number' ? `${info.bestRank}등` : info.bestRank}
-              </span>
-              <span className="game-count">({info.gameCount}게임)</span>
+              {info.bestRank === '대기중' ? (
+                <>
+                  <span className="rank rank-waiting">참여</span>
+                  <span className="game-count">({info.gameCount}게임)</span>
+                </>
+              ) : (
+                <>
+                  <span className={`rank rank-${info.bestRank}`}>
+                    {typeof info.bestRank === 'number' ? `${info.bestRank}등` : info.bestRank}
+                  </span>
+                  <span className="game-count">({info.gameCount}게임)</span>
+                </>
+              )}
             </div>
           );
         })
