@@ -102,7 +102,7 @@ const Momok = () => {
       id: 'mealKind',
       question: '어떤 종류의 식사를 원하시나요?',
       icon: '🍴',
-      options: ['상관없음']
+      options: ['데이터 입력 중']
     },
     {
       id: 'location',
@@ -155,33 +155,8 @@ const Momok = () => {
     const newAnswers = { ...answers, [questionId]: answer };
     setAnswers(newAnswers);
 
-    // 다음 단계로 이동하기 전에 옵션 개수 확인
     if (step < questions.length - 1) {
-      const nextStep = step + 1;
-      setStep(nextStep);
-
-      // 다음 질문의 옵션을 미리 확인
-      setTimeout(() => {
-        const nextQuestion = questions[nextStep];
-        let nextOptions = [];
-
-        if (nextQuestion.options) {
-          nextOptions = nextQuestion.options;
-        } else if (nextQuestion.getOptions) {
-          nextOptions = nextQuestion.getOptions();
-        }
-
-        // '상관없음' 제외한 실제 옵션 개수 확인
-        const realOptions = nextOptions.filter(opt => opt !== '상관없음');
-
-        // 실제 옵션이 1개면 자동으로 선택
-        if (realOptions.length === 1) {
-          handleAnswer(nextQuestion.id, realOptions[0]);
-        } else if (realOptions.length === 0) {
-          // 옵션이 없으면 '상관없음' 자동 선택
-          handleAnswer(nextQuestion.id, '상관없음');
-        }
-      }, 0);
+      setStep(step + 1);
     } else {
       // 마지막 질문까지 답했으면 필터링 시작
       filterAndShowResult(newAnswers);

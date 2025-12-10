@@ -53,6 +53,14 @@ const Home = () => {
             <div className="card-arrow">→</div>
           </Link>
 
+          <Link to="/momok" className="nav-card momok-card">
+            <div className="card-icon">🍽️</div>
+            <div className="card-content">
+              <h2>MOMOK</h2>
+            </div>
+            <div className="card-arrow">→</div>
+          </Link>
+
           <Link to="/whattoeat" className="nav-card whattoeat-card">
             <div className="card-icon">🍽️</div>
             <div className="card-content">
@@ -69,14 +77,6 @@ const Home = () => {
               <div className="service-status">서비스 준비중</div>
             </div>
           </div>
-
-          <Link to="/momok" className="nav-card momok-card">
-            <div className="card-icon">🍽️</div>
-            <div className="card-content">
-              <h2>MOMOK</h2>
-            </div>
-            <div className="card-arrow">→</div>
-          </Link>
 
           <div className="nav-card dashboard-card disabled-card">
             <div className="card-icon">📈</div>

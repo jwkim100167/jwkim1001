@@ -875,7 +875,7 @@ export default function MyPage() {
                           className="select-box"
                         >
                           <option value="">선택하세요</option>
-                          <option value="상관없음">상관없음</option>
+                          <option value="데이터 입력 중">데이터 입력 중</option>
                         </select>
                       </div>
 
