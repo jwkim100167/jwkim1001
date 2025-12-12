@@ -101,7 +101,7 @@
 }
 
 .generator-section {
-  padding-top: 260px; /* 고정된 버튼 영역만큼 공간 확보 */
+  padding-top: 0;
 }
 
 /* 필수 포함 번호 섹션 */
@@ -2335,11 +2335,15 @@
 
 .generator-controls-top.fixed {
   position: fixed;
-  top: 210px;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 750px;
-  width: 750px;
+  top: 0;
+  left: 0;
+  right: 0;
+  transform: none;
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  border-radius: 0;
+  z-index: 1000;
 }
 
 .main-title {
@@ -2501,33 +2505,72 @@
 /* 모바일 반응형 */
 @media (max-width: 768px) {
   .generator-controls-top {
-    padding: 20px 15px;
+    padding: 15px 10px;
+  }
+
+  .generator-controls-top.fixed {
+    padding: 10px;
   }
 
   .main-title {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
   }
 
   .generate-btn-large {
-    padding: 12px 20px;
-    font-size: 1rem;
-    min-width: 130px;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    min-width: 110px;
   }
 
   .generator-buttons {
-    gap: 10px;
+    gap: 8px;
+    flex-wrap: wrap;
   }
 
   .option-title {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
 
   .help-tooltip {
-    padding: 12px 15px;
+    padding: 10px 12px;
   }
 
   .help-tooltip p {
+    font-size: 0.8rem;
+  }
+
+  .generate-btn-small {
+    padding: 8px 12px;
     font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .generator-controls-top {
+    padding: 12px 8px;
+  }
+
+  .generator-controls-top.fixed {
+    padding: 8px;
+  }
+
+  .main-title {
+    font-size: 1.1rem;
+  }
+
+  .generate-btn-large {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    min-width: 100px;
+  }
+
+  .option-title {
+    font-size: 1rem;
+  }
+
+  .generate-btn-small {
+    padding: 6px 10px;
+    font-size: 0.8rem;
   }
 }
 

@@ -2532,7 +2532,6 @@ const Lotto = () => {
                 </div>
           </div>
         )}
-
         <div className="lotto-content">
           {activeTab === 'generator' && (
             <div className="generator-section">
