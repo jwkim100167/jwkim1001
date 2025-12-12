@@ -44,14 +44,17 @@ const Momok = () => {
   const currentFilteredCount = useMemo(() => {
     let filtered = [...restaurantData];
 
-    if (answers.mealTime && answers.mealTime !== '상관없음') {
-      filtered = filtered.filter(r => r.mealTime === answers.mealTime);
-    }
     if (answers.location && answers.location !== '상관없음') {
       filtered = filtered.filter(r => r.location === answers.location);
     }
     if (answers.location2 && answers.location2 !== '상관없음') {
       filtered = filtered.filter(r => r.location2 === answers.location2);
+    }
+    if (answers.mealTime && answers.mealTime !== '상관없음') {
+      filtered = filtered.filter(r => r.mealTime === answers.mealTime);
+    }
+    if (answers.mealKind && answers.mealKind !== '상관없음') {
+      filtered = filtered.filter(r => r.mealKind === answers.mealKind);
     }
     if (answers.drinkYN && answers.drinkYN !== '상관없음') {
       const drinkValue = answers.drinkYN === '예';
@@ -68,39 +71,56 @@ const Momok = () => {
   }, [restaurantData, answers]);
 
   // 동적으로 옵션 생성 - 이전 선택에 따라 필터링
-  const getMealTimeOptions = () => {
-    return getUniqueValues(restaurantData, 'mealTime');
-  };
-
   const getLocationOptions = () => {
-    let data = [...restaurantData];
-    if (answers.mealTime && answers.mealTime !== '상관없음') {
-      data = data.filter(r => r.mealTime === answers.mealTime);
-    }
-    return [...getUniqueValues(data, 'location'), '상관없음'];
+    return [...getUniqueValues(restaurantData, 'location'), '상관없음'];
   };
 
   const getLocation2Options = () => {
     let data = [...restaurantData];
-    if (answers.mealTime && answers.mealTime !== '상관없음') {
-      data = data.filter(r => r.mealTime === answers.mealTime);
-    }
     if (answers.location && answers.location !== '상관없음') {
       data = data.filter(r => r.location === answers.location);
     }
     return [...getUniqueValues(data, 'location2'), '상관없음'];
   };
 
-  const getCategoryOptions = () => {
+  const getMealTimeOptions = () => {
     let data = [...restaurantData];
-    if (answers.mealTime && answers.mealTime !== '상관없음') {
-      data = data.filter(r => r.mealTime === answers.mealTime);
-    }
     if (answers.location && answers.location !== '상관없음') {
       data = data.filter(r => r.location === answers.location);
     }
     if (answers.location2 && answers.location2 !== '상관없음') {
       data = data.filter(r => r.location2 === answers.location2);
+    }
+    return getUniqueValues(data, 'mealTime');
+  };
+
+  const getMealKindOptions = () => {
+    let data = [...restaurantData];
+    if (answers.location && answers.location !== '상관없음') {
+      data = data.filter(r => r.location === answers.location);
+    }
+    if (answers.location2 && answers.location2 !== '상관없음') {
+      data = data.filter(r => r.location2 === answers.location2);
+    }
+    if (answers.mealTime && answers.mealTime !== '상관없음') {
+      data = data.filter(r => r.mealTime === answers.mealTime);
+    }
+    return [...getUniqueValues(data, 'mealKind'), '상관없음'];
+  };
+
+  const getCategoryOptions = () => {
+    let data = [...restaurantData];
+    if (answers.location && answers.location !== '상관없음') {
+      data = data.filter(r => r.location === answers.location);
+    }
+    if (answers.location2 && answers.location2 !== '상관없음') {
+      data = data.filter(r => r.location2 === answers.location2);
+    }
+    if (answers.mealTime && answers.mealTime !== '상관없음') {
+      data = data.filter(r => r.mealTime === answers.mealTime);
+    }
+    if (answers.mealKind && answers.mealKind !== '상관없음') {
+      data = data.filter(r => r.mealKind === answers.mealKind);
     }
     if (answers.drinkYN && answers.drinkYN !== '상관없음') {
       const drinkValue = answers.drinkYN === '예';
@@ -111,14 +131,17 @@ const Momok = () => {
 
   const getDrinkYNOptions = () => {
     let data = [...restaurantData];
-    if (answers.mealTime && answers.mealTime !== '상관없음') {
-      data = data.filter(r => r.mealTime === answers.mealTime);
-    }
     if (answers.location && answers.location !== '상관없음') {
       data = data.filter(r => r.location === answers.location);
     }
     if (answers.location2 && answers.location2 !== '상관없음') {
       data = data.filter(r => r.location2 === answers.location2);
+    }
+    if (answers.mealTime && answers.mealTime !== '상관없음') {
+      data = data.filter(r => r.mealTime === answers.mealTime);
+    }
+    if (answers.mealKind && answers.mealKind !== '상관없음') {
+      data = data.filter(r => r.mealKind === answers.mealKind);
     }
 
     // drinkYN 값의 고유값 확인
@@ -134,14 +157,17 @@ const Momok = () => {
 
   const getSignatureOptions = () => {
     let data = [...restaurantData];
-    if (answers.mealTime && answers.mealTime !== '상관없음') {
-      data = data.filter(r => r.mealTime === answers.mealTime);
-    }
     if (answers.location && answers.location !== '상관없음') {
       data = data.filter(r => r.location === answers.location);
     }
     if (answers.location2 && answers.location2 !== '상관없음') {
       data = data.filter(r => r.location2 === answers.location2);
+    }
+    if (answers.mealTime && answers.mealTime !== '상관없음') {
+      data = data.filter(r => r.mealTime === answers.mealTime);
+    }
+    if (answers.mealKind && answers.mealKind !== '상관없음') {
+      data = data.filter(r => r.mealKind === answers.mealKind);
     }
     if (answers.drinkYN && answers.drinkYN !== '상관없음') {
       const drinkValue = answers.drinkYN === '예';
@@ -155,18 +181,6 @@ const Momok = () => {
 
   const questions = [
     {
-      id: 'mealTime',
-      question: '점심인가요, 저녁인가요?',
-      icon: '🍽️',
-      getOptions: getMealTimeOptions
-    },
-    {
-      id: 'mealKind',
-      question: '어떤 종류의 식사를 원하시나요?',
-      icon: '🍴',
-      options: ['데이터 입력 중']
-    },
-    {
       id: 'location',
       question: '어느 지역이 좋으세요?',
       icon: '📍',
@@ -177,6 +191,18 @@ const Momok = () => {
       question: '더 구체적인 위치는?',
       icon: '🗺️',
       getOptions: getLocation2Options
+    },
+    {
+      id: 'mealTime',
+      question: '점심인가요, 저녁인가요?',
+      icon: '🍽️',
+      getOptions: getMealTimeOptions
+    },
+    {
+      id: 'mealKind',
+      question: '어떤 종류의 식사를 원하시나요?',
+      icon: '🍴',
+      getOptions: getMealKindOptions
     },
     {
       id: 'drinkYN',
@@ -219,14 +245,17 @@ const Momok = () => {
 
     // 현재 답변까지 포함해서 필터링된 개수 확인
     let filtered = [...restaurantData];
-    if (newAnswers.mealTime && newAnswers.mealTime !== '상관없음') {
-      filtered = filtered.filter(r => r.mealTime === newAnswers.mealTime);
-    }
     if (newAnswers.location && newAnswers.location !== '상관없음') {
       filtered = filtered.filter(r => r.location === newAnswers.location);
     }
     if (newAnswers.location2 && newAnswers.location2 !== '상관없음') {
       filtered = filtered.filter(r => r.location2 === newAnswers.location2);
+    }
+    if (newAnswers.mealTime && newAnswers.mealTime !== '상관없음') {
+      filtered = filtered.filter(r => r.mealTime === newAnswers.mealTime);
+    }
+    if (newAnswers.mealKind && newAnswers.mealKind !== '상관없음') {
+      filtered = filtered.filter(r => r.mealKind === newAnswers.mealKind);
     }
     if (newAnswers.drinkYN && newAnswers.drinkYN !== '상관없음') {
       const drinkValue = newAnswers.drinkYN === '예';
@@ -265,11 +294,6 @@ const Momok = () => {
   const filterAndShowResult = async (userAnswers) => {
     let filteredRestaurants = [...restaurantData];
 
-    // 점심/저녁 필터링
-    if (userAnswers.mealTime && userAnswers.mealTime !== '상관없음') {
-      filteredRestaurants = filteredRestaurants.filter(r => r.mealTime === userAnswers.mealTime);
-    }
-
     // 위치 필터링 (대분류)
     if (userAnswers.location && userAnswers.location !== '상관없음') {
       filteredRestaurants = filteredRestaurants.filter(r =>
@@ -282,6 +306,16 @@ const Momok = () => {
       filteredRestaurants = filteredRestaurants.filter(r =>
         r.location2 === userAnswers.location2
       );
+    }
+
+    // 점심/저녁 필터링
+    if (userAnswers.mealTime && userAnswers.mealTime !== '상관없음') {
+      filteredRestaurants = filteredRestaurants.filter(r => r.mealTime === userAnswers.mealTime);
+    }
+
+    // 식사 종류 필터링
+    if (userAnswers.mealKind && userAnswers.mealKind !== '상관없음') {
+      filteredRestaurants = filteredRestaurants.filter(r => r.mealKind === userAnswers.mealKind);
     }
 
     // 주류가능 필터링
