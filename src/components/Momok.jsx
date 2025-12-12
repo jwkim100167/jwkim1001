@@ -23,6 +23,7 @@ const Momok = () => {
   const [candidateRestaurants, setCandidateRestaurants] = useState([]); // 3개 이하일 때 선택지
   const [restaurantData, setRestaurantData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filteredCount, setFilteredCount] = useState(0); // 현재 필터링된 레스토랑 개수
 
   // Supabase에서 레스토랑 데이터 가져오기
   useEffect(() => {
@@ -39,13 +40,51 @@ const Momok = () => {
     fetchData();
   }, []);
 
+  // 현재 선택된 조건으로 필터링된 레스토랑 개수 계산
+  const currentFilteredCount = useMemo(() => {
+    let filtered = [...restaurantData];
+
+    if (answers.mealTime && answers.mealTime !== '상관없음') {
+      filtered = filtered.filter(r => r.mealTime === answers.mealTime);
+    }
+    if (answers.location && answers.location !== '상관없음') {
+      filtered = filtered.filter(r => r.location === answers.location);
+    }
+    if (answers.location2 && answers.location2 !== '상관없음') {
+      filtered = filtered.filter(r => r.location2 === answers.location2);
+    }
+    if (answers.drinkYN && answers.drinkYN !== '상관없음') {
+      const drinkValue = answers.drinkYN === '예';
+      filtered = filtered.filter(r => r.drinkYN === drinkValue);
+    }
+    if (answers.category && answers.category !== '상관없음') {
+      filtered = filtered.filter(r => r.category === answers.category);
+    }
+    if (answers.signature && answers.signature !== '상관없음') {
+      filtered = filtered.filter(r => r.signature === answers.signature);
+    }
+
+    return filtered.length;
+  }, [restaurantData, answers]);
+
   // 동적으로 옵션 생성 - 이전 선택에 따라 필터링
+  const getMealTimeOptions = () => {
+    return getUniqueValues(restaurantData, 'mealTime');
+  };
+
   const getLocationOptions = () => {
-    return [...getUniqueValues(restaurantData, 'location'), '상관없음'];
+    let data = [...restaurantData];
+    if (answers.mealTime && answers.mealTime !== '상관없음') {
+      data = data.filter(r => r.mealTime === answers.mealTime);
+    }
+    return [...getUniqueValues(data, 'location'), '상관없음'];
   };
 
   const getLocation2Options = () => {
     let data = [...restaurantData];
+    if (answers.mealTime && answers.mealTime !== '상관없음') {
+      data = data.filter(r => r.mealTime === answers.mealTime);
+    }
     if (answers.location && answers.location !== '상관없음') {
       data = data.filter(r => r.location === answers.location);
     }
@@ -68,6 +107,29 @@ const Momok = () => {
       data = data.filter(r => r.drinkYN === drinkValue);
     }
     return [...getUniqueValues(data, 'category'), '상관없음'];
+  };
+
+  const getDrinkYNOptions = () => {
+    let data = [...restaurantData];
+    if (answers.mealTime && answers.mealTime !== '상관없음') {
+      data = data.filter(r => r.mealTime === answers.mealTime);
+    }
+    if (answers.location && answers.location !== '상관없음') {
+      data = data.filter(r => r.location === answers.location);
+    }
+    if (answers.location2 && answers.location2 !== '상관없음') {
+      data = data.filter(r => r.location2 === answers.location2);
+    }
+
+    // drinkYN 값의 고유값 확인
+    const uniqueDrinkValues = [...new Set(data.map(r => r.drinkYN))];
+    const options = [];
+
+    if (uniqueDrinkValues.includes(true)) options.push('예');
+    if (uniqueDrinkValues.includes(false)) options.push('아니오');
+    options.push('상관없음');
+
+    return options;
   };
 
   const getSignatureOptions = () => {
@@ -96,7 +158,7 @@ const Momok = () => {
       id: 'mealTime',
       question: '점심인가요, 저녁인가요?',
       icon: '🍽️',
-      options: ['점심', '저녁', '상관없음']
+      getOptions: getMealTimeOptions
     },
     {
       id: 'mealKind',
@@ -120,7 +182,7 @@ const Momok = () => {
       id: 'drinkYN',
       question: '주류가 가능한 곳이 좋나요?',
       icon: '🍺',
-      options: ['예', '아니오', '상관없음']
+      getOptions: getDrinkYNOptions
     },
     {
       id: 'category',
@@ -151,10 +213,47 @@ const Momok = () => {
     return [];
   };
 
-  const handleAnswer = (questionId, answer) => {
+  const handleAnswer = async (questionId, answer) => {
     const newAnswers = { ...answers, [questionId]: answer };
     setAnswers(newAnswers);
 
+    // 현재 답변까지 포함해서 필터링된 개수 확인
+    let filtered = [...restaurantData];
+    if (newAnswers.mealTime && newAnswers.mealTime !== '상관없음') {
+      filtered = filtered.filter(r => r.mealTime === newAnswers.mealTime);
+    }
+    if (newAnswers.location && newAnswers.location !== '상관없음') {
+      filtered = filtered.filter(r => r.location === newAnswers.location);
+    }
+    if (newAnswers.location2 && newAnswers.location2 !== '상관없음') {
+      filtered = filtered.filter(r => r.location2 === newAnswers.location2);
+    }
+    if (newAnswers.drinkYN && newAnswers.drinkYN !== '상관없음') {
+      const drinkValue = newAnswers.drinkYN === '예';
+      filtered = filtered.filter(r => r.drinkYN === drinkValue);
+    }
+    if (newAnswers.category && newAnswers.category !== '상관없음') {
+      filtered = filtered.filter(r => r.category === newAnswers.category);
+    }
+    if (newAnswers.signature && newAnswers.signature !== '상관없음') {
+      filtered = filtered.filter(r => r.signature === newAnswers.signature);
+    }
+
+    // 1개면 바로 결과 보여주기
+    if (filtered.length === 1) {
+      const restaurantWithDetails = await getRestaurantById(filtered[0].r_id);
+      setResult({
+        ...filtered[0],
+        name: restaurantWithDetails?.name || '이름 없음',
+        address: restaurantWithDetails?.address || '',
+        link: restaurantWithDetails?.link || ''
+      });
+      setCandidateRestaurants([]);
+      setStep(questions.length + 1);
+      return;
+    }
+
+    // 1개가 아니면 계속 질문 진행
     if (step < questions.length - 1) {
       setStep(step + 1);
     } else {
@@ -213,8 +312,19 @@ const Momok = () => {
       alert('조건에 맞는 레스토랑이 없습니다. 다른 옵션을 선택해주세요.');
       setStep(step - 1);
       return;
+    } else if (filteredRestaurants.length === 1) {
+      // 1개면 바로 보여주기
+      const restaurantWithDetails = await getRestaurantById(filteredRestaurants[0].r_id);
+      setResult({
+        ...filteredRestaurants[0],
+        name: restaurantWithDetails?.name || '이름 없음',
+        address: restaurantWithDetails?.address || '',
+        link: restaurantWithDetails?.link || ''
+      });
+      setCandidateRestaurants([]);
+      setStep(questions.length + 1); // 결과 화면으로
     } else if (filteredRestaurants.length <= 3) {
-      // 3개 이하면 선택지 보여주기
+      // 2-3개면 선택지 보여주기
       const restaurantsWithDetails = await Promise.all(
         filteredRestaurants.map(async (restaurant) => {
           try {
@@ -258,7 +368,8 @@ const Momok = () => {
           link: ''
         });
       }
-      setStep(questions.length); // 결과 화면으로
+      setCandidateRestaurants([]);
+      setStep(questions.length + 1); // 결과 화면으로
     }
   };
 
@@ -327,6 +438,12 @@ const Momok = () => {
             <div className="step-indicator">
               {step + 1} / {questions.length}
             </div>
+
+            {currentFilteredCount > 0 && answers.location2 && (
+              <div className="filtered-count">
+                선택 조건으로 검색된 레스토랑 : {currentFilteredCount}개
+              </div>
+            )}
 
             <div className="question-card">
               <div className="question-icon">{questions[step].icon}</div>
