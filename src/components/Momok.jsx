@@ -473,7 +473,7 @@ const Momok = () => {
               {step + 1} / {questions.length}
             </div>
 
-            {currentFilteredCount > 0 && answers.location2 && (
+            {currentFilteredCount > 0 && answers.mealKind && (
               <div className="filtered-count">
                 선택 조건으로 검색된 레스토랑 : {currentFilteredCount}개
               </div>
