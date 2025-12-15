@@ -187,16 +187,16 @@ const Momok = () => {
       getOptions: getLocationOptions
     },
     {
-      id: 'location2',
-      question: '더 구체적인 위치는?',
-      icon: '🗺️',
-      getOptions: getLocation2Options
-    },
-    {
       id: 'mealTime',
       question: '점심인가요, 저녁인가요?',
       icon: '🍽️',
       getOptions: getMealTimeOptions
+    },
+    {
+      id: 'location2',
+      question: '더 구체적인 위치는?',
+      icon: '🗺️',
+      getOptions: getLocation2Options
     },
     {
       id: 'mealKind',

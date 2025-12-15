@@ -852,33 +852,6 @@ export default function MyPage() {
                         </select>
                       </div>
 
-                      {/* 점심/저녁 */}
-                      <div className="form-group">
-                        <label>점심/저녁</label>
-                        <select
-                          value={categoryData.mealTime}
-                          onChange={(e) => handleCategoryChange('mealTime', e.target.value)}
-                          className="select-box"
-                        >
-                          <option value="">선택하세요</option>
-                          <option value="점심">점심</option>
-                          <option value="저녁">저녁</option>
-                        </select>
-                      </div>
-
-                      {/* 식사 종류 */}
-                      <div className="form-group">
-                        <label>식사 종류</label>
-                        <select
-                          value={categoryData.mealKind}
-                          onChange={(e) => handleCategoryChange('mealKind', e.target.value)}
-                          className="select-box"
-                        >
-                          <option value="">선택하세요</option>
-                          <option value="데이터 입력 중">데이터 입력 중</option>
-                        </select>
-                      </div>
-
                       {/* 대분류 */}
                       <div className="form-group">
                         <label>대분류 *</label>
@@ -909,6 +882,33 @@ export default function MyPage() {
                           {getLocation2Options().map(loc2 => (
                             <option key={loc2} value={loc2}>{loc2}</option>
                           ))}
+                        </select>
+                      </div>
+
+                      {/* 점심/저녁 */}
+                      <div className="form-group">
+                        <label>점심/저녁</label>
+                        <select
+                          value={categoryData.mealTime}
+                          onChange={(e) => handleCategoryChange('mealTime', e.target.value)}
+                          className="select-box"
+                        >
+                          <option value="">선택하세요</option>
+                          <option value="점심">점심</option>
+                          <option value="저녁">저녁</option>
+                        </select>
+                      </div>
+
+                      {/* 식사 종류 */}
+                      <div className="form-group">
+                        <label>식사 종류</label>
+                        <select
+                          value={categoryData.mealKind}
+                          onChange={(e) => handleCategoryChange('mealKind', e.target.value)}
+                          className="select-box"
+                        >
+                          <option value="">선택하세요</option>
+                          <option value="데이터 입력 중">데이터 입력 중</option>
                         </select>
                       </div>
 
