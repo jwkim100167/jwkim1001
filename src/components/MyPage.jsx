@@ -428,6 +428,18 @@ export default function MyPage() {
     return Array.from(location2s).sort();
   };
 
+  // 선택된 mealTime에 따른 mealKind 목록 추출
+  const getMealKindOptions = () => {
+    if (!categoryData.mealTime) return [];
+    const mealKinds = new Set();
+    restaurantCategoryFromDB.forEach(item => {
+      if (item.mealTime === categoryData.mealTime && item.mealKind) {
+        mealKinds.add(item.mealKind);
+      }
+    });
+    return Array.from(mealKinds).sort();
+  };
+
   // 카테고리가 이미 있는 레스토랑 ID 목록
   const getCategorizedRestaurantIds = () => {
     return new Set(restaurantCategoryFromDB.map(cat => cat.r_id));
@@ -885,6 +897,21 @@ export default function MyPage() {
                         </select>
                       </div>
 
+                      {/* 카테고리 */}
+                      <div className="form-group">
+                        <label>카테고리 *</label>
+                        <select
+                          value={categoryData.category}
+                          onChange={(e) => handleCategoryChange('category', e.target.value)}
+                          className="select-box"
+                        >
+                          <option value="">선택하세요</option>
+                          {getUniqueCategories().map(cat => (
+                            <option key={cat} value={cat}>{cat}</option>
+                          ))}
+                        </select>
+                      </div>
+
                       {/* 점심/저녁 */}
                       <div className="form-group">
                         <label>점심/저녁</label>
@@ -906,23 +933,11 @@ export default function MyPage() {
                           value={categoryData.mealKind}
                           onChange={(e) => handleCategoryChange('mealKind', e.target.value)}
                           className="select-box"
+                          disabled={!categoryData.mealTime}
                         >
                           <option value="">선택하세요</option>
-                          <option value="데이터 입력 중">데이터 입력 중</option>
-                        </select>
-                      </div>
-
-                      {/* 카테고리 */}
-                      <div className="form-group">
-                        <label>카테고리 *</label>
-                        <select
-                          value={categoryData.category}
-                          onChange={(e) => handleCategoryChange('category', e.target.value)}
-                          className="select-box"
-                        >
-                          <option value="">선택하세요</option>
-                          {getUniqueCategories().map(cat => (
-                            <option key={cat} value={cat}>{cat}</option>
+                          {getMealKindOptions().map(kind => (
+                            <option key={kind} value={kind}>{kind}</option>
                           ))}
                         </select>
                       </div>
