@@ -376,6 +376,18 @@
   border-radius: 15px;
 }
 
+.answer-summary {
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #333;
+  font-weight: 500;
+  text-align: center;
+  word-break: keep-all;
+}
+
 /* 홈 버튼 */
 .back-btn {
   display: block;
@@ -478,5 +490,10 @@
 
   .answer-value {
     align-self: flex-end;
+  }
+
+  .answer-summary {
+    font-size: 0.9rem;
+    padding: 12px 15px;
   }
 }

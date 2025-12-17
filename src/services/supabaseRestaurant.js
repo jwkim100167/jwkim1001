@@ -57,6 +57,13 @@ export const getRestaurantById = async (rId) => {
 
   const restaurant = Array.isArray(data) ? data[0] : data;
   console.log('✅ 조회된 레스토랑 상세:', restaurant);
+
+  // address가 없으면 null 반환
+  if (!restaurant || !restaurant.address) {
+    console.log('⚠️ address가 없는 레스토랑:', restaurant);
+    return null;
+  }
+
   return restaurant;
 };
 

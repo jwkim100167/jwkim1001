@@ -445,13 +445,19 @@ export default function MyPage() {
     return new Set(restaurantCategoryFromDB.map(cat => cat.r_id));
   };
 
-  // 카테고리가 없는 내 레스토랑만 필터링
+  // 카테고리가 없는 내 레스토랑만 필터링 (address 순으로 정렬)
   const getUncategorizedMyRestaurants = () => {
     const categorizedIds = getCategorizedRestaurantIds();
-    return myRestaurants.filter(restaurant => {
-      const rid = restaurant.r_id || restaurant.id;
-      return !categorizedIds.has(rid);
-    });
+    return myRestaurants
+      .filter(restaurant => {
+        const rid = restaurant.r_id || restaurant.id;
+        return !categorizedIds.has(rid);
+      })
+      .sort((a, b) => {
+        const addressA = a.address || '';
+        const addressB = b.address || '';
+        return addressA.localeCompare(addressB);
+      });
   };
 
   // 비밀번호 변경 핸들러
