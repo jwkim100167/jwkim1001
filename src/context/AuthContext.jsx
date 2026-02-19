@@ -38,10 +38,15 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const loginDirect = (user) => {
+    setUser(user);
+  };
+
   const value = {
     user,
     login,
     logout,
+    loginDirect,
     isAuthenticated: user !== null,
     loading
   };

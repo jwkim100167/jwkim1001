@@ -2452,12 +2452,14 @@ const Lotto = () => {
         <div className="auth-buttons">
           {isAuthenticated ? (
             <>
-              <span className="user-greeting">👋 {user.loginId}님</span>
-              <button className="auth-btn mypage-btn" onClick={() => navigate('/mypage')}>
-                마이페이지
+              <span className="user-greeting">👋 {user.userName || user.loginId}님</span>
+              <button className="auth-icon-btn mypage-btn" onClick={() => navigate('/mypage')} title="마이페이지">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                  <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/>
+                </svg>
               </button>
-              <button className="auth-btn logout-btn" onClick={handleLogout}>
-                로그아웃
+              <button className="auth-icon-btn logout-btn" onClick={handleLogout} title="로그아웃">
+                ⏻
               </button>
             </>
           ) : (

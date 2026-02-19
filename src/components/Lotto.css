@@ -1407,12 +1407,47 @@
 /* Auth buttons */
 .auth-buttons {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 12px;
+  right: 12px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  z-index: 1001;
+  gap: 6px;
+  z-index: 2100;
+}
+
+.auth-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  padding: 0;
+}
+
+.auth-icon-btn.mypage-btn {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+}
+
+.auth-icon-btn.mypage-btn:hover {
+  background: rgba(255, 255, 255, 0.45);
+  transform: scale(1.1);
+}
+
+.auth-icon-btn.logout-btn {
+  background: rgba(245, 87, 108, 0.7);
+  color: white;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.auth-icon-btn.logout-btn:hover {
+  background: rgba(245, 87, 108, 1);
+  transform: scale(1.1);
 }
 
 /* 반응형 디자인 */

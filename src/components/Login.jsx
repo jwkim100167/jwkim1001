@@ -21,6 +21,25 @@ export default function Login() {
 
     if (result.success) {
       navigate('/');
+    } else if (result.needsPasswordChange) {
+      navigate('/change-password', {
+        state: {
+          userId: result.userId,
+          loginId: result.loginId,
+          userName: result.userName,
+          createdAt: result.createdAt,
+          status: result.status,
+        },
+      });
+    } else if (result.needsVerification) {
+      navigate('/verify', {
+        state: {
+          userId: result.userId,
+          loginId: result.loginId,
+          userName: result.userName,
+          createdAt: result.createdAt,
+        },
+      });
     } else {
       setError(result.error);
     }
@@ -63,6 +82,14 @@ export default function Login() {
 
           <button type="submit" className="login-btn" disabled={loading}>
             {loading ? '로그인 중...' : '로그인'}
+          </button>
+
+          <button
+            type="button"
+            className="register-link-btn"
+            onClick={() => navigate('/register')}
+          >
+            회원가입
           </button>
 
           <button

@@ -9,6 +9,9 @@ import Komom from './components/Komom';
 import Momok from './components/Momok';
 import WhatToEat from './components/WhatToEat';
 import Login from './components/Login';
+import Register from './components/Register';
+import Verify from './components/Verify';
+import ChangePassword from './components/ChangePassword';
 import MyPage from './components/MyPage';
 import Admin from './components/Admin';
 import LottoAdmin from './components/LottoAdmin';
@@ -23,6 +26,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/verify" element={<Verify />} />
+          <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/lottoadmin" element={<LottoAdmin />} />
