@@ -14,6 +14,16 @@ export const getRestaurantCategories = async () => {
   return data || [];
 };
 
+// isOpen=true 인 레스토랑의 r_id(또는 id) 집합 반환
+export const getOpenRestaurantIds = async () => {
+  const { data, error } = await supabase
+    .from('restaurantDataTable')
+    .select('r_id, id')
+    .eq('isOpen', true);
+  if (error) return null;
+  return new Set(data.map(r => r.r_id ?? r.id));
+};
+
 // 레스토랑 상세 데이터 조회
 export const getRestaurantData = async () => {
   const { data, error } = await supabase

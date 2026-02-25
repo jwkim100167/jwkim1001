@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   getRestaurantCategories,
   getRestaurantById,
+  getOpenRestaurantIds,
   getUniqueValues
 } from '../services/supabaseRestaurant';
 import './Momok.css';
@@ -30,8 +31,14 @@ const Momok = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getRestaurantCategories();
-        setRestaurantData(data);
+        const [data, openIds] = await Promise.all([
+          getRestaurantCategories(),
+          getOpenRestaurantIds(),
+        ]);
+        const filtered = openIds
+          ? data.filter(r => openIds.has(r.r_id))
+          : data;
+        setRestaurantData(filtered);
       } catch (error) {
         console.error('레스토랑 데이터 로드 실패:', error);
       } finally {

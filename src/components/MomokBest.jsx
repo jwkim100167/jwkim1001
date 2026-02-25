@@ -5,7 +5,6 @@ import { supabase } from '../supabaseClient';
 import { getUserLife, decreaseUserLife } from '../services/authService';
 import './MomokBest.css';
 
-const RANDOM_CATEGORIES = ['한식', '중식', '일식', '양식', '분식', '카페', '패스트푸드'];
 
 export default function MomokBest() {
   const navigate = useNavigate();
@@ -32,7 +31,7 @@ export default function MomokBest() {
     setLoading(true);
     try {
       const [dataRes, catRes] = await Promise.all([
-        supabase.from('restaurantDataTable').select('*').eq('bobYN', true),
+        supabase.from('restaurantDataTable').select('*').eq('bobYN', true).eq('isOpen', true),
         supabase.from('restaurantCategoryTable').select('*'),
       ]);
 
@@ -43,13 +42,11 @@ export default function MomokBest() {
         const rId = row.r_id ?? row.id;
         const cats = catRows.filter((c) => c.r_id === rId);
         const cat = cats[0] || null;
-        const randomCat =
-          RANDOM_CATEGORIES[Math.floor(Math.random() * RANDOM_CATEGORIES.length)];
         return {
           ...row,
           _rId: rId,
           signature: cat?.signature || row.signature || '-',
-          category: cat?.category || randomCat,
+          category: cat?.category || '-',
           location: cat?.location || '',
           location2: cat?.location2 || '',
         };

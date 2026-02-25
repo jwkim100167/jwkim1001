@@ -277,7 +277,9 @@ export default function MyPage() {
       const { data: restaurants, error: restaurantError } = await supabase
         .from('restaurantDataTable')
         .select('*')
-        .eq('u_id', user.id);
+        .eq('u_id', user.id)
+        .eq('isOpen', true)
+        .order('name', { ascending: true });
 
       if (restaurantError) throw restaurantError;
 
