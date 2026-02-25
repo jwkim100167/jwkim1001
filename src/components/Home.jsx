@@ -70,14 +70,13 @@ const Home = () => {
             <div className="card-arrow">→</div>
           </Link>
 
-          <Link to="/whattoeat" className="nav-card whattoeat-card">
+          <div className="nav-card whattoeat-card disabled-card">
             <div className="card-icon">🍽️</div>
             <div className="card-content">
               <h2>오늘 뭐 먹지?</h2>
-              <div className="card-desc">로그인 필요</div>
+              <div className="service-status">서비스 준비중</div>
             </div>
-            <div className="card-arrow">→</div>
-          </Link>
+          </div>
 
           <div className="nav-card komom-card disabled-card">
             <div className="card-icon">🍴</div>
@@ -107,11 +106,11 @@ const Home = () => {
         <div className="home-footer">
           <div className="stats">
             <div className="stat-item">
-              <div className="stat-number">4</div>
+              <div className="stat-number">3</div>
               <div className="stat-label">운영중</div>
             </div>
             <div className="stat-item">
-              <div className="stat-number">2</div>
+              <div className="stat-number">4</div>
               <div className="stat-label">준비중</div>
             </div>
             <div className="stat-item">
