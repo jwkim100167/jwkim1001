@@ -54,7 +54,8 @@ const Home = () => {
         </div>
 
         <div className="navigation-cards">
-          <Link to="/lotto" className="nav-card lotto-card">
+          {/* 로또 서비스 (기본) */}
+          <Link to="/lotto-basic" className="nav-card lotto-card">
             <div className="card-icon">🎰</div>
             <div className="card-content">
               <h2>로또 서비스</h2>
@@ -62,6 +63,27 @@ const Home = () => {
             <div className="card-arrow">→</div>
           </Link>
 
+          {/* 로또 서비스 - 멤버십 (로그인 필요) */}
+          {isAuthenticated ? (
+            <Link to="/lotto" className="nav-card lotto-card">
+              <div className="card-icon">🎰</div>
+              <div className="card-content">
+                <h2>로또 서비스 - 멤버십</h2>
+                <div className="card-desc">로그인 전용</div>
+              </div>
+              <div className="card-arrow">→</div>
+            </Link>
+          ) : (
+            <div className="nav-card lotto-card disabled-card">
+              <div className="card-icon">🎰</div>
+              <div className="card-content">
+                <h2>로또 서비스 - 멤버십</h2>
+                <div className="service-status">로그인 필요</div>
+              </div>
+            </div>
+          )}
+
+          {/* MOMOK */}
           <Link to="/momok" className="nav-card momok-card">
             <div className="card-icon">🍽️</div>
             <div className="card-content">
@@ -70,11 +92,12 @@ const Home = () => {
             <div className="card-arrow">→</div>
           </Link>
 
+          {/* MOMOK - 멤버십 (로그인 필요) */}
           {isAuthenticated ? (
             <Link to="/momok-best" className="nav-card momokbest-card">
               <div className="card-icon">🏆</div>
               <div className="card-content">
-                <h2>MOMOK - Best</h2>
+                <h2>MOMOK - 멤버십</h2>
                 <div className="card-desc">로그인 전용</div>
               </div>
               <div className="card-arrow">→</div>
@@ -83,7 +106,7 @@ const Home = () => {
             <div className="nav-card momokbest-card disabled-card">
               <div className="card-icon">🏆</div>
               <div className="card-content">
-                <h2>MOMOK - Best</h2>
+                <h2>MOMOK - 멤버십</h2>
                 <div className="service-status">로그인 필요</div>
               </div>
             </div>
@@ -125,11 +148,11 @@ const Home = () => {
         <div className="home-footer">
           <div className="stats">
             <div className="stat-item">
-              <div className="stat-number">{isAuthenticated ? 3 : 2}</div>
+              <div className="stat-number">{isAuthenticated ? 4 : 2}</div>
               <div className="stat-label">운영중</div>
             </div>
             <div className="stat-item">
-              <div className="stat-number">{isAuthenticated ? 4 : 5}</div>
+              <div className="stat-number">4</div>
               <div className="stat-label">준비중</div>
             </div>
             <div className="stat-item">

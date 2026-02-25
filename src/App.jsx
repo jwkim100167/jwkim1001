@@ -13,6 +13,7 @@ import Register from './components/Register';
 import Verify from './components/Verify';
 import ChangePassword from './components/ChangePassword';
 import MomokBest from './components/MomokBest';
+import LottoBasic from './components/LottoBasic';
 import MyPage from './components/MyPage';
 import Admin from './components/Admin';
 import LottoAdmin from './components/LottoAdmin';
@@ -35,6 +36,7 @@ function App() {
           <Route path="/lottoadmin" element={<LottoAdmin />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/lotto" element={<Lotto />} />
+          <Route path="/lotto-basic" element={<LottoBasic />} />
           <Route path="/whattoeat" element={<WhatToEat />} />
           <Route path="/komom" element={<Komom />} />
           <Route path="/momok" element={<Momok />} />
