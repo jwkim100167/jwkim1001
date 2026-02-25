@@ -70,6 +70,25 @@ const Home = () => {
             <div className="card-arrow">→</div>
           </Link>
 
+          {isAuthenticated ? (
+            <Link to="/momok-best" className="nav-card momokbest-card">
+              <div className="card-icon">🏆</div>
+              <div className="card-content">
+                <h2>MOMOK - Best</h2>
+                <div className="card-desc">로그인 전용</div>
+              </div>
+              <div className="card-arrow">→</div>
+            </Link>
+          ) : (
+            <div className="nav-card momokbest-card disabled-card">
+              <div className="card-icon">🏆</div>
+              <div className="card-content">
+                <h2>MOMOK - Best</h2>
+                <div className="service-status">로그인 필요</div>
+              </div>
+            </div>
+          )}
+
           <div className="nav-card whattoeat-card disabled-card">
             <div className="card-icon">🍽️</div>
             <div className="card-content">
@@ -106,11 +125,11 @@ const Home = () => {
         <div className="home-footer">
           <div className="stats">
             <div className="stat-item">
-              <div className="stat-number">3</div>
+              <div className="stat-number">{isAuthenticated ? 3 : 2}</div>
               <div className="stat-label">운영중</div>
             </div>
             <div className="stat-item">
-              <div className="stat-number">4</div>
+              <div className="stat-number">{isAuthenticated ? 4 : 5}</div>
               <div className="stat-label">준비중</div>
             </div>
             <div className="stat-item">

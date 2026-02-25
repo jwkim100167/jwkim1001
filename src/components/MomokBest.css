@@ -1,0 +1,305 @@
+.momokbest-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  padding: 0 0 40px;
+  color: white;
+}
+
+/* 헤더 */
+.mb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.mb-back-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+.mb-back-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.mb-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.mb-life {
+  font-size: 1.2rem;
+  min-width: 80px;
+  text-align: right;
+}
+.mb-heart {
+  margin: 0 1px;
+}
+.mb-life-exempt {
+  font-size: 1.6rem;
+  color: #ffd700;
+}
+.mb-no-life {
+  font-size: 0.85rem;
+  color: #ff6b6b;
+}
+
+/* 안내 문구 */
+.mb-notice {
+  text-align: center;
+  padding: 12px 20px;
+  background: rgba(255, 193, 7, 0.15);
+  border-bottom: 1px solid rgba(255, 193, 7, 0.3);
+  font-size: 0.9rem;
+  color: #ffd966;
+}
+
+/* 라이프 없음 토스트 */
+.mb-nolife-toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #c0392b;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  z-index: 999;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  white-space: nowrap;
+}
+
+/* 로딩/빈 상태 */
+.mb-loading,
+.mb-empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.1rem;
+}
+
+/* 카드 그리드 */
+.mb-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: 24px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 카드 */
+.mb-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  text-align: center;
+  backdrop-filter: blur(4px);
+}
+.mb-card:hover:not(.mb-card-disabled) {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.12));
+  border-color: rgba(255, 255, 255, 0.35);
+}
+.mb-card-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 카드 상단: location | location2 */
+.mb-card-top {
+  flex: 1;
+  display: flex;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  min-height: 0;
+}
+.mb-card-location,
+.mb-card-location2 {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 4px 2px;
+  word-break: keep-all;
+  line-height: 1.2;
+}
+.mb-card-location {
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* 카드 하단: category + signature */
+.mb-card-bottom {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 4px;
+  min-height: 0;
+}
+.mb-card-category {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.1);
+  padding: 1px 7px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.mb-card-signature {
+  font-size: 0.72rem;
+  color: #ffd966;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  padding: 0 4px;
+}
+
+/* 모달 */
+.mb-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  padding: 20px;
+  backdrop-filter: blur(6px);
+}
+
+.mb-modal {
+  background: white;
+  border-radius: 24px;
+  padding: 40px 32px 32px;
+  max-width: 480px;
+  width: 100%;
+  position: relative;
+  text-align: center;
+  color: #2c3e50;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  animation: mbModalIn 0.25s ease;
+}
+@keyframes mbModalIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.mb-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+}
+.mb-modal-close:hover { color: #333; }
+
+.mb-modal-icon { font-size: 2.5rem; margin-bottom: 10px; }
+
+.mb-modal-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: #1a1a2e;
+}
+.mb-modal-category {
+  display: inline-block;
+  background: #e8f4ff;
+  color: #2980b9;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.88rem;
+  margin-bottom: 10px;
+}
+.mb-modal-signature {
+  color: #e67e22;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.mb-modal-address {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+.mb-modal-links {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.mb-modal-link {
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  transition: opacity 0.2s;
+}
+.mb-modal-link.naver {
+  background: linear-gradient(135deg, #03c75a, #028a40);
+}
+.mb-modal-link:hover { opacity: 0.85; }
+
+.mb-modal-life-info {
+  font-size: 0.82rem;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* 반응형 — 항상 4열 유지 */
+@media (max-width: 900px) {
+  .mb-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 14px;
+  }
+}
+@media (max-width: 600px) {
+  .mb-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    padding: 8px;
+  }
+  .mb-card-location,
+  .mb-card-location2 {
+    font-size: 0.6rem;
+    padding: 2px 1px;
+  }
+  .mb-card-category,
+  .mb-card-signature {
+    font-size: 0.58rem;
+  }
+  .mb-title { font-size: 1rem; }
+  .mb-modal { padding: 28px 16px 20px; }
+}

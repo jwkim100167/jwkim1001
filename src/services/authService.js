@@ -108,13 +108,18 @@ export async function login(loginId, password) {
     const user = buildUser(data);
     localStorage.setItem('user', JSON.stringify(user));
 
-    // last_login_at 업데이트 + 로그인 히스토리 저장 (admin, test 제외)
+    // last_login_at 업데이트 + 날짜 변경 시 userLife +3 + 로그인 히스토리 저장 (admin, test 제외)
     if (loginId !== 'admin' && loginId !== 'test') {
       try {
-        await supabase
-          .from('userTable')
-          .update({ last_login_at: new Date().toISOString() })
-          .eq('id', data.id);
+        const lastDate = data.last_login_at
+          ? new Date(data.last_login_at).toDateString()
+          : null;
+        const today = new Date().toDateString();
+        const updateFields = { last_login_at: new Date().toISOString() };
+        if (lastDate !== today) {
+          updateFields.userLife = (data.userLife || 0) + 3;
+        }
+        await supabase.from('userTable').update(updateFields).eq('id', data.id);
         await supabase.from('loginHistoryTable').insert({ u_id: data.id, ip: null });
       } catch (historyError) {
         console.error('로그인 히스토리 저장 실패:', historyError);
@@ -292,4 +297,28 @@ export async function register(loginId, password, userName) {
  */
 export function isAuthenticated() {
   return getCurrentUser() !== null;
+}
+
+/**
+ * userLife 조회
+ */
+export async function getUserLife(userId) {
+  const { data, error } = await supabase
+    .from('userTable')
+    .select('userLife')
+    .eq('id', userId)
+    .single();
+  if (error) return 0;
+  return data?.userLife ?? 0;
+}
+
+/**
+ * userLife -1 (0 미만으로 내려가지 않음)
+ */
+export async function decreaseUserLife(userId) {
+  const current = await getUserLife(userId);
+  if (current <= 0) return 0;
+  const next = current - 1;
+  await supabase.from('userTable').update({ userLife: next }).eq('id', userId);
+  return next;
 }

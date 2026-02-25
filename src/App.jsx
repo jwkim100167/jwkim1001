@@ -12,6 +12,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Verify from './components/Verify';
 import ChangePassword from './components/ChangePassword';
+import MomokBest from './components/MomokBest';
 import MyPage from './components/MyPage';
 import Admin from './components/Admin';
 import LottoAdmin from './components/LottoAdmin';
@@ -37,6 +38,7 @@ function App() {
           <Route path="/whattoeat" element={<WhatToEat />} />
           <Route path="/komom" element={<Komom />} />
           <Route path="/momok" element={<Momok />} />
+          <Route path="/momok-best" element={<MomokBest />} />
           <Route path="/jobs" element={<JobBoard />} />
         </Routes>
       </Router>

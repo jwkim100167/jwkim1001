@@ -152,6 +152,11 @@
   box-shadow: 0 20px 40px rgba(255, 167, 81, 0.1);
 }
 
+.momokbest-card:hover {
+  border-color: rgba(255, 215, 0, 0.5);
+  box-shadow: 0 20px 40px rgba(255, 215, 0, 0.15);
+}
+
 .jobs-card:hover {
   border-color: rgba(102, 126, 234, 0.5);
   box-shadow: 0 20px 40px rgba(102, 126, 234, 0.1);
