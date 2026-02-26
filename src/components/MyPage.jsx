@@ -320,30 +320,32 @@ export default function MyPage() {
     }
   }, [activeTab, foodSubMenu, user]);
 
-  // admin: restaurantCategoryTable에 있는 레스토랑 로드 (r_id 중복 제거, 가나다 순)
+  // admin: restaurantCategoryTable에 있는 r_id로 restaurantDataTable에서 이름 조회 (가나다 순)
   const loadCategorizedRestaurants = async () => {
     setLoadingEdit(true);
     try {
-      // DB 레벨에서 r_id IS NOT NULL 조건으로 필터링
-      const { data: cats, error } = await supabase
+      // 1. restaurantCategoryTable에서 r_id 목록 가져오기
+      const { data: cats, error: catError } = await supabase
         .from('restaurantCategoryTable')
-        .select('*')
+        .select('r_id')
         .not('r_id', 'is', null);
-      if (error) throw error;
+      if (catError) throw catError;
 
-      // r_id 기준 중복 제거 (r_name 있는 레코드 우선)
-      const map = new Map();
-      (cats || []).forEach(cat => {
-        if (!map.has(cat.r_id) || (!map.get(cat.r_id).r_name && cat.r_name)) {
-          map.set(cat.r_id, cat);
-        }
-      });
+      const uniqueRIds = [...new Set((cats || []).map(c => c.r_id))];
+      if (uniqueRIds.length === 0) {
+        setCategorizedRestaurants([]);
+        return;
+      }
 
-      const deduped = Array.from(map.values())
-        .filter(cat => cat.r_name)
-        .sort((a, b) => (a.r_name || '').localeCompare(b.r_name || '', 'ko'));
+      // 2. 해당 r_id의 레스토랑 이름을 restaurantDataTable에서 가져오기
+      const { data: restaurants, error: rError } = await supabase
+        .from('restaurantDataTable')
+        .select('r_id, name')
+        .in('r_id', uniqueRIds)
+        .order('name', { ascending: true });
+      if (rError) throw rError;
 
-      setCategorizedRestaurants(deduped);
+      setCategorizedRestaurants(restaurants || []);
     } catch (e) {
       console.error('카테고리 목록 로드 실패:', e);
     } finally {
@@ -351,8 +353,8 @@ export default function MyPage() {
     }
   };
 
-  // admin: 레스토랑 선택 시 기존 값 불러오기
-  const handleEditRestaurantSelect = (rid) => {
+  // admin: 레스토랑 선택 시 restaurantCategoryTable에서 기존 값 불러오기
+  const handleEditRestaurantSelect = async (rid) => {
     setEditRestaurantId(rid);
     setEditCategoryMessage('');
     if (!rid) {
@@ -360,19 +362,24 @@ export default function MyPage() {
       setEditCategoryData({ mealTime: '', mealKind: '', location: '', location2: '', drinkYN: 'N', category: '', signature: '', partyNumMin: 1, partyNumMax: 10 });
       return;
     }
-    const record = categorizedRestaurants.find(c => String(c.r_id) === String(rid));
-    if (record) {
-      setEditCategoryRecordId(record.id);
+    const { data, error } = await supabase
+      .from('restaurantCategoryTable')
+      .select('*')
+      .eq('r_id', parseInt(rid))
+      .limit(1)
+      .single();
+    if (!error && data) {
+      setEditCategoryRecordId(data.id);
       setEditCategoryData({
-        mealTime: record.mealTime || '',
-        mealKind: record.mealKind || '',
-        location: record.location || '',
-        location2: record.location2 || '',
-        drinkYN: record.drinkYN || 'N',
-        category: record.category || '',
-        signature: record.signature || '',
-        partyNumMin: record.partyNumMin ?? 1,
-        partyNumMax: record.partyNumMax ?? 10,
+        mealTime: data.mealTime || '',
+        mealKind: data.mealKind || '',
+        location: data.location || '',
+        location2: data.location2 || '',
+        drinkYN: data.drinkYN || 'N',
+        category: data.category || '',
+        signature: data.signature || '',
+        partyNumMin: data.partyNumMin ?? 1,
+        partyNumMax: data.partyNumMax ?? 10,
       });
     }
   };
@@ -1135,8 +1142,8 @@ export default function MyPage() {
                           className="select-box"
                         >
                           <option value="">레스토랑을 선택하세요</option>
-                          {categorizedRestaurants.map(cat => (
-                            <option key={cat.id} value={cat.r_id}>{cat.r_name}</option>
+                          {categorizedRestaurants.map(r => (
+                            <option key={r.r_id} value={r.r_id}>{r.name}</option>
                           ))}
                         </select>
                       </div>
