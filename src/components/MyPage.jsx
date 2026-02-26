@@ -337,11 +337,12 @@ export default function MyPage() {
         return;
       }
 
-      // 2. 해당 r_id의 레스토랑 이름을 restaurantDataTable에서 가져오기
+      // 2. 해당 id(PK)의 레스토랑 이름을 restaurantDataTable에서 가져오기
+      // restaurantCategoryTable.r_id → restaurantDataTable.id(PK)
       const { data: restaurants, error: rError } = await supabase
         .from('restaurantDataTable')
-        .select('r_id, name')
-        .in('r_id', uniqueRIds)
+        .select('id, name')
+        .in('id', uniqueRIds)
         .order('name', { ascending: true });
       if (rError) throw rError;
 
@@ -1143,7 +1144,7 @@ export default function MyPage() {
                         >
                           <option value="">레스토랑을 선택하세요</option>
                           {categorizedRestaurants.map(r => (
-                            <option key={r.r_id} value={r.r_id}>{r.name}</option>
+                            <option key={r.id} value={r.id}>{r.name}</option>
                           ))}
                         </select>
                       </div>
