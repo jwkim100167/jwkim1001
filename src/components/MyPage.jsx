@@ -324,7 +324,7 @@ export default function MyPage() {
   const loadCategorizedRestaurants = async () => {
     setLoadingEdit(true);
     try {
-      // 1. restaurantCategoryTable에서 r_id 목록 가져오기
+      // 1. restaurantCategoryTable 전체 r_id 조회
       const { data: cats, error: catError } = await supabase
         .from('restaurantCategoryTable')
         .select('r_id')
@@ -332,13 +332,15 @@ export default function MyPage() {
       if (catError) throw catError;
 
       const uniqueRIds = [...new Set((cats || []).map(c => c.r_id))];
+      console.log('✅ restaurantCategoryTable에서 가져온 r_id 목록:', uniqueRIds);
+      console.log('✅ 324가 포함되어 있는가:', uniqueRIds.includes(324));
+
       if (uniqueRIds.length === 0) {
         setCategorizedRestaurants([]);
         return;
       }
 
-      // 2. 해당 id(PK)의 레스토랑 이름을 restaurantDataTable에서 가져오기
-      // restaurantCategoryTable.r_id → restaurantDataTable.id(PK)
+      // 2. restaurantCategoryTable.r_id = restaurantDataTable.id(PK)
       const { data: restaurants, error: rError } = await supabase
         .from('restaurantDataTable')
         .select('id, name')
@@ -346,6 +348,7 @@ export default function MyPage() {
         .order('name', { ascending: true });
       if (rError) throw rError;
 
+      console.log('✅ 드롭다운에 표시될 레스토랑 목록:', restaurants?.map(r => `${r.id}:${r.name}`));
       setCategorizedRestaurants(restaurants || []);
     } catch (e) {
       console.error('카테고리 목록 로드 실패:', e);
