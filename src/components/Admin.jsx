@@ -24,6 +24,7 @@ export default function Admin() {
     drinkYN: 'N', category: '', signature: '', partyNumMin: 1, partyNumMax: 10
   });
   const [editBobYN, setEditBobYN] = useState(false);
+  const [filterBobYN, setFilterBobYN] = useState(null); // null=전체, true=노출, false=미노출
   const [saveMessage, setSaveMessage] = useState('');
   const [loadingRestaurants, setLoadingRestaurants] = useState(false);
 
@@ -51,10 +52,10 @@ export default function Admin() {
         return;
       }
 
-      // 2. restaurantDataTable.id(PK) 기준으로 이름 가져오기
+      // 2. restaurantDataTable.id(PK) 기준으로 이름 + bobYN 가져오기
       const { data: restaurants, error: rError } = await supabase
         .from('restaurantDataTable')
-        .select('id, name')
+        .select('id, name, bobYN')
         .in('id', uniqueRIds)
         .order('name', { ascending: true });
       if (rError) throw rError;
@@ -316,6 +317,30 @@ export default function Admin() {
                 ) : (
                   <div className="form-section">
                     <div className="form-group">
+                      <label>MOMOK-멤버십 노출 필터 (bobYN)</label>
+                      <div className="radio-group">
+                        <label>
+                          <input type="radio" name="filterBobYN" value="all"
+                            checked={filterBobYN === null}
+                            onChange={() => { setFilterBobYN(null); setSelectedRestaurantId(''); setEditCategoryRecordId(null); }} />
+                          &nbsp;전체
+                        </label>
+                        <label>
+                          <input type="radio" name="filterBobYN" value="true"
+                            checked={filterBobYN === true}
+                            onChange={() => { setFilterBobYN(true); setSelectedRestaurantId(''); setEditCategoryRecordId(null); }} />
+                          &nbsp;노출
+                        </label>
+                        <label>
+                          <input type="radio" name="filterBobYN" value="false"
+                            checked={filterBobYN === false}
+                            onChange={() => { setFilterBobYN(false); setSelectedRestaurantId(''); setEditCategoryRecordId(null); }} />
+                          &nbsp;미노출
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
                       <label>레스토랑 선택 *</label>
                       <select
                         value={selectedRestaurantId}
@@ -323,9 +348,11 @@ export default function Admin() {
                         className="select-box"
                       >
                         <option value="">레스토랑을 선택하세요</option>
-                        {categorizedRestaurants.map(r => (
-                          <option key={r.id} value={r.id}>{r.name}</option>
-                        ))}
+                        {categorizedRestaurants
+                          .filter(r => filterBobYN === null || r.bobYN === filterBobYN)
+                          .map(r => (
+                            <option key={r.id} value={r.id}>{r.name}</option>
+                          ))}
                       </select>
                     </div>
 
