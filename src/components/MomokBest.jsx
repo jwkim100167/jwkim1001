@@ -52,7 +52,13 @@ export default function MomokBest() {
         };
       });
 
-      setCards(joined);
+      const sorted = joined.sort((a, b) => {
+        const catCmp = (a.category || '-').localeCompare(b.category || '-', 'ko');
+        if (catCmp !== 0) return catCmp;
+        return (a.address || '').localeCompare(b.address || '', 'ko');
+      });
+
+      setCards(sorted);
 
       const life = await getUserLife(user.id);
       setUserLife(life);

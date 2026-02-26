@@ -455,11 +455,7 @@ export default function MyPage() {
         const rid = restaurant.r_id || restaurant.id;
         return !categorizedIds.has(rid);
       })
-      .sort((a, b) => {
-        const addressA = a.address || '';
-        const addressB = b.address || '';
-        return addressA.localeCompare(addressB);
-      });
+      .sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ko'));
   };
 
   // 비밀번호 변경 핸들러
