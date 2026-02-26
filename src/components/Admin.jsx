@@ -23,6 +23,7 @@ export default function Admin() {
     mealTime: '', mealKind: '', location: '', location2: '',
     drinkYN: 'N', category: '', signature: '', partyNumMin: 1, partyNumMax: 10
   });
+  const [editBobYN, setEditBobYN] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
   const [loadingRestaurants, setLoadingRestaurants] = useState(false);
 
@@ -79,28 +80,37 @@ export default function Admin() {
     if (!id) {
       setEditCategoryRecordId(null);
       setEditCategoryData({ mealTime: '', mealKind: '', location: '', location2: '', drinkYN: 'N', category: '', signature: '', partyNumMin: 1, partyNumMax: 10 });
+      setEditBobYN(false);
       return;
     }
-    const { data, error } = await supabase
+    // restaurantCategoryTable에서 카테고리 데이터 로드
+    const { data: catData, error: catError } = await supabase
       .from('restaurantCategoryTable')
       .select('*')
       .eq('r_id', parseInt(id))
       .limit(1)
       .single();
-    if (!error && data) {
-      setEditCategoryRecordId(data.id);
+    if (!catError && catData) {
+      setEditCategoryRecordId(catData.id);
       setEditCategoryData({
-        mealTime: data.mealTime || '',
-        mealKind: data.mealKind || '',
-        location: data.location || '',
-        location2: data.location2 || '',
-        drinkYN: data.drinkYN || 'N',
-        category: data.category || '',
-        signature: data.signature || '',
-        partyNumMin: data.partyNumMin ?? 1,
-        partyNumMax: data.partyNumMax ?? 10,
+        mealTime: catData.mealTime || '',
+        mealKind: catData.mealKind || '',
+        location: catData.location || '',
+        location2: catData.location2 || '',
+        drinkYN: catData.drinkYN || 'N',
+        category: catData.category || '',
+        signature: catData.signature || '',
+        partyNumMin: catData.partyNumMin ?? 1,
+        partyNumMax: catData.partyNumMax ?? 10,
       });
     }
+    // restaurantDataTable에서 bobYN 로드
+    const { data: rData } = await supabase
+      .from('restaurantDataTable')
+      .select('bobYN')
+      .eq('id', parseInt(id))
+      .single();
+    setEditBobYN(rData?.bobYN ?? false);
   };
 
   // 카테고리 수정 저장
@@ -127,6 +137,14 @@ export default function Admin() {
         })
         .eq('id', editCategoryRecordId);
       if (error) { setSaveMessage('수정 실패: ' + error.message); return; }
+
+      // restaurantDataTable.bobYN 업데이트
+      const { error: bobError } = await supabase
+        .from('restaurantDataTable')
+        .update({ bobYN: editBobYN })
+        .eq('id', parseInt(selectedRestaurantId));
+      if (bobError) { setSaveMessage('bobYN 수정 실패: ' + bobError.message); return; }
+
       setSaveMessage('수정이 완료되었습니다!');
     } catch (e) {
       console.error('카테고리 수정 오류:', e);
@@ -372,6 +390,23 @@ export default function Admin() {
                             <label>최대 인원</label>
                             <input type="number" min="1" value={editCategoryData.partyNumMax}
                               onChange={(e) => setEditCategoryData(prev => ({ ...prev, partyNumMax: parseInt(e.target.value) || 1 }))} />
+                          </div>
+                        </div>
+                        <div className="form-group">
+                          <label>MOMOK-멤버십 노출 (bobYN)</label>
+                          <div className="radio-group">
+                            <label>
+                              <input type="radio" name="bobYN" value="true"
+                                checked={editBobYN === true}
+                                onChange={() => setEditBobYN(true)} />
+                              &nbsp;노출
+                            </label>
+                            <label>
+                              <input type="radio" name="bobYN" value="false"
+                                checked={editBobYN === false}
+                                onChange={() => setEditBobYN(false)} />
+                              &nbsp;미노출
+                            </label>
                           </div>
                         </div>
                         <button onClick={handleSaveCategory} className="save-btn">
