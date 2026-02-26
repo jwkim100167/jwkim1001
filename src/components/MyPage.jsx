@@ -129,6 +129,17 @@ export default function MyPage() {
   const [restaurantCategoryFromDB, setRestaurantCategoryFromDB] = useState([]);
   const [loadingCategory, setLoadingCategory] = useState(false);
 
+  // admin 카테고리 수정 상태
+  const [categorizedRestaurants, setCategorizedRestaurants] = useState([]);
+  const [editRestaurantId, setEditRestaurantId] = useState('');
+  const [editCategoryRecordId, setEditCategoryRecordId] = useState(null);
+  const [editCategoryData, setEditCategoryData] = useState({
+    mealTime: '', mealKind: '', location: '', location2: '',
+    drinkYN: 'N', category: '', signature: '', partyNumMin: 1, partyNumMax: 10
+  });
+  const [editCategoryMessage, setEditCategoryMessage] = useState('');
+  const [loadingEdit, setLoadingEdit] = useState(false);
+
   useEffect(() => {
     console.log('🔵 MyPage useEffect 실행됨, user:', user);
     if (user?.id) {
@@ -273,13 +284,16 @@ export default function MyPage() {
   const loadMyRestaurants = async () => {
     setLoadingCategory(true);
     try {
-      // 내가 등록한 레스토랑 가져오기
-      const { data: restaurants, error: restaurantError } = await supabase
+      // admin은 모든 레스토랑, 일반 유저는 본인 레스토랑만
+      let query = supabase
         .from('restaurantDataTable')
         .select('*')
-        .eq('u_id', user.id)
         .eq('isOpen', true)
         .order('name', { ascending: true });
+      if (user?.loginId !== 'admin') {
+        query = query.eq('u_id', user.id);
+      }
+      const { data: restaurants, error: restaurantError } = await query;
 
       if (restaurantError) throw restaurantError;
 
@@ -305,6 +319,95 @@ export default function MyPage() {
       loadMyRestaurants();
     }
   }, [activeTab, foodSubMenu, user]);
+
+  // admin: restaurantCategoryTable에 있는 레스토랑 로드 (r_id 중복 제거, 가나다 순)
+  const loadCategorizedRestaurants = async () => {
+    setLoadingEdit(true);
+    try {
+      // DB 레벨에서 r_id IS NOT NULL 조건으로 필터링
+      const { data: cats, error } = await supabase
+        .from('restaurantCategoryTable')
+        .select('*')
+        .not('r_id', 'is', null);
+      if (error) throw error;
+
+      // r_id 기준 중복 제거 (r_name 있는 레코드 우선)
+      const map = new Map();
+      (cats || []).forEach(cat => {
+        if (!map.has(cat.r_id) || (!map.get(cat.r_id).r_name && cat.r_name)) {
+          map.set(cat.r_id, cat);
+        }
+      });
+
+      const deduped = Array.from(map.values())
+        .filter(cat => cat.r_name)
+        .sort((a, b) => (a.r_name || '').localeCompare(b.r_name || '', 'ko'));
+
+      setCategorizedRestaurants(deduped);
+    } catch (e) {
+      console.error('카테고리 목록 로드 실패:', e);
+    } finally {
+      setLoadingEdit(false);
+    }
+  };
+
+  // admin: 레스토랑 선택 시 기존 값 불러오기
+  const handleEditRestaurantSelect = (rid) => {
+    setEditRestaurantId(rid);
+    setEditCategoryMessage('');
+    if (!rid) {
+      setEditCategoryRecordId(null);
+      setEditCategoryData({ mealTime: '', mealKind: '', location: '', location2: '', drinkYN: 'N', category: '', signature: '', partyNumMin: 1, partyNumMax: 10 });
+      return;
+    }
+    const record = categorizedRestaurants.find(c => String(c.r_id) === String(rid));
+    if (record) {
+      setEditCategoryRecordId(record.id);
+      setEditCategoryData({
+        mealTime: record.mealTime || '',
+        mealKind: record.mealKind || '',
+        location: record.location || '',
+        location2: record.location2 || '',
+        drinkYN: record.drinkYN || 'N',
+        category: record.category || '',
+        signature: record.signature || '',
+        partyNumMin: record.partyNumMin ?? 1,
+        partyNumMax: record.partyNumMax ?? 10,
+      });
+    }
+  };
+
+  // admin: 카테고리 수정 저장
+  const handleUpdateCategory = async () => {
+    setEditCategoryMessage('');
+    if (!editCategoryRecordId) { setEditCategoryMessage('레스토랑을 선택해주세요.'); return; }
+    if (!editCategoryData.location || !editCategoryData.location2 || !editCategoryData.category) {
+      setEditCategoryMessage('대분류, 소분류, 카테고리는 필수 항목입니다.');
+      return;
+    }
+    try {
+      const { error } = await supabase
+        .from('restaurantCategoryTable')
+        .update({
+          mealTime: editCategoryData.mealTime || null,
+          mealKind: editCategoryData.mealKind || null,
+          location: editCategoryData.location,
+          location2: editCategoryData.location2,
+          drinkYN: editCategoryData.drinkYN,
+          category: editCategoryData.category,
+          signature: editCategoryData.signature || null,
+          partyNumMin: editCategoryData.partyNumMin,
+          partyNumMax: editCategoryData.partyNumMax,
+        })
+        .eq('id', editCategoryRecordId);
+      if (error) { setEditCategoryMessage('수정 실패: ' + error.message); return; }
+      setEditCategoryMessage('수정이 완료되었습니다!');
+      loadCategorizedRestaurants();
+    } catch (e) {
+      console.error('카테고리 수정 오류:', e);
+      setEditCategoryMessage('수정 중 오류가 발생했습니다.');
+    }
+  };
 
   // 카테고리 저장 핸들러
   const handleSaveCategory = async () => {
@@ -447,7 +550,7 @@ export default function MyPage() {
     return new Set(restaurantCategoryFromDB.map(cat => cat.r_id));
   };
 
-  // 카테고리가 없는 내 레스토랑만 필터링 (address 순으로 정렬)
+  // 카테고리가 없는 내 레스토랑만 필터링 (name 가나다 순)
   const getUncategorizedMyRestaurants = () => {
     const categorizedIds = getCategorizedRestaurantIds();
     return myRestaurants
@@ -788,8 +891,16 @@ export default function MyPage() {
                   className={`submenu-btn ${foodSubMenu === 'category' ? 'active' : ''}`}
                   onClick={() => setFoodSubMenu('category')}
                 >
-                  카테고리 관리
+                  카테고리 추가
                 </button>
+                {user?.loginId === 'admin' && (
+                  <button
+                    className={`submenu-btn ${foodSubMenu === 'categoryEdit' ? 'active' : ''}`}
+                    onClick={() => { setFoodSubMenu('categoryEdit'); loadCategorizedRestaurants(); }}
+                  >
+                    카테고리 관리
+                  </button>
+                )}
               </div>
 
               {/* 레스토랑 관리 */}
@@ -839,9 +950,11 @@ export default function MyPage() {
               {/* 카테고리 관리 */}
               {foodSubMenu === 'category' && (
                 <div className="food-admin-card">
-                  <h2>🏷️ 카테고리 관리</h2>
+                  <h2>🏷️ 카테고리 추가</h2>
                   <p className="description">
-                    내가 등록한 레스토랑에 카테고리를 할당할 수 있습니다.
+                    {user?.loginId === 'admin'
+                      ? '모든 레스토랑에 카테고리를 할당할 수 있습니다.'
+                      : '내가 등록한 레스토랑에 카테고리를 할당할 수 있습니다.'}
                   </p>
 
                   {loadingCategory ? (
@@ -999,6 +1112,107 @@ export default function MyPage() {
                       {categorySaveMessage && (
                         <div className={`save-message ${categorySaveMessage.includes('성공') ? 'success' : 'error'}`}>
                           {categorySaveMessage}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+              {/* admin 카테고리 수정 */}
+              {foodSubMenu === 'categoryEdit' && user?.loginId === 'admin' && (
+                <div className="food-admin-card">
+                  <h2>✏️ 카테고리 관리</h2>
+                  <p className="description">카테고리가 등록된 레스토랑의 값을 수정합니다.</p>
+                  {loadingEdit ? (
+                    <div className="loading">로딩 중...</div>
+                  ) : (
+                    <div className="form-section">
+                      <div className="form-group">
+                        <label>레스토랑 선택 *</label>
+                        <select
+                          value={editRestaurantId}
+                          onChange={(e) => handleEditRestaurantSelect(e.target.value)}
+                          className="select-box"
+                        >
+                          <option value="">레스토랑을 선택하세요</option>
+                          {categorizedRestaurants.map(cat => (
+                            <option key={cat.id} value={cat.r_id}>{cat.r_name}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {editCategoryRecordId && (
+                        <>
+                          <div className="form-group">
+                            <label>대분류 *</label>
+                            <input type="text" value={editCategoryData.location}
+                              onChange={(e) => setEditCategoryData(prev => ({ ...prev, location: e.target.value, location2: '' }))}
+                              className="input-box" />
+                          </div>
+                          <div className="form-group">
+                            <label>소분류 *</label>
+                            <input type="text" value={editCategoryData.location2}
+                              onChange={(e) => setEditCategoryData(prev => ({ ...prev, location2: e.target.value }))}
+                              className="input-box" />
+                          </div>
+                          <div className="form-group">
+                            <label>카테고리 *</label>
+                            <input type="text" value={editCategoryData.category}
+                              onChange={(e) => setEditCategoryData(prev => ({ ...prev, category: e.target.value }))}
+                              className="input-box" />
+                          </div>
+                          <div className="form-group">
+                            <label>점심/저녁</label>
+                            <select value={editCategoryData.mealTime}
+                              onChange={(e) => setEditCategoryData(prev => ({ ...prev, mealTime: e.target.value }))}
+                              className="select-box">
+                              <option value="">선택하세요</option>
+                              <option value="점심">점심</option>
+                              <option value="저녁">저녁</option>
+                            </select>
+                          </div>
+                          <div className="form-group">
+                            <label>식사 종류</label>
+                            <input type="text" value={editCategoryData.mealKind}
+                              onChange={(e) => setEditCategoryData(prev => ({ ...prev, mealKind: e.target.value }))}
+                              className="input-box" />
+                          </div>
+                          <div className="form-group">
+                            <label>주류 가능 여부</label>
+                            <select value={editCategoryData.drinkYN}
+                              onChange={(e) => setEditCategoryData(prev => ({ ...prev, drinkYN: e.target.value }))}
+                              className="select-box">
+                              <option value="Y">Y (가능)</option>
+                              <option value="N">N (불가능)</option>
+                            </select>
+                          </div>
+                          <div className="form-group">
+                            <label>시그니처 메뉴</label>
+                            <input type="text" value={editCategoryData.signature}
+                              onChange={(e) => setEditCategoryData(prev => ({ ...prev, signature: e.target.value }))}
+                              placeholder="예: 제육볶음" className="input-box" />
+                          </div>
+                          <div className="party-num-group">
+                            <div className="form-group">
+                              <label>최소 인원</label>
+                              <input type="number" min="1" value={editCategoryData.partyNumMin}
+                                onChange={(e) => setEditCategoryData(prev => ({ ...prev, partyNumMin: parseInt(e.target.value) || 1 }))} />
+                            </div>
+                            <div className="form-group">
+                              <label>최대 인원</label>
+                              <input type="number" min="1" value={editCategoryData.partyNumMax}
+                                onChange={(e) => setEditCategoryData(prev => ({ ...prev, partyNumMax: parseInt(e.target.value) || 1 }))} />
+                            </div>
+                          </div>
+                          <button onClick={handleUpdateCategory} className="save-btn">
+                            💾 수정 저장하기
+                          </button>
+                        </>
+                      )}
+
+                      {editCategoryMessage && (
+                        <div className={`save-message ${editCategoryMessage.includes('완료') ? 'success' : 'error'}`}>
+                          {editCategoryMessage}
                         </div>
                       )}
                     </div>
