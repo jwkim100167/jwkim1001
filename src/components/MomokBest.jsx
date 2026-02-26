@@ -15,19 +15,12 @@ export default function MomokBest() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [noLifeMsg, setNoLifeMsg] = useState(false);
+  const [loginRequiredMsg, setLoginRequiredMsg] = useState(false);
 
   const isExempt = user?.loginId === 'admin' || user?.loginId === 'test';
 
-  // 로그인 확인
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login');
-    }
-  }, [isAuthenticated, navigate]);
-
   // 데이터 로드
   const loadData = useCallback(async () => {
-    if (!user) return;
     setLoading(true);
     try {
       const [dataRes, catRes] = await Promise.all([
@@ -60,8 +53,10 @@ export default function MomokBest() {
 
       setCards(sorted);
 
-      const life = await getUserLife(user.id);
-      setUserLife(life);
+      if (user) {
+        const life = await getUserLife(user.id);
+        setUserLife(life);
+      }
     } catch (err) {
       console.error('MomokBest 데이터 로드 실패:', err);
     } finally {
@@ -70,10 +65,15 @@ export default function MomokBest() {
   }, [user]);
 
   useEffect(() => {
-    if (isAuthenticated && user) loadData();
-  }, [isAuthenticated, user, loadData]);
+    loadData();
+  }, [loadData]);
 
   const handleCardClick = async (card) => {
+    if (!isAuthenticated) {
+      setLoginRequiredMsg(true);
+      setTimeout(() => setLoginRequiredMsg(false), 2500);
+      return;
+    }
     if (!isExempt && userLife <= 0) {
       setNoLifeMsg(true);
       setTimeout(() => setNoLifeMsg(false), 2500);
@@ -87,8 +87,6 @@ export default function MomokBest() {
   };
 
   const handleCloseModal = () => setSelectedCard(null);
-
-  if (!isAuthenticated) return null;
 
   return (
     <div className="momokbest-page">
@@ -116,6 +114,10 @@ export default function MomokBest() {
         {!isExempt && ` (현재 ${userLife}개)`}
         &nbsp;·&nbsp;매일 첫 로그인 시 라이프 <strong>+3</strong> 충전
       </div>
+
+      {loginRequiredMsg && (
+        <div className="mb-nolife-toast">🔒 로그인이 필요합니다!</div>
+      )}
 
       {noLifeMsg && (
         <div className="mb-nolife-toast">❌ 라이프가 없습니다. 내일 다시 접속하면 충전됩니다!</div>

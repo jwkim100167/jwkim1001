@@ -3204,3 +3204,18 @@
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
 }
+
+.mb-nolife-toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #c0392b;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  z-index: 999;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  white-space: nowrap;
+}

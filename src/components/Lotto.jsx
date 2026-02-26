@@ -49,6 +49,7 @@ const Lotto = () => {
   const [showExcludeOptions, setShowExcludeOptions] = useState(false); // 제외할 번호 옵션 표시 상태
   const [showIncludeOptions, setShowIncludeOptions] = useState(false); // 필수 포함 번호 옵션 표시 상태
   const [showPatternOptions, setShowPatternOptions] = useState(false); // 제외 패턴 옵션 표시 상태
+  const [loginRequiredMsg, setLoginRequiredMsg] = useState(false);
 
   // 함수 참조를 위한 ref
   const controlsRef = useRef(null);
@@ -1896,6 +1897,11 @@ const Lotto = () => {
 
   // 특정 게임 슬롯에 번호 생성 (targetSlot: 0-4, null이면 첫 번째 빈 슬롯)
   const generateSingleGame = (targetSlot = null) => {
+    if (!isAuthenticated) {
+      setLoginRequiredMsg(true);
+      setTimeout(() => setLoginRequiredMsg(false), 2500);
+      return;
+    }
     // 필수 포함 번호 검증
     if (mustIncludeNumbers.length > 6) {
       alert('필수 포함 번호가 6개를 초과할 수 없습니다.');
@@ -1978,6 +1984,11 @@ const Lotto = () => {
 
   // 전체게임 생성 (5게임 모두 생성)
   const generate5Games = async () => {
+    if (!isAuthenticated) {
+      setLoginRequiredMsg(true);
+      setTimeout(() => setLoginRequiredMsg(false), 2500);
+      return;
+    }
     // 저장된 게임 확인
     if (user?.id && lottoData?.data && lottoData.data.length > 0) {
       try {
@@ -2496,6 +2507,10 @@ const Lotto = () => {
             📊 분석
           </button>
         </div>
+
+        {loginRequiredMsg && (
+          <div className="mb-nolife-toast">🔒 로그인이 필요합니다!</div>
+        )}
 
         {/* 게임 생성 버튼을 lotto-content 밖으로 - generator 탭일 때만 표시 */}
         {activeTab === 'generator' && (
