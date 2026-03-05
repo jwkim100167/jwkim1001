@@ -54,6 +54,11 @@
   font-size: 0.85rem;
   color: #ff6b6b;
 }
+.mb-life-count {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #ffd700;
+}
 
 /* 안내 문구 */
 .mb-notice {
@@ -169,7 +174,8 @@
   white-space: nowrap;
 }
 .mb-card-signature {
-  font-size: 0.72rem;
+  font-size: 1rem;
+  font-weight: 700;
   color: #ffd966;
   white-space: nowrap;
   overflow: hidden;
@@ -296,9 +302,11 @@
     font-size: 0.6rem;
     padding: 2px 1px;
   }
-  .mb-card-category,
-  .mb-card-signature {
+  .mb-card-category {
     font-size: 0.58rem;
+  }
+  .mb-card-signature {
+    font-size: 0.82rem;
   }
   .mb-title { font-size: 1rem; }
   .mb-modal { padding: 28px 16px 20px; }

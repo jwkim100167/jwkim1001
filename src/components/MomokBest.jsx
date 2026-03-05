@@ -99,9 +99,10 @@ export default function MomokBest() {
             <span className="mb-life-exempt">∞</span>
           ) : (
             <span>
-              {Array.from({ length: Math.max(userLife, 0) }).map((_, i) => (
+              {userLife > 0 && userLife <= 4 && Array.from({ length: userLife }).map((_, i) => (
                 <span key={i} className="mb-heart">❤️</span>
               ))}
+              {userLife >= 5 && <span>❤️ <span className="mb-life-count">+{userLife}개</span></span>}
               {userLife <= 0 && <span className="mb-no-life">라이프 소진</span>}
             </span>
           )}

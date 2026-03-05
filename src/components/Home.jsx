@@ -78,6 +78,7 @@ const Home = () => {
             <div className="card-icon">🍽️</div>
             <div className="card-content">
               <h2>MOMOK</h2>
+              <div className="card-desc">🔧 버그 수정 중</div>
             </div>
             <div className="card-arrow">→</div>
           </Link>
