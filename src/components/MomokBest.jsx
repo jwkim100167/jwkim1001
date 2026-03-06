@@ -137,6 +137,7 @@ export default function MomokBest() {
               className={`mb-card ${!isExempt && userLife <= 0 ? 'mb-card-disabled' : ''}`}
               onClick={() => handleCardClick(card)}
             >
+              {card.link && <span className="mb-card-star">★</span>}
               <div className="mb-card-top">
                 <div className="mb-card-location">{card.location || '랜덤'}</div>
                 <div className="mb-card-location2">{card.location2 || '랜덤'}</div>

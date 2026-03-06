@@ -118,6 +118,18 @@
   transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
   text-align: center;
   backdrop-filter: blur(4px);
+  position: relative;
+}
+
+.mb-card-star {
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  color: #FFD700;
+  font-size: 0.75rem;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 1;
 }
 .mb-card:hover:not(.mb-card-disabled) {
   transform: translateY(-4px) scale(1.02);
