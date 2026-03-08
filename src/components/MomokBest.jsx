@@ -46,6 +46,9 @@ export default function MomokBest() {
       });
 
       const sorted = joined.sort((a, b) => {
+        const aHasLink = a.link ? 0 : 1;
+        const bHasLink = b.link ? 0 : 1;
+        if (aHasLink !== bHasLink) return aHasLink - bHasLink;
         const catCmp = (a.category || '-').localeCompare(b.category || '-', 'ko');
         if (catCmp !== 0) return catCmp;
         return (a.address || '').localeCompare(b.address || '', 'ko');
