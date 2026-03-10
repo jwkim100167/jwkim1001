@@ -45,6 +45,10 @@ const Lotto = () => {
   const [excludeLastDigitRanges, setExcludeLastDigitRanges] = useState(false); // 저번주 1의 자리 수 대역 전체 제외
   const [excludeTensDigitRanges, setExcludeTensDigitRanges] = useState(false); // 저번주 10의 자리 수 대역 전체 제외
   const [preventConsecutiveFour, setPreventConsecutiveFour] = useState(false); // 연속된 번호 4개 제외
+  const [filterOddEven, setFilterOddEven] = useState(false); // 홀짝 극단 비율(0:6, 6:0) 필터
+  const [filterSumRange, setFilterSumRange] = useState(false); // 번호 합계 100~170 범위 필터
+  const [filterHighLow, setFilterHighLow] = useState(false); // 고저 극단 비율(0:6, 6:0) 필터
+  const [filterACValue, setFilterACValue] = useState(false); // AC값 7 미만 제외 필터
   const [showHelp, setShowHelp] = useState(null); // 도움말 표시 상태 ('generate', 'exclude', 'include', 'pattern' 등)
   const [showExcludeOptions, setShowExcludeOptions] = useState(false); // 제외할 번호 옵션 표시 상태
   const [showIncludeOptions, setShowIncludeOptions] = useState(false); // 필수 포함 번호 옵션 표시 상태
@@ -1895,6 +1899,38 @@ const Lotto = () => {
     return false;
   };
 
+  // 홀짝 극단 비율 체크 (0:6 또는 6:0이면 true)
+  const hasExtremeOddEven = (numbers) => {
+    const oddCount = numbers.filter(n => n % 2 !== 0).length;
+    return oddCount === 0 || oddCount === 6;
+  };
+
+  // 번호 합계 범위 체크 (100~170 범위 밖이면 true)
+  const isOutOfSumRange = (numbers) => {
+    const sum = numbers.reduce((a, b) => a + b, 0);
+    return sum < 100 || sum > 170;
+  };
+
+  // 고저 극단 비율 체크 (1~22: 저, 23~45: 고, 0:6 또는 6:0이면 true)
+  const hasExtremeHighLow = (numbers) => {
+    const lowCount = numbers.filter(n => n <= 22).length;
+    return lowCount === 0 || lowCount === 6;
+  };
+
+  // AC값 계산 (번호 간 차이 값의 종류 수)
+  const calcACValue = (numbers) => {
+    const diffs = new Set();
+    for (let i = 0; i < numbers.length; i++) {
+      for (let j = i + 1; j < numbers.length; j++) {
+        diffs.add(Math.abs(numbers[i] - numbers[j]));
+      }
+    }
+    return diffs.size;
+  };
+
+  // AC값 7 미만이면 단순 패턴으로 판단
+  const hasLowACValue = (numbers) => calcACValue(numbers) < 7;
+
   // 특정 게임 슬롯에 번호 생성 (targetSlot: 0-4, null이면 첫 번째 빈 슬롯)
   const generateSingleGame = (targetSlot = null) => {
     if (!isAuthenticated) {
@@ -2052,7 +2088,7 @@ const Lotto = () => {
     ];
 
     // 겹침 방지 옵션이 모두 꺼져있으면 바로 생성
-    if (!preventExactDuplicates && !preventPartialDuplicates) {
+    if (!preventExactDuplicates && !preventPartialDuplicates && !filterOddEven && !filterSumRange && !filterHighLow && !filterACValue) {
       for (let i = 0; i < 5; i++) {
         const gameAvailable = [...finalAvailableNumbers]; // 복사본 생성
         const numbers = [];
@@ -2112,7 +2148,13 @@ const Lotto = () => {
         // 연속된 번호 4개 방지 검사
         const hasConsecutive = preventConsecutiveFour && hasConsecutiveFour(numbers);
 
-        if (!isDuplicate && !hasConsecutive) {
+        // 통계 기반 필터 검사
+        const isOddEvenExtreme = filterOddEven && hasExtremeOddEven(numbers);
+        const isOutOfSum = filterSumRange && isOutOfSumRange(numbers);
+        const isHighLowExtreme = filterHighLow && hasExtremeHighLow(numbers);
+        const isLowAC = filterACValue && hasLowACValue(numbers);
+
+        if (!isDuplicate && !hasConsecutive && !isOddEvenExtreme && !isOutOfSum && !isHighLowExtreme && !isLowAC) {
           console.log(`✅ 게임 ${i + 1}: 유니크한 조합 생성 완료 (${attempts}번 시도)`);
           break;
         } else {
@@ -2781,6 +2823,186 @@ const Lotto = () => {
                 )}
               </div>
 
+              <div className="sub-options-divider">패턴 옵션</div>
+
+              <div className="overlap-prevention-section">
+                <div className="section-title-with-help">
+                  <h3
+                    className="option-title"
+                    onClick={() => setShowPatternOptions(!showPatternOptions)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {showPatternOptions ? '▼' : '▶'} 🎯 제외할 패턴
+                  </h3>
+                  <button
+                    className="help-btn-small"
+                    onClick={() => setShowHelp(showHelp === 'pattern' ? null : 'pattern')}
+                  >
+                    ❓
+                  </button>
+                </div>
+                {showHelp === 'pattern' && (
+                  <div className="help-tooltip" onClick={() => setShowHelp(null)}>
+                    <p><strong>선택</strong> - 고급 제외 패턴을 설정합니다</p>
+                    <p>• 완전 겹침: 이전 회차와 6개 모두 같은 조합 방지</p>
+                    <p>• 부분 겹침: 5개 이상 같은 조합 방지</p>
+                    <p>• 연속 번호: 4개 이상 연속된 번호 방지</p>
+                    <p>• 홀짝 비율: 극단적 홀짝 비율(0:6, 6:0) 방지</p>
+                    <p>• 합계 구간: 번호 합계 100~170 범위 밖 조합 방지</p>
+                    <p>• 고저 비율: 극단적 고저 비율(0:6, 6:0) 방지</p>
+                    <p>• AC값: 번호 패턴이 너무 단순한 조합 방지</p>
+                  </div>
+                )}
+
+                {showPatternOptions && (
+                  <>
+                <div className="overlap-options">
+                  <label className="overlap-option">
+                    <input
+                      type="checkbox"
+                      checked={preventExactDuplicates}
+                      onChange={(e) => setPreventExactDuplicates(e.target.checked)}
+                    />
+                    <span className="overlap-label">
+                      🚫 완전 겹침 제외 (6개 모두 일치)
+                      <small>이전 회차와 완전히 동일한 조합 방지</small>
+                    </span>
+                  </label>
+                  <label className="overlap-option">
+                    <input
+                      type="checkbox"
+                      checked={preventPartialDuplicates}
+                      onChange={(e) => setPreventPartialDuplicates(e.target.checked)}
+                    />
+                    <span className="overlap-label">
+                      ⚠️ 부분 겹침 제외 (5개 일치)
+                      <small>이전 회차와 5개 번호가 겹치는 조합 방지</small>
+                    </span>
+                  </label>
+                  <label className="overlap-option">
+                    <input
+                      type="checkbox"
+                      checked={excludeLastDigitRanges}
+                      onChange={(e) => setExcludeLastDigitRanges(e.target.checked)}
+                    />
+                    <span className="overlap-label">
+                      🔢 지난주 최다 1의 자리 수 제외
+                      <small>가장 많이 나온 1의 자리 수의 모든 대역 번호 제외 (예: 7이면 7,17,27,37 제외)</small>
+                    </span>
+                  </label>
+                  <label className="overlap-option">
+                    <input
+                      type="checkbox"
+                      checked={excludeTensDigitRanges}
+                      onChange={(e) => setExcludeTensDigitRanges(e.target.checked)}
+                    />
+                    <span className="overlap-label">
+                      🔟 지난주 최다 10의 자리 수 대역 전체 제외
+                      <small>가장 많이 나온 10의 자리 수 대역 제외 (0→1~10, 1→11~20, 2→21~30, 3→31~40, 4→41~45)</small>
+                    </span>
+                  </label>
+                  <label className="overlap-option">
+                    <input
+                      type="checkbox"
+                      checked={preventConsecutiveFour}
+                      onChange={(e) => setPreventConsecutiveFour(e.target.checked)}
+                    />
+                    <span className="overlap-label">
+                      📊 연속된 번호 4개 제외
+                      <small>연속된 번호가 4개 이상인 조합 방지 (예: 1,2,3,4 또는 15,16,17,18)</small>
+                    </span>
+                  </label>
+                  <label className="overlap-option">
+                    <input
+                      type="checkbox"
+                      checked={filterOddEven}
+                      onChange={(e) => setFilterOddEven(e.target.checked)}
+                    />
+                    <span className="overlap-label">
+                      ⚖️ 홀짝 극단 비율 제외
+                      <small>홀수 또는 짝수만으로 이루어진 조합 방지 (0:6, 6:0)</small>
+                    </span>
+                  </label>
+                  <label className="overlap-option">
+                    <input
+                      type="checkbox"
+                      checked={filterSumRange}
+                      onChange={(e) => setFilterSumRange(e.target.checked)}
+                    />
+                    <span className="overlap-label">
+                      ➕ 번호 합계 구간 설정 (100~170)
+                      <small>6개 번호 합계가 100~170 범위를 벗어나는 조합 방지</small>
+                    </span>
+                  </label>
+                  <label className="overlap-option">
+                    <input
+                      type="checkbox"
+                      checked={filterHighLow}
+                      onChange={(e) => setFilterHighLow(e.target.checked)}
+                    />
+                    <span className="overlap-label">
+                      📈 고저 극단 비율 제외
+                      <small>1~22(저) 또는 23~45(고)에서만 추출된 조합 방지 (0:6, 6:0)</small>
+                    </span>
+                  </label>
+                  <label className="overlap-option">
+                    <input
+                      type="checkbox"
+                      checked={filterACValue}
+                      onChange={(e) => setFilterACValue(e.target.checked)}
+                    />
+                    <span className="overlap-label">
+                      🔬 AC값 필터 (끝수 복잡도)
+                      <small>번호 간 차이 값의 종류가 7 미만인 단순 패턴 조합 방지</small>
+                    </span>
+                  </label>
+                </div>
+                {!preventExactDuplicates && !preventPartialDuplicates && (
+                  <div className="overlap-warning">
+                    ⚡ 겹침 방지가 비활성화되어 있어 생성 속도가 빨라집니다.
+                  </div>
+                )}
+                {preventPartialDuplicates && (
+                  <div className="overlap-info">
+                    💡 부분 겹침 제외 시 생성 시간이 오래 걸릴 수 있습니다.
+                  </div>
+                )}
+                {excludeLastDigitRanges && (
+                  <div className="overlap-info">
+                    🔢 1의 자리 제외: {(() => {
+                      const analysis = analyzeLastDigits();
+                      if (analysis && analysis.mostFrequentDigit !== null) {
+                        const excludeNums = getExcludeRangesByLastDigit();
+                        const roundInfo = analysis.isFromMultipleRounds
+                          ? `${analysis.checkedRounds.length}회차(${analysis.checkedRounds.join(',')})`
+                          : `${analysis.checkedRounds[0]}회차`;
+                        const tieInfo = analysis.hasMultipleTies ? ' (동점으로 첫 번째 선택)' : '';
+                        return `${roundInfo} 분석: 1의 자리 ${analysis.mostFrequentDigit} 대역 ${excludeNums.length}개 번호 제외 (${excludeNums.join(', ')})${tieInfo}`;
+                      }
+                      return '로또 데이터를 불러와주세요';
+                    })()}
+                  </div>
+                )}
+                {excludeTensDigitRanges && (
+                  <div className="overlap-info">
+                    🔟 10의 자리 대역 제외: {(() => {
+                      const analysis = analyzeTensDigits();
+                      if (analysis && analysis.mostFrequentTensDigit !== null) {
+                        const excludeNums = getExcludeRangesByTensDigit();
+                        const roundInfo = analysis.isFromMultipleRounds
+                          ? `${analysis.checkedRounds.length}회차(${analysis.checkedRounds.join(',')})`
+                          : `${analysis.checkedRounds[0]}회차`;
+                        const tieInfo = analysis.hasMultipleTies ? ' (동점으로 첫 번째 선택)' : '';
+                        return `${roundInfo} 분석: 10의 자리 ${analysis.mostFrequentTensDigit} 대역 ${excludeNums.length}개 번호 제외 (${excludeNums.join(', ')})${tieInfo}`;
+                      }
+                      return '로또 데이터를 불러와주세요';
+                    })()}
+                  </div>
+                )}
+                  </>
+                )}
+              </div>
+
               <div className="include-section">
                 <div className="section-title-with-help">
                   <h3
@@ -2851,7 +3073,7 @@ const Lotto = () => {
                     추가
                   </button>
                 </div>
-                
+
                 <div className="included-numbers">
                   {mustIncludeNumbers.length > 0 ? (
                     <>
@@ -2876,138 +3098,6 @@ const Lotto = () => {
                     <div className="no-includes">필수 포함할 번호를 추가해보세요</div>
                   )}
                 </div>
-                  </>
-                )}
-              </div>
-
-              <div className="sub-options-divider">패턴 옵션</div>
-
-              <div className="overlap-prevention-section">
-                <div className="section-title-with-help">
-                  <h3
-                    className="option-title"
-                    onClick={() => setShowPatternOptions(!showPatternOptions)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    {showPatternOptions ? '▼' : '▶'} 이전 회차와의 중복 방지
-                  </h3>
-                  <button
-                    className="help-btn-small"
-                    onClick={() => setShowHelp(showHelp === 'pattern' ? null : 'pattern')}
-                  >
-                    ❓
-                  </button>
-                </div>
-                {showHelp === 'pattern' && (
-                  <div className="help-tooltip" onClick={() => setShowHelp(null)}>
-                    <p><strong>선택</strong> - 고급 제외 패턴을 설정합니다</p>
-                    <p>• 완전 겹침: 이전 회차와 6개 모두 같은 조합 방지</p>
-                    <p>• 부분 겹침: 5개 이상 같은 조합 방지</p>
-                    <p>• 연속 번호: 4개 이상 연속된 번호 방지</p>
-                  </div>
-                )}
-
-                {showPatternOptions && (
-                  <>
-                <div className="overlap-options">
-                  <label className="overlap-option">
-                    <input
-                      type="checkbox"
-                      checked={preventExactDuplicates}
-                      onChange={(e) => setPreventExactDuplicates(e.target.checked)}
-                    />
-                    <span className="overlap-label">
-                      🚫 완전 겹침 제외 (6개 모두 일치)
-                      <small>이전 회차와 완전히 동일한 조합 방지</small>
-                    </span>
-                  </label>
-                  <label className="overlap-option">
-                    <input
-                      type="checkbox"
-                      checked={preventPartialDuplicates}
-                      onChange={(e) => setPreventPartialDuplicates(e.target.checked)}
-                    />
-                    <span className="overlap-label">
-                      ⚠️ 부분 겹침 제외 (5개 일치)
-                      <small>이전 회차와 5개 번호가 겹치는 조합 방지</small>
-                    </span>
-                  </label>
-                  <label className="overlap-option">
-                    <input
-                      type="checkbox"
-                      checked={excludeLastDigitRanges}
-                      onChange={(e) => setExcludeLastDigitRanges(e.target.checked)}
-                    />
-                    <span className="overlap-label">
-                      🔢 지난주 최다 1의 자리 수 제외
-                      <small>가장 많이 나온 1의 자리 수의 모든 대역 번호 제외 (예: 7이면 7,17,27,37 제외)</small>
-                    </span>
-                  </label>
-                  <label className="overlap-option">
-                    <input
-                      type="checkbox"
-                      checked={excludeTensDigitRanges}
-                      onChange={(e) => setExcludeTensDigitRanges(e.target.checked)}
-                    />
-                    <span className="overlap-label">
-                      🔟 지난주 최다 10의 자리 수 대역 전체 제외
-                      <small>가장 많이 나온 10의 자리 수 대역 제외 (0→1~10, 1→11~20, 2→21~30, 3→31~40, 4→41~45)</small>
-                    </span>
-                  </label>
-                  <label className="overlap-option">
-                    <input
-                      type="checkbox"
-                      checked={preventConsecutiveFour}
-                      onChange={(e) => setPreventConsecutiveFour(e.target.checked)}
-                    />
-                    <span className="overlap-label">
-                      📊 연속된 번호 4개 제외
-                      <small>연속된 번호가 4개 이상인 조합 방지 (예: 1,2,3,4 또는 15,16,17,18)</small>
-                    </span>
-                  </label>
-                </div>
-                {!preventExactDuplicates && !preventPartialDuplicates && (
-                  <div className="overlap-warning">
-                    ⚡ 겹침 방지가 비활성화되어 있어 생성 속도가 빨라집니다.
-                  </div>
-                )}
-                {preventPartialDuplicates && (
-                  <div className="overlap-info">
-                    💡 부분 겹침 제외 시 생성 시간이 오래 걸릴 수 있습니다.
-                  </div>
-                )}
-                {excludeLastDigitRanges && (
-                  <div className="overlap-info">
-                    🔢 1의 자리 제외: {(() => {
-                      const analysis = analyzeLastDigits();
-                      if (analysis && analysis.mostFrequentDigit !== null) {
-                        const excludeNums = getExcludeRangesByLastDigit();
-                        const roundInfo = analysis.isFromMultipleRounds
-                          ? `${analysis.checkedRounds.length}회차(${analysis.checkedRounds.join(',')})`
-                          : `${analysis.checkedRounds[0]}회차`;
-                        const tieInfo = analysis.hasMultipleTies ? ' (동점으로 첫 번째 선택)' : '';
-                        return `${roundInfo} 분석: 1의 자리 ${analysis.mostFrequentDigit} 대역 ${excludeNums.length}개 번호 제외 (${excludeNums.join(', ')})${tieInfo}`;
-                      }
-                      return '로또 데이터를 불러와주세요';
-                    })()}
-                  </div>
-                )}
-                {excludeTensDigitRanges && (
-                  <div className="overlap-info">
-                    🔟 10의 자리 대역 제외: {(() => {
-                      const analysis = analyzeTensDigits();
-                      if (analysis && analysis.mostFrequentTensDigit !== null) {
-                        const excludeNums = getExcludeRangesByTensDigit();
-                        const roundInfo = analysis.isFromMultipleRounds
-                          ? `${analysis.checkedRounds.length}회차(${analysis.checkedRounds.join(',')})`
-                          : `${analysis.checkedRounds[0]}회차`;
-                        const tieInfo = analysis.hasMultipleTies ? ' (동점으로 첫 번째 선택)' : '';
-                        return `${roundInfo} 분석: 10의 자리 ${analysis.mostFrequentTensDigit} 대역 ${excludeNums.length}개 번호 제외 (${excludeNums.join(', ')})${tieInfo}`;
-                      }
-                      return '로또 데이터를 불러와주세요';
-                    })()}
-                  </div>
-                )}
                   </>
                 )}
               </div>
