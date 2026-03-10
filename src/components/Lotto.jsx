@@ -55,28 +55,24 @@ const Lotto = () => {
   const [showPatternOptions, setShowPatternOptions] = useState(false); // 제외 패턴 옵션 표시 상태
   const [loginRequiredMsg, setLoginRequiredMsg] = useState(false);
 
-  // 함수 참조를 위한 ref
-  const controlsRef = useRef(null);
-  const [isControlsFixed, setIsControlsFixed] = useState(false);
-
   // Auth hooks
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
 
-  // 스크롤 이벤트로 게임 생성 버튼 고정
+  // 생성 컨트롤 높이 측정 (spacer용)
+  const controlsRef = useRef(null);
+  const [controlsHeight, setControlsHeight] = useState(0);
+
   useEffect(() => {
-    const handleScroll = () => {
-      if (activeTab !== 'generator' || !controlsRef.current) return;
-
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const triggerPoint = 210; // 탭 아래 위치
-
-      setIsControlsFixed(scrollTop > triggerPoint);
+    const updateHeight = () => {
+      if (controlsRef.current) {
+        setControlsHeight(controlsRef.current.offsetHeight);
+      }
     };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [activeTab]);
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+    return () => window.removeEventListener('resize', updateHeight);
+  }, [generatedNumbers]);
 
   // 디버깅: Supabase auth UUID 확인
   useEffect(() => {
@@ -2554,56 +2550,50 @@ const Lotto = () => {
           <div className="mb-nolife-toast">🔒 로그인이 필요합니다!</div>
         )}
 
-        {/* 게임 생성 버튼을 lotto-content 밖으로 - generator 탭일 때만 표시 */}
+        {/* 게임 생성 컨트롤 - generator 탭일 때만 표시 */}
         {activeTab === 'generator' && (
-          <div
-            ref={controlsRef}
-            className={`generator-controls-top ${isControlsFixed ? 'fixed' : ''}`}
-          >
-                <div className="section-title-with-help">
-                  <h2 className="main-title">🎲 게임 생성</h2>
-                  <button
-                    className="help-btn"
-                    onClick={() => setShowHelp(showHelp === 'generate' ? null : 'generate')}
-                  >
-                    ❓
-                  </button>
-                </div>
-                {showHelp === 'generate' && (
-                  <div className="help-tooltip" onClick={() => setShowHelp(null)}>
-                    <p><strong>필수</strong> - 로또 번호를 생성합니다</p>
-                    <p>• 1게임: 6개 번호 1세트 생성</p>
-                    <p>• 5게임: 6개 번호 5세트 생성</p>
-                    <p>• 아래 옵션을 설정하면 조건에 맞는 번호만 생성됩니다</p>
-                  </div>
-                )}
-                <div className="generator-buttons">
-                  <button onClick={generate5Games} className="generate-btn-full">
-                    🎯 전체게임 생성
-                  </button>
-                  <div className="individual-game-buttons">
-                    <button onClick={() => generateSingleGame(0)} className="generate-btn-small">게임 1</button>
-                    <button onClick={() => generateSingleGame(1)} className="generate-btn-small">게임 2</button>
-                    <button onClick={() => generateSingleGame(2)} className="generate-btn-small">게임 3</button>
-                    <button onClick={() => generateSingleGame(3)} className="generate-btn-small">게임 4</button>
-                    <button onClick={() => generateSingleGame(4)} className="generate-btn-small">게임 5</button>
-                  </div>
-                </div>
+          <>
+          <div ref={controlsRef} className="generator-controls-top">
+            {/* 상태 표시줄: 슬롯 현황 + 불러오기/저장 */}
+            <div className="gen-status-row">
+              <div className="gen-slot-indicators">
+                {generatedNumbers.map((game, i) => (
+                  <span key={i} className={`gen-slot-dot ${game ? 'filled' : ''}`} />
+                ))}
+                <span className="gen-slot-count">
+                  {generatedNumbers.filter(g => g !== null).length}/5 생성됨
+                </span>
+              </div>
+              <div className="gen-mgmt-btns">
+                <button className="gen-load-btn" onClick={loadSavedGamesFromDB}>📥 불러오기</button>
+                <button className="gen-save-btn" onClick={handleSaveAllGames}>💾 저장</button>
+              </div>
+            </div>
+
+            {/* 전체 생성 버튼 */}
+            <button onClick={generate5Games} className="generate-btn-full">
+              🎲 전체 생성
+            </button>
+
+            {/* 개별 슬롯 버튼 */}
+            <div className="individual-game-buttons">
+              {generatedNumbers.map((game, i) => (
+                <button
+                  key={i}
+                  onClick={() => generateSingleGame(i)}
+                  className={`generate-btn-small ${game ? 'filled' : ''}`}
+                >
+                  {game ? `↺ ${i + 1}` : `게임 ${i + 1}`}
+                </button>
+              ))}
+            </div>
           </div>
+          <div style={{ height: controlsHeight }} />
+          </>
         )}
         <div className="lotto-content">
           {activeTab === 'generator' && (
             <div className="generator-section">
-              {/* 내 게임 불러오기 / 전체 저장 버튼 */}
-              <div className="game-management-buttons">
-                <button className="load-games-btn" onClick={loadSavedGamesFromDB}>
-                  📥 내 게임 불러오기
-                </button>
-                <button className="save-all-btn" onClick={handleSaveAllGames}>
-                  💾 전체 게임 저장
-                </button>
-              </div>
-
               {/* 생성된 번호 표시 - 항상 5개 슬롯 표시 */}
               <div className="generated-numbers">
                 {generatedNumbers.map((game, gameIndex) => (
@@ -2638,10 +2628,6 @@ const Lotto = () => {
                   </div>
                 ))}
               </div>
-
-              <div className="options-divider">선택 옵션</div>
-
-              <div className="sub-options-divider">번호 옵션</div>
 
               <div className="exclude-section">
                 <div className="section-title-with-help">
@@ -2823,8 +2809,6 @@ const Lotto = () => {
                 )}
               </div>
 
-              <div className="sub-options-divider">패턴 옵션</div>
-
               <div className="overlap-prevention-section">
                 <div className="section-title-with-help">
                   <h3
@@ -2857,6 +2841,26 @@ const Lotto = () => {
                 {showPatternOptions && (
                   <>
                 <div className="overlap-options">
+                  <div className="overlap-select-all">
+                    <button
+                      className="overlap-select-all-btn"
+                      onClick={() => {
+                        const allChecked = preventExactDuplicates && preventPartialDuplicates && excludeLastDigitRanges && excludeTensDigitRanges && preventConsecutiveFour && filterOddEven && filterSumRange && filterHighLow && filterACValue;
+                        const next = !allChecked;
+                        setPreventExactDuplicates(next);
+                        setPreventPartialDuplicates(next);
+                        setExcludeLastDigitRanges(next);
+                        setExcludeTensDigitRanges(next);
+                        setPreventConsecutiveFour(next);
+                        setFilterOddEven(next);
+                        setFilterSumRange(next);
+                        setFilterHighLow(next);
+                        setFilterACValue(next);
+                      }}
+                    >
+                      {preventExactDuplicates && preventPartialDuplicates && excludeLastDigitRanges && excludeTensDigitRanges && preventConsecutiveFour && filterOddEven && filterSumRange && filterHighLow && filterACValue ? '전체 해제' : '전체 체크'}
+                    </button>
+                  </div>
                   <label className="overlap-option">
                     <input
                       type="checkbox"

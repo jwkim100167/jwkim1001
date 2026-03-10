@@ -1958,6 +1958,27 @@
   font-weight: bold;
 }
 
+.overlap-select-all {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 4px;
+}
+
+.overlap-select-all-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.2s;
+}
+
+.overlap-select-all-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
 .overlap-options {
   display: flex;
   flex-direction: column;
@@ -2357,28 +2378,88 @@
 
 /* 번호 생성기 재배치 스타일 */
 .generator-controls-top {
-  background: linear-gradient(135deg, rgba(103, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
-  border: 2px solid rgba(103, 126, 234, 0.5);
-  border-radius: 20px;
-  padding: 25px;
-  margin-bottom: 25px;
-  margin-top: 10px;
-  z-index: 100;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-  transition: all 0.3s ease;
-}
-
-.generator-controls-top.fixed {
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
-  transform: none;
-  max-width: 100%;
-  width: 100%;
-  margin: 0;
-  border-radius: 0;
-  z-index: 1000;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  background: linear-gradient(135deg, rgba(103, 126, 234, 0.97), rgba(118, 75, 162, 0.97));
+  border: none;
+  border-bottom: 2px solid rgba(103, 126, 234, 0.5);
+  border-radius: 0 0 16px 16px;
+  padding: 10px 20px;
+  z-index: 200;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+/* 상태 표시줄 */
+.gen-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.gen-slot-indicators {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gen-slot-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  background: transparent;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.gen-slot-dot.filled {
+  background: white;
+  border-color: white;
+}
+
+.gen-slot-count {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin-left: 6px;
+  white-space: nowrap;
+}
+
+.gen-mgmt-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.gen-load-btn,
+.gen-save-btn {
+  padding: 5px 11px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.gen-load-btn:hover,
+.gen-save-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* 채워진 슬롯 개별 버튼 */
+.generate-btn-small.filled {
+  background: rgba(255, 178, 50, 0.3);
+  border-color: rgba(255, 178, 50, 0.6);
+  color: #FFD966;
 }
 
 .main-title {
@@ -2540,11 +2621,10 @@
 /* 모바일 반응형 */
 @media (max-width: 768px) {
   .generator-controls-top {
-    padding: 15px 10px;
-  }
-
-  .generator-controls-top.fixed {
-    padding: 10px;
+    width: 100%;
+    padding: 8px 12px;
+    gap: 7px;
+    border-radius: 0 0 12px 12px;
   }
 
   .main-title {
@@ -2582,11 +2662,9 @@
 
 @media (max-width: 480px) {
   .generator-controls-top {
-    padding: 12px 8px;
-  }
-
-  .generator-controls-top.fixed {
-    padding: 8px;
+    width: 100%;
+    padding: 7px 10px;
+    gap: 6px;
   }
 
   .main-title {
