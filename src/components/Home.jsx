@@ -93,6 +93,15 @@ const Home = () => {
             <div className="card-arrow">→</div>
           </Link>
 
+          {/* 취향 알기 */}
+          <Link to="/taste-match" className="nav-card taste-card">
+            <div className="card-icon">💫</div>
+            <div className="card-content">
+              <h2>취향 알기</h2>
+            </div>
+            <div className="card-arrow">→</div>
+          </Link>
+
           <div className="nav-card whattoeat-card disabled-card">
             <div className="card-icon">🍽️</div>
             <div className="card-content">

@@ -17,6 +17,7 @@ import LottoBasic from './components/LottoBasic';
 import MyPage from './components/MyPage';
 import Admin from './components/Admin';
 import LottoAdmin from './components/LottoAdmin';
+import TasteMatch from './components/TasteMatch';
 
 function App() {
   // GitHub Pages의 경우 basename 설정
@@ -42,6 +43,7 @@ function App() {
           <Route path="/momok" element={<Momok />} />
           <Route path="/momok-best" element={<MomokBest />} />
           <Route path="/jobs" element={<JobBoard />} />
+          <Route path="/taste-match" element={<TasteMatch />} />
         </Routes>
       </Router>
     </AuthProvider>

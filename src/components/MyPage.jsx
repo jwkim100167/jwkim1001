@@ -129,6 +129,12 @@ export default function MyPage() {
   const [restaurantCategoryFromDB, setRestaurantCategoryFromDB] = useState([]);
   const [loadingCategory, setLoadingCategory] = useState(false);
 
+  // 취향 알기 탭 상태
+  const [tasteQuestions, setTasteQuestions] = useState([]);
+  const [myTasteAnswers, setMyTasteAnswers] = useState({});
+  const [myTasteActive, setMyTasteActive] = useState({});
+  const [tasteLoading, setTasteLoading] = useState(false);
+
   // admin 카테고리 수정 상태
   const [categorizedRestaurants, setCategorizedRestaurants] = useState([]);
   const [editRestaurantId, setEditRestaurantId] = useState('');
@@ -229,6 +235,33 @@ export default function MyPage() {
       setLoading(false);
     }
   };
+
+  // 취향 알기 문항 로드
+  const loadTasteQuestions = async () => {
+    setTasteLoading(true);
+    const { data, error } = await supabase
+      .from('taste_match_questions')
+      .select('id, sort_order, category, title, emoji_a, text_a, emoji_b, text_b, jw_answer, is_active')
+      .order('sort_order', { ascending: true });
+    if (!error && data) {
+      setTasteQuestions(data);
+      const answers = {};
+      const active = {};
+      data.forEach(q => {
+        answers[q.id] = q.jw_answer;
+        active[q.id] = q.is_active !== false;
+      });
+      setMyTasteAnswers(answers);
+      setMyTasteActive(active);
+    }
+    setTasteLoading(false);
+  };
+
+  useEffect(() => {
+    if (activeTab === 'taste') {
+      loadTasteQuestions();
+    }
+  }, [activeTab]);
 
   const handleLogout = () => {
     logout();
@@ -685,6 +718,12 @@ export default function MyPage() {
             onClick={() => setActiveTab('food')}
           >
             오늘 뭐먹지
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'taste' ? 'active' : ''}`}
+            onClick={() => setActiveTab('taste')}
+          >
+            취향 알기
           </button>
         </div>
 
@@ -1230,6 +1269,45 @@ export default function MyPage() {
                   )}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* 취향 알기 탭 */}
+          {activeTab === 'taste' && (
+            <div className="taste-tab">
+              <div className="taste-admin-card">
+                <h2>💫 JW의 취향</h2>
+                <p className="description">각 질문에 대한 JW의 취향을 확인해보세요.</p>
+                {tasteLoading ? (
+                  <div className="loading">문항 불러오는 중...</div>
+                ) : (
+                  <div className="taste-q-list">
+                    {tasteQuestions.map((q, i) => (
+                      <div key={q.id} className={`taste-q-item ${myTasteActive[q.id] === false ? 'inactive' : ''}`}>
+                        <div className="taste-q-header">
+                          <span className="taste-q-num">{i + 1}</span>
+                          <span className="taste-q-title">{q.title || `문항 ${i + 1}`}</span>
+                          <span className="taste-q-category">{q.category}</span>
+                          <span className={`taste-active-badge ${myTasteActive[q.id] !== false ? 'on' : 'off'}`}>
+                            {myTasteActive[q.id] !== false ? '활성' : '비활성'}
+                          </span>
+                        </div>
+                        <div className="taste-choice-group">
+                          <div className={`taste-choice-btn ${myTasteAnswers[q.id] === '1' ? 'selected' : ''}`}>
+                            <span className="taste-choice-emoji">{q.emoji_a}</span>
+                            <span>{q.text_a}</span>
+                          </div>
+                          <span className="taste-vs">VS</span>
+                          <div className={`taste-choice-btn ${myTasteAnswers[q.id] === '2' ? 'selected' : ''}`}>
+                            <span className="taste-choice-emoji">{q.emoji_b}</span>
+                            <span>{q.text_b}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

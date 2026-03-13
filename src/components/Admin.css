@@ -589,6 +589,222 @@
   }
 }
 
+/* ── 취향 알기 탭 ───────────────────────────────────────── */
+.taste-admin-card {
+  background: #f8f9ff;
+  border-radius: 15px;
+  padding: 25px;
+}
+
+.taste-admin-card h2 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 1.4rem;
+}
+
+.taste-admin-card .description {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.taste-q-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.taste-q-item {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.taste-q-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.taste-q-num {
+  width: 24px;
+  height: 24px;
+  background: #667eea;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.taste-q-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2c3e50;
+  flex: 1;
+}
+
+.taste-q-category {
+  font-size: 0.72rem;
+  color: #999;
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.taste-choice-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.taste-choice-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: #555;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.taste-choice-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+  background: #f0f2ff;
+}
+
+.taste-choice-btn.selected {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #667eea22, #764ba222);
+  color: #667eea;
+  font-weight: 700;
+}
+
+.taste-choice-emoji {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.taste-vs {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #bbb;
+  flex-shrink: 0;
+}
+
+.taste-active-toggle {
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: none;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.taste-active-toggle.on {
+  background: #d4edda;
+  color: #155724;
+}
+
+.taste-active-toggle.on:hover {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.taste-active-toggle.off {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.taste-active-toggle.off:hover {
+  background: #d4edda;
+  color: #155724;
+}
+
+.taste-q-item.inactive {
+  opacity: 0.45;
+  background: #fafafa;
+}
+
+.taste-q-item.inactive .taste-choice-btn {
+  pointer-events: none;
+}
+
+.taste-delete-btn {
+  padding: 3px 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 6px;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.taste-delete-btn:hover {
+  background: #fee2e2;
+}
+
+/* ── 질문 추가 폼 ─────────────────────────────────────────── */
+.taste-add-form {
+  margin-top: 24px;
+  border-top: 2px dashed #e0e0e0;
+  padding-top: 20px;
+}
+
+.taste-add-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 16px;
+}
+
+.taste-add-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.taste-add-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.taste-add-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.taste-add-choice label {
+  font-size: 0.8rem;
+  color: #666;
+  font-weight: 600;
+}
+
+.taste-emoji-input {
+  width: 60px !important;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .admin-container {

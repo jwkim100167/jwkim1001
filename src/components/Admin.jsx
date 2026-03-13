@@ -15,6 +15,19 @@ export default function Admin() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMessage, setPasswordMessage] = useState('');
 
+  // 취향 알기 탭 상태
+  const [tasteQuestions, setTasteQuestions] = useState([]);
+  const [jwAnswers, setJwAnswers] = useState({});
+  const [isActive, setIsActive] = useState({});
+  const [tasteLoading, setTasteLoading] = useState(false);
+  const [tasteSaveMsg, setTasteSaveMsg] = useState('');
+  const [newQuestion, setNewQuestion] = useState({
+    category: 'food', title: '',
+    emoji_a: '', text_a: '', emoji_b: '', text_b: '', jw_answer: '1',
+  });
+  const [addMsg, setAddMsg] = useState('');
+  const [isAdding, setIsAdding] = useState(false);
+
   // 오늘 뭐먹지 - 카테고리 관리 상태 (categorized 레스토랑 수정)
   const [categorizedRestaurants, setCategorizedRestaurants] = useState([]);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState('');
@@ -72,7 +85,196 @@ export default function Admin() {
     if (activeTab === 'food') {
       loadCategorizedRestaurants();
     }
+    if (activeTab === 'taste') {
+      loadTasteQuestions();
+    }
   }, [activeTab]);
+
+  // 취향 알기 문항 로드
+  const loadTasteQuestions = async () => {
+    setTasteLoading(true);
+    setTasteSaveMsg('');
+    const { data, error } = await supabase
+      .from('taste_match_questions')
+      .select('id, sort_order, category, title, emoji_a, text_a, emoji_b, text_b, jw_answer')
+      .order('sort_order', { ascending: true });
+    if (!error && data) {
+      setTasteQuestions(data);
+      const initial = {};
+      const initialActive = {};
+      data.forEach(q => {
+        initial[q.id] = q.jw_answer;
+        initialActive[q.id] = q.is_active !== false;
+      });
+      setJwAnswers(initial);
+      setIsActive(initialActive);
+    }
+    setTasteLoading(false);
+  };
+
+  // 기존 result 전체 재계산
+  const recalculateAllResults = async (sortedQs, newJwAnswers, newIsActive) => {
+    const activeItems = sortedQs
+      .map((q, i) => ({ q, i }))
+      .filter(({ q }) => newIsActive[q.id] !== false);
+    if (activeItems.length === 0) return;
+
+    const { data: allResults } = await supabase
+      .from('taste_match_results')
+      .select('id, answers');
+    if (!allResults || allResults.length === 0) return;
+
+    await Promise.all(
+      allResults.map(result => {
+        const matchCount = activeItems.filter(({ q, i }) =>
+          result.answers?.[i] === newJwAnswers[q.id]
+        ).length;
+        const scoreNum = Math.round((matchCount / activeItems.length) * 100);
+        return supabase
+          .from('taste_match_results')
+          .update({ score: `${scoreNum}%` })
+          .eq('id', result.id);
+      })
+    );
+  };
+
+  // 취향 알기 전체 저장 + 결과 재계산
+  const handleSaveTasteAnswers = async () => {
+    setTasteSaveMsg('저장 중...');
+    try {
+      await Promise.all(
+        tasteQuestions.map(q =>
+          supabase
+            .from('taste_match_questions')
+            .update({ jw_answer: jwAnswers[q.id], is_active: isActive[q.id] !== false })
+            .eq('id', q.id)
+        )
+      );
+      setTasteSaveMsg('결과 재계산 중...');
+      await recalculateAllResults(tasteQuestions, jwAnswers, isActive);
+      setTasteSaveMsg('저장 완료! 기존 결과 재계산 완료 ✅');
+    } catch (e) {
+      setTasteSaveMsg('저장 실패: ' + e.message);
+    }
+  };
+
+  // 질문 추가
+  const handleAddQuestion = async () => {
+    if (!newQuestion.title.trim() || !newQuestion.text_a.trim() || !newQuestion.text_b.trim()) {
+      setAddMsg('제목, 선택지A, 선택지B는 필수 항목입니다.');
+      return;
+    }
+    setIsAdding(true);
+    setAddMsg('추가 중...');
+    try {
+      // 1. 현재 max sort_order 조회
+      const { data: maxData } = await supabase
+        .from('taste_match_questions')
+        .select('sort_order')
+        .order('sort_order', { ascending: false })
+        .limit(1);
+      const nextOrder = (maxData?.[0]?.sort_order ?? 0) + 1;
+
+      // 2. 질문 INSERT
+      await supabase.from('taste_match_questions').insert([{
+        sort_order: nextOrder,
+        category: newQuestion.category,
+        title: newQuestion.title.trim(),
+        emoji_a: newQuestion.emoji_a.trim(),
+        text_a: newQuestion.text_a.trim(),
+        emoji_b: newQuestion.emoji_b.trim(),
+        text_b: newQuestion.text_b.trim(),
+        jw_answer: newQuestion.jw_answer,
+        is_active: true,
+      }]);
+
+      // 3. 기존 results의 answers 끝에 '0' 추가
+      const { data: allResults } = await supabase
+        .from('taste_match_results').select('id, answers');
+      if (allResults && allResults.length > 0) {
+        await Promise.all(
+          allResults.map(r =>
+            supabase.from('taste_match_results')
+              .update({ answers: (r.answers || '') + '0' })
+              .eq('id', r.id)
+          )
+        );
+      }
+
+      // 4. 질문 목록 새로고침 후 점수 재계산
+      setAddMsg('점수 재계산 중...');
+      const { data: freshQs } = await supabase
+        .from('taste_match_questions')
+        .select('id, sort_order, category, title, emoji_a, text_a, emoji_b, text_b, jw_answer, is_active')
+        .order('sort_order', { ascending: true });
+      if (freshQs) {
+        setTasteQuestions(freshQs);
+        const newJwAnswers = {};
+        const newIsActive = {};
+        freshQs.forEach(q => {
+          newJwAnswers[q.id] = q.jw_answer;
+          newIsActive[q.id] = q.is_active !== false;
+        });
+        setJwAnswers(newJwAnswers);
+        setIsActive(newIsActive);
+        await recalculateAllResults(freshQs, newJwAnswers, newIsActive);
+      }
+
+      setNewQuestion({ category: 'food', title: '', emoji_a: '', text_a: '', emoji_b: '', text_b: '', jw_answer: '1' });
+      setAddMsg('질문 추가 완료! 기존 결과 재계산 완료 ✅');
+    } catch (e) {
+      setAddMsg('추가 실패: ' + e.message);
+    } finally {
+      setIsAdding(false);
+    }
+  };
+
+  // 질문 삭제
+  const handleDeleteQuestion = async (questionId, questionIndex) => {
+    if (!window.confirm(`이 질문을 삭제하면 모든 기존 결과가 재계산됩니다.\n계속하시겠습니까?`)) return;
+    setTasteSaveMsg('삭제 중...');
+    try {
+      // 1. 질문 DELETE
+      await supabase.from('taste_match_questions').delete().eq('id', questionId);
+
+      // 2. 모든 results의 answers에서 해당 index 문자 제거
+      const { data: allResults } = await supabase
+        .from('taste_match_results').select('id, answers');
+      if (allResults && allResults.length > 0) {
+        await Promise.all(
+          allResults.map(r => {
+            const ans = r.answers || '';
+            const newAns = ans.slice(0, questionIndex) + ans.slice(questionIndex + 1);
+            return supabase.from('taste_match_results')
+              .update({ answers: newAns })
+              .eq('id', r.id);
+          })
+        );
+      }
+
+      // 3. 남은 질문 새로고침 후 점수 재계산
+      setTasteSaveMsg('점수 재계산 중...');
+      const { data: freshQs } = await supabase
+        .from('taste_match_questions')
+        .select('id, sort_order, category, title, emoji_a, text_a, emoji_b, text_b, jw_answer, is_active')
+        .order('sort_order', { ascending: true });
+      if (freshQs) {
+        setTasteQuestions(freshQs);
+        const newJwAnswers = {};
+        const newIsActive = {};
+        freshQs.forEach(q => {
+          newJwAnswers[q.id] = q.jw_answer;
+          newIsActive[q.id] = q.is_active !== false;
+        });
+        setJwAnswers(newJwAnswers);
+        setIsActive(newIsActive);
+        await recalculateAllResults(freshQs, newJwAnswers, newIsActive);
+      }
+      setTasteSaveMsg('삭제 완료! 기존 결과 재계산 완료 ✅');
+    } catch (e) {
+      setTasteSaveMsg('삭제 실패: ' + e.message);
+    }
+  };
 
   // 레스토랑 선택 시 restaurantCategoryTable에서 기존 값 불러오기
   const handleRestaurantSelect = async (id) => {
@@ -241,6 +443,12 @@ export default function Admin() {
             onClick={() => setActiveTab('food')}
           >
             오늘 뭐먹지
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'taste' ? 'active' : ''}`}
+            onClick={() => setActiveTab('taste')}
+          >
+            취향 알기
           </button>
         </div>
 
@@ -448,6 +656,156 @@ export default function Admin() {
                       </div>
                     )}
                   </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* 취향 알기 탭 */}
+          {activeTab === 'taste' && (
+            <div className="taste-tab">
+              <div className="taste-admin-card">
+                <h2>💫 취향 알기 - JW 답변 설정</h2>
+                <p className="description">
+                  각 문항에서 JW의 답변을 선택하세요. 선택 후 하단 "전체 저장" 버튼을 눌러주세요.
+                </p>
+                {tasteLoading ? (
+                  <div className="loading">문항 불러오는 중...</div>
+                ) : (
+                  <>
+                    <div className="taste-q-list">
+                      {tasteQuestions.map((q, i) => (
+                        <div key={q.id} className={`taste-q-item ${isActive[q.id] === false ? 'inactive' : ''}`}>
+                          <div className="taste-q-header">
+                            <span className="taste-q-num">{i + 1}</span>
+                            <span className="taste-q-title">{q.title || `문항 ${i + 1}`}</span>
+                            <span className="taste-q-category">{q.category}</span>
+                            <button
+                              className={`taste-active-toggle ${isActive[q.id] !== false ? 'on' : 'off'}`}
+                              onClick={() => setIsActive(prev => ({ ...prev, [q.id]: prev[q.id] === false }))}
+                              title={isActive[q.id] !== false ? '클릭 시 비활성화 (점수 제외)' : '클릭 시 활성화 (점수 포함)'}
+                            >
+                              {isActive[q.id] !== false ? '활성' : '비활성'}
+                            </button>
+                            <button
+                              className="taste-delete-btn"
+                              onClick={() => handleDeleteQuestion(q.id, i)}
+                              title="질문 삭제"
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                          <div className="taste-choice-group">
+                            <button
+                              className={`taste-choice-btn ${jwAnswers[q.id] === '1' ? 'selected' : ''}`}
+                              onClick={() => setJwAnswers(prev => ({ ...prev, [q.id]: '1' }))}
+                            >
+                              <span className="taste-choice-emoji">{q.emoji_a}</span>
+                              <span>{q.text_a}</span>
+                            </button>
+                            <span className="taste-vs">VS</span>
+                            <button
+                              className={`taste-choice-btn ${jwAnswers[q.id] === '2' ? 'selected' : ''}`}
+                              onClick={() => setJwAnswers(prev => ({ ...prev, [q.id]: '2' }))}
+                            >
+                              <span className="taste-choice-emoji">{q.emoji_b}</span>
+                              <span>{q.text_b}</span>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button className="save-btn" onClick={handleSaveTasteAnswers}>
+                      💾 전체 저장
+                    </button>
+                    {tasteSaveMsg && (
+                      <div className={`save-message ${tasteSaveMsg.includes('완료') ? 'success' : 'error'}`}>
+                        {tasteSaveMsg}
+                      </div>
+                    )}
+
+                    {/* 질문 추가 폼 */}
+                    <div className="taste-add-form">
+                      <h3 className="taste-add-title">➕ 질문 추가</h3>
+                      <div className="taste-add-grid">
+                        <div className="form-group">
+                          <label>카테고리</label>
+                          <select
+                            value={newQuestion.category}
+                            onChange={e => setNewQuestion(p => ({ ...p, category: e.target.value }))}
+                            className="select-box"
+                          >
+                            <option value="food">🍔 food</option>
+                            <option value="life">🏠 life</option>
+                            <option value="relation">👥 relation</option>
+                            <option value="dilemma">🔥 dilemma</option>
+                          </select>
+                        </div>
+                        <div className="form-group">
+                          <label>질문 제목 *</label>
+                          <input
+                            type="text"
+                            placeholder="예: 달달한 것 vs 매운 것"
+                            value={newQuestion.title}
+                            onChange={e => setNewQuestion(p => ({ ...p, title: e.target.value }))}
+                            className="input-box"
+                          />
+                        </div>
+                        <div className="taste-add-choices">
+                          <div className="taste-add-choice">
+                            <label>이모지 A</label>
+                            <input type="text" placeholder="🍰" value={newQuestion.emoji_a}
+                              onChange={e => setNewQuestion(p => ({ ...p, emoji_a: e.target.value }))}
+                              className="input-box taste-emoji-input" />
+                            <label>선택지 A *</label>
+                            <input type="text" placeholder="달달한 것" value={newQuestion.text_a}
+                              onChange={e => setNewQuestion(p => ({ ...p, text_a: e.target.value }))}
+                              className="input-box" />
+                          </div>
+                          <div className="taste-add-choice">
+                            <label>이모지 B</label>
+                            <input type="text" placeholder="🌶️" value={newQuestion.emoji_b}
+                              onChange={e => setNewQuestion(p => ({ ...p, emoji_b: e.target.value }))}
+                              className="input-box taste-emoji-input" />
+                            <label>선택지 B *</label>
+                            <input type="text" placeholder="매운 것" value={newQuestion.text_b}
+                              onChange={e => setNewQuestion(p => ({ ...p, text_b: e.target.value }))}
+                              className="input-box" />
+                          </div>
+                        </div>
+                        <div className="form-group">
+                          <label>JW의 답변</label>
+                          <div className="radio-group">
+                            <label>
+                              <input type="radio" name="newJwAnswer" value="1"
+                                checked={newQuestion.jw_answer === '1'}
+                                onChange={() => setNewQuestion(p => ({ ...p, jw_answer: '1' }))} />
+                              &nbsp;A
+                            </label>
+                            <label>
+                              <input type="radio" name="newJwAnswer" value="2"
+                                checked={newQuestion.jw_answer === '2'}
+                                onChange={() => setNewQuestion(p => ({ ...p, jw_answer: '2' }))} />
+                              &nbsp;B
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        className="save-btn"
+                        onClick={handleAddQuestion}
+                        disabled={isAdding}
+                      >
+                        {isAdding ? '추가 중...' : '➕ 질문 추가하기'}
+                      </button>
+                      {addMsg && (
+                        <div className={`save-message ${addMsg.includes('완료') ? 'success' : addMsg.includes('실패') || addMsg.includes('필수') ? 'error' : ''}`}>
+                          {addMsg}
+                        </div>
+                      )}
+                    </div>
+                  </>
                 )}
               </div>
             </div>

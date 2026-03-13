@@ -1,0 +1,651 @@
+/* ── 전체 래퍼 ──────────────────────────────────────────────── */
+.tm-wrap {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: 'Segoe UI', 'Noto Sans KR', sans-serif;
+}
+
+.tm-container {
+  width: 100%;
+  max-width: 480px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  backdrop-filter: blur(12px);
+  padding: 32px 24px;
+  color: white;
+  position: relative;
+}
+
+.tm-container.quiz {
+  max-width: 540px;
+}
+
+.tm-container.result {
+  max-width: 440px;
+}
+
+/* ── 뒤로 버튼 ─────────────────────────────────────────────── */
+.tm-back-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 20px;
+  display: block;
+  transition: color 0.2s;
+}
+
+.tm-back-btn:hover {
+  color: white;
+}
+
+/* ── 시작 화면 ─────────────────────────────────────────────── */
+.tm-start {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.tm-logo {
+  font-size: 3.5rem;
+  margin-bottom: 4px;
+}
+
+.tm-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(135deg, #ffd700, #ff6b9d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tm-subtitle {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+  letter-spacing: 0.1em;
+}
+
+.tm-desc {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.7;
+  margin: 8px 0 16px;
+}
+
+.tm-nickname-input {
+  width: 100%;
+  max-width: 280px;
+  padding: 12px 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 1rem;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.tm-nickname-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.tm-nickname-input:focus {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.06);
+}
+
+.tm-desc-count {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.tm-user-greeting {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 215, 0, 0.08);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 50px;
+  padding: 10px 20px;
+}
+
+.tm-user-greeting strong {
+  color: #ffd700;
+}
+
+.tm-start-btn {
+  margin-top: 8px;
+  padding: 14px 36px;
+  background: linear-gradient(135deg, #ffd700, #ff6b9d);
+  color: #1a1a2e;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tm-start-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(255, 215, 0, 0.35);
+}
+
+.tm-start-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── 로그인/회원가입 링크 ───────────────────────────────────── */
+.tm-auth-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.tm-auth-divider {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.tm-auth-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tm-auth-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 4px;
+  transition: color 0.2s;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.tm-auth-btn:hover {
+  color: #ffd700;
+}
+
+.tm-auth-sep {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 0.85rem;
+}
+
+/* ── 진행 바 ───────────────────────────────────────────────── */
+.tm-progress-wrap {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.tm-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #ffd700, #ff6b9d);
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.tm-progress-label {
+  text-align: right;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 16px;
+}
+
+.tm-progress-label span {
+  color: #ffd700;
+  font-weight: 700;
+}
+
+/* ── 카테고리 라벨 ─────────────────────────────────────────── */
+.tm-category-label {
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 20px;
+  letter-spacing: 0.05em;
+}
+
+/* ── 선택 카드 ─────────────────────────────────────────────── */
+.tm-cards {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tm-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 28px 16px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 160px;
+}
+
+.tm-card:hover:not(:disabled) {
+  background: rgba(255, 215, 0, 0.1);
+  border-color: #ffd700;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 28px rgba(255, 215, 0, 0.2);
+}
+
+.tm-card.selected {
+  background: rgba(255, 107, 157, 0.2);
+  border-color: #ff6b9d;
+  transform: scale(1.04);
+  box-shadow: 0 0 24px rgba(255, 107, 157, 0.4);
+}
+
+.tm-card.dimmed {
+  opacity: 0.35;
+  transform: scale(0.97);
+}
+
+.tm-card:disabled {
+  cursor: default;
+}
+
+.tm-card-emoji {
+  font-size: 2.8rem;
+  line-height: 1;
+}
+
+.tm-card-text {
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.tm-vs {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+
+/* ── 결과 화면 ─────────────────────────────────────────────── */
+.tm-result-title {
+  text-align: center;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 20px;
+}
+
+.tm-score-wrap {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  margin: 0 auto 16px;
+}
+
+.tm-ring-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.tm-ring-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 10;
+}
+
+.tm-ring-fill {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s ease;
+}
+
+.tm-score-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.tm-grade {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.tm-grade-msg {
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 6px;
+}
+
+.tm-match-count {
+  text-align: center;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 24px;
+}
+
+/* ── 취향 친구 찾기 ────────────────────────────────────────── */
+.tm-similar-section {
+  margin-bottom: 20px;
+}
+
+.tm-find-similar-btn {
+  width: 100%;
+  padding: 14px;
+  background: rgba(107, 202, 255, 0.12);
+  border: 1.5px solid rgba(107, 202, 255, 0.3);
+  border-radius: 50px;
+  color: #6bcaff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tm-find-similar-btn:hover:not(:disabled) {
+  background: rgba(107, 202, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(107, 202, 255, 0.2);
+}
+
+.tm-find-similar-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tm-similar-loading {
+  text-align: center;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 16px 0;
+}
+
+.tm-similar-result {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(107, 202, 255, 0.15);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.tm-similar-title {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #6bcaff;
+  margin-bottom: 12px;
+}
+
+/* ── 랭킹 (공용) ────────────────────────────────────────────── */
+.tm-ranking {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.tm-ranking-title {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #ffd700;
+  margin-bottom: 12px;
+}
+
+.tm-ranking-loading,
+.tm-ranking-empty {
+  text-align: center;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.4);
+  padding: 8px 0;
+}
+
+.tm-ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tm-rank-row {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.88rem;
+}
+
+.tm-rank-row.first {
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.25);
+}
+
+.tm-rank-row.me {
+  background: rgba(107, 202, 255, 0.1);
+  border: 1px solid rgba(107, 202, 255, 0.25);
+}
+
+.tm-rank-row.first.me {
+  background: rgba(255, 215, 0, 0.15);
+  border-color: #ffd700;
+}
+
+.tm-rank-num {
+  font-size: 1rem;
+  text-align: center;
+}
+
+.tm-rank-name {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tm-rank-score {
+  font-weight: 700;
+  color: #ffd700;
+}
+
+/* ── 다시 하기 버튼 ────────────────────────────────────────── */
+.tm-restart-btn {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tm-restart-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.tm-home-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.tm-home-btn:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── 게스트 안내 ────────────────────────────────────────────── */
+.tm-guest-notice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.tm-guest-icon {
+  font-size: 2.8rem;
+}
+
+.tm-guest-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: white;
+  margin: 0;
+}
+
+.tm-guest-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 16px 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tm-guest-list li {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.5;
+}
+
+.tm-guest-list li strong {
+  color: #ffb347;
+}
+
+.tm-guest-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.tm-guest-login-btn,
+.tm-guest-register-btn,
+.tm-guest-continue-btn {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tm-guest-login-btn {
+  background: linear-gradient(135deg, #ffd700, #ff6b9d);
+  color: #1a1a2e;
+}
+
+.tm-guest-login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.35);
+}
+
+.tm-guest-register-btn {
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+.tm-guest-register-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+}
+
+.tm-guest-continue-btn {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 8px;
+}
+
+.tm-guest-continue-btn:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── 모바일 ────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .tm-container {
+    padding: 24px 16px;
+  }
+
+  .tm-card {
+    padding: 22px 12px;
+    min-height: 130px;
+  }
+
+  .tm-card-emoji {
+    font-size: 2.2rem;
+  }
+
+  .tm-card-text {
+    font-size: 0.82rem;
+  }
+
+  .tm-score-wrap {
+    width: 130px;
+    height: 130px;
+  }
+
+  .tm-score-text {
+    font-size: 1.6rem;
+  }
+}

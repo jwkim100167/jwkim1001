@@ -162,6 +162,11 @@
   box-shadow: 0 20px 40px rgba(102, 126, 234, 0.1);
 }
 
+.taste-card:hover {
+  border-color: rgba(255, 107, 157, 0.5);
+  box-shadow: 0 20px 40px rgba(255, 107, 157, 0.15);
+}
+
 .disabled-card {
   opacity: 0.6;
   cursor: not-allowed;

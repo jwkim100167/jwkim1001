@@ -898,3 +898,135 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── 취향 알기 탭 ─────────────────────────────────────────── */
+.taste-admin-card {
+  background: #f8f9ff;
+  border-radius: 15px;
+  padding: 25px;
+}
+
+.taste-admin-card h2 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 1.4rem;
+}
+
+.taste-admin-card .description {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.taste-q-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.taste-q-item {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.taste-q-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.taste-q-num {
+  width: 24px;
+  height: 24px;
+  background: #667eea;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.taste-q-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2c3e50;
+  flex: 1;
+}
+
+.taste-q-category {
+  font-size: 0.72rem;
+  color: #999;
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.taste-choice-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.taste-choice-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  background: white;
+  font-size: 0.88rem;
+  color: #555;
+  text-align: center;
+}
+
+.taste-choice-btn.selected {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #667eea22, #764ba222);
+  color: #667eea;
+  font-weight: 700;
+}
+
+.taste-choice-emoji {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.taste-vs {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #bbb;
+  flex-shrink: 0;
+}
+
+.taste-active-badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.taste-active-badge.on {
+  background: #d4edda;
+  color: #155724;
+}
+
+.taste-active-badge.off {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.taste-q-item.inactive {
+  opacity: 0.45;
+  background: #fafafa;
+}
