@@ -56,6 +56,7 @@ export default function KboPredict() {
   const [loading, setLoading] = useState(true);
   const [isMock, setIsMock] = useState(false);
   const [openIdx, setOpenIdx] = useState(null); // 열린 카드 인덱스
+  const [showMore, setShowMore] = useState(false); // 4~5위 더보기
 
   // 내 점수판
   const [myScoreOpen, setMyScoreOpen] = useState(false);
@@ -93,6 +94,7 @@ export default function KboPredict() {
   }, [actualRank, users]);
 
   const top3 = results.slice(0, 3);
+  const rest = results.slice(3, 5);
 
   const handleToggle = (idx) => setOpenIdx(openIdx === idx ? null : idx);
 
@@ -198,6 +200,55 @@ export default function KboPredict() {
               </div>
             ))}
           </div>
+
+          {/* 더보기 (4~5위) */}
+          {rest.length > 0 && (
+            <>
+              {showMore && rest.map((r, i) => {
+                const rank = 3 + i;
+                return (
+                  <div key={r.name} className={`podium-card rank-rest ${openIdx === rank ? 'open' : ''}`}>
+                    <button className="podium-header" onClick={() => handleToggle(rank)}>
+                      <span className="podium-medal" style={{ fontSize: '1.1rem', opacity: 0.7 }}>#{rank + 1}</span>
+                      <div className="podium-info">
+                        <span className="user-name">{r.name}</span>
+                        <span className="user-myteam">
+                          <img src={TEAMS[r.myTeam].logo} alt={TEAMS[r.myTeam].name} className="team-logo-xs" /> {TEAMS[r.myTeam].name} 팬
+                        </span>
+                      </div>
+                      <div className="podium-score">
+                        <span className="score-num" style={{ fontSize: '1.4rem' }}>{r.total}</span>
+                        <span className="score-label">점</span>
+                      </div>
+                      <span className={`chevron ${openIdx === rank ? 'up' : ''}`}>›</span>
+                    </button>
+                    {openIdx === rank && (
+                      <div className="podium-detail">
+                        <div className="prediction-list">
+                          {r.detail.map((d) => (
+                            <div key={d.teamId} className={`prediction-item ${d.exactMatch ? 'exact' : d.inTop5 ? 'entry' : 'miss'}`}>
+                              <span className="pred-rank">{d.predictedRank}위 예측</span>
+                              <span className="pred-team"><img src={TEAMS[d.teamId].logo} alt={TEAMS[d.teamId].name} className="team-logo-xs" /> {TEAMS[d.teamId].name}</span>
+                              <span className="pred-result">{d.exactMatch ? '✅ +2' : d.inTop5 ? '🟡 +1' : '❌ 0'}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="score-breakdown">
+                          <span>5강진입 <b>{r.entryScore}</b>점</span>
+                          <span>순위적중 <b>{r.exactScore}</b>점</span>
+                          <span>팬심보너스 <b>{r.fanBonus}</b>점</span>
+                          <span className="total-label">합계 <b>{r.total}</b>점</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+              <button className="show-more-btn" onClick={() => setShowMore(!showMore)}>
+                {showMore ? '접기 ▲' : '더보기 ▼'}
+              </button>
+            </>
+          )}
         </section>
 
         {/* 내 점수판 */}
