@@ -84,15 +84,20 @@ export async function findMyPrediction({ name, phone, season = 2026 }) {
  * @returns {Promise<boolean>}
  */
 export async function updatePrediction({ name, phone, data, myTeam, season = 2026 }) {
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from('kboPredictionTable')
     .update({ data, my_team: parseInt(myTeam, 10), updated_at: new Date().toISOString() })
     .eq('season', season)
     .eq('name', name)
-    .eq('phone', phone);
+    .eq('phone', phone)
+    .select();
 
   if (error) {
     console.error('❌ 예측 데이터 수정 실패:', error);
+    return false;
+  }
+  if (!updated || updated.length === 0) {
+    console.error('❌ 예측 데이터 수정 실패: 업데이트된 행 없음 (RLS 정책 또는 조건 불일치)');
     return false;
   }
   return true;
