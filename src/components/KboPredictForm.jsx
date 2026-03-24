@@ -135,7 +135,7 @@ export default function KboPredictForm() {
             placeholder="010-0000-0000"
             maxLength={13}
           />
-          <p className="phone-notice">📌 전화번호는 본인 확인 용도로만 사용됩니다.</p>
+          <p className="phone-notice">📌 선물 받을 번호를 입력해주세요.</p>
         </section>
 
         {/* 5강 예측 선택 */}
