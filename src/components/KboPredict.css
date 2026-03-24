@@ -335,7 +335,18 @@
   opacity: 0.8;
 }
 
-.rank-emoji { font-size: 1.1rem; }
+.team-logo-sm {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.team-logo-xs {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  vertical-align: middle;
+}
 
 .rank-name {
   flex: 1;

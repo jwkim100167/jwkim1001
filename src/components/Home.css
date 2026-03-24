@@ -114,6 +114,7 @@
   font-size: 0.85rem;
   opacity: 0.8;
   margin-top: 5px;
+  white-space: nowrap;
 }
 
 .card-features {

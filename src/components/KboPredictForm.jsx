@@ -3,17 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { addPrediction } from '../services/supabaseKbo';
 import './KboPredictForm.css';
 
+const BASE = 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/KBOHome/resources/images/emblem/regular';
 const TEAMS = [
-  { id: 1,  name: 'KIA',  emoji: '🦁' },
-  { id: 2,  name: '삼성', emoji: '🦅' },
-  { id: 3,  name: 'LG',   emoji: '⚡' },
-  { id: 4,  name: '두산', emoji: '🐻' },
-  { id: 5,  name: 'KT',   emoji: '🔴' },
-  { id: 6,  name: '한화', emoji: '🦅' },
-  { id: 7,  name: '롯데', emoji: '🌊' },
-  { id: 8,  name: 'SSG',  emoji: '🛍️' },
-  { id: 9,  name: 'NC',   emoji: '🎯' },
-  { id: 10, name: '키움', emoji: '⚾' },
+  { id: 1,  name: 'KIA',  logo: `${BASE}/2022/HT.png` },
+  { id: 2,  name: '삼성', logo: `${BASE}/2022/SS.png` },
+  { id: 3,  name: 'LG',   logo: `${BASE}/2022/LG.png` },
+  { id: 4,  name: '두산', logo: `${BASE}/2025/OB.png` },
+  { id: 5,  name: 'KT',   logo: `${BASE}/2022/KT.png` },
+  { id: 6,  name: '한화', logo: `${BASE}/2025/HH.png` },
+  { id: 7,  name: '롯데', logo: `${BASE}/2022/LT.png` },
+  { id: 8,  name: 'SSG',  logo: `${BASE}/2024/SK.png` },
+  { id: 9,  name: 'NC',   logo: `${BASE}/2022/NC.png` },
+  { id: 10, name: '키움', logo: `${BASE}/2022/WO.png` },
 ];
 
 const RANK_LABELS = ['1위', '2위', '3위', '4위', '5위'];
@@ -85,7 +86,7 @@ export default function KboPredictForm() {
                 return (
                   <div key={id} className="done-pick-row">
                     <span className="done-rank">{RANK_LABELS[idx]}</span>
-                    <span>{t.emoji} {t.name}</span>
+                    <span><img src={t.logo} alt={t.name} className="team-logo-xs" /> {t.name}</span>
                   </div>
                 );
               })}
@@ -154,7 +155,7 @@ export default function KboPredictForm() {
                 >
                   <span className="slot-rank">{label}</span>
                   {team ? (
-                    <span className="slot-team">{team.emoji} {team.name}</span>
+                    <span className="slot-team"><img src={team.logo} alt={team.name} className="team-logo-xs" /> {team.name}</span>
                   ) : (
                     <span className="slot-placeholder">—</span>
                   )}
@@ -174,7 +175,7 @@ export default function KboPredictForm() {
                   className={`team-btn ${selected ? 'selected' : ''}`}
                   onClick={() => handlePickTeam(t.id)}
                 >
-                  <span className="team-btn-emoji">{t.emoji}</span>
+                  <img src={t.logo} alt={t.name} className="team-logo-btn" />
                   <span className="team-btn-name">{t.name}</span>
                   {selected && <span className="team-btn-rank">{RANK_LABELS[pickIdx]}</span>}
                 </button>
@@ -193,7 +194,7 @@ export default function KboPredictForm() {
                 className={`team-btn ${myTeam === t.id ? 'my-team-selected' : ''}`}
                 onClick={() => setMyTeam(t.id)}
               >
-                <span className="team-btn-emoji">{t.emoji}</span>
+                <img src={t.logo} alt={t.name} className="team-logo-btn" />
                 <span className="team-btn-name">{t.name}</span>
                 {myTeam === t.id && <span className="team-btn-rank">❤️</span>}
               </button>

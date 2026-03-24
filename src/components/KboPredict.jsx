@@ -3,17 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { getActualRank, getPredictions } from '../services/supabaseKbo';
 import './KboPredict.css';
 
+const BASE = 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/KBOHome/resources/images/emblem/regular';
 const TEAMS = {
-  1: { name: 'KIA', emoji: '🦁', color: '#e60012' },
-  2: { name: '삼성', emoji: '🦅', color: '#074ca1' },
-  3: { name: 'LG', emoji: '⚡', color: '#c30452' },
-  4: { name: '두산', emoji: '🐻', color: '#131230' },
-  5: { name: 'KT', emoji: '🔴', color: '#e60012' },
-  6: { name: '한화', emoji: '🦅', color: '#f37021' },
-  7: { name: '롯데', emoji: '🌊', color: '#e31837' },
-  8: { name: 'SSG', emoji: '🛍️', color: '#ce0e2d' },
-  9: { name: 'NC', emoji: '🎯', color: '#065ead' },
-  10: { name: '키움', emoji: '⚾', color: '#820024' },
+  1:  { name: 'KIA',  color: '#e60012', logo: `${BASE}/2022/HT.png` },
+  2:  { name: '삼성', color: '#074ca1', logo: `${BASE}/2022/SS.png` },
+  3:  { name: 'LG',   color: '#c30452', logo: `${BASE}/2022/LG.png` },
+  4:  { name: '두산', color: '#131230', logo: `${BASE}/2025/OB.png` },
+  5:  { name: 'KT',   color: '#e60012', logo: `${BASE}/2022/KT.png` },
+  6:  { name: '한화', color: '#f37021', logo: `${BASE}/2025/HH.png` },
+  7:  { name: '롯데', color: '#e31837', logo: `${BASE}/2022/LT.png` },
+  8:  { name: 'SSG',  color: '#ce0e2d', logo: `${BASE}/2024/SK.png` },
+  9:  { name: 'NC',   color: '#065ead', logo: `${BASE}/2022/NC.png` },
+  10: { name: '키움', color: '#820024', logo: `${BASE}/2022/WO.png` },
 };
 
 const MOCK_ACTUAL_RANK = [3, 1, 8, 5, 6, 2, 7, 9, 4, 10];
@@ -115,7 +116,7 @@ export default function KboPredict() {
                   <div className="podium-info">
                     <span className="user-name">{r.name}</span>
                     <span className="user-myteam">
-                      {TEAMS[r.myTeam].emoji} {TEAMS[r.myTeam].name} 팬
+                      <img src={TEAMS[r.myTeam].logo} alt={TEAMS[r.myTeam].name} className="team-logo-xs" /> {TEAMS[r.myTeam].name} 팬
                     </span>
                   </div>
                   <div className="podium-score">
@@ -135,7 +136,7 @@ export default function KboPredict() {
                           className={`prediction-item ${d.exactMatch ? 'exact' : d.inTop5 ? 'entry' : 'miss'}`}
                         >
                           <span className="pred-rank">{d.predictedRank}위 예측</span>
-                          <span className="pred-team">{TEAMS[d.teamId].emoji} {TEAMS[d.teamId].name}</span>
+                          <span className="pred-team"><img src={TEAMS[d.teamId].logo} alt={TEAMS[d.teamId].name} className="team-logo-xs" /> {TEAMS[d.teamId].name}</span>
                           <span className="pred-result">
                             {d.exactMatch ? '✅ +2' : d.inTop5 ? '🟡 +1' : '❌ 0'}
                           </span>
@@ -165,7 +166,7 @@ export default function KboPredict() {
                 className={`rank-row ${idx < 5 ? 'top5' : ''} ${idx === 0 ? 'first-place' : ''}`}
               >
                 <span className="rank-num">{idx + 1}</span>
-                <span className="rank-emoji">{TEAMS[teamId].emoji}</span>
+                <img src={TEAMS[teamId].logo} alt={TEAMS[teamId].name} className="team-logo-sm" />
                 <span className="rank-name">{TEAMS[teamId].name}</span>
                 {idx < 5 && <span className="top5-badge">5강</span>}
               </div>
