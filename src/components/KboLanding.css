@@ -1,0 +1,111 @@
+.kbo-landing-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 24px 16px;
+}
+
+.kbo-landing-container {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.landing-back-btn {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-bottom: 40px;
+  transition: background 0.2s;
+}
+
+.landing-back-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.landing-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.landing-icon {
+  font-size: 3.5rem;
+  margin-bottom: 12px;
+}
+
+.landing-header h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.landing-question {
+  font-size: 1.1rem;
+  opacity: 0.8;
+  margin: 0 0 28px;
+}
+
+.landing-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+.choice-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 28px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.07);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.choice-card:hover {
+  transform: translateY(-3px);
+}
+
+.choice-yes:hover {
+  border-color: rgba(255, 214, 10, 0.5);
+  background: rgba(255, 214, 10, 0.1);
+  box-shadow: 0 8px 24px rgba(255, 214, 10, 0.15);
+}
+
+.choice-no:hover {
+  border-color: rgba(96, 165, 250, 0.5);
+  background: rgba(96, 165, 250, 0.1);
+  box-shadow: 0 8px 24px rgba(96, 165, 250, 0.15);
+}
+
+.choice-emoji {
+  font-size: 2.2rem;
+}
+
+.choice-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.choice-desc {
+  font-size: 0.82rem;
+  opacity: 0.6;
+}

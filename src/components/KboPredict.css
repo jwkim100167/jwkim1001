@@ -1,0 +1,396 @@
+/* ─────────────────────────────────────────────
+   KBO 순위 예측 게임 스타일
+───────────────────────────────────────────── */
+
+.kbo-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+  padding: 0 0 60px 0;
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.kbo-container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* ─── 헤더 ─── */
+.kbo-header {
+  padding: 24px 0 24px;
+  text-align: center;
+}
+
+.back-btn {
+  display: block;
+  width: fit-content;
+  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.kbo-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 6px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.kbo-subtitle {
+  font-size: 0.95rem;
+  opacity: 0.75;
+  margin: 0 0 10px;
+  text-align: center;
+}
+
+.mock-badge {
+  display: block;
+  text-align: center;
+  width: fit-content;
+  margin: 0 auto;
+  background: rgba(255, 193, 7, 0.2);
+  border: 1px solid rgba(255, 193, 7, 0.5);
+  color: #ffc107;
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* ─── 섹션 카드 공통 ─── */
+.section-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(8px);
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 16px;
+  opacity: 0.95;
+}
+
+/* ─── 점수 범례 ─── */
+.score-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  font-size: 0.78rem;
+  opacity: 0.8;
+}
+
+.legend-item.exact { color: #4ade80; }
+.legend-item.entry { color: #facc15; }
+.legend-item.miss  { color: rgba(255, 255, 255, 0.4); }
+
+/* ─── 포디엄 카드 ─── */
+.podium-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.podium-card {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+/* 1위 강조 */
+.podium-card.rank-1 {
+  border-color: rgba(255, 214, 10, 0.4);
+  background: rgba(255, 214, 10, 0.07);
+  box-shadow: 0 4px 20px rgba(255, 214, 10, 0.1);
+}
+
+/* 2위 */
+.podium-card.rank-2 {
+  border-color: rgba(180, 188, 202, 0.35);
+  background: rgba(180, 188, 202, 0.06);
+}
+
+/* 3위 */
+.podium-card.rank-3 {
+  border-color: rgba(205, 127, 50, 0.35);
+  background: rgba(205, 127, 50, 0.06);
+}
+
+/* 클릭 가능한 헤더 버튼 */
+.podium-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.podium-header:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.podium-medal {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.podium-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.user-myteam {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+.podium-score {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  margin-right: 4px;
+}
+
+.score-num {
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #facc15;
+}
+
+.podium-card.rank-1 .score-num {
+  text-shadow: 0 0 12px rgba(255, 214, 10, 0.5);
+}
+
+.score-label {
+  font-size: 0.82rem;
+  opacity: 0.7;
+}
+
+/* 토글 화살표 */
+.chevron {
+  font-size: 1.4rem;
+  opacity: 0.6;
+  display: inline-block;
+  transform: rotate(90deg);
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.chevron.up {
+  transform: rotate(-90deg);
+}
+
+/* ─── 펼쳐지는 예측 내용 ─── */
+.podium-detail {
+  padding: 0 16px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 예측 목록 */
+.prediction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 12px 0;
+}
+
+.prediction-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+}
+
+.prediction-item.exact {
+  background: rgba(74, 222, 128, 0.15);
+  border-left: 3px solid #4ade80;
+}
+
+.prediction-item.entry {
+  background: rgba(250, 204, 21, 0.12);
+  border-left: 3px solid #facc15;
+}
+
+.prediction-item.miss {
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 3px solid rgba(255, 255, 255, 0.1);
+  opacity: 0.6;
+}
+
+.pred-rank {
+  width: 64px;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.pred-team {
+  flex: 1;
+  font-weight: 600;
+}
+
+.pred-result {
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+/* 점수 breakdown */
+.score-breakdown {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  opacity: 0.7;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 10px;
+}
+
+.score-breakdown b {
+  color: #facc15;
+}
+
+.total-label {
+  margin-left: auto;
+  font-weight: 700;
+  opacity: 1;
+  color: white;
+}
+
+.total-label b {
+  color: #facc15;
+  font-size: 1rem;
+}
+
+/* ─── 실제 순위표 ─── */
+.rank-table {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rank-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.92rem;
+}
+
+.rank-row.top5 {
+  background: rgba(255, 214, 10, 0.1);
+  border-left: 3px solid rgba(255, 214, 10, 0.6);
+}
+
+.rank-row.first-place {
+  background: rgba(255, 214, 10, 0.18);
+  border-left: 3px solid #ffd60a;
+}
+
+.rank-num {
+  width: 24px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: right;
+  opacity: 0.8;
+}
+
+.rank-emoji { font-size: 1.1rem; }
+
+.rank-name {
+  flex: 1;
+  font-weight: 600;
+}
+
+.top5-badge {
+  font-size: 0.7rem;
+  background: rgba(255, 214, 10, 0.3);
+  color: #ffd60a;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+/* ─── 채점 기준 ─── */
+.rules-card { opacity: 0.85; }
+
+.rules-list {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.rules-list b { color: #facc15; }
+
+/* ─── 로딩 ─── */
+.kbo-loading {
+  text-align: center;
+  padding: 120px 0;
+  font-size: 1.2rem;
+  opacity: 0.7;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}
+
+/* ─── 반응형 ─── */
+@media (max-width: 480px) {
+  .kbo-header h1 { font-size: 1.5rem; }
+
+  .back-btn {
+    position: static;
+    display: block;
+    width: fit-content;
+    margin-bottom: 12px;
+  }
+
+  .score-breakdown { gap: 8px; }
+  .total-label { margin-left: 0; }
+}

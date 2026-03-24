@@ -18,6 +18,9 @@ import MyPage from './components/MyPage';
 import Admin from './components/Admin';
 import LottoAdmin from './components/LottoAdmin';
 import TasteMatch from './components/TasteMatch';
+import KboLanding from './components/KboLanding';
+import KboPredict from './components/KboPredict';
+import KboPredictForm from './components/KboPredictForm';
 
 function App() {
   // GitHub Pages의 경우 basename 설정
@@ -44,6 +47,9 @@ function App() {
           <Route path="/momok-best" element={<MomokBest />} />
           <Route path="/jobs" element={<JobBoard />} />
           <Route path="/taste-match" element={<TasteMatch />} />
+          <Route path="/kbo-predict" element={<KboLanding />} />
+          <Route path="/kbo-predict/result" element={<KboPredict />} />
+          <Route path="/kbo-predict/form" element={<KboPredictForm />} />
         </Routes>
       </Router>
     </AuthProvider>

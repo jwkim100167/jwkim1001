@@ -49,88 +49,63 @@ const Home = () => {
         </div>
 
         <div className="home-header">
-          <h1>🎯 미니게임천국(등대지기)</h1>
+          <h1>🎯 미니게임천국</h1>
           <p>다양한 웹 서비스를 한 곳에서</p>
         </div>
 
         <div className="navigation-cards">
+          {/* KBO 순위 예측 */}
+          <Link to="/kbo-predict" className="nav-card kbo-card">
+            <div className="card-icon">⚾</div>
+            <div className="card-content">
+              <h2>KBO 순위 예측</h2>
+              <div className="card-desc">2026 시즌 예측 점수 확인</div>
+            </div>
+            <div className="card-arrow">→</div>
+          </Link>
+
           {/* 로또 서비스 (기본) */}
-          <Link to="/lotto-basic" className="nav-card lotto-card">
+          <div className="nav-card lotto-card disabled-card">
             <div className="card-icon">🎰</div>
             <div className="card-content">
               <h2>로또 서비스</h2>
+              <div className="service-status">잠시 휴업 중</div>
             </div>
-            <div className="card-arrow">→</div>
-          </Link>
+          </div>
 
           {/* 로또 서비스 - 멤버십 */}
-          <Link to="/lotto" className="nav-card lotto-card">
+          <div className="nav-card lotto-card disabled-card">
             <div className="card-icon">🎰</div>
             <div className="card-content">
               <h2>로또 서비스 - 멤버십</h2>
-              {!isAuthenticated && <div className="card-desc">생성 시 로그인 필요</div>}
+              <div className="service-status">잠시 휴업 중</div>
             </div>
-            <div className="card-arrow">→</div>
-          </Link>
+          </div>
 
           {/* MOMOK */}
-          <Link to="/momok" className="nav-card momok-card">
+          <div className="nav-card momok-card disabled-card">
             <div className="card-icon">🍽️</div>
             <div className="card-content">
               <h2>MOMOK</h2>
-              <div className="card-desc">🔧 버그 수정 중</div>
+              <div className="service-status">잠시 휴업 중</div>
             </div>
-            <div className="card-arrow">→</div>
-          </Link>
+          </div>
 
           {/* MOMOK - 멤버십 */}
-          <Link to="/momok-best" className="nav-card momokbest-card">
+          <div className="nav-card momokbest-card disabled-card">
             <div className="card-icon">🏆</div>
             <div className="card-content">
               <h2>MOMOK - 멤버십</h2>
-              {!isAuthenticated && <div className="card-desc">카드 열람 시 로그인 필요</div>}
+              <div className="service-status">잠시 휴업 중</div>
             </div>
-            <div className="card-arrow">→</div>
-          </Link>
+          </div>
 
           {/* 취향 알기 */}
-          <Link to="/taste-match" className="nav-card taste-card">
+          <div className="nav-card taste-card disabled-card">
             <div className="card-icon">💫</div>
             <div className="card-content">
               <h2>취향 알기</h2>
-            </div>
-            <div className="card-arrow">→</div>
-          </Link>
-
-          <div className="nav-card whattoeat-card disabled-card">
-            <div className="card-icon">🍽️</div>
-            <div className="card-content">
-              <h2>오늘 뭐 먹지?</h2>
-              <div className="service-status">서비스 준비중</div>
-            </div>
-          </div>
-
-          <div className="nav-card komom-card disabled-card">
-            <div className="card-icon">🍴</div>
-            <div className="card-content">
-              <h2>KOMOM</h2>
-              <div className="service-status">서비스 준비중</div>
-            </div>
-          </div>
-
-          <div className="nav-card dashboard-card disabled-card">
-            <div className="card-icon">📈</div>
-            <div className="card-content">
-              <h2>스마트 대시보드</h2>
-              <div className="service-status">서비스 준비중</div>
-            </div>
-          </div>
-
-          <div className="nav-card jobs-card disabled-card">
-            <div className="card-icon">💼</div>
-            <div className="card-content">
-              <h2>채용공고 모니터</h2>
-              <div className="service-status">서비스 준비중</div>
+              <div className="service-status">잠시 휴업 중</div>
             </div>
           </div>
         </div>
@@ -138,12 +113,12 @@ const Home = () => {
         <div className="home-footer">
           <div className="stats">
             <div className="stat-item">
-              <div className="stat-number">4</div>
+              <div className="stat-number">1</div>
               <div className="stat-label">운영중</div>
             </div>
             <div className="stat-item">
-              <div className="stat-number">4</div>
-              <div className="stat-label">준비중</div>
+              <div className="stat-number">5</div>
+              <div className="stat-label">휴업중</div>
             </div>
             <div className="stat-item">
               <div className="stat-number">24/7</div>
