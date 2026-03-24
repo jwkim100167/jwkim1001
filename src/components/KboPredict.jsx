@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getActualRank, getPredictions } from '../services/supabaseKbo';
+import { getActualRank, getPredictions, findMyPrediction } from '../services/supabaseKbo';
 import './KboPredict.css';
 
 const BASE = 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/KBOHome/resources/images/emblem/regular';
@@ -57,6 +57,14 @@ export default function KboPredict() {
   const [isMock, setIsMock] = useState(false);
   const [openIdx, setOpenIdx] = useState(null); // 열린 카드 인덱스
 
+  // 내 점수판
+  const [myScoreOpen, setMyScoreOpen] = useState(false);
+  const [myName, setMyName] = useState('');
+  const [myPhone, setMyPhone] = useState('010');
+  const [myResult, setMyResult] = useState(null); // 조회 결과
+  const [myError, setMyError] = useState('');
+  const [mySearching, setMySearching] = useState(false);
+
   useEffect(() => {
     async function loadData() {
       const [rankData, predData] = await Promise.all([getActualRank(2026), getPredictions(2026)]);
@@ -70,12 +78,48 @@ export default function KboPredict() {
 
   const results = useMemo(() => {
     if (!actualRank || !users) return [];
-    return users.map((u) => calcScore(u, actualRank)).sort((a, b) => b.total - a.total);
+    return users.map((u) => calcScore(u, actualRank)).sort((a, b) => {
+      // 1순위: 총점
+      if (b.total !== a.total) return b.total - a.total;
+      // 동률 시: 1위 순서 > 1위 진입 > 2위 순서 > 2위 진입 > ...
+      for (let i = 0; i < 5; i++) {
+        const da = a.detail[i];
+        const db = b.detail[i];
+        if (db.exactMatch !== da.exactMatch) return (db.exactMatch ? 1 : 0) - (da.exactMatch ? 1 : 0);
+        if (db.inTop5 !== da.inTop5)         return (db.inTop5 ? 1 : 0) - (da.inTop5 ? 1 : 0);
+      }
+      return 0;
+    });
   }, [actualRank, users]);
 
   const top3 = results.slice(0, 3);
 
   const handleToggle = (idx) => setOpenIdx(openIdx === idx ? null : idx);
+
+  const handleMyPhoneChange = (e) => {
+    const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
+    if (!digits.startsWith('010')) { setMyPhone('010'); return; }
+    let formatted = digits.slice(0, 3);
+    if (digits.length > 3) formatted += '-' + digits.slice(3, 7);
+    if (digits.length > 7) formatted += '-' + digits.slice(7, 11);
+    setMyPhone(formatted);
+  };
+
+  const handleMySearch = async () => {
+    if (!myName.trim()) { setMyError('이름을 입력해주세요.'); return; }
+    const rawPhone = myPhone.replace(/-/g, '');
+    if (!/^010\d{8}$/.test(rawPhone)) { setMyError('전화번호를 올바르게 입력해주세요.'); return; }
+    setMySearching(true);
+    setMyError('');
+    setMyResult(null);
+    const found = await findMyPrediction({ name: myName.trim(), phone: rawPhone });
+    setMySearching(false);
+    if (!found) {
+      setMyError('일치하는 정보가 없습니다. 이름과 전화번호를 확인해주세요.');
+    } else {
+      setMyResult(calcScore(found, actualRank));
+    }
+  };
 
   if (loading) {
     return (
@@ -154,6 +198,70 @@ export default function KboPredict() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* 내 점수판 */}
+        <section className="section-card my-score-section">
+          <button className="my-score-toggle" onClick={() => { setMyScoreOpen(!myScoreOpen); setMyResult(null); setMyError(''); }}>
+            <span>🙋 내 점수판</span>
+            <span className={`chevron ${myScoreOpen ? 'up' : ''}`}>›</span>
+          </button>
+
+          {myScoreOpen && (
+            <div className="my-score-body">
+              <div className="my-score-inputs">
+                <input
+                  className="my-score-input"
+                  type="text"
+                  placeholder="이름"
+                  value={myName}
+                  onChange={(e) => { setMyName(e.target.value); setMyResult(null); setMyError(''); }}
+                  maxLength={10}
+                />
+                <input
+                  className="my-score-input"
+                  type="tel"
+                  placeholder="010-0000-0000"
+                  value={myPhone}
+                  onChange={handleMyPhoneChange}
+                  maxLength={13}
+                />
+                <button className="my-score-btn" onClick={handleMySearch} disabled={mySearching}>
+                  {mySearching ? '조회 중...' : '조회'}
+                </button>
+              </div>
+
+              {myError && <p className="my-score-error">{myError}</p>}
+
+              {myResult && (
+                <div className="my-score-result">
+                  <div className="my-score-result-header">
+                    <span className="my-score-name">{myResult.name}</span>
+                    <span className="my-score-total"><b>{myResult.total}</b>점</span>
+                  </div>
+                  <div className="prediction-list">
+                    {myResult.detail.map((d) => (
+                      <div key={d.teamId} className={`prediction-item ${d.exactMatch ? 'exact' : d.inTop5 ? 'entry' : 'miss'}`}>
+                        <span className="pred-rank">{d.predictedRank}위 예측</span>
+                        <span className="pred-team">
+                          <img src={TEAMS[d.teamId].logo} alt={TEAMS[d.teamId].name} className="team-logo-xs" /> {TEAMS[d.teamId].name}
+                        </span>
+                        <span className="pred-result">
+                          {d.exactMatch ? '✅ +2' : d.inTop5 ? '🟡 +1' : '❌ 0'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="score-breakdown">
+                    <span>5강진입 <b>{myResult.entryScore}</b>점</span>
+                    <span>순위적중 <b>{myResult.exactScore}</b>점</span>
+                    <span>팬심보너스 <b>{myResult.fanBonus}</b>점</span>
+                    <span className="total-label">합계 <b>{myResult.total}</b>점</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </section>
 
         {/* 실제 순위표 */}
