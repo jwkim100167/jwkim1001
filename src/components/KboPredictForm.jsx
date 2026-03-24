@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { addPrediction } from '../services/supabaseKbo';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { addPrediction, updatePrediction } from '../services/supabaseKbo';
 import './KboPredictForm.css';
 
 const BASE = 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/KBOHome/resources/images/emblem/regular';
@@ -19,13 +19,28 @@ const TEAMS = [
 
 const RANK_LABELS = ['1위', '2위', '3위', '4위', '5위'];
 
+function formatPhone(raw) {
+  let f = raw.slice(0, 3);
+  if (raw.length > 3) f += '-' + raw.slice(3, 7);
+  if (raw.length > 7) f += '-' + raw.slice(7, 11);
+  return f;
+}
+
 export default function KboPredictForm() {
   const navigate = useNavigate();
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('010');
-  const [picks, setPicks] = useState([]); // 선택 순서대로 teamId 배열 (최대 5)
-  const [myTeam, setMyTeam] = useState(null);
-  const [step, setStep] = useState('pick'); // 'pick' | 'myteam' | 'done'
+  const location = useLocation();
+  const editState = location.state; // { editMode, name, phone (raw), data, myTeam }
+  const isEditMode = editState?.editMode === true;
+
+  const [name, setName] = useState(editState?.name || '');
+  const [phone, setPhone] = useState(editState?.phone ? formatPhone(editState.phone) : '010');
+  const [picks, setPicks] = useState(
+    editState?.data ? editState.data.split('').map(Number) : []
+  );
+  const [myTeam, setMyTeam] = useState(
+    editState?.myTeam ? parseInt(editState.myTeam, 10) : null
+  );
+  const [step, setStep] = useState('pick'); // 'pick' | 'done'
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -62,7 +77,9 @@ export default function KboPredictForm() {
     setSubmitting(true);
     setError('');
     const data = picks.join(''); // e.g. "31856"
-    const ok = await addPrediction({ name: name.trim(), phone: rawPhone, data, myTeam, season: 2026 });
+    const ok = isEditMode
+      ? await updatePrediction({ name: name.trim(), phone: rawPhone, data, myTeam, season: 2026 })
+      : await addPrediction({ name: name.trim(), phone: rawPhone, data, myTeam, season: 2026 });
     setSubmitting(false);
 
     if (ok) {
@@ -77,9 +94,9 @@ export default function KboPredictForm() {
       <div className="form-page">
         <div className="form-container">
           <div className="done-card">
-            <div className="done-icon">🎉</div>
-            <h2>예측 완료!</h2>
-            <p><b>{name}</b>님의 예측이 저장됐습니다.</p>
+            <div className="done-icon">{isEditMode ? '✅' : '🎉'}</div>
+            <h2>{isEditMode ? '수정 완료!' : '예측 완료!'}</h2>
+            <p><b>{name}</b>님의 예측이 {isEditMode ? '수정됐습니다.' : '저장됐습니다.'}</p>
             <div className="done-picks">
               {picks.map((id, idx) => {
                 const t = TEAMS.find((t) => t.id === id);
@@ -107,7 +124,7 @@ export default function KboPredictForm() {
         <button className="form-back-btn" onClick={() => navigate('/kbo-predict')}>← 뒤로</button>
 
         <div className="form-header">
-          <h1>✏️ 2026 KBO 순위 예측</h1>
+          <h1>{isEditMode ? '✏️ 예측 수정' : '✏️ 2026 KBO 순위 예측'}</h1>
           <p>5강에 들 팀을 순서대로 선택하세요</p>
         </div>
 
@@ -115,12 +132,13 @@ export default function KboPredictForm() {
         <section className="form-section">
           <label className="form-label">이름</label>
           <input
-            className="form-input"
+            className={`form-input ${isEditMode ? 'form-input-readonly' : ''}`}
             type="text"
             placeholder="예) 홍길동"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => !isEditMode && setName(e.target.value)}
             maxLength={10}
+            readOnly={isEditMode}
           />
         </section>
 
@@ -128,14 +146,15 @@ export default function KboPredictForm() {
         <section className="form-section">
           <label className="form-label">전화번호</label>
           <input
-            className="form-input"
+            className={`form-input ${isEditMode ? 'form-input-readonly' : ''}`}
             type="tel"
             value={phone}
-            onChange={handlePhoneChange}
+            onChange={isEditMode ? undefined : handlePhoneChange}
             placeholder="010-0000-0000"
             maxLength={13}
+            readOnly={isEditMode}
           />
-          <p className="phone-notice">📌 선물 받을 번호를 입력해주세요.</p>
+          {!isEditMode && <p className="phone-notice">📌 선물 받을 번호를 입력해주세요.</p>}
         </section>
 
         {/* 5강 예측 선택 */}
@@ -209,7 +228,7 @@ export default function KboPredictForm() {
           onClick={handleSubmit}
           disabled={submitting}
         >
-          {submitting ? '저장 중...' : '예측 제출하기'}
+          {submitting ? '저장 중...' : isEditMode ? '예측 수정하기' : '예측 제출하기'}
         </button>
       </div>
     </div>

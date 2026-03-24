@@ -309,6 +309,20 @@ export default function KboPredict() {
                     <span>팬심보너스 <b>{myResult.fanBonus}</b>점</span>
                     <span className="total-label">합계 <b>{myResult.total}</b>점</span>
                   </div>
+                  <button
+                    className="my-score-edit-btn"
+                    onClick={() => navigate('/kbo-predict/form', {
+                      state: {
+                        editMode: true,
+                        name: myResult.name,
+                        phone: myPhone.replace(/-/g, ''),
+                        data: myResult.detail.map((d) => d.teamId).join(''),
+                        myTeam: String(myResult.myTeam),
+                      },
+                    })}
+                  >
+                    ✏️ 예측 수정하기
+                  </button>
                 </div>
               )}
             </div>

@@ -50,7 +50,7 @@ const Home = () => {
 
         <div className="home-header">
           <h1>🎯 미니게임천국</h1>
-          <p>3월까지는 KBO 순위 예측 만 운영합니다.</p>
+          <p>3월까지는 "KBO 순위 예측" 만 운영합니다.</p>
         </div>
 
         <div className="navigation-cards">

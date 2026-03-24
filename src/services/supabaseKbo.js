@@ -79,6 +79,26 @@ export async function findMyPrediction({ name, phone, season = 2026 }) {
 }
 
 /**
+ * 예측 데이터 수정 (이름 + 전화번호로 식별)
+ * @param {{ name: string, phone: string, data: string, myTeam: string|number, season?: number }} prediction
+ * @returns {Promise<boolean>}
+ */
+export async function updatePrediction({ name, phone, data, myTeam, season = 2026 }) {
+  const { error } = await supabase
+    .from('kboPredictionTable')
+    .update({ data, my_team: parseInt(myTeam, 10), updated_at: new Date().toISOString() })
+    .eq('season', season)
+    .eq('name', name)
+    .eq('phone', phone);
+
+  if (error) {
+    console.error('❌ 예측 데이터 수정 실패:', error);
+    return false;
+  }
+  return true;
+}
+
+/**
  * 실제 순위 업데이트 (관리자용)
  * @param {number[]} rankOrder - 팀 ID 배열 (1위~10위)
  * @param {number} season

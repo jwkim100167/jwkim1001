@@ -388,6 +388,24 @@
   margin: 10px 0 0;
 }
 
+.my-score-edit-btn {
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(250, 204, 21, 0.4);
+  background: rgba(250, 204, 21, 0.1);
+  color: #facc15;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.my-score-edit-btn:hover {
+  background: rgba(250, 204, 21, 0.2);
+}
+
 .my-score-result {
   margin-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
