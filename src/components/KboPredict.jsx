@@ -46,7 +46,7 @@ function calcScore(userData, actualRank) {
     return { teamId, predictedRank: idx + 1, inTop5, exactMatch };
   });
 
-  return { name: userData.name, myTeam, entryScore, exactScore, fanBonus, total: entryScore + exactScore + fanBonus, detail };
+  return { name: userData.name, myTeam, entryScore, exactScore, fanBonus, total: entryScore + exactScore + fanBonus, detail, submittedAt: userData.submittedAt ?? null };
 }
 
 export default function KboPredict() {
@@ -89,7 +89,10 @@ export default function KboPredict() {
         if (db.exactMatch !== da.exactMatch) return (db.exactMatch ? 1 : 0) - (da.exactMatch ? 1 : 0);
         if (db.inTop5 !== da.inTop5)         return (db.inTop5 ? 1 : 0) - (da.inTop5 ? 1 : 0);
       }
-      return 0;
+      // 최종: 제출/수정 시간이 이른 순 (updated_at 우선, 없으면 created_at)
+      const tA = a.submittedAt ? new Date(a.submittedAt).getTime() : Infinity;
+      const tB = b.submittedAt ? new Date(b.submittedAt).getTime() : Infinity;
+      return tA - tB;
     });
   }, [actualRank, users]);
 

@@ -27,7 +27,7 @@ export async function getActualRank(season = 2026) {
 export async function getPredictions(season = 2026) {
   const { data, error } = await supabase
     .from('kboPredictionTable')
-    .select('id, name, data, my_team')
+    .select('id, name, data, my_team, created_at, updated_at')
     .eq('season', season)
     .order('created_at', { ascending: true });
 
@@ -35,11 +35,11 @@ export async function getPredictions(season = 2026) {
     console.error('❌ 예측 데이터 조회 실패:', error);
     return null;
   }
-  // my_team 컬럼을 컴포넌트가 기대하는 myTeam 형식으로 변환
   return data.map((row) => ({
     name: row.name,
     data: row.data,
     myTeam: String(row.my_team),
+    submittedAt: row.updated_at ?? row.created_at, // 수정 시간 우선, 없으면 생성 시간
   }));
 }
 
