@@ -77,7 +77,7 @@ const Home = () => {
           <div className="nav-card lotto-card disabled-card">
             <div className="card-icon">🎰</div>
             <div className="card-content">
-              <h2>로또 서비스 - 멤버십</h2>
+              <h2>로또 서비스<br/>[멤버십]</h2>
               <div className="service-status">잠시 휴업 중</div>
             </div>
           </div>
@@ -95,7 +95,7 @@ const Home = () => {
           <div className="nav-card momokbest-card disabled-card">
             <div className="card-icon">🏆</div>
             <div className="card-content">
-              <h2>MOMOK - 멤버십</h2>
+              <h2>오늘 뭐 먹지?<br/>[멤버십]</h2>
               <div className="service-status">잠시 휴업 중</div>
             </div>
           </div>
