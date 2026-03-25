@@ -495,25 +495,36 @@
   font-weight: 700;
 }
 
-/* ─── 현황판 바 ─── */
-.pick-bar-wrap {
-  flex: 1;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-  overflow: hidden;
+/* ─── 현황판 ─── */
+.pick-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
 }
 
-.pick-bar {
-  height: 100%;
-  background: linear-gradient(90deg, #facc15, #f59e0b);
-  border-radius: 3px;
+.pick-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.78rem;
+}
+
+.pick-cell.top5 {
+  background: rgba(255, 214, 10, 0.1);
+  border: 1px solid rgba(255, 214, 10, 0.3);
+}
+
+.pick-cell-name {
+  font-weight: 600;
+  opacity: 0.85;
 }
 
 .pick-pct {
-  width: 36px;
-  text-align: right;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 700;
   color: #facc15;
 }

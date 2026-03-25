@@ -268,19 +268,16 @@ export default function KboPredict() {
         {/* 현황판 */}
         <section className="section-card">
           <h2 className="section-title">📊 가을야구 예측 현황판</h2>
-          <div className="rank-table">
+          <div className="pick-grid">
             {Object.entries(teamPickCount)
               .sort((a, b) => b[1] - a[1])
               .map(([teamId, count]) => {
                 const pct = users ? Math.round((count / users.length) * 100) : 0;
                 const tid = parseInt(teamId, 10);
                 return (
-                  <div key={teamId} className={`rank-row ${pct >= 50 ? 'top5' : ''}`}>
+                  <div key={teamId} className={`pick-cell ${pct >= 50 ? 'top5' : ''}`}>
                     <img src={TEAMS[tid].logo} alt={TEAMS[tid].name} className="team-logo-sm" />
-                    <span className="rank-name">{TEAMS[tid].name}</span>
-                    <div className="pick-bar-wrap">
-                      <div className="pick-bar" style={{ width: `${pct}%` }} />
-                    </div>
+                    <span className="pick-cell-name">{TEAMS[tid].name}</span>
                     <span className="pick-pct">{pct}%</span>
                   </div>
                 );
