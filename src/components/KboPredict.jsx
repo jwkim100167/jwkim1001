@@ -99,6 +99,17 @@ export default function KboPredict() {
   const top3 = results.slice(0, 3);
   const rest = results.slice(3, 5);
 
+  // 현황판: 팀별 가을야구 예측 선택률
+  const teamPickCount = useMemo(() => {
+    if (!users) return {};
+    const count = {};
+    for (let i = 1; i <= 10; i++) count[i] = 0;
+    users.forEach((u) => {
+      u.data.split('').map(Number).forEach((tid) => { count[tid] = (count[tid] || 0) + 1; });
+    });
+    return count;
+  }, [users]);
+
   const handleToggle = (idx) => setOpenIdx(openIdx === idx ? null : idx);
 
   const handleMyPhoneChange = (e) => {
@@ -153,7 +164,7 @@ export default function KboPredict() {
           <h2 className="section-title">🎯 예측 점수판</h2>
           <div className="score-legend">
             <span className="legend-item exact">■ 순위 완벽 적중</span>
-            <span className="legend-item entry">■ 5강 진입 적중</span>
+            <span className="legend-item entry">■ 가을야구 진입 적중</span>
             <span className="legend-item miss">■ 미적중</span>
           </div>
           <div className="podium-cards">
@@ -193,7 +204,7 @@ export default function KboPredict() {
                       ))}
                     </div>
                     <div className="score-breakdown">
-                      <span>5강진입 <b>{r.entryScore}</b>점</span>
+                      <span>가을야구 진입 <b>{r.entryScore}</b>점</span>
                       <span>순위적중 <b>{r.exactScore}</b>점</span>
                       <span>팬심보너스 <b>{r.fanBonus}</b>점</span>
                       <span className="total-label">합계 <b>{r.total}</b>점</span>
@@ -237,7 +248,7 @@ export default function KboPredict() {
                           ))}
                         </div>
                         <div className="score-breakdown">
-                          <span>5강진입 <b>{r.entryScore}</b>점</span>
+                          <span>가을야구 진입 <b>{r.entryScore}</b>점</span>
                           <span>순위적중 <b>{r.exactScore}</b>점</span>
                           <span>팬심보너스 <b>{r.fanBonus}</b>점</span>
                           <span className="total-label">합계 <b>{r.total}</b>점</span>
@@ -252,6 +263,29 @@ export default function KboPredict() {
               </button>
             </>
           )}
+        </section>
+
+        {/* 현황판 */}
+        <section className="section-card">
+          <h2 className="section-title">📊 가을야구 예측 현황판</h2>
+          <div className="rank-table">
+            {Object.entries(teamPickCount)
+              .sort((a, b) => b[1] - a[1])
+              .map(([teamId, count]) => {
+                const pct = users ? Math.round((count / users.length) * 100) : 0;
+                const tid = parseInt(teamId, 10);
+                return (
+                  <div key={teamId} className={`rank-row ${pct >= 50 ? 'top5' : ''}`}>
+                    <img src={TEAMS[tid].logo} alt={TEAMS[tid].name} className="team-logo-sm" />
+                    <span className="rank-name">{TEAMS[tid].name}</span>
+                    <div className="pick-bar-wrap">
+                      <div className="pick-bar" style={{ width: `${pct}%` }} />
+                    </div>
+                    <span className="pick-pct">{pct}%</span>
+                  </div>
+                );
+              })}
+          </div>
         </section>
 
         {/* 내 점수판 */}
@@ -307,7 +341,7 @@ export default function KboPredict() {
                     ))}
                   </div>
                   <div className="score-breakdown">
-                    <span>5강진입 <b>{myResult.entryScore}</b>점</span>
+                    <span>가을야구 진입 <b>{myResult.entryScore}</b>점</span>
                     <span>순위적중 <b>{myResult.exactScore}</b>점</span>
                     <span>팬심보너스 <b>{myResult.fanBonus}</b>점</span>
                     <span className="total-label">합계 <b>{myResult.total}</b>점</span>
@@ -344,7 +378,7 @@ export default function KboPredict() {
                 <span className="rank-num">{idx + 1}</span>
                 <img src={TEAMS[teamId].logo} alt={TEAMS[teamId].name} className="team-logo-sm" />
                 <span className="rank-name">{TEAMS[teamId].name}</span>
-                {idx < 5 && <span className="top5-badge">5강</span>}
+                {idx < 5 && <span className="top5-badge">가을야구</span>}
               </div>
             ))}
           </div>
@@ -354,8 +388,8 @@ export default function KboPredict() {
         <section className="section-card rules-card">
           <h2 className="section-title">📌 채점 기준</h2>
           <ul className="rules-list">
-            <li>예측한 팀이 실제 1~5위 안에 있으면 <b>+1점</b> (최대 5점)</li>
-            <li>5강 팀의 순위까지 정확히 일치하면 <b>추가 +1점</b> (최대 5점)</li>
+            <li>예측한 팀이 실제 가을야구(1~5위) 안에 있으면 <b>+1점</b> (최대 5점)</li>
+            <li>가을야구 팀의 순위까지 정확히 일치하면 <b>추가 +1점</b> (최대 5점)</li>
             <li>응원팀이 실제 1위라면 <b>팬심 보너스 +1점</b></li>
           </ul>
         </section>
