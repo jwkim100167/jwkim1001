@@ -52,6 +52,7 @@ function calcScore(userData, actualRank) {
 export default function KboPredict() {
   const navigate = useNavigate();
   const [actualRank, setActualRank] = useState(null);
+  const [rankStats, setRankStats] = useState(null);
   const [users, setUsers] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isMock, setIsMock] = useState(false);
@@ -69,7 +70,8 @@ export default function KboPredict() {
   useEffect(() => {
     async function loadData() {
       const [rankData, predData] = await Promise.all([getActualRank(2026), getPredictions(2026)]);
-      setActualRank(rankData ?? MOCK_ACTUAL_RANK);
+      setActualRank(rankData?.rankOrder ?? MOCK_ACTUAL_RANK);
+      setRankStats(rankData?.rankStats ?? null);
       setUsers(predData ?? MOCK_USERS);
       setIsMock(!rankData || !predData);
       setLoading(false);
@@ -158,6 +160,84 @@ export default function KboPredict() {
           <p className="kbo-subtitle">현재는 2026 시범경기 순위입니다.<br/>순위와 예측을 비교해 점수를 확인하세요.</p>
           {isMock && <div className="mock-badge">📋 MOCK DATA</div>}
         </div>
+
+        {/* 내 점수판 */}
+        <section className="section-card my-score-section">
+          <button className="my-score-toggle" onClick={() => { setMyScoreOpen(!myScoreOpen); setMyResult(null); setMyError(''); }}>
+            <span>🙋 내 점수판</span>
+            <span className={`chevron ${myScoreOpen ? 'up' : ''}`}>›</span>
+          </button>
+
+          {myScoreOpen && (
+            <div className="my-score-body">
+              <div className="my-score-inputs">
+                <input
+                  className="my-score-input"
+                  type="text"
+                  placeholder="이름"
+                  value={myName}
+                  onChange={(e) => { setMyName(e.target.value); setMyResult(null); setMyError(''); }}
+                  maxLength={10}
+                />
+                <input
+                  className="my-score-input"
+                  type="tel"
+                  placeholder="010-0000-0000"
+                  value={myPhone}
+                  onChange={handleMyPhoneChange}
+                  maxLength={13}
+                />
+                <button className="my-score-btn" onClick={handleMySearch} disabled={mySearching}>
+                  {mySearching ? '조회 중...' : '조회'}
+                </button>
+              </div>
+
+              {myError && <p className="my-score-error">{myError}</p>}
+
+              {myResult && (
+                <div className="my-score-result">
+                  <div className="my-score-result-header">
+                    <span className="my-score-name">{myResult.name}</span>
+                    <span className="my-score-total"><b>{myResult.total}</b>점</span>
+                  </div>
+                  <div className="prediction-list">
+                    {myResult.detail.map((d) => (
+                      <div key={d.teamId} className={`prediction-item ${d.exactMatch ? 'exact' : d.inTop5 ? 'entry' : 'miss'}`}>
+                        <span className="pred-rank">{d.predictedRank}위 예측</span>
+                        <span className="pred-team">
+                          <img src={TEAMS[d.teamId].logo} alt={TEAMS[d.teamId].name} className="team-logo-xs" /> {TEAMS[d.teamId].name}
+                        </span>
+                        <span className="pred-result">
+                          {d.exactMatch ? '✅ +2' : d.inTop5 ? '🟡 +1' : '❌ 0'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="score-breakdown">
+                    <span>가을야구 진입 <b>{myResult.entryScore}</b>점</span>
+                    <span>순위적중 <b>{myResult.exactScore}</b>점</span>
+                    <span>팬심보너스 <b>{myResult.fanBonus}</b>점</span>
+                    <span className="total-label">합계 <b>{myResult.total}</b>점</span>
+                  </div>
+                  <button
+                    className="my-score-edit-btn"
+                    onClick={() => navigate('/kbo-predict/form', {
+                      state: {
+                        editMode: true,
+                        name: myResult.name,
+                        phone: myPhone.replace(/-/g, ''),
+                        data: myResult.detail.map((d) => d.teamId).join(''),
+                        myTeam: String(myResult.myTeam),
+                      },
+                    })}
+                  >
+                    ✏️ 예측 수정하기
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </section>
 
         {/* 예측 점수판 — TOP 3 */}
         <section className="section-card">
@@ -285,99 +365,31 @@ export default function KboPredict() {
           </div>
         </section>
 
-        {/* 내 점수판 */}
-        <section className="section-card my-score-section">
-          <button className="my-score-toggle" onClick={() => { setMyScoreOpen(!myScoreOpen); setMyResult(null); setMyError(''); }}>
-            <span>🙋 내 점수판</span>
-            <span className={`chevron ${myScoreOpen ? 'up' : ''}`}>›</span>
-          </button>
-
-          {myScoreOpen && (
-            <div className="my-score-body">
-              <div className="my-score-inputs">
-                <input
-                  className="my-score-input"
-                  type="text"
-                  placeholder="이름"
-                  value={myName}
-                  onChange={(e) => { setMyName(e.target.value); setMyResult(null); setMyError(''); }}
-                  maxLength={10}
-                />
-                <input
-                  className="my-score-input"
-                  type="tel"
-                  placeholder="010-0000-0000"
-                  value={myPhone}
-                  onChange={handleMyPhoneChange}
-                  maxLength={13}
-                />
-                <button className="my-score-btn" onClick={handleMySearch} disabled={mySearching}>
-                  {mySearching ? '조회 중...' : '조회'}
-                </button>
-              </div>
-
-              {myError && <p className="my-score-error">{myError}</p>}
-
-              {myResult && (
-                <div className="my-score-result">
-                  <div className="my-score-result-header">
-                    <span className="my-score-name">{myResult.name}</span>
-                    <span className="my-score-total"><b>{myResult.total}</b>점</span>
-                  </div>
-                  <div className="prediction-list">
-                    {myResult.detail.map((d) => (
-                      <div key={d.teamId} className={`prediction-item ${d.exactMatch ? 'exact' : d.inTop5 ? 'entry' : 'miss'}`}>
-                        <span className="pred-rank">{d.predictedRank}위 예측</span>
-                        <span className="pred-team">
-                          <img src={TEAMS[d.teamId].logo} alt={TEAMS[d.teamId].name} className="team-logo-xs" /> {TEAMS[d.teamId].name}
-                        </span>
-                        <span className="pred-result">
-                          {d.exactMatch ? '✅ +2' : d.inTop5 ? '🟡 +1' : '❌ 0'}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="score-breakdown">
-                    <span>가을야구 진입 <b>{myResult.entryScore}</b>점</span>
-                    <span>순위적중 <b>{myResult.exactScore}</b>점</span>
-                    <span>팬심보너스 <b>{myResult.fanBonus}</b>점</span>
-                    <span className="total-label">합계 <b>{myResult.total}</b>점</span>
-                  </div>
-                  <button
-                    className="my-score-edit-btn"
-                    onClick={() => navigate('/kbo-predict/form', {
-                      state: {
-                        editMode: true,
-                        name: myResult.name,
-                        phone: myPhone.replace(/-/g, ''),
-                        data: myResult.detail.map((d) => d.teamId).join(''),
-                        myTeam: String(myResult.myTeam),
-                      },
-                    })}
-                  >
-                    ✏️ 예측 수정하기
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-        </section>
-
         {/* 실제 순위표 */}
         <section className="section-card">
           <h2 className="section-title">🏆 실제 순위표</h2>
           <div className="rank-table">
-            {actualRank.map((teamId, idx) => (
-              <div
-                key={teamId}
-                className={`rank-row ${idx < 5 ? 'top5' : ''} ${idx === 0 ? 'first-place' : ''}`}
-              >
-                <span className="rank-num">{idx + 1}</span>
-                <img src={TEAMS[teamId].logo} alt={TEAMS[teamId].name} className="team-logo-sm" />
-                <span className="rank-name">{TEAMS[teamId].name}</span>
-                {idx < 5 && <span className="top5-badge">가을야구</span>}
-              </div>
-            ))}
+            {actualRank.map((teamId, idx) => {
+              const stats = rankStats?.[idx] ?? null;
+              return (
+                <div
+                  key={teamId}
+                  className={`rank-row ${idx < 5 ? 'top5' : ''} ${idx === 0 ? 'first-place' : ''}`}
+                >
+                  <span className="rank-num">{idx + 1}</span>
+                  <img src={TEAMS[teamId].logo} alt={TEAMS[teamId].name} className="team-logo-sm" />
+                  <span className="rank-name">{TEAMS[teamId].name}</span>
+                  {stats && (
+                    <span className="rank-stats">
+                      <span className="stat-w">{stats.w}승</span>
+                      {stats.d > 0 && <span className="stat-d">{stats.d}무</span>}
+                      <span className="stat-l">{stats.l}패</span>
+                    </span>
+                  )}
+                  {idx < 5 && <span className="top5-badge">가을야구</span>}
+                </div>
+              );
+            })}
           </div>
         </section>
 

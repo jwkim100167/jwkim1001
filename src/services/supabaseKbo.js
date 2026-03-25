@@ -8,7 +8,7 @@ import { supabase } from '../supabaseClient';
 export async function getActualRank(season = 2026) {
   const { data, error } = await supabase
     .from('kboActualRankTable')
-    .select('rank_order')
+    .select('rank_order, rank_stats')
     .eq('season', season)
     .single();
 
@@ -16,7 +16,7 @@ export async function getActualRank(season = 2026) {
     console.error('❌ 실제 순위 조회 실패:', error);
     return null;
   }
-  return data.rank_order; // jsonb → JS 배열로 자동 파싱됨
+  return { rankOrder: data.rank_order, rankStats: data.rank_stats ?? null };
 }
 
 /**
