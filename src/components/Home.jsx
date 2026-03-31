@@ -1,12 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getServiceConfig } from '../services/supabaseAdmin';
 import './Home.css';
+
+const SERVICE_LIST = [
+  { id: 'kbo-predict',   title: 'KBO 순위 예측',           icon: '⚾', path: '/kbo-predict/form',   cardClass: 'kbo-card',       desc: '2026 시즌 순위 예측하기' },
+  { id: 'kbo-result',    title: 'KBO 예측 점수 확인',        icon: '🏆', path: '/kbo-predict/result', cardClass: 'kbo-card',       desc: '내 예측 점수 확인하기' },
+  { id: 'lotto',         title: '로또 서비스',              icon: '🎰', path: '/lotto',              cardClass: 'lotto-card',      desc: '' },
+  { id: 'lotto-vip',     title: '로또 서비스\n[멤버십]',    icon: '🎰', path: '/lotto-basic',        cardClass: 'lotto-card',      desc: '' },
+  { id: 'whattoeat',     title: '오늘 뭐 먹지?',            icon: '🍽️', path: '/whattoeat',          cardClass: 'momok-card',      desc: '' },
+  { id: 'whattoeat-vip', title: '오늘 뭐 먹지?\n[멤버십]',  icon: '🍽️', path: '/momok-best',         cardClass: 'momokbest-card',  desc: '' },
+  { id: 'taste',         title: '취향 알기',                icon: '💫', path: '/taste-match',        cardClass: 'taste-card',      desc: '' },
+];
 
 const Home = () => {
   console.log('Home 컴포넌트 렌더링됨');
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
+  const [serviceConfig, setServiceConfig] = useState(null);
+
+  useEffect(() => {
+    getServiceConfig().then((cfg) => {
+      if (cfg) setServiceConfig(cfg);
+    });
+  }, []);
+
+  const isEnabled = (id) => {
+    if (!serviceConfig) return id === 'kbo-predict' || id === 'kbo-result'; // 로딩 전 기본값
+    return serviceConfig[id] ?? false;
+  };
+
+  const enabledCount  = SERVICE_LIST.filter((s) => isEnabled(s.id)).length;
+  const disabledCount = SERVICE_LIST.length - enabledCount;
 
   const handleLogout = () => {
     logout();
@@ -54,70 +80,36 @@ const Home = () => {
         </div>
 
         <div className="navigation-cards">
-          {/* KBO 순위 예측 */}
-          <Link to="/kbo-predict" className="nav-card kbo-card">
-            <div className="card-icon">⚾</div>
-            <div className="card-content">
-              <h2>KBO 순위 예측</h2>
-              <div className="card-desc">2026 시즌 예측 점수 확인</div>
-            </div>
-            <div className="card-arrow">→</div>
-          </Link>
-
-          {/* 로또 서비스 (기본) */}
-          <div className="nav-card lotto-card disabled-card">
-            <div className="card-icon">🎰</div>
-            <div className="card-content">
-              <h2>로또 서비스</h2>
-              <div className="service-status">잠시 휴업 중</div>
-            </div>
-          </div>
-
-          {/* 로또 서비스 - 멤버십 */}
-          <div className="nav-card lotto-card disabled-card">
-            <div className="card-icon">🎰</div>
-            <div className="card-content">
-              <h2>로또 서비스<br/>[멤버십]</h2>
-              <div className="service-status">잠시 휴업 중</div>
-            </div>
-          </div>
-
-          {/* MOMOK */}
-          <div className="nav-card momok-card disabled-card">
-            <div className="card-icon">🍽️</div>
-            <div className="card-content">
-              <h2>오늘 뭐 먹지?</h2>
-              <div className="service-status">잠시 휴업 중</div>
-            </div>
-          </div>
-
-          {/* MOMOK - 멤버십 */}
-          <div className="nav-card momokbest-card disabled-card">
-            <div className="card-icon">🍽️</div>
-            <div className="card-content">
-              <h2>오늘 뭐 먹지?<br/>[멤버십]</h2>
-              <div className="service-status">잠시 휴업 중</div>
-            </div>
-          </div>
-
-          {/* 취향 알기 */}
-          <div className="nav-card taste-card disabled-card">
-            <div className="card-icon">💫</div>
-            <div className="card-content">
-              <h2>취향 알기</h2>
-              <div className="service-status">잠시 휴업 중</div>
-            </div>
-          </div>
+          {SERVICE_LIST.map((svc) =>
+            isEnabled(svc.id) ? (
+              <Link key={svc.id} to={svc.path} className={`nav-card ${svc.cardClass}`}>
+                <div className="card-icon">{svc.icon}</div>
+                <div className="card-content">
+                  <h2>{svc.title.split('\n').map((t, i) => <React.Fragment key={i}>{t}{i === 0 && svc.title.includes('\n') && <br/>}</React.Fragment>)}</h2>
+                  {svc.desc && <div className="card-desc">{svc.desc}</div>}
+                </div>
+                <div className="card-arrow">→</div>
+              </Link>
+            ) : (
+              <div key={svc.id} className={`nav-card ${svc.cardClass} disabled-card`}>
+                <div className="card-icon">{svc.icon}</div>
+                <div className="card-content">
+                  <h2>{svc.title.split('\n').map((t, i) => <React.Fragment key={i}>{t}{i === 0 && svc.title.includes('\n') && <br/>}</React.Fragment>)}</h2>
+                  <div className="service-status">잠시 휴업 중</div>
+                </div>
+              </div>
+            )
+          )}
         </div>
 
         <div className="home-footer">
           <div className="stats">
             <div className="stat-item">
-              <div className="stat-number">1</div>
+              <div className="stat-number">{enabledCount}</div>
               <div className="stat-label">운영중</div>
             </div>
             <div className="stat-item">
-              <div className="stat-number">5</div>
+              <div className="stat-number">{disabledCount}</div>
               <div className="stat-label">휴업중</div>
             </div>
             <div className="stat-item">

@@ -2,7 +2,18 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
+import { getServiceConfig, updateServiceConfig } from '../services/supabaseAdmin';
 import './Admin.css';
+
+const SERVICE_LIST = [
+  { id: 'kbo-predict',   title: 'KBO 순위 예측',          icon: '⚾' },
+  { id: 'kbo-result',    title: 'KBO 점수 확인',           icon: '🏆' },
+  { id: 'lotto',         title: '로또 서비스',              icon: '🎰' },
+  { id: 'lotto-vip',     title: '로또 서비스 [멤버십]',     icon: '🎰' },
+  { id: 'whattoeat',     title: '오늘 뭐 먹지?',            icon: '🍽️' },
+  { id: 'whattoeat-vip', title: '오늘 뭐 먹지? [멤버십]',   icon: '🍽️' },
+  { id: 'taste',         title: '취향 알기',                icon: '💫' },
+];
 
 export default function Admin() {
   const { user, logout, loading: authLoading } = useAuth();
@@ -14,6 +25,10 @@ export default function Admin() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMessage, setPasswordMessage] = useState('');
+
+  // 서비스 관리 탭 상태
+  const [serviceConfig, setServiceConfig] = useState({});
+  const [serviceMsg, setServiceMsg] = useState('');
 
   // 취향 알기 탭 상태
   const [tasteQuestions, setTasteQuestions] = useState([]);
@@ -82,6 +97,9 @@ export default function Admin() {
   };
 
   useEffect(() => {
+    if (activeTab === 'service') {
+      getServiceConfig().then((cfg) => { if (cfg) setServiceConfig(cfg); });
+    }
     if (activeTab === 'food') {
       loadCategorizedRestaurants();
     }
@@ -89,6 +107,14 @@ export default function Admin() {
       loadTasteQuestions();
     }
   }, [activeTab]);
+
+  const handleServiceToggle = async (serviceId) => {
+    const newVal = !serviceConfig[serviceId];
+    setServiceConfig((prev) => ({ ...prev, [serviceId]: newVal }));
+    const ok = await updateServiceConfig(serviceId, newVal);
+    setServiceMsg(ok ? '✅ 저장됨' : '❌ 저장 실패');
+    setTimeout(() => setServiceMsg(''), 2000);
+  };
 
   // 취향 알기 문항 로드
   const loadTasteQuestions = async () => {
@@ -433,6 +459,12 @@ export default function Admin() {
             기본정보
           </button>
           <button
+            className={`tab-btn ${activeTab === 'service' ? 'active' : ''}`}
+            onClick={() => setActiveTab('service')}
+          >
+            서비스
+          </button>
+          <button
             className={`tab-btn ${activeTab === 'lotto' ? 'active' : ''}`}
             onClick={() => navigate('/lottoadmin')}
           >
@@ -507,6 +539,29 @@ export default function Admin() {
                     비밀번호 변경
                   </button>
                 </form>
+              </div>
+            </div>
+          )}
+
+          {/* 서비스 관리 탭 */}
+          {activeTab === 'service' && (
+            <div className="service-tab">
+              <h2>🔧 서비스 관리</h2>
+              <p className="description">서비스를 켜거나 끄면 홈 화면에 즉시 반영됩니다.</p>
+              {serviceMsg && <div className="service-save-msg">{serviceMsg}</div>}
+              <div className="service-toggle-list">
+                {SERVICE_LIST.map((svc) => (
+                  <div key={svc.id} className="service-toggle-row">
+                    <span className="service-toggle-icon">{svc.icon}</span>
+                    <span className="service-toggle-title">{svc.title}</span>
+                    <button
+                      className={`toggle-btn ${serviceConfig[svc.id] ? 'on' : 'off'}`}
+                      onClick={() => handleServiceToggle(svc.id)}
+                    >
+                      {serviceConfig[svc.id] ? 'ON' : 'OFF'}
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
           )}
