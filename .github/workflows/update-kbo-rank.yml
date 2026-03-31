@@ -1,0 +1,39 @@
+name: KBO 순위 자동 업데이트
+
+on:
+  schedule:
+    # 매일 새벽 5시 (KST) = UTC 20:00 (전날)
+    - cron: '0 20 * * *'
+  workflow_dispatch: # 수동 트리거 가능
+
+jobs:
+  update-rank:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # puppeteer가 사용하는 Chromium 의존 패키지 설치
+      - name: Install Chromium dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 \
+            libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 \
+            libxfixes3 libxrandr2 libgbm1 libasound2 libpango-1.0-0 libcairo2
+
+      - name: KBO 순위 업데이트
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node --env-file=.env scripts/update-kbo-rank.js || node scripts/update-kbo-rank.js
