@@ -54,6 +54,10 @@ const Lotto = () => {
   const [showIncludeOptions, setShowIncludeOptions] = useState(false); // 필수 포함 번호 옵션 표시 상태
   const [showPatternOptions, setShowPatternOptions] = useState(false); // 제외 패턴 옵션 표시 상태
   const [loginRequiredMsg, setLoginRequiredMsg] = useState(false);
+  const [backtestResult, setBacktestResult] = useState(null);
+  const [isBacktesting, setIsBacktesting] = useState(false);
+  const [backtestWeeks, setBacktestWeeks] = useState(52);
+  const [showBacktestDetail, setShowBacktestDetail] = useState(false);
 
   // Auth hooks
   const { isAuthenticated, user, logout } = useAuth();
@@ -1927,6 +1931,174 @@ const Lotto = () => {
   // AC값 7 미만이면 단순 패턴으로 판단
   const hasLowACValue = (numbers) => calcACValue(numbers) < 7;
 
+  // ── 백테스팅 관련 함수 ──────────────────────────────────────────
+
+  // 당첨 등수 판별
+  const getPrizeRank = (myNumbers, winningNumbers, bonusNumber) => {
+    const matchCount = myNumbers.filter(n => winningNumbers.includes(n)).length;
+    const hasBonus = myNumbers.includes(bonusNumber);
+    if (matchCount === 6) return 1;
+    if (matchCount === 5 && hasBonus) return 2;
+    if (matchCount === 5) return 3;
+    if (matchCount === 4) return 4;
+    if (matchCount === 3) return 5;
+    return 0;
+  };
+
+  // 백테스팅 전용 경량 게임 생성 (Supabase 없음, sync)
+  const generateGameForBacktest = (pool, mustInclude) => {
+    const MAX_ATTEMPTS = 500;
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+      const numbers = [...mustInclude];
+      const available = pool.filter(n => !numbers.includes(n));
+      const shuffled = [...available].sort(() => Math.random() - 0.5);
+      for (const n of shuffled) {
+        if (numbers.length >= 6) break;
+        numbers.push(n);
+      }
+      if (numbers.length < 6) return null;
+      numbers.sort((a, b) => a - b);
+      // 패턴 필터 적용
+      if (filterOddEven && hasExtremeOddEven(numbers)) continue;
+      if (filterSumRange && isOutOfSumRange(numbers)) continue;
+      if (filterHighLow && hasExtremeHighLow(numbers)) continue;
+      if (filterACValue && hasLowACValue(numbers)) continue;
+      if (preventConsecutiveFour && hasConsecutiveFour(numbers)) continue;
+      return numbers;
+    }
+    return null;
+  };
+
+  // 백테스팅 메인 함수
+  const runBacktest = () => {
+    if (!lottoData?.data?.length) {
+      alert('로또 데이터가 없습니다. 당첨번호 확인 탭에서 데이터를 먼저 다운로드하세요.');
+      return;
+    }
+    setIsBacktesting(true);
+    setBacktestResult(null);
+
+    // 최신 N회차 추출
+    const sorted = [...lottoData.data].sort((a, b) => b.round - a.round);
+    const targetDraws = sorted.slice(0, backtestWeeks);
+
+    // 현재 제외 번호 풀 계산
+    const extraExclude = [
+      ...(excludeLastDigitRanges ? getExcludeRangesByLastDigit() : []),
+      ...(excludeTensDigitRanges ? getExcludeRangesByTensDigit() : []),
+    ];
+    const allExcluded = [...new Set([...excludeNumbers, ...extraExclude])];
+    const validMust = mustIncludeNumbers.filter(n => !allExcluded.includes(n));
+
+    // 사용 가능 번호 풀
+    let pool = Array.from({ length: 45 }, (_, i) => i + 1)
+      .filter(n => !allExcluded.includes(n) && !validMust.includes(n));
+    if (pool.length + validMust.length < 6) {
+      pool = Array.from({ length: 45 }, (_, i) => i + 1)
+        .filter(n => !validMust.includes(n));
+    }
+
+    const prizes = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 0: 0 };
+    const prizeAmounts = { 1: 2000000000, 2: 60000000, 3: 1500000, 4: 50000, 5: 5000 };
+    let filterPassCount = 0;
+    const weekResults = [];
+
+    for (const draw of targetDraws) {
+      const winning = [draw.num1, draw.num2, draw.num3, draw.num4, draw.num5, draw.num6];
+      const bonus = draw.bonus;
+
+      // 필터 적합도: 이 회차 당첨번호가 현재 필터를 통과하는지
+      const isFiltered =
+        winning.some(n => allExcluded.includes(n)) ||
+        (validMust.length > 0 && validMust.some(n => !winning.includes(n))) ||
+        (filterOddEven && hasExtremeOddEven(winning)) ||
+        (filterSumRange && isOutOfSumRange(winning)) ||
+        (filterHighLow && hasExtremeHighLow(winning)) ||
+        (filterACValue && hasLowACValue(winning)) ||
+        (preventConsecutiveFour && hasConsecutiveFour(winning));
+      if (!isFiltered) filterPassCount++;
+
+      // 5게임 생성 및 등수 체크
+      const games = [];
+      for (let g = 0; g < 5; g++) {
+        const game = generateGameForBacktest(pool, validMust);
+        if (!game) continue;
+        const rank = getPrizeRank(game, winning, bonus);
+        prizes[rank]++;
+        games.push({ numbers: game, rank });
+      }
+      weekResults.push({ round: draw.round, date: draw.date, winning, bonus, games });
+    }
+
+    const totalGames = targetDraws.length * 5;
+    const totalInvest = totalGames * 1000;
+    const totalReturn = (prizes[1] * prizeAmounts[1]) + (prizes[2] * prizeAmounts[2]) +
+      (prizes[3] * prizeAmounts[3]) + (prizes[4] * prizeAmounts[4]) + (prizes[5] * prizeAmounts[5]);
+
+    setBacktestResult({
+      weeks: targetDraws.length,
+      totalGames,
+      totalInvest,
+      totalReturn,
+      returnRate: ((totalReturn / totalInvest) * 100).toFixed(1),
+      prizes,
+      filterPassCount,
+      filterPassRate: ((filterPassCount / targetDraws.length) * 100).toFixed(1),
+      weekResults,
+    });
+    setIsBacktesting(false);
+  };
+
+  // 역대 당첨번호 통계 분포 계산 (백테스팅 탭 - 탭 진입 시 자동)
+  const lottoStats = useMemo(() => {
+    if (!lottoData?.data?.length) return null;
+    const draws = lottoData.data;
+    const total = draws.length;
+
+    const sumBuckets = { under100: 0, range100to170: 0, over170: 0 };
+    const oddEvenDist = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+    const acDist = {};
+    // 구간: 1~9, 10~19, 20~29, 30~39, 40~45
+    const rangeTotals = [0, 0, 0, 0, 0];
+    const rangeZeroCounts = [0, 0, 0, 0, 0]; // 해당 구간에서 0개 나온 회차
+
+    for (const d of draws) {
+      const nums = [d.num1, d.num2, d.num3, d.num4, d.num5, d.num6];
+      const sum = nums.reduce((a, b) => a + b, 0);
+      if (sum < 100) sumBuckets.under100++;
+      else if (sum <= 170) sumBuckets.range100to170++;
+      else sumBuckets.over170++;
+
+      const oddCount = nums.filter(n => n % 2 !== 0).length;
+      oddEvenDist[oddCount]++;
+
+      const ac = calcACValue(nums);
+      acDist[ac] = (acDist[ac] || 0) + 1;
+
+      const rangeCounts = [0, 0, 0, 0, 0];
+      nums.forEach(n => {
+        if (n <= 9) rangeCounts[0]++;
+        else if (n <= 19) rangeCounts[1]++;
+        else if (n <= 29) rangeCounts[2]++;
+        else if (n <= 39) rangeCounts[3]++;
+        else rangeCounts[4]++;
+      });
+      rangeCounts.forEach((cnt, i) => {
+        rangeTotals[i] += cnt;
+        if (cnt === 0) rangeZeroCounts[i]++;
+      });
+    }
+
+    return {
+      total,
+      sumBuckets,
+      oddEvenDist,
+      acDist,
+      rangeTotals,
+      rangeZeroCounts,
+    };
+  }, [lottoData]);
+
   // 특정 게임 슬롯에 번호 생성 (targetSlot: 0-4, null이면 첫 번째 빈 슬롯)
   const generateSingleGame = (targetSlot = null) => {
     if (!isAuthenticated) {
@@ -2543,6 +2715,12 @@ const Lotto = () => {
             onClick={() => setActiveTab('analysis')}
           >
             📊 분석
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'backtest' ? 'active' : ''}`}
+            onClick={() => setActiveTab('backtest')}
+          >
+            🧪 백테스팅
           </button>
         </div>
 
@@ -3565,10 +3743,259 @@ const Lotto = () => {
               </div>
             )
           )}
-        </div>
 
+          {activeTab === 'backtest' && (
+            <div className="backtest-section">
+              <div className="backtest-header">
+                <h2 className="backtest-title">🧪 백테스팅 시뮬레이션</h2>
+                <p className="backtest-desc">현재 필터 설정으로 매주 5게임씩 구매했다면?</p>
+              </div>
 
-        <div className="navigation">
+              {/* 📊 역대 당첨번호 통계 분포 */}
+              {lottoStats ? (
+                <div className="stat-dist-panel">
+                  <div className="stat-dist-title">📊 역대 당첨번호 통계 분포 <span className="stat-dist-sub">({lottoStats.total}회 기준)</span></div>
+                  <div className="stat-dist-grid">
+
+                    {/* 합계 분포 */}
+                    <div className="stat-dist-card">
+                      <div className="sdc-label">합계 분포 <span className="sdc-hint">필터: 100~170</span></div>
+                      {[
+                        { label: '~99', count: lottoStats.sumBuckets.under100, filtered: true },
+                        { label: '100~170', count: lottoStats.sumBuckets.range100to170, filtered: false },
+                        { label: '171~', count: lottoStats.sumBuckets.over170, filtered: true },
+                      ].map(({ label, count, filtered }) => {
+                        const pct = ((count / lottoStats.total) * 100).toFixed(1);
+                        return (
+                          <div key={label} className={`sdc-row ${filtered ? 'filtered' : 'pass'}`}>
+                            <span className="sdc-row-label">{label}</span>
+                            <div className="sdc-bar-wrap">
+                              <div className="sdc-bar" style={{ width: `${pct}%` }} />
+                            </div>
+                            <span className="sdc-pct">{pct}%</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* 홀짝 분포 */}
+                    <div className="stat-dist-card">
+                      <div className="sdc-label">홀짝 비율 분포 <span className="sdc-hint">필터: 0:6, 6:0 제외</span></div>
+                      {[0, 1, 2, 3, 4, 5, 6].map(odd => {
+                        const count = lottoStats.oddEvenDist[odd];
+                        const pct = ((count / lottoStats.total) * 100).toFixed(1);
+                        const filtered = odd === 0 || odd === 6;
+                        return (
+                          <div key={odd} className={`sdc-row ${filtered ? 'filtered' : 'pass'}`}>
+                            <span className="sdc-row-label">홀{odd}:짝{6 - odd}</span>
+                            <div className="sdc-bar-wrap">
+                              <div className="sdc-bar" style={{ width: `${pct}%` }} />
+                            </div>
+                            <span className="sdc-pct">{pct}%</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* AC값 분포 */}
+                    <div className="stat-dist-card">
+                      <div className="sdc-label">AC값 분포 <span className="sdc-hint">필터: 7 미만 제외</span></div>
+                      {Object.keys(lottoStats.acDist).map(Number).sort((a, b) => a - b).map(ac => {
+                        const count = lottoStats.acDist[ac];
+                        const pct = ((count / lottoStats.total) * 100).toFixed(1);
+                        const filtered = ac < 7;
+                        return (
+                          <div key={ac} className={`sdc-row ${filtered ? 'filtered' : 'pass'}`}>
+                            <span className="sdc-row-label">AC {ac}</span>
+                            <div className="sdc-bar-wrap">
+                              <div className="sdc-bar" style={{ width: `${pct}%` }} />
+                            </div>
+                            <span className="sdc-pct">{pct}%</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* 구간 분포 */}
+                    <div className="stat-dist-card">
+                      <div className="sdc-label">번호 구간 분포 <span className="sdc-hint">회차당 평균 개수</span></div>
+                      {[
+                        { label: '1~9', idx: 0 },
+                        { label: '10~19', idx: 1 },
+                        { label: '20~29', idx: 2 },
+                        { label: '30~39', idx: 3 },
+                        { label: '40~45', idx: 4 },
+                      ].map(({ label, idx }) => {
+                        const avg = (lottoStats.rangeTotals[idx] / lottoStats.total).toFixed(2);
+                        const zeroPct = ((lottoStats.rangeZeroCounts[idx] / lottoStats.total) * 100).toFixed(1);
+                        const barPct = Math.min(parseFloat(avg) / 2 * 100, 100);
+                        return (
+                          <div key={label} className="sdc-row pass">
+                            <span className="sdc-row-label">{label}</span>
+                            <div className="sdc-bar-wrap">
+                              <div className="sdc-bar" style={{ width: `${barPct}%` }} />
+                            </div>
+                            <span className="sdc-pct">평균 {avg}개 <span className="sdc-zero">(0개: {zeroPct}%)</span></span>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                  </div>
+                </div>
+              ) : (
+                <div className="stat-dist-empty">
+                  통계 분포를 보려면 당첨번호 확인 탭에서 데이터를 먼저 다운로드하세요.
+                </div>
+              )}
+
+              {/* 필터 요약 */}
+              <div className="backtest-filter-summary">
+                <span>제외 번호 <strong>{excludeNumbers.length}개</strong></span>
+                <span>·</span>
+                <span>포함 번호 <strong>{mustIncludeNumbers.length}개</strong></span>
+                <span>·</span>
+                <span>패턴 필터 <strong>{[filterOddEven, filterSumRange, filterHighLow, filterACValue, preventConsecutiveFour, preventExactDuplicates, preventPartialDuplicates, excludeLastDigitRanges, excludeTensDigitRanges].filter(Boolean).length}개</strong> 활성</span>
+              </div>
+
+              {/* 기간 선택 + 실행 버튼 */}
+              <div className="backtest-controls">
+                <div className="backtest-weeks-selector">
+                  {[26, 52, 104].map(w => (
+                    <button
+                      key={w}
+                      className={`backtest-week-btn ${backtestWeeks === w ? 'active' : ''}`}
+                      onClick={() => setBacktestWeeks(w)}
+                    >
+                      {w}주
+                    </button>
+                  ))}
+                </div>
+                <button
+                  className="backtest-run-btn"
+                  onClick={runBacktest}
+                  disabled={isBacktesting}
+                >
+                  {isBacktesting ? '⏳ 시뮬레이션 중...' : '🚀 시뮬레이션 실행'}
+                </button>
+              </div>
+
+              {/* 결과 */}
+              {backtestResult && (
+                <>
+                  {/* 투자 요약 */}
+                  <div className="backtest-invest-summary">
+                    <span>{backtestResult.weeks}주 × 5게임 × 1,000원</span>
+                    <strong>= 총 {backtestResult.totalInvest.toLocaleString()}원 투자</strong>
+                  </div>
+
+                  {/* 등수별 결과 */}
+                  <div className="backtest-prizes">
+                    {[
+                      { rank: 1, emoji: '🏆', label: '1등', amount: 2000000000 },
+                      { rank: 2, emoji: '🥈', label: '2등', amount: 60000000 },
+                      { rank: 3, emoji: '🥉', label: '3등', amount: 1500000 },
+                      { rank: 4, emoji: '4️⃣', label: '4등', amount: 50000 },
+                      { rank: 5, emoji: '5️⃣', label: '5등', amount: 5000 },
+                    ].map(({ rank, emoji, label, amount }) => (
+                      <div key={rank} className={`backtest-prize-row ${backtestResult.prizes[rank] > 0 ? 'hit' : ''}`}>
+                        <span className="bp-emoji">{emoji}</span>
+                        <span className="bp-label">{label}</span>
+                        <span className="bp-count">{backtestResult.prizes[rank]}회</span>
+                        <span className="bp-amount">
+                          {backtestResult.prizes[rank] > 0
+                            ? `💰 ${(backtestResult.prizes[rank] * amount).toLocaleString()}원`
+                            : '-'}
+                        </span>
+                      </div>
+                    ))}
+                    <div className="backtest-prize-row miss">
+                      <span className="bp-emoji">❌</span>
+                      <span className="bp-label">꽝</span>
+                      <span className="bp-count">{backtestResult.prizes[0]}회</span>
+                      <span className="bp-amount">-</span>
+                    </div>
+                  </div>
+
+                  {/* 수익 요약 */}
+                  <div className={`backtest-return-summary ${backtestResult.totalReturn >= backtestResult.totalInvest ? 'profit' : 'loss'}`}>
+                    <div>
+                      <span>총 예상 수익</span>
+                      <strong>{backtestResult.totalReturn.toLocaleString()}원</strong>
+                    </div>
+                    <div>
+                      <span>수익률</span>
+                      <strong>{backtestResult.returnRate}%</strong>
+                    </div>
+                  </div>
+
+                  {/* 필터 적합도 */}
+                  <div className="backtest-filter-compat">
+                    <div className="bfc-label">
+                      필터 적합도 — 지난 {backtestResult.weeks}회 당첨번호 중 현재 필터를 통과한 조합
+                    </div>
+                    <div className="bfc-bar-wrap">
+                      <div className="bfc-bar" style={{ width: `${backtestResult.filterPassRate}%` }} />
+                    </div>
+                    <div className="bfc-stats">
+                      <span>{backtestResult.filterPassCount} / {backtestResult.weeks}회 통과</span>
+                      <span className={`bfc-rate ${parseFloat(backtestResult.filterPassRate) < 30 ? 'warn' : ''}`}>
+                        {backtestResult.filterPassRate}%
+                      </span>
+                    </div>
+                    {parseFloat(backtestResult.filterPassRate) < 30 && (
+                      <div className="bfc-warning">⚠️ 필터가 너무 강해 당첨 조합 대부분을 걸러내고 있습니다.</div>
+                    )}
+                  </div>
+
+                  {/* 회차별 상세 토글 */}
+                  <button
+                    className="backtest-detail-toggle"
+                    onClick={() => setShowBacktestDetail(v => !v)}
+                  >
+                    {showBacktestDetail ? '▲ 회차별 상세 접기' : '▼ 회차별 상세 펼치기'}
+                  </button>
+
+                  {showBacktestDetail && (
+                    <div className="backtest-detail-table">
+                      <div className="bdt-header">
+                        <span>회차</span>
+                        <span>날짜</span>
+                        <span>당첨번호</span>
+                        <span>내 게임</span>
+                        <span>최고</span>
+                      </div>
+                      {backtestResult.weekResults.map(({ round, date, winning, bonus, games }) => {
+                        const bestRank = games.length ? Math.min(...games.map(g => g.rank === 0 ? 99 : g.rank)) : 99;
+                        const rankLabel = bestRank === 99 ? '꽝' : `${bestRank}등`;
+                        const hasWin = bestRank <= 5;
+                        return (
+                          <div key={round} className={`bdt-row ${hasWin ? 'win' : ''}`}>
+                            <span>{round}회</span>
+                            <span>{date}</span>
+                            <span className="bdt-winning">
+                              {[...winning].sort((a,b)=>a-b).map(n => (
+                                <span key={n} className="bdt-ball">{n}</span>
+                              ))}
+                              <span className="bdt-bonus">+{bonus}</span>
+                            </span>
+                            <span className="bdt-games">
+                              {games.map((g, gi) => (
+                                <span key={gi} className={`bdt-game-tag ${g.rank > 0 ? `rank-${g.rank}` : ''}`}>
+                                  {g.numbers.join(',')}
+                                </span>
+                              ))}
+                            </span>
+                            <span className={`bdt-rank ${hasWin ? 'hit' : ''}`}>{rankLabel}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
         </div>
 
 

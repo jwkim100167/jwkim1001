@@ -29,6 +29,7 @@ export async function getPredictions(season = 2026) {
     .from('kboPredictionTable')
     .select('id, name, data, my_team, created_at, updated_at')
     .eq('season', season)
+    .eq('isYN', true)
     .order('created_at', { ascending: true });
 
   if (error) {

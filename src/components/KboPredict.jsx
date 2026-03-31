@@ -99,7 +99,7 @@ export default function KboPredict() {
   }, [actualRank, users]);
 
   const top3 = results.slice(0, 3);
-  const rest = results.slice(3, 5);
+  const rest = results.slice(3, 10);
 
   // 현황판: 팀별 가을야구 예측 선택률
   const teamPickCount = useMemo(() => {
