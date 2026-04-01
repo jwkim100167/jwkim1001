@@ -461,11 +461,12 @@
 }
 
 .rank-num {
-  width: 24px;
+  min-width: 52px;
   font-weight: 700;
   font-size: 0.95rem;
   text-align: right;
   opacity: 0.8;
+  white-space: nowrap;
 }
 
 .team-logo-sm {

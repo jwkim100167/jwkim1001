@@ -29,6 +29,17 @@ const MOCK_USERS = [
 
 const PODIUM_MEDALS = ['🥇', '🥈', '🥉'];
 
+// 승/무/패가 동일한 팀에 같은 순위 번호 부여 → [1, 1, 3, 3, 3, 6, ...]
+// 직전 팀이 아닌 전체에서 같은 기록의 첫 번째 위치를 찾아 순위 결정
+function computeRankNumbers(stats) {
+  return stats.map((curr) => {
+    const firstIdx = stats.findIndex(
+      (s) => s.w === curr.w && s.d === curr.d && s.l === curr.l
+    );
+    return firstIdx + 1;
+  });
+}
+
 function calcScore(userData, actualRank) {
   const predicted = userData.data.split('').map(Number);
   const top5Actual = actualRank.slice(0, 5);
@@ -369,14 +380,18 @@ export default function KboPredict() {
         <section className="section-card">
           <h2 className="section-title">🏆 실제 순위표</h2>
           <div className="rank-table">
-            {actualRank.map((teamId, idx) => {
+            {(() => {
+              const rankNumbers = rankStats ? computeRankNumbers(rankStats) : null;
+              return actualRank.map((teamId, idx) => {
               const stats = rankStats?.[idx] ?? null;
+              const rankNum = rankNumbers ? rankNumbers[idx] : idx + 1;
+              const isTied = rankNumbers ? rankNumbers.filter(n => n === rankNum).length > 1 : false;
               return (
                 <div
                   key={teamId}
                   className={`rank-row ${idx < 5 ? 'top5' : ''} ${idx === 0 ? 'first-place' : ''}`}
                 >
-                  <span className="rank-num">{idx + 1}</span>
+                  <span className="rank-num">{isTied ? `공동${rankNum}위` : `${rankNum}위`}</span>
                   <img src={TEAMS[teamId].logo} alt={TEAMS[teamId].name} className="team-logo-sm" />
                   <span className="rank-name">{TEAMS[teamId].name}</span>
                   {stats && (
@@ -389,7 +404,8 @@ export default function KboPredict() {
                   {idx < 5 && <span className="top5-badge">가을야구</span>}
                 </div>
               );
-            })}
+              });
+            })()}
           </div>
         </section>
 
