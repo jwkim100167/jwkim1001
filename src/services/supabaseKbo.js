@@ -56,6 +56,7 @@ export async function addPrediction({ name, phone, data, myTeam, season = 2026 }
 
   if (error) {
     console.error('❌ 예측 데이터 저장 실패:', error);
+    if (error.code === '23505') return 'duplicate_phone';
     return false;
   }
   return true;

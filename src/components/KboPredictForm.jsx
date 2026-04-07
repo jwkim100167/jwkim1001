@@ -82,8 +82,10 @@ export default function KboPredictForm() {
       : await addPrediction({ name: name.trim(), phone: rawPhone, data, myTeam, season: 2026 });
     setSubmitting(false);
 
-    if (ok) {
+    if (ok === true) {
       setStep('done');
+    } else if (ok === 'duplicate_phone') {
+      setError('이미 등록된 전화번호입니다. 수정을 원하시면 점수 확인에서 조회 후 수정해주세요.');
     } else {
       setError('저장에 실패했습니다. 다시 시도해주세요.');
     }
