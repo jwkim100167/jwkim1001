@@ -5,6 +5,7 @@ import { getServiceConfig } from '../services/supabaseAdmin';
 import './Home.css';
 
 const SERVICE_LIST = [
+  { id: 'world-cup-predict', title: '월드컵 순위 예측',      icon: '⚽', path: '/world-cup-predict', cardClass: 'kbo-card', desc: '2026 FIFA 월드컵 1·2·3위 예측' },
   { id: 'kbo-predict',   title: 'KBO 순위 예측',           icon: '⚾', path: '/kbo-predict/form',   cardClass: 'kbo-card',       desc: '2026 시즌 순위 예측하기' },
   { id: 'kbo-result',    title: 'KBO 예측 점수 확인',        icon: '🏆', path: '/kbo-predict/result', cardClass: 'kbo-card',       desc: '내 예측 점수 확인하기' },
   { id: 'lotto',         title: '로또 서비스',              icon: '🎰', path: '/lotto-basic',        cardClass: 'lotto-card',      desc: '' },
@@ -27,7 +28,7 @@ const Home = () => {
   }, []);
 
   const isEnabled = (id) => {
-    if (!serviceConfig) return id === 'kbo-predict' || id === 'kbo-result'; // 로딩 전 기본값
+    if (!serviceConfig) return ['kbo-predict', 'kbo-result', 'world-cup-predict'].includes(id); // 로딩 전 기본값
     return serviceConfig[id] ?? false;
   };
 

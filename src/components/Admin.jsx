@@ -6,6 +6,8 @@ import { getServiceConfig, updateServiceConfig } from '../services/supabaseAdmin
 import './Admin.css';
 
 const SERVICE_LIST = [
+  { id: 'world-cup-predict', title: '월드컵 순위 예측',    icon: '⚽' },
+  { id: 'world-cup-result',  title: '월드컵 점수 확인',    icon: '🏆' },
   { id: 'kbo-predict',   title: 'KBO 순위 예측',          icon: '⚾' },
   { id: 'kbo-result',    title: 'KBO 점수 확인',           icon: '🏆' },
   { id: 'lotto',         title: '로또 서비스',              icon: '🎰' },

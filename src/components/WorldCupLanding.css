@@ -1,0 +1,183 @@
+.wc-landing-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 24px 16px;
+}
+
+.wc-landing-container {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wc-landing-back-btn {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-bottom: 40px;
+  transition: background 0.2s;
+}
+
+.wc-landing-back-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.wc-landing-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.wc-landing-icon {
+  font-size: 3.5rem;
+  margin-bottom: 12px;
+}
+
+.wc-landing-header h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0 0 8px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  line-height: 1.3;
+}
+
+.wc-landing-sub {
+  font-size: 0.9rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* 상금 배너 */
+.wc-prize-banner {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 14px 24px;
+  margin-bottom: 28px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.wc-prize-total {
+  text-align: center;
+  font-size: 0.85rem;
+  opacity: 0.75;
+  margin-bottom: 10px;
+}
+.wc-prize-total b { color: #facc15; font-size: 1rem; }
+
+.wc-prize-items {
+  display: flex;
+  align-items: center;
+}
+
+.wc-prize-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.wc-prize-medal {
+  font-size: 1.6rem;
+}
+
+.wc-prize-amount {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #facc15;
+}
+
+.wc-prize-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* 선택지 */
+.wc-landing-question {
+  font-size: 1.1rem;
+  opacity: 0.8;
+  margin: 0 0 20px;
+}
+
+.wc-landing-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.wc-choice-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 24px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.07);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.wc-choice-card:hover {
+  transform: translateY(-3px);
+}
+
+.wc-choice-yes:hover {
+  border-color: rgba(250, 204, 21, 0.5);
+  background: rgba(250, 204, 21, 0.1);
+  box-shadow: 0 8px 24px rgba(250, 204, 21, 0.15);
+}
+
+.wc-choice-no:hover {
+  border-color: rgba(96, 165, 250, 0.5);
+  background: rgba(96, 165, 250, 0.1);
+  box-shadow: 0 8px 24px rgba(96, 165, 250, 0.15);
+}
+
+.wc-choice-emoji {
+  font-size: 2rem;
+}
+
+.wc-choice-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.wc-choice-desc {
+  font-size: 0.82rem;
+  opacity: 0.6;
+}
+
+/* 채점 규칙 */
+.wc-landing-rules {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 14px 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.wc-landing-rules p {
+  margin: 4px 0;
+  font-size: 0.85rem;
+  opacity: 0.75;
+}

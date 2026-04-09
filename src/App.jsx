@@ -21,6 +21,9 @@ import TasteMatch from './components/TasteMatch';
 import KboLanding from './components/KboLanding';
 import KboPredict from './components/KboPredict';
 import KboPredictForm from './components/KboPredictForm';
+import WorldCupLanding from './components/WorldCupLanding';
+import WorldCupPredict from './components/WorldCupPredict';
+import WorldCupPredictForm from './components/WorldCupPredictForm';
 
 function App() {
   // GitHub Pages의 경우 basename 설정
@@ -50,6 +53,9 @@ function App() {
           <Route path="/kbo-predict" element={<KboLanding />} />
           <Route path="/kbo-predict/result" element={<KboPredict />} />
           <Route path="/kbo-predict/form" element={<KboPredictForm />} />
+          <Route path="/world-cup-predict" element={<WorldCupLanding />} />
+          <Route path="/world-cup-predict/result" element={<WorldCupPredict />} />
+          <Route path="/world-cup-predict/form" element={<WorldCupPredictForm />} />
         </Routes>
       </Router>
     </AuthProvider>
