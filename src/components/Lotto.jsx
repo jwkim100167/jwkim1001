@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAllLottoNumbers, getLatestLottoNumbers, saveLottoDataToStorage, loadLottoDataFromStorage, getLottoNumberByRound, clearLottoDataFromStorage, downloadAllLottoData } from '../utils/lottoAPI';
