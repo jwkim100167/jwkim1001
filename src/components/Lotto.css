@@ -2405,6 +2405,46 @@
   backdrop-filter: blur(16px);
 }
 
+/* 고정 바 상단 홈+탭 네비게이션 */
+.gen-nav-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.gen-home-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.gen-home-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.gen-tabs-inline {
+  display: flex;
+  gap: 0;
+  flex: 1;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 3px;
+}
+
+.gen-tabs-inline .tab-btn {
+  padding: 6px 10px;
+  font-size: 0.78rem;
+}
+
 /* 상태 표시줄 */
 .gen-status-row {
   display: flex;

@@ -2690,48 +2690,19 @@ const Lotto = () => {
           )}
         </div>
 
-        <div className="lotto-header">
-          <h1>🎰 로또 서비스</h1>
-        </div>
-        
-        <div className="lotto-tabs">
-          <button
-            className={`tab-btn ${activeTab === 'generator' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveTab('generator');
-              setGeneratedNumbers([]); // 생성된 번호 초기화
-            }}
-          >
-            🎲 번호 생성기
-          </button>
-          <button
-            className={`tab-btn ${activeTab === 'checker' ? 'active' : ''}`}
-            onClick={() => setActiveTab('checker')}
-          >
-            🔍 당첨번호 확인
-          </button>
-          <button
-            className={`tab-btn ${activeTab === 'analysis' ? 'active' : ''}`}
-            onClick={() => setActiveTab('analysis')}
-          >
-            📊 분석
-          </button>
-          <button
-            className={`tab-btn ${activeTab === 'backtest' ? 'active' : ''}`}
-            onClick={() => setActiveTab('backtest')}
-          >
-            🧪 백테스팅
-          </button>
-        </div>
-
-        {loginRequiredMsg && (
-          <div className="mb-nolife-toast">🔒 로그인이 필요합니다!</div>
-        )}
-
-        {/* 게임 생성 컨트롤 - generator 탭일 때만 표시 */}
-        {activeTab === 'generator' && (
+        {activeTab === 'generator' ? (
           <>
           <div ref={controlsRef} className="generator-controls-top">
+            {/* 홈 버튼 + 탭 네비게이션 */}
+            <div className="gen-nav-row">
+              <button className="gen-home-btn" onClick={() => navigate('/')}>← 홈</button>
+              <div className="gen-tabs-inline">
+                <button className={`tab-btn ${activeTab === 'generator' ? 'active' : ''}`} onClick={() => { setActiveTab('generator'); setGeneratedNumbers([]); }}>🎲 번호 생성기</button>
+                <button className={`tab-btn ${activeTab === 'checker' ? 'active' : ''}`} onClick={() => setActiveTab('checker')}>🔍 당첨번호 확인</button>
+                <button className={`tab-btn ${activeTab === 'analysis' ? 'active' : ''}`} onClick={() => setActiveTab('analysis')}>📊 분석</button>
+                <button className={`tab-btn ${activeTab === 'backtest' ? 'active' : ''}`} onClick={() => setActiveTab('backtest')}>🧪 백테스팅</button>
+              </div>
+            </div>
             {/* 상태 표시줄: 슬롯 현황 + 불러오기/저장 */}
             <div className="gen-status-row">
               <div className="gen-slot-indicators">
@@ -2768,6 +2739,22 @@ const Lotto = () => {
           </div>
           <div style={{ height: controlsHeight }} />
           </>
+        ) : (
+          <>
+          <div className="lotto-header">
+            <h1>🎰 로또 서비스</h1>
+          </div>
+          <div className="lotto-tabs">
+            <button className={`tab-btn ${activeTab === 'generator' ? 'active' : ''}`} onClick={() => { setActiveTab('generator'); setGeneratedNumbers([]); }}>🎲 번호 생성기</button>
+            <button className={`tab-btn ${activeTab === 'checker' ? 'active' : ''}`} onClick={() => setActiveTab('checker')}>🔍 당첨번호 확인</button>
+            <button className={`tab-btn ${activeTab === 'analysis' ? 'active' : ''}`} onClick={() => setActiveTab('analysis')}>📊 분석</button>
+            <button className={`tab-btn ${activeTab === 'backtest' ? 'active' : ''}`} onClick={() => setActiveTab('backtest')}>🧪 백테스팅</button>
+          </div>
+          </>
+        )}
+
+        {loginRequiredMsg && (
+          <div className="mb-nolife-toast">🔒 로그인이 필요합니다!</div>
         )}
         <div className="lotto-content">
           {activeTab === 'generator' && (
