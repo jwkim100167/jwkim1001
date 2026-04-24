@@ -2,12 +2,12 @@
 // GitHub Actions에서 실행 (Node 18+ 내장 fetch 사용)
 import { createClient } from '@supabase/supabase-js';
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const LOTTO_API_BASE = 'https://www.dhlottery.co.kr/common.do?method=getLottoNumber';
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  console.error('❌ 환경변수 SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY가 필요합니다.');
+  console.error('❌ 환경변수 VITE_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY가 필요합니다.');
   process.exit(1);
 }
 

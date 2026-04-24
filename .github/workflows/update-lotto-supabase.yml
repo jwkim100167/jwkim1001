@@ -23,6 +23,6 @@ jobs:
 
       - name: Insert latest lotto round to Supabase
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: node scripts/update-lotto-supabase.js
