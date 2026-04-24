@@ -2,8 +2,8 @@ name: Update Lotto Supabase
 
 on:
   schedule:
-    # 매주 일요일 00:00 KST (토요일 15:00 UTC)
-    - cron: '0 15 * * 6'
+    # 매주 일요일 09:00 KST (일요일 00:00 UTC)
+    - cron: '0 0 * * 0'
   workflow_dispatch: # 수동 실행 가능
 
 jobs:
