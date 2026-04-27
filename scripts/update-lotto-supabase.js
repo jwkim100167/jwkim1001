@@ -25,15 +25,37 @@ async function getLatestRoundFromDB() {
   return data.number;
 }
 
+const PROXY_SERVERS = [
+  'https://api.allorigins.win/get?url=',
+  'https://cors-anywhere.herokuapp.com/',
+  'https://thingproxy.freeboard.io/fetch/'
+];
+
+async function fetchWithProxy(url) {
+  // 프록시 순차 시도
+  for (let i = 0; i < PROXY_SERVERS.length; i++) {
+    try {
+      const proxyUrl = PROXY_SERVERS[i] + encodeURIComponent(url);
+      const response = await fetch(proxyUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+      if (!response.ok) continue;
+      if (PROXY_SERVERS[i].includes('allorigins')) {
+        const wrapper = await response.json();
+        return JSON.parse(wrapper.contents);
+      }
+      return await response.json();
+    } catch (e) {
+      console.log(`프록시 ${i + 1} 실패: ${e.message}`);
+    }
+  }
+  // 직접 요청 최후 시도
+  const response = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+  if (!response.ok) throw new Error(`직접 요청 실패: ${response.status}`);
+  return await response.json();
+}
+
 async function fetchLottoRound(round) {
   const url = `${LOTTO_API_BASE}&drwNo=${round}`;
-  const response = await fetch(url, {
-    headers: { 'User-Agent': 'Mozilla/5.0' }
-  });
-
-  if (!response.ok) throw new Error(`API 응답 오류: ${response.status}`);
-
-  const data = await response.json();
+  const data = await fetchWithProxy(url);
 
   if (data.returnValue !== 'success') return null;
 
