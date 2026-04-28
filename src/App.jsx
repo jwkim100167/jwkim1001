@@ -24,6 +24,7 @@ import KboPredictForm from './components/KboPredictForm';
 import WorldCupLanding from './components/WorldCupLanding';
 import WorldCupPredict from './components/WorldCupPredict';
 import WorldCupPredictForm from './components/WorldCupPredictForm';
+import CobraGame from './components/CobraGame';
 
 function App() {
   // GitHub Pages의 경우 basename 설정
@@ -56,6 +57,7 @@ function App() {
           <Route path="/world-cup-predict" element={<WorldCupLanding />} />
           <Route path="/world-cup-predict/result" element={<WorldCupPredict />} />
           <Route path="/world-cup-predict/form" element={<WorldCupPredictForm />} />
+          <Route path="/cobra" element={<CobraGame />} />
         </Routes>
       </Router>
     </AuthProvider>

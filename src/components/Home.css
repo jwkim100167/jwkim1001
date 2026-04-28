@@ -173,6 +173,11 @@
   box-shadow: 0 20px 40px rgba(20, 184, 166, 0.15);
 }
 
+.cobra-card:hover {
+  border-color: rgba(233, 69, 96, 0.5);
+  box-shadow: 0 20px 40px rgba(233, 69, 96, 0.15);
+}
+
 .kbo-card .card-content h2 {
   font-size: 1.4rem;
 }
