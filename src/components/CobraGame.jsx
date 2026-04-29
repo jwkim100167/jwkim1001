@@ -12,8 +12,9 @@ import {
   unsubscribeFromRoom,
   startGame,
 } from '../services/supabaseCobra';
-import CobraGamePlay from './CobraGamePlay';
+import CobraGamePlay, { RulesModal } from './CobraGamePlay';
 import './CobraGame.css';
+import './CobraGamePlay.css';
 
 const MAX_PLAYERS = 5;
 const PLAYER_COLORS = ['#e94560', '#f5a623', '#4ecdc4', '#a29bfe', '#55efc4'];
@@ -33,6 +34,7 @@ export default function CobraGame() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+  const [showRules, setShowRules] = useState(false);
   const channelRef = useRef(null);
 
   // 방에 입장하면 데이터 로드 + 실시간 구독
@@ -168,11 +170,16 @@ export default function CobraGame() {
     </div>
   );
 
+  const rulesBtn = <button className="cgp-rules-btn" onClick={() => setShowRules(true)}>📖</button>;
+  const rulesModal = showRules && <RulesModal onClose={() => setShowRules(false)} options={options} />;
+
   // ────── LOBBY ──────
   if (view === 'lobby') {
     return (
       <div className="cobra-wrap">
         {loginPromptDialog}
+        {rulesModal}
+        {rulesBtn}
         <button className="cobra-back-btn" onClick={() => navigate('/')}>← 홈으로</button>
         <div className="cobra-container">
           <div className="cobra-logo">
@@ -214,6 +221,8 @@ export default function CobraGame() {
     return (
       <div className="cobra-wrap">
         {loginPromptDialog}
+        {rulesModal}
+        {rulesBtn}
         <button className="cobra-back-btn" onClick={goToLobby}>← 뒤로</button>
         <div className="cobra-container cobra-container-sm">
           <div className="cobra-form-header">
@@ -265,6 +274,8 @@ export default function CobraGame() {
   if (view === 'join') {
     return (
       <div className="cobra-wrap">
+        {rulesModal}
+        {rulesBtn}
         <button className="cobra-back-btn" onClick={goToLobby}>← 뒤로</button>
         <div className="cobra-container cobra-container-sm">
           <div className="cobra-form-header">
@@ -310,6 +321,8 @@ export default function CobraGame() {
 
     return (
       <div className="cobra-wrap">
+        {rulesModal}
+        {rulesBtn}
         <div className="cobra-container">
           <div className="cobra-room-header">
             <p className="cobra-room-label">방 코드</p>

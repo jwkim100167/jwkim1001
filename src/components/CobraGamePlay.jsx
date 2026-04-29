@@ -7,7 +7,6 @@ import {
 } from '../utils/cobraGameLogic';
 import {
   peekCard,
-  setViewingReady,
   drawFromDeck,
   discardDrawn,
   swapWithHand,
@@ -25,7 +24,7 @@ const PLAYER_COLORS = ['#e94560', '#f5a623', '#4ecdc4', '#a29bfe', '#55efc4'];
 const TURN_SECONDS = 20;
 
 // ─── 카드 컴포넌트 ────────────────────────────────────
-function GameCard({ card, faceUp, onClick, highlight, selected, small, animReveal, badge }) {
+function GameCard({ card, faceUp, onClick, highlight, selected, small, animReveal, badge, knownDot }) {
   if (!card) return null;
   const isJoker = card === 'JKR' || card === 'JKB';
   const suit = faceUp && !isJoker ? getCardSuit(card) : null;
@@ -67,6 +66,7 @@ function GameCard({ card, faceUp, onClick, highlight, selected, small, animRevea
         )}
       </div>
       {badge && <div className={`cgp-card-badge cgp-badge-${badge.type}`}>{badge.text}</div>}
+      {knownDot && <div className="cgp-known-dot" />}
     </div>
   );
 }
@@ -87,36 +87,65 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
 }
 
 // ─── 규칙 모달 ────────────────────────────────────────
-function RulesModal({ onClose, options }) {
-  const rules = [
-    ['🎯', '목표', '가장 작은 합계를 만들어라'],
-    ['🃏', '카드 점수', 'A=1, 2~10=숫자, J/Q/K=10점 (서로 다른 카드), 😈조커=-1'],
-    ['👀', '시작', '4장 받고 2장 몰래 확인 (오픈된 카드만 내가 인식)'],
-    ['🔄', '내 차례', '덱에서 1장 뽑기'],
-    ['✂️', '매칭', '오픈된 손패와 완전히 같은 카드(같은 숫자)면 둘 다 버리기'],
-    ['🔀', '교체', '손패 카드 클릭 → 뽑은 카드와 교체 (비공개 카드도 교체 가능)'],
-    ['🎯', '선점', '버린 패 top이 내 오픈 카드와 같으면 덱 뽑기 전에 선점 매칭'],
-    ['🐍', '코브라', '내 카드 즉시 공개 → 나머지 한 바퀴 → 전체 오픈'],
-    ['⚡', '자동코브라', '카드 0장이 되면 즉시 발동'],
-    ['⏱️', '제한 시간', '한 턴 최대 20초 (초과 시 자동 처리)'],
-    ...(options?.specialCards ? [
-      ['🃏J', 'J 버리기', '내 손패 중 비공개 카드 1장을 선택해 확인 (face-up 처리)'],
-      ['🃏Q', 'Q 버리기', '상대 손패 카드 1장을 선택해 확인 (face-up 처리)'],
-      ['🃏K', 'K 버리기', '내 카드 1장 ↔ 상대 카드 1장 교환 (내 카드 선택 → 상대 카드 선택)'],
-    ] : []),
+export function RulesModal({ onClose, options }) {
+  const sections = [
+    {
+      title: '기본',
+      items: [
+        ['🎯', '목표', '손패 합계를 가장 낮게!'],
+        ['🃏', '점수', 'A=1 · 2~10=숫자 · J/Q/K=10 · 😈조커=−1'],
+      ],
+    },
+    {
+      title: '진행',
+      items: [
+        ['👀', '시작', '4장 받고 2장 확인 — 확인한 카드만 내가 인식'],
+        ['🔄', '내 차례', '덱에서 1장 뽑기 → 교체 · 매칭 · 버리기 선택'],
+        ['⏱️', '제한', '1턴 최대 20초 (초과 시 자동 버리기)'],
+      ],
+    },
+    {
+      title: '행동',
+      items: [
+        ['✂️', '매칭', '뽑은 카드 = 내 오픈 카드 → 둘 다 버리기'],
+        ['🔀', '교체', '손패 클릭 → 뽑은 카드로 교체 (비공개도 가능)'],
+        ['⚡', '선점', '버린 패 top = 내 오픈 카드 → 뽑기 전에 선점 매칭'],
+      ],
+    },
+    {
+      title: '종료',
+      items: [
+        ['🐍', '코브라 선언', '내 카드 즉시 공개 → 나머지 한 바퀴 → 전체 오픈'],
+        ['💥', '자동 코브라', '카드 0장이 되면 자동 발동'],
+      ],
+    },
+    ...(options?.specialCards ? [{
+      title: '특수 카드 (버릴 때 발동)',
+      items: [
+        ['J', '내 카드 확인', '비공개 카드 1장 선택해 확인 (나만 앎)'],
+        ['Q', '상대 카드 확인', '상대 카드 1장 선택해 확인 (나만 앎, 교체 시 무효)'],
+        ['K', '카드 교환', '내 카드 1장 ↔ 상대 카드 1장 교환'],
+      ],
+    }] : []),
   ];
+
   return (
     <div className="cgp-overlay" onClick={onClose}>
       <div className="cgp-rules-modal" onClick={(e) => e.stopPropagation()}>
         <div className="cgp-rules-header">
-          <span>📖 코브라 규칙</span>
+          <span>📖 게임 방법</span>
           <button className="cgp-close-btn" onClick={onClose}>✕</button>
         </div>
         <div className="cgp-rules-body">
-          {rules.map(([icon, title, desc]) => (
-            <div key={title} className="cgp-rule-item">
-              <span className="cgp-rule-icon">{icon}</span>
-              <span><b>{title}</b>: {desc}</span>
+          {sections.map((sec) => (
+            <div key={sec.title} className="cgp-rules-section">
+              <div className="cgp-rules-section-title">{sec.title}</div>
+              {sec.items.map(([icon, title, desc]) => (
+                <div key={title} className="cgp-rule-item">
+                  <span className="cgp-rule-icon">{icon}</span>
+                  <span><b>{title}</b> — {desc}</span>
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -152,8 +181,10 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
     playerMap[p.id] = { ...p, color: PLAYER_COLORS[i % PLAYER_COLORS.length] };
   });
 
-  // 나만 아는 사적 지식 (Q 능력으로 확인한 상대 카드)
+  // 나만 아는 사적 지식 (J/Q 능력으로 확인한 카드)
   const myPrivate = gameState.private_knowledge?.[myId] || {};
+  // J 능력으로 확인한 내 카드 (private, face_up 아님)
+  const myJKnown = myPrivate[myId] || {};
   const otherPlayers = players.filter((p) => p.id !== myId);
   const cobraCaller = gameState.cobra_caller_id ? playerMap[gameState.cobra_caller_id] : null;
 
@@ -332,11 +363,6 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
             })}
           </div>
           <p className="cgp-peek-count">{myReady ? '✅ 준비 완료!' : `${myPeekedCount} / 2 확인함`}</p>
-          {!myReady && myPeekedCount >= 2 && (
-            <button className="cgp-btn cgp-btn-primary" onClick={() => act(() => setViewingReady(roomId, myId, gameState))} disabled={busy}>
-              준비 완료
-            </button>
-          )}
           {waitingPlayers.length > 0 && (
             <div className="cgp-waiting-list">
               <span>대기 중: </span>
@@ -525,13 +551,14 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
                   <div className="cgp-opp-hand">
                     {hand.map((card, idx) => {
                       const isSelectable = canPeekOpp || canSwapTarget;
-                      // Q 능력으로 내가 확인한 카드는 내 화면에서만 앞면 표시
+                      // 처음 확인한 카드(public face_up) + Q 능력으로 확인한 카드(private, 내 화면만)
+                      const isPublicFaceUp = gameState.face_up?.[p.id]?.[idx] ?? false;
                       const peekedByMe = myPrivate[p.id]?.[idx] ?? false;
                       return (
                         <GameCard
                           key={idx}
                           card={card}
-                          faceUp={peekedByMe}
+                          faceUp={isPublicFaceUp || peekedByMe}
                           small
                           highlight={isSelectable}
                           onClick={isSelectable ? () => {
@@ -602,7 +629,10 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
           <div className="cgp-pile-label">내 패 ({myHand.length}장) — {getHandScore(myHand)}점</div>
           <div className="cgp-my-hand-row">
             {myHand.map((card, idx) => {
-              const faceUp = myFaceUp[idx] ?? false;
+              // face_up(초기 공개) 또는 J 능력으로 확인한 카드도 내 화면에서는 앞면
+              const faceUp = (myFaceUp[idx] || !!myJKnown[idx]) ?? false;
+              // 내가 아는 카드 여부 표시 (face_up 또는 J-known, Q는 해당 없음)
+              const isKnown = myFaceUp[idx] || !!myJKnown[idx];
               const isAction = isMyTurn && gameState.turn_phase === 'action' && !!drawnCard;
               const sp = gameState.special_pending;
 
@@ -631,6 +661,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
               return (
                 <GameCard
                   key={idx} card={card} faceUp={faceUp}
+                  knownDot={isKnown && !badge}
                   onClick={isClickable ? () => {
                     if (isPeekOwn) {
                       act(() => resolveSpecialPeek(roomId, myId, myId, idx, gameState));

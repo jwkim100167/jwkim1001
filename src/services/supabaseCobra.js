@@ -188,13 +188,19 @@ export async function resetGame(roomId) {
 // 뷰잉 페이즈
 // ─────────────────────────────────────────
 
-/** 카드 한 장 확인 (뒤집기) */
+/** 카드 한 장 확인 (뒤집기) — 2장 선택 시 자동 준비 완료 */
 export async function peekCard(roomId, playerId, cardIndex, gameState) {
-  const newFaceUp = {
-    ...gameState.face_up,
-    [playerId]: gameState.face_up[playerId].map((v, i) => (i === cardIndex ? true : v)),
-  };
-  await updateGameState(roomId, { ...gameState, face_up: newFaceUp });
+  const newFaceUpArr = gameState.face_up[playerId].map((v, i) => (i === cardIndex ? true : v));
+  const newFaceUp = { ...gameState.face_up, [playerId]: newFaceUpArr };
+  const peekedCount = newFaceUpArr.filter(Boolean).length;
+
+  let newState = { ...gameState, face_up: newFaceUp };
+  if (peekedCount >= 2) {
+    const newReady = { ...gameState.viewing_ready, [playerId]: true };
+    const allReady = gameState.player_order.every(pid => newReady[pid]);
+    newState = { ...newState, viewing_ready: newReady, phase: allReady ? 'playing' : 'viewing' };
+  }
+  await updateGameState(roomId, newState);
 }
 
 /** 카드 확인 완료 (준비 완료) */
@@ -260,35 +266,24 @@ export async function discardDrawn(roomId, playerId, gameState) {
 }
 
 /** J(내 카드 확인) 또는 Q(상대 카드 확인) 특수 능력 해결
- *  - J: 자기 카드 → face_up 업데이트 (나만 알고 있던 것을 공식화)
- *  - Q: 상대 카드 → private_knowledge 에만 기록 (face_up 변경 없음, 나만 아는 정보)
+ *  - J: 자기 카드 → private_knowledge 에만 기록 (나만 앎, face_up 변경 없음)
+ *  - Q: 상대 카드 → private_knowledge 에만 기록 (나만 앎, 교체되면 무효)
  */
 export async function resolveSpecialPeek(roomId, initiatorId, targetPlayerId, cardIdx, gameState) {
-  let newFaceUp = gameState.face_up;
   let newPrivateKnowledge = gameState.private_knowledge || {};
-
-  if (initiatorId === targetPlayerId) {
-    // J — 내 카드 확인: face_up 처리 (이미 내 카드이므로 공식 지식)
-    newFaceUp = {
-      ...gameState.face_up,
-      [targetPlayerId]: gameState.face_up[targetPlayerId].map((v, i) => (i === cardIdx ? true : v)),
-    };
-  } else {
-    // Q — 상대 카드 확인: 나만 아는 private_knowledge 에만 기록
-    const myKnowledge = newPrivateKnowledge[initiatorId] || {};
-    const targetKnowledge = myKnowledge[targetPlayerId] || {};
-    newPrivateKnowledge = {
-      ...newPrivateKnowledge,
-      [initiatorId]: {
-        ...myKnowledge,
-        [targetPlayerId]: { ...targetKnowledge, [cardIdx]: true },
-      },
-    };
-  }
+  // J든 Q든 모두 private_knowledge 에만 기록
+  const myKnowledge = newPrivateKnowledge[initiatorId] || {};
+  const targetKnowledge = myKnowledge[targetPlayerId] || {};
+  newPrivateKnowledge = {
+    ...newPrivateKnowledge,
+    [initiatorId]: {
+      ...myKnowledge,
+      [targetPlayerId]: { ...targetKnowledge, [cardIdx]: true },
+    },
+  };
 
   const newState = {
     ...gameState,
-    face_up: newFaceUp,
     private_knowledge: newPrivateKnowledge,
     turn_phase: 'draw',
     special_pending: null,
@@ -351,16 +346,16 @@ export async function swapWithHand(roomId, playerId, handIndex, gameState) {
   const newHand = [...gameState.hands[playerId]];
   newHand[handIndex] = drawnCard;
 
-  // 교체된 카드는 이제 내가 알고 있음 (face_up = true)
-  const newFaceUp = {
-    ...gameState.face_up,
-    [playerId]: gameState.face_up[playerId].map((v, i) => (i === handIndex ? true : v)),
-  };
+  // 교체 후 해당 위치는 새 카드 → face_up false, private_knowledge 무효
+  const { newFaceUp, newPK } = clearPositionKnowledge(
+    gameState.face_up, gameState.private_knowledge || {}, playerId, handIndex
+  );
 
   const newState = {
     ...gameState,
     hands: { ...gameState.hands, [playerId]: newHand },
     face_up: newFaceUp,
+    private_knowledge: newPK,
     discard_pile: [...gameState.discard_pile, handCard],
     drawn_card: null,
     turn_phase: 'draw',
@@ -381,15 +376,16 @@ export async function matchAndDiscard(roomId, playerId, handIndex, gameState) {
   if (!cardsMatch(handCard, drawnCard)) throw new Error('같은 숫자가 아닙니다.');
 
   const newHand = gameState.hands[playerId].filter((_, i) => i !== handIndex);
-  const newFaceUp = {
-    ...gameState.face_up,
-    [playerId]: gameState.face_up[playerId].filter((_, i) => i !== handIndex),
-  };
+  // 카드 제거 → 인덱스 조정 + private_knowledge 정리
+  const { newFaceUp, newPK } = removePositionKnowledge(
+    gameState.face_up, gameState.private_knowledge || {}, playerId, handIndex
+  );
 
   const newState = {
     ...gameState,
     hands: { ...gameState.hands, [playerId]: newHand },
     face_up: newFaceUp,
+    private_knowledge: newPK,
     discard_pile: [...gameState.discard_pile, drawnCard, handCard],
     drawn_card: null,
     turn_phase: 'draw',
@@ -417,10 +413,10 @@ export async function takeFromDiscard(roomId, playerId, handIndex, gameState) {
   if (!cardsMatch(discardTop, handCard)) throw new Error('같은 숫자가 아닙니다.');
 
   const newHand = gameState.hands[playerId].filter((_, i) => i !== handIndex);
-  const newFaceUp = {
-    ...gameState.face_up,
-    [playerId]: gameState.face_up[playerId].filter((_, i) => i !== handIndex),
-  };
+  // 카드 제거 → 인덱스 조정 + private_knowledge 정리
+  const { newFaceUp, newPK } = removePositionKnowledge(
+    gameState.face_up, gameState.private_knowledge || {}, playerId, handIndex
+  );
   // discard top 제거 (선점으로 소모됨)
   const newDiscardPile = discardPile.slice(0, -1);
 
@@ -428,6 +424,7 @@ export async function takeFromDiscard(roomId, playerId, handIndex, gameState) {
     ...gameState,
     hands: { ...gameState.hands, [playerId]: newHand },
     face_up: newFaceUp,
+    private_knowledge: newPK,
     discard_pile: newDiscardPile,
     drawn_card: null,
     turn_phase: 'draw',
@@ -448,6 +445,52 @@ export async function callCobra(roomId, playerId, gameState) {
 // ─────────────────────────────────────────
 // 내부 헬퍼
 // ─────────────────────────────────────────
+
+/** 특정 위치의 카드가 교체될 때 face_up 및 private_knowledge 초기화 */
+function clearPositionKnowledge(face_up, pk, targetPlayerId, cardIdx) {
+  const newFaceUp = {
+    ...face_up,
+    [targetPlayerId]: face_up[targetPlayerId].map((v, i) => (i === cardIdx ? false : v)),
+  };
+  const newPK = {};
+  for (const [peekerId, peekerData] of Object.entries(pk)) {
+    const inner = {};
+    for (const [tid, tdata] of Object.entries(peekerData)) {
+      const cleaned = { ...tdata };
+      if (tid === targetPlayerId) delete cleaned[cardIdx];
+      if (Object.keys(cleaned).length > 0) inner[tid] = cleaned;
+    }
+    if (Object.keys(inner).length > 0) newPK[peekerId] = inner;
+  }
+  return { newFaceUp, newPK };
+}
+
+/** 특정 위치의 카드가 제거될 때 face_up 및 private_knowledge 인덱스 조정 */
+function removePositionKnowledge(face_up, pk, targetPlayerId, removedIdx) {
+  const newFaceUp = {
+    ...face_up,
+    [targetPlayerId]: face_up[targetPlayerId].filter((_, i) => i !== removedIdx),
+  };
+  const newPK = {};
+  for (const [peekerId, peekerData] of Object.entries(pk)) {
+    const inner = {};
+    for (const [tid, tdata] of Object.entries(peekerData)) {
+      if (tid === targetPlayerId) {
+        const shifted = {};
+        for (const [k, v] of Object.entries(tdata)) {
+          const i = parseInt(k);
+          if (i < removedIdx) shifted[i] = v;
+          else if (i > removedIdx) shifted[i - 1] = v;
+        }
+        if (Object.keys(shifted).length > 0) inner[tid] = shifted;
+      } else {
+        inner[tid] = tdata;
+      }
+    }
+    if (Object.keys(inner).length > 0) newPK[peekerId] = inner;
+  }
+  return { newFaceUp, newPK };
+}
 
 async function advanceTurn(roomId, currentPlayerId, state) {
   const nextId = getNextPlayerId(state.player_order, currentPlayerId);

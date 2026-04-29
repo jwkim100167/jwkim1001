@@ -118,29 +118,47 @@
 .cgp-close-btn:hover { color: white; }
 
 .cgp-rules-body {
-  padding: 12px 20px 20px;
+  padding: 10px 16px 20px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
+}
+
+.cgp-rules-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cgp-rules-section-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(233, 69, 96, 0.8);
+  padding: 0 4px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  margin-bottom: 2px;
 }
 
 .cgp-rule-item {
   display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 8px;
-  padding: 10px 12px;
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.88rem;
-  line-height: 1.5;
+  gap: 10px;
+  align-items: baseline;
+  padding: 6px 8px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.86rem;
+  line-height: 1.45;
+  border-radius: 6px;
 }
+.cgp-rule-item:hover { background: rgba(255,255,255,0.04); }
 
 .cgp-rule-icon {
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   flex-shrink: 0;
-  width: 24px;
+  width: 20px;
   text-align: center;
+  opacity: 0.85;
 }
 
 /* ========================
@@ -610,6 +628,15 @@
 .cgp-badge-seonjeom {
   background: linear-gradient(135deg, #a29bfe, #6c5ce7);
   color: white;
+}
+
+/* 내 카드 중 내가 알고 있는 카드 표시 (초기 확인 or J 능력) */
+.cgp-known-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ecdc4;
+  margin: 3px auto 0;
 }
 
 /* ========================
