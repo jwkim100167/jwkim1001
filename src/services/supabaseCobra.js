@@ -249,6 +249,17 @@ export async function discardDrawn(roomId, playerId, gameState) {
   if (gameState.options?.specialCards) {
     const val = getCardDisplayValue(discardedCard);
     if (val === 'J' || val === 'Q' || val === 'K') {
+      // J: 비공개 카드가 없으면 턴 pass
+      if (val === 'J') {
+        const faceUpArr = gameState.face_up[playerId];
+        const selfKnown = gameState.private_knowledge?.[playerId]?.[playerId] || {};
+        const hasUnknown = gameState.hands[playerId].some((_, i) => !faceUpArr[i] && !selfKnown[i]);
+        if (!hasUnknown) {
+          const newState = { ...gameState, discard_pile: newDiscard, drawn_card: null, turn_phase: 'draw' };
+          await advanceTurn(roomId, playerId, newState);
+          return;
+        }
+      }
       const type = val === 'J' ? 'peek_own' : val === 'Q' ? 'peek_opp' : 'swap';
       await updateGameState(roomId, {
         ...gameState,
@@ -346,10 +357,17 @@ export async function swapWithHand(roomId, playerId, handIndex, gameState) {
   const newHand = [...gameState.hands[playerId]];
   newHand[handIndex] = drawnCard;
 
-  // 교체 후 해당 위치는 새 카드 → face_up false, private_knowledge 무효
-  const { newFaceUp, newPK } = clearPositionKnowledge(
+  // 교체 후 해당 위치는 새 카드 → 기존 face_up/knowledge 클리어
+  const { newFaceUp, newPK: clearedPK } = clearPositionKnowledge(
     gameState.face_up, gameState.private_knowledge || {}, playerId, handIndex
   );
+  // 나는 뽑은 카드를 봤으므로 private_knowledge 에만 기록 (나만 앎)
+  const myKnowledge = clearedPK[playerId] || {};
+  const selfKnowledge = myKnowledge[playerId] || {};
+  const newPK = {
+    ...clearedPK,
+    [playerId]: { ...myKnowledge, [playerId]: { ...selfKnowledge, [handIndex]: true } },
+  };
 
   const newState = {
     ...gameState,

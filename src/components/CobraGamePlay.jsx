@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   getCardDisplayValue,
   getCardSuit,
@@ -66,7 +66,7 @@ function GameCard({ card, faceUp, onClick, highlight, selected, small, animRevea
         )}
       </div>
       {badge && <div className={`cgp-card-badge cgp-badge-${badge.type}`}>{badge.text}</div>}
-      {knownDot && <div className="cgp-known-dot" />}
+      {knownDot && <div className="cgp-known-dot">secret</div>}
     </div>
   );
 }
@@ -196,7 +196,8 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
   // 선점 가능한 내 손패 인덱스들 (face-up인 카드만)
   const seonjeomMatchIndices = discardTop && isMyTurn && gameState.turn_phase === 'draw'
     ? myHand.reduce((acc, card, idx) => {
-        if (myFaceUp[idx] && cardsMatch(card, discardTop)) acc.push(idx);
+        const iKnowThisCard = myFaceUp[idx] || !!myJKnown[idx];
+        if (iKnowThisCard && cardsMatch(card, discardTop)) acc.push(idx);
         return acc;
       }, [])
     : [];
@@ -299,7 +300,8 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
     if (!isMyTurn || gameState.turn_phase !== 'action' || !drawnCard) return;
 
     // face-up 카드만 매칭 가능, 나머지는 교체
-    if (myFaceUp[idx] && cardsMatch(drawnCard, myHand[idx])) {
+    const iKnow = myFaceUp[idx] || !!myJKnown[idx];
+    if (iKnow && cardsMatch(drawnCard, myHand[idx])) {
       act(() => matchAndDiscard(roomId, myId, idx, gameState));
     } else {
       act(() => swapWithHand(roomId, myId, idx, gameState));
@@ -629,10 +631,10 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
           <div className="cgp-pile-label">내 패 ({myHand.length}장) — {getHandScore(myHand)}점</div>
           <div className="cgp-my-hand-row">
             {myHand.map((card, idx) => {
-              // face_up(초기 공개) 또는 J 능력으로 확인한 카드도 내 화면에서는 앞면
+              // face_up(초기 공개) 또는 J/교체로 나만 아는 카드 → 내 화면에서 앞면
               const faceUp = (myFaceUp[idx] || !!myJKnown[idx]) ?? false;
-              // 내가 아는 카드 여부 표시 (face_up 또는 J-known, Q는 해당 없음)
-              const isKnown = myFaceUp[idx] || !!myJKnown[idx];
+              // 나만 아는 카드만 청록 점 표시 (공개 카드는 표시 없음)
+              const isKnown = !!myJKnown[idx];
               const isAction = isMyTurn && gameState.turn_phase === 'action' && !!drawnCard;
               const sp = gameState.special_pending;
 

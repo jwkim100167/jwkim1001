@@ -630,13 +630,14 @@
   color: white;
 }
 
-/* 내 카드 중 내가 알고 있는 카드 표시 (초기 확인 or J 능력) */
+/* 나만 아는 카드 표시 (J/교체) */
 .cgp-known-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #4ecdc4;
-  margin: 3px auto 0;
+  font-size: 0.58rem;
+  font-weight: 800;
+  color: #4ecdc4;
+  letter-spacing: 0.04em;
+  text-align: center;
+  margin-top: 3px;
 }
 
 /* ========================
