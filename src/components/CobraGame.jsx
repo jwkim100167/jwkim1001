@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import {
   createRoom,
   joinRoom,
@@ -19,8 +20,11 @@ const PLAYER_COLORS = ['#e94560', '#f5a623', '#4ecdc4', '#a29bfe', '#55efc4'];
 
 export default function CobraGame() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [view, setView] = useState('lobby'); // lobby | create | join | waiting
   const [playerName, setPlayerName] = useState('');
+  const [options, setOptions] = useState({ specialCards: false });
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [joinCode, setJoinCode] = useState('');
   const [currentRoom, setCurrentRoom] = useState(null);
   const [roomData, setRoomData] = useState(null);   // full room row (game_state 포함)
@@ -69,6 +73,7 @@ export default function CobraGame() {
   }, [currentPlayer]);
 
   const handleCreateRoom = async () => {
+    if (!isAuthenticated) { setShowLoginPrompt(true); return; }
     if (!playerName.trim()) return setError('이름을 입력해주세요.');
     if (playerName.trim().length > 8) return setError('이름은 8자 이하로 입력해주세요.');
     setLoading(true); setError('');
@@ -120,7 +125,7 @@ export default function CobraGame() {
     if (players.length < 2) return;
     setLoading(true); setError('');
     try {
-      await startGame(currentRoom.id, players);
+      await startGame(currentRoom.id, players, options);
     } catch (e) {
       setError(e.message || '게임 시작에 실패했습니다.');
     } finally {
@@ -150,10 +155,24 @@ export default function CobraGame() {
     );
   }
 
+  // ────── LOGIN PROMPT ──────
+  const loginPromptDialog = showLoginPrompt && (
+    <div className="cobra-modal-overlay">
+      <div className="cobra-modal-dialog">
+        <p className="cobra-modal-msg">방 만들기는 로그인이 필요합니다.{'\n'}로그인하시겠습니까?</p>
+        <div className="cobra-modal-btns">
+          <button className="cobra-btn cobra-btn-secondary" onClick={() => setShowLoginPrompt(false)}>취소</button>
+          <button className="cobra-btn cobra-btn-primary" onClick={() => navigate('/login')}>로그인</button>
+        </div>
+      </div>
+    </div>
+  );
+
   // ────── LOBBY ──────
   if (view === 'lobby') {
     return (
       <div className="cobra-wrap">
+        {loginPromptDialog}
         <button className="cobra-back-btn" onClick={() => navigate('/')}>← 홈으로</button>
         <div className="cobra-container">
           <div className="cobra-logo">
@@ -162,7 +181,7 @@ export default function CobraGame() {
             <p className="cobra-subtitle">최대 5인 카드 게임</p>
           </div>
           <div className="cobra-lobby-actions">
-            <button className="cobra-btn cobra-btn-primary" onClick={() => setView('create')}>
+            <button className="cobra-btn cobra-btn-primary" onClick={() => isAuthenticated ? setView('create') : setShowLoginPrompt(true)}>
               <span className="cobra-btn-icon">+</span>방 만들기
             </button>
             <button className="cobra-btn cobra-btn-secondary" onClick={() => setView('join')}>
@@ -194,6 +213,7 @@ export default function CobraGame() {
   if (view === 'create') {
     return (
       <div className="cobra-wrap">
+        {loginPromptDialog}
         <button className="cobra-back-btn" onClick={goToLobby}>← 뒤로</button>
         <div className="cobra-container cobra-container-sm">
           <div className="cobra-form-header">
@@ -213,6 +233,24 @@ export default function CobraGame() {
               maxLength={8}
               autoFocus
             />
+
+            {/* ── 게임 옵션 ── */}
+            <div className="cobra-options-section">
+              <div className="cobra-options-title">게임 옵션</div>
+              <div className="cobra-option-row">
+                <div className="cobra-option-info">
+                  <div className="cobra-option-name">🃏 특수 카드 능력</div>
+                  <div className="cobra-option-desc">J 버리기: 내 카드 확인 · Q 버리기: 상대 카드 확인 · K 버리기: 카드 교환</div>
+                </div>
+                <button
+                  className={`cobra-toggle ${options.specialCards ? 'cobra-toggle-on' : ''}`}
+                  onClick={() => setOptions(o => ({ ...o, specialCards: !o.specialCards }))}
+                >
+                  {options.specialCards ? 'ON' : 'OFF'}
+                </button>
+              </div>
+            </div>
+
             {error && <div className="cobra-error">{error}</div>}
             <button className="cobra-btn cobra-btn-primary cobra-btn-full" onClick={handleCreateRoom} disabled={loading}>
               {loading ? '생성 중...' : '방 만들기'}

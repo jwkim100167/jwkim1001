@@ -34,6 +34,7 @@ import { supabase } from '../supabaseClient';
 import {
   initGame,
   getCardValue,
+  getCardDisplayValue,
   cardsMatch,
   getNextPlayerId,
   getHandScore,
@@ -170,8 +171,8 @@ async function updateGameState(roomId, gameState) {
 }
 
 /** 호스트가 게임을 시작할 때 호출 */
-export async function startGame(roomId, players) {
-  const gameState = initGame(players);
+export async function startGame(roomId, players, options = {}) {
+  const gameState = initGame(players, options);
   await updateGameState(roomId, gameState);
 }
 
@@ -234,11 +235,112 @@ export async function drawFromDeck(roomId, playerId, gameState) {
   });
 }
 
-/** 뽑은 카드를 버리기 (손패 유지) */
+/** 뽑은 카드를 버리기 (손패 유지) — J/Q/K 특수 능력 처리 포함 */
 export async function discardDrawn(roomId, playerId, gameState) {
-  const newDiscard = [...gameState.discard_pile, gameState.drawn_card];
+  const discardedCard = gameState.drawn_card;
+  const newDiscard = [...gameState.discard_pile, discardedCard];
+
+  if (gameState.options?.specialCards) {
+    const val = getCardDisplayValue(discardedCard);
+    if (val === 'J' || val === 'Q' || val === 'K') {
+      const type = val === 'J' ? 'peek_own' : val === 'Q' ? 'peek_opp' : 'swap';
+      await updateGameState(roomId, {
+        ...gameState,
+        discard_pile: newDiscard,
+        drawn_card: null,
+        turn_phase: 'special',
+        special_pending: { type, initiator_id: playerId },
+      });
+      return;
+    }
+  }
+
   const newState = { ...gameState, discard_pile: newDiscard, drawn_card: null, turn_phase: 'draw' };
   await advanceTurn(roomId, playerId, newState);
+}
+
+/** J(내 카드 확인) 또는 Q(상대 카드 확인) 특수 능력 해결
+ *  - J: 자기 카드 → face_up 업데이트 (나만 알고 있던 것을 공식화)
+ *  - Q: 상대 카드 → private_knowledge 에만 기록 (face_up 변경 없음, 나만 아는 정보)
+ */
+export async function resolveSpecialPeek(roomId, initiatorId, targetPlayerId, cardIdx, gameState) {
+  let newFaceUp = gameState.face_up;
+  let newPrivateKnowledge = gameState.private_knowledge || {};
+
+  if (initiatorId === targetPlayerId) {
+    // J — 내 카드 확인: face_up 처리 (이미 내 카드이므로 공식 지식)
+    newFaceUp = {
+      ...gameState.face_up,
+      [targetPlayerId]: gameState.face_up[targetPlayerId].map((v, i) => (i === cardIdx ? true : v)),
+    };
+  } else {
+    // Q — 상대 카드 확인: 나만 아는 private_knowledge 에만 기록
+    const myKnowledge = newPrivateKnowledge[initiatorId] || {};
+    const targetKnowledge = myKnowledge[targetPlayerId] || {};
+    newPrivateKnowledge = {
+      ...newPrivateKnowledge,
+      [initiatorId]: {
+        ...myKnowledge,
+        [targetPlayerId]: { ...targetKnowledge, [cardIdx]: true },
+      },
+    };
+  }
+
+  const newState = {
+    ...gameState,
+    face_up: newFaceUp,
+    private_knowledge: newPrivateKnowledge,
+    turn_phase: 'draw',
+    special_pending: null,
+  };
+  await advanceTurn(roomId, initiatorId, newState);
+}
+
+/** K(카드 교환) 특수 능력 해결 — p1 의 p1Idx ↔ p2 의 p2Idx
+ *  face_up 상태는 카드와 함께 이동 (카드의 공개 상태 유지).
+ *  교환된 위치에 대한 private_knowledge 는 무효화.
+ */
+export async function resolveSpecialSwap(roomId, initiatorId, p1Id, p1Idx, p2Id, p2Idx, gameState) {
+  const card1 = gameState.hands[p1Id][p1Idx];
+  const card2 = gameState.hands[p2Id][p2Idx];
+  const fu1 = gameState.face_up[p1Id][p1Idx];
+  const fu2 = gameState.face_up[p2Id][p2Idx];
+
+  const newHands = {
+    ...gameState.hands,
+    [p1Id]: gameState.hands[p1Id].map((c, i) => (i === p1Idx ? card2 : c)),
+    [p2Id]: gameState.hands[p2Id].map((c, i) => (i === p2Idx ? card1 : c)),
+  };
+  // face_up 상태는 카드와 함께 이동
+  const newFaceUp = {
+    ...gameState.face_up,
+    [p1Id]: gameState.face_up[p1Id].map((v, i) => (i === p1Idx ? fu2 : v)),
+    [p2Id]: gameState.face_up[p2Id].map((v, i) => (i === p2Idx ? fu1 : v)),
+  };
+
+  // 교환된 위치에 대한 private_knowledge 무효화 (카드가 이동했으므로 기존 지식 무효)
+  const oldPK = gameState.private_knowledge || {};
+  const newPrivateKnowledge = {};
+  for (const [peekerId, peekerData] of Object.entries(oldPK)) {
+    newPrivateKnowledge[peekerId] = {};
+    for (const [targetId, targetData] of Object.entries(peekerData)) {
+      const cleaned = { ...targetData };
+      if (targetId === p1Id) delete cleaned[p1Idx];
+      if (targetId === p2Id) delete cleaned[p2Idx];
+      if (Object.keys(cleaned).length > 0) newPrivateKnowledge[peekerId][targetId] = cleaned;
+    }
+    if (Object.keys(newPrivateKnowledge[peekerId]).length === 0) delete newPrivateKnowledge[peekerId];
+  }
+
+  const newState = {
+    ...gameState,
+    hands: newHands,
+    face_up: newFaceUp,
+    private_knowledge: newPrivateKnowledge,
+    turn_phase: 'draw',
+    special_pending: null,
+  };
+  await advanceTurn(roomId, initiatorId, newState);
 }
 
 /** 손패의 카드와 뽑은 카드 교체 (손패 카드가 버리기 패로) */

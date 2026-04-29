@@ -45,9 +45,9 @@ export function getHandScore(hand) {
   return hand.reduce((sum, c) => sum + getCardValue(c), 0);
 }
 
-/** 두 카드가 같은 숫자인지 (J/Q/K 서로 매칭 가능) */
+/** 두 카드가 같은 숫자인지 (J/Q/K는 점수는 같지만 다른 카드 — J끼리만 매칭) */
 export function cardsMatch(a, b) {
-  return getCardValue(a) === getCardValue(b);
+  return getCardDisplayValue(a) === getCardDisplayValue(b);
 }
 
 /** 다음 플레이어 id */
@@ -57,7 +57,7 @@ export function getNextPlayerId(playerOrder, currentId) {
 }
 
 /** 게임 상태 초기화 */
-export function initGame(players) {
+export function initGame(players, options = {}) {
   const deck = generateDeck();
   const hands = {};
   const faceUp = {};
@@ -75,12 +75,15 @@ export function initGame(players) {
     discard_pile: [],
     player_order: players.map(p => p.id),
     current_player_id: players[0].id,
-    turn_phase: 'draw',         // draw | action
+    turn_phase: 'draw',         // draw | action | special
     drawn_card: null,
     hands,
     face_up: faceUp,
     viewing_ready: viewingReady,
     cobra_caller_id: null,
     scores: {},
+    options: { specialCards: options.specialCards ?? false },
+    special_pending: null,      // { type: 'peek_own'|'peek_opp'|'swap', initiator_id }
+    private_knowledge: {},      // { [peekerId]: { [targetPlayerId]: { [cardIdx]: true } } }
   };
 }

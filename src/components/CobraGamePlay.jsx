@@ -15,6 +15,8 @@ import {
   takeFromDiscard,
   callCobra,
   resetGame,
+  resolveSpecialPeek,
+  resolveSpecialSwap,
 } from '../services/supabaseCobra';
 import './CobraGamePlay.css';
 
@@ -85,18 +87,23 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
 }
 
 // ─── 규칙 모달 ────────────────────────────────────────
-function RulesModal({ onClose }) {
+function RulesModal({ onClose, options }) {
   const rules = [
     ['🎯', '목표', '가장 작은 합계를 만들어라'],
-    ['🃏', '카드 점수', 'A=1, 2~10=숫자, J/Q/K=10, 😈조커=-1'],
+    ['🃏', '카드 점수', 'A=1, 2~10=숫자, J/Q/K=10점 (서로 다른 카드), 😈조커=-1'],
     ['👀', '시작', '4장 받고 2장 몰래 확인 (오픈된 카드만 내가 인식)'],
     ['🔄', '내 차례', '덱에서 1장 뽑기'],
-    ['✂️', '매칭', '오픈된 손패와 같은 숫자면 둘 다 버리기'],
+    ['✂️', '매칭', '오픈된 손패와 완전히 같은 카드(같은 숫자)면 둘 다 버리기'],
     ['🔀', '교체', '손패 카드 클릭 → 뽑은 카드와 교체 (비공개 카드도 교체 가능)'],
     ['🎯', '선점', '버린 패 top이 내 오픈 카드와 같으면 덱 뽑기 전에 선점 매칭'],
     ['🐍', '코브라', '내 카드 즉시 공개 → 나머지 한 바퀴 → 전체 오픈'],
     ['⚡', '자동코브라', '카드 0장이 되면 즉시 발동'],
     ['⏱️', '제한 시간', '한 턴 최대 20초 (초과 시 자동 처리)'],
+    ...(options?.specialCards ? [
+      ['🃏J', 'J 버리기', '내 손패 중 비공개 카드 1장을 선택해 확인 (face-up 처리)'],
+      ['🃏Q', 'Q 버리기', '상대 손패 카드 1장을 선택해 확인 (face-up 처리)'],
+      ['🃏K', 'K 버리기', '내 카드 1장 ↔ 상대 카드 1장 교환 (내 카드 선택 → 상대 카드 선택)'],
+    ] : []),
   ];
   return (
     <div className="cgp-overlay" onClick={onClose}>
@@ -126,6 +133,8 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
   const [showRules, setShowRules] = useState(false);
   const [seonjeomMode, setSeonjeomMode] = useState(false);
   const [timeLeft, setTimeLeft] = useState(TURN_SECONDS);
+  // K 교환 특수 능력: 1단계 선택 저장
+  const [swapSelection, setSwapSelection] = useState(null); // { playerId, cardIdx } | null
   // 종료 애니메이션
   const [revealedCount, setRevealedCount] = useState(0);
   const [showWinner, setShowWinner] = useState(false);
@@ -142,6 +151,9 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
   players.forEach((p, i) => {
     playerMap[p.id] = { ...p, color: PLAYER_COLORS[i % PLAYER_COLORS.length] };
   });
+
+  // 나만 아는 사적 지식 (Q 능력으로 확인한 상대 카드)
+  const myPrivate = gameState.private_knowledge?.[myId] || {};
   const otherPlayers = players.filter((p) => p.id !== myId);
   const cobraCaller = gameState.cobra_caller_id ? playerMap[gameState.cobra_caller_id] : null;
 
@@ -182,11 +194,10 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
       if (count <= 0) {
         clearInterval(timerRef.current);
         const gs = gameStateRef.current;
+        if (gs.turn_phase === 'special') return; // 특수 능력 중 자동 처리 없음
         if (gs.turn_phase === 'draw') {
-          // 자동 덱 뽑기
           act(() => drawFromDeck(roomId, myId, gs));
         } else if (gs.turn_phase === 'action' && gs.drawn_card) {
-          // 자동 뽑은 카드 버리기
           act(() => discardDrawn(roomId, myId, gs));
         }
       }
@@ -195,9 +206,13 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [gameState.current_player_id]); // eslint-disable-line
 
-  // 선점 모드 리셋 (덱 뽑으면)
+  // 선점 모드 리셋 (덱 뽑으면), 특수 페이즈 시 타이머 정지
   useEffect(() => {
     if (gameState.turn_phase === 'action') setSeonjeomMode(false);
+    if (gameState.turn_phase === 'special') {
+      if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
+      setSwapSelection(null);
+    }
   }, [gameState.turn_phase]);
 
   // ── 종료 카드별 순차 공개 ──
@@ -299,7 +314,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
     return (
       <div className="cgp-wrap">
         <button className="cgp-rules-btn" onClick={() => setShowRules(true)}>📖</button>
-        {showRules && <RulesModal onClose={() => setShowRules(false)} />}
+        {showRules && <RulesModal onClose={() => setShowRules(false)} options={gameState.options} />}
         <div className="cgp-container">
           <div className="cgp-phase-banner"><span>👀</span><span>카드 확인하기</span></div>
           <p className="cgp-hint">내 카드 2장을 선택해서 확인하세요</p>
@@ -344,7 +359,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
     return (
       <div className="cgp-wrap">
         <button className="cgp-rules-btn" onClick={() => setShowRules(true)}>📖</button>
-        {showRules && <RulesModal onClose={() => setShowRules(false)} />}
+        {showRules && <RulesModal onClose={() => setShowRules(false)} options={gameState.options} />}
         <div className="cgp-container">
           <div className="cgp-phase-banner cgp-open-banner"><span>🃏</span><span>카드 오픈!</span></div>
           <div className="cgp-reveal-list">
@@ -402,7 +417,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
   return (
     <div className="cgp-wrap">
       <button className="cgp-rules-btn" onClick={() => setShowRules(true)}>📖</button>
-      {showRules && <RulesModal onClose={() => setShowRules(false)} />}
+      {showRules && <RulesModal onClose={() => setShowRules(false)} options={gameState.options} />}
       {confirmDialog && <ConfirmDialog message={confirmDialog.message} onConfirm={confirmDialog.onConfirm} onCancel={confirmDialog.onCancel} />}
 
       <div className="cgp-container">
@@ -441,13 +456,65 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
           </div>
         )}
 
-        {/* 상대 플레이어 (항상 뒷면) */}
+        {/* 특수 능력 대기 배너 */}
+        {gameState.turn_phase === 'special' && gameState.special_pending && (() => {
+          const sp = gameState.special_pending;
+          const isInitiator = sp.initiator_id === myId;
+          const initiatorName = playerMap[sp.initiator_id]?.player_name ?? '';
+          const typeLabel = sp.type === 'peek_own' ? 'J — 카드 확인'
+            : sp.type === 'peek_opp' ? 'Q — 상대 카드 확인'
+            : 'K — 카드 교환';
+
+          if (!isInitiator) {
+            return (
+              <div className="cgp-special-banner cgp-special-wait">
+                🃏 {initiatorName}이(가) {typeLabel} 중...
+              </div>
+            );
+          }
+
+          if (sp.type === 'peek_own') {
+            return (
+              <div className="cgp-special-banner cgp-special-active">
+                🃏 J 능력: 내 비공개 카드 1장을 선택하세요
+              </div>
+            );
+          }
+          if (sp.type === 'peek_opp') {
+            return (
+              <div className="cgp-special-banner cgp-special-active">
+                🃏 Q 능력: 상대 카드 1장을 선택하세요
+              </div>
+            );
+          }
+          if (sp.type === 'swap') {
+            return (
+              <div className="cgp-special-banner cgp-special-active">
+                {swapSelection
+                  ? '🃏 K 능력: 교환할 상대(또는 내) 카드를 선택하세요'
+                  : '🃏 K 능력: 교환할 내 카드를 먼저 선택하세요'}
+                {swapSelection && (
+                  <button className="cgp-cancel-sm" onClick={() => setSwapSelection(null)}>다시 선택</button>
+                )}
+              </div>
+            );
+          }
+          return null;
+        })()}
+
+        {/* 상대 플레이어 */}
         {otherPlayers.length > 0 && (
           <div className="cgp-opponents">
             {otherPlayers.map((p) => {
               const hand = gameState.hands[p.id] || [];
               const isActive = gameState.current_player_id === p.id;
               const isCobra = gameState.cobra_caller_id === p.id;
+              const sp = gameState.special_pending;
+              // Q: 상대 카드 선택 가능 여부
+              const canPeekOpp = sp?.type === 'peek_opp' && sp.initiator_id === myId;
+              // K: 2단계 - 상대(또는 자신 외) 카드 선택
+              const canSwapTarget = sp?.type === 'swap' && sp.initiator_id === myId && swapSelection !== null;
+
               return (
                 <div key={p.id} className={`cgp-opponent ${isActive ? 'cgp-active-player' : ''}`}>
                   <div className="cgp-opp-name" style={{ color: playerMap[p.id]?.color }}>
@@ -456,8 +523,28 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
                     {isCobra && <span className="cgp-cobra-tag">🐍</span>}
                   </div>
                   <div className="cgp-opp-hand">
-                    {/* 항상 뒷면으로 표시 */}
-                    {hand.map((card, idx) => <GameCard key={idx} card={card} faceUp={false} small />)}
+                    {hand.map((card, idx) => {
+                      const isSelectable = canPeekOpp || canSwapTarget;
+                      // Q 능력으로 내가 확인한 카드는 내 화면에서만 앞면 표시
+                      const peekedByMe = myPrivate[p.id]?.[idx] ?? false;
+                      return (
+                        <GameCard
+                          key={idx}
+                          card={card}
+                          faceUp={peekedByMe}
+                          small
+                          highlight={isSelectable}
+                          onClick={isSelectable ? () => {
+                            if (canPeekOpp) {
+                              act(() => resolveSpecialPeek(roomId, myId, p.id, idx, gameState));
+                            } else if (canSwapTarget) {
+                              act(() => resolveSpecialSwap(roomId, myId, swapSelection.playerId, swapSelection.cardIdx, p.id, idx, gameState));
+                              setSwapSelection(null);
+                            }
+                          } : undefined}
+                        />
+                      );
+                    })}
                     {hand.length === 0 && <span className="cgp-no-cards">-</span>}
                   </div>
                   <span className="cgp-opp-count">{hand.length}장</span>
@@ -517,21 +604,47 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
             {myHand.map((card, idx) => {
               const faceUp = myFaceUp[idx] ?? false;
               const isAction = isMyTurn && gameState.turn_phase === 'action' && !!drawnCard;
-              // face-up인 카드만 매칭 표시
+              const sp = gameState.special_pending;
+
+              // 특수 능력 선택 상태
+              const isSpecialActive = sp && sp.initiator_id === myId;
+              const isPeekOwn = isSpecialActive && sp.type === 'peek_own' && !faceUp; // J: 비공개 카드만
+              const isSwapStep1 = isSpecialActive && sp.type === 'swap' && swapSelection === null; // K 1단계
+              const isSwapStep2Own = isSpecialActive && sp.type === 'swap' && swapSelection !== null
+                && !(swapSelection.playerId === myId && swapSelection.cardIdx === idx); // K 2단계 자기 다른 카드
+              const isSwapSelected = swapSelection?.playerId === myId && swapSelection?.cardIdx === idx;
+
+              // face-up 카드만 매칭 표시
               const isMatchable = isAction && faceUp && cardsMatch(card, drawnCard);
               const isSeonjeomTarget = seonjeomMode && seonjeomMatchIndices.includes(idx);
 
               let badge = null;
-              if (isMatchable) badge = { type: 'match', text: '매칭!' };
+              if (isPeekOwn) badge = { type: 'seonjeom', text: '확인' };
+              else if (isSwapStep1) badge = { type: 'swap', text: '선택' };
+              else if (isSwapStep2Own) badge = { type: 'swap', text: '교환' };
+              else if (isMatchable) badge = { type: 'match', text: '매칭!' };
               else if (isAction && !isMatchable) badge = { type: 'swap', text: '교체' };
               else if (isSeonjeomTarget) badge = { type: 'seonjeom', text: '선점!' };
+
+              const isClickable = isAction || seonjeomMode || isPeekOwn || isSwapStep1 || isSwapStep2Own;
 
               return (
                 <GameCard
                   key={idx} card={card} faceUp={faceUp}
-                  onClick={(isAction || seonjeomMode) ? () => handleHandCardClick(idx) : undefined}
-                  highlight={isMatchable || isSeonjeomTarget}
-                  selected={isAction && !isMatchable && !isSeonjeomTarget}
+                  onClick={isClickable ? () => {
+                    if (isPeekOwn) {
+                      act(() => resolveSpecialPeek(roomId, myId, myId, idx, gameState));
+                    } else if (isSwapStep1) {
+                      setSwapSelection({ playerId: myId, cardIdx: idx });
+                    } else if (isSwapStep2Own) {
+                      act(() => resolveSpecialSwap(roomId, myId, swapSelection.playerId, swapSelection.cardIdx, myId, idx, gameState));
+                      setSwapSelection(null);
+                    } else {
+                      handleHandCardClick(idx);
+                    }
+                  } : undefined}
+                  highlight={isMatchable || isSeonjeomTarget || isPeekOwn || isSwapStep1 || isSwapStep2Own}
+                  selected={isSwapSelected || (isAction && !isMatchable && !isSeonjeomTarget && !isSpecialActive)}
                   badge={badge}
                 />
               );
@@ -540,7 +653,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
         </div>
 
         {/* 액션 버튼 */}
-        {isMyTurn && !seonjeomMode && (
+        {isMyTurn && !seonjeomMode && gameState.turn_phase !== 'special' && (
           <div className="cgp-action-bar">
             {gameState.turn_phase === 'draw' && (
               <>

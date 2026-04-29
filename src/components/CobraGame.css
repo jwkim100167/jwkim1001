@@ -461,6 +461,110 @@
   margin-left: auto;
 }
 
+/* ===========================
+   LOGIN PROMPT MODAL
+   =========================== */
+.cobra-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.cobra-modal-dialog {
+  background: #1e1235;
+  border: 1px solid rgba(233, 69, 96, 0.4);
+  border-radius: 16px;
+  padding: 28px 24px 20px;
+  max-width: 320px;
+  width: 100%;
+  text-align: center;
+}
+
+.cobra-modal-msg {
+  color: white;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+  white-space: pre-wrap;
+}
+
+.cobra-modal-btns {
+  display: flex;
+  gap: 10px;
+}
+
+/* ===========================
+   GAME OPTIONS (create view)
+   =========================== */
+.cobra-options-section {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cobra-options-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.cobra-option-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cobra-option-info {
+  flex: 1;
+}
+
+.cobra-option-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 3px;
+}
+
+.cobra-option-desc {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.4;
+}
+
+.cobra-toggle {
+  flex-shrink: 0;
+  width: 54px;
+  height: 30px;
+  border-radius: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.03em;
+}
+
+.cobra-toggle.cobra-toggle-on {
+  background: linear-gradient(135deg, #4ecdc4, #2ecc71);
+  border-color: #4ecdc4;
+  color: white;
+  box-shadow: 0 0 12px rgba(78, 205, 196, 0.4);
+}
+
 /* Actions */
 .cobra-waiting-actions {
   display: flex;

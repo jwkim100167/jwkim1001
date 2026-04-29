@@ -144,6 +144,33 @@
 }
 
 /* ========================
+   SPECIAL ABILITY BANNERS
+   ======================== */
+.cgp-special-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  gap: 10px;
+}
+
+.cgp-special-active {
+  background: rgba(162, 155, 254, 0.14);
+  border: 1px solid rgba(162, 155, 254, 0.45);
+  color: #a29bfe;
+  animation: cobraFlash 1s ease-in-out infinite alternate;
+}
+
+.cgp-special-wait {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ========================
    PHASE BANNERS
    ======================== */
 .cgp-phase-banner {
