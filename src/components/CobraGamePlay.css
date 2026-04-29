@@ -704,6 +704,13 @@
 }
 .cgp-btn-discard:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(245,166,35,0.45); }
 
+.cgp-btn-hint {
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.85;
+  margin-left: 4px;
+}
+
 /* ========================
    HINTS / ERRORS
    ======================== */

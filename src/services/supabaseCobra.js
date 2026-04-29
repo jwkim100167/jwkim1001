@@ -33,7 +33,6 @@
 import { supabase } from '../supabaseClient';
 import {
   initGame,
-  getCardValue,
   getCardDisplayValue,
   cardsMatch,
   getNextPlayerId,
@@ -203,23 +202,12 @@ export async function peekCard(roomId, playerId, cardIndex, gameState) {
   await updateGameState(roomId, newState);
 }
 
-/** 카드 확인 완료 (준비 완료) */
-export async function setViewingReady(roomId, playerId, gameState) {
-  const newReady = { ...gameState.viewing_ready, [playerId]: true };
-  const allReady = gameState.player_order.every(pid => newReady[pid]);
-  await updateGameState(roomId, {
-    ...gameState,
-    viewing_ready: newReady,
-    phase: allReady ? 'playing' : 'viewing',
-  });
-}
-
 // ─────────────────────────────────────────
 // 플레이 페이즈 액션
 // ─────────────────────────────────────────
 
 /** 덱에서 카드 한 장 뽑기 */
-export async function drawFromDeck(roomId, playerId, gameState) {
+export async function drawFromDeck(roomId, _playerId, gameState) {
   let deck = [...gameState.deck];
   let discardPile = [...gameState.discard_pile];
 
@@ -453,6 +441,12 @@ export async function takeFromDiscard(roomId, playerId, handIndex, gameState) {
   } else {
     await advanceTurn(roomId, playerId, newState);
   }
+}
+
+/** 특수 능력 패스 (K에서 교환 안 할 때) */
+export async function skipSpecialAbility(roomId, playerId, gameState) {
+  const newState = { ...gameState, turn_phase: 'draw', special_pending: null };
+  await advanceTurn(roomId, playerId, newState);
 }
 
 /** 코브라 선언 */

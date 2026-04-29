@@ -16,6 +16,7 @@ import {
   resetGame,
   resolveSpecialPeek,
   resolveSpecialSwap,
+  skipSpecialAbility,
 } from '../services/supabaseCobra';
 import './CobraGamePlay.css';
 
@@ -78,10 +79,37 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
       <div className="cgp-dialog">
         <p className="cgp-dialog-msg">{message}</p>
         <div className="cgp-dialog-btns">
-          <button className="cgp-btn cgp-btn-secondary" onClick={onCancel}>취소 (매칭)</button>
+          <button className="cgp-btn cgp-btn-secondary" onClick={onCancel}>취소</button>
           <button className="cgp-btn cgp-btn-danger" onClick={onConfirm}>그냥 버리기</button>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ─── 특수 능력 배너 ───────────────────────────────────
+const SPECIAL_LABELS = { peek_own: 'J — 내 카드 확인', peek_opp: 'Q — 상대 카드 확인', swap: 'K — 카드 교환' };
+function SpecialBanner({ sp, isInitiator, initiatorName, swapSelection, onCancelSwap, onSkip }) {
+  if (!isInitiator) {
+    return (
+      <div className="cgp-special-banner cgp-special-wait">
+        🃏 {initiatorName}이(가) {SPECIAL_LABELS[sp.type]} 중...
+      </div>
+    );
+  }
+  const msg = {
+    peek_own: '🃏 J — 내 비공개 카드 1장을 선택하세요',
+    peek_opp: '🃏 Q — 상대 카드 1장을 선택하세요',
+    swap: swapSelection ? '🃏 K — 교환할 상대 카드를 선택하세요' : '🃏 K — 교환할 내 카드를 먼저 선택하세요',
+  }[sp.type];
+  return (
+    <div className="cgp-special-banner cgp-special-active">
+      {msg}
+      {sp.type === 'swap' && (
+        swapSelection
+          ? <button className="cgp-cancel-sm" onClick={onCancelSwap}>다시 선택</button>
+          : <button className="cgp-cancel-sm" onClick={onSkip}>패스</button>
+      )}
     </div>
   );
 }
@@ -206,6 +234,13 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
   // ── gameStateRef 최신 유지 ──
   useEffect(() => { gameStateRef.current = gameState; }, [gameState]);
 
+  // ── 에러 3초 후 자동 소멸 ──
+  useEffect(() => {
+    if (!errMsg) return;
+    const t = setTimeout(() => setErrMsg(''), 3000);
+    return () => clearTimeout(t);
+  }, [errMsg]);
+
   // ── 턴 타이머 ──
   useEffect(() => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -312,7 +347,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
   const handleDiscardDrawn = () => {
     const drawnCard = gameState.drawn_card;
     if (!drawnCard) return;
-    const faceUpMatchIdx = myHand.findIndex((card, idx) => myFaceUp[idx] && cardsMatch(card, drawnCard));
+    const faceUpMatchIdx = myHand.findIndex((card, idx) => (myFaceUp[idx] || !!myJKnown[idx]) && cardsMatch(card, drawnCard));
     if (faceUpMatchIdx >= 0) {
       setConfirmDialog({
         message: `오픈된 '${getCardDisplayValue(myHand[faceUpMatchIdx])}'와 매칭 가능합니다.\n정말 그냥 버리시겠습니까?`,
@@ -484,51 +519,17 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
           </div>
         )}
 
-        {/* 특수 능력 대기 배너 */}
-        {gameState.turn_phase === 'special' && gameState.special_pending && (() => {
-          const sp = gameState.special_pending;
-          const isInitiator = sp.initiator_id === myId;
-          const initiatorName = playerMap[sp.initiator_id]?.player_name ?? '';
-          const typeLabel = sp.type === 'peek_own' ? 'J — 카드 확인'
-            : sp.type === 'peek_opp' ? 'Q — 상대 카드 확인'
-            : 'K — 카드 교환';
-
-          if (!isInitiator) {
-            return (
-              <div className="cgp-special-banner cgp-special-wait">
-                🃏 {initiatorName}이(가) {typeLabel} 중...
-              </div>
-            );
-          }
-
-          if (sp.type === 'peek_own') {
-            return (
-              <div className="cgp-special-banner cgp-special-active">
-                🃏 J 능력: 내 비공개 카드 1장을 선택하세요
-              </div>
-            );
-          }
-          if (sp.type === 'peek_opp') {
-            return (
-              <div className="cgp-special-banner cgp-special-active">
-                🃏 Q 능력: 상대 카드 1장을 선택하세요
-              </div>
-            );
-          }
-          if (sp.type === 'swap') {
-            return (
-              <div className="cgp-special-banner cgp-special-active">
-                {swapSelection
-                  ? '🃏 K 능력: 교환할 상대(또는 내) 카드를 선택하세요'
-                  : '🃏 K 능력: 교환할 내 카드를 먼저 선택하세요'}
-                {swapSelection && (
-                  <button className="cgp-cancel-sm" onClick={() => setSwapSelection(null)}>다시 선택</button>
-                )}
-              </div>
-            );
-          }
-          return null;
-        })()}
+        {/* 특수 능력 배너 */}
+        {gameState.turn_phase === 'special' && gameState.special_pending && (
+          <SpecialBanner
+            sp={gameState.special_pending}
+            isInitiator={gameState.special_pending.initiator_id === myId}
+            initiatorName={playerMap[gameState.special_pending.initiator_id]?.player_name ?? ''}
+            swapSelection={swapSelection}
+            onCancelSwap={() => setSwapSelection(null)}
+            onSkip={() => act(() => skipSpecialAbility(roomId, myId, gameState))}
+          />
+        )}
 
         {/* 상대 플레이어 */}
         {otherPlayers.length > 0 && (
@@ -698,11 +699,17 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
                 </button>
               </>
             )}
-            {gameState.turn_phase === 'action' && (
-              <button className="cgp-btn cgp-btn-discard" onClick={handleDiscardDrawn} disabled={busy}>
-                뽑은 카드 버리기
-              </button>
-            )}
+            {gameState.turn_phase === 'action' && (() => {
+              const dv = drawnCard ? getCardDisplayValue(drawnCard) : '';
+              const abilityHint = gameState.options?.specialCards
+                ? { J: '→ 내 카드 확인', Q: '→ 상대 카드 확인', K: '→ 카드 교환' }[dv] ?? ''
+                : '';
+              return (
+                <button className="cgp-btn cgp-btn-discard" onClick={handleDiscardDrawn} disabled={busy}>
+                  버리기 {abilityHint && <span className="cgp-btn-hint">{abilityHint}</span>}
+                </button>
+              );
+            })()}
           </div>
         )}
 
