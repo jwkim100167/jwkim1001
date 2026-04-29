@@ -20,7 +20,7 @@ const Home = () => {
   console.log('Home 컴포넌트 렌더링됨');
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
-  const [serviceConfig, setServiceConfig] = useState(null);
+  const [serviceConfig, setServiceConfig] = useState({ enabledMap: null, sortedIds: [] });
 
   useEffect(() => {
     getServiceConfig().then((cfg) => {
@@ -29,12 +29,16 @@ const Home = () => {
   }, []);
 
   const isEnabled = (id) => {
-    if (!serviceConfig) return ['kbo-predict', 'kbo-result', 'world-cup-predict', 'cobra'].includes(id); // 로딩 전 기본값
-    return serviceConfig[id] ?? false;
+    if (!serviceConfig.enabledMap) return ['kbo-predict', 'kbo-result', 'world-cup-predict', 'cobra'].includes(id); // 로딩 전 기본값
+    return serviceConfig.enabledMap[id] ?? false;
   };
 
-  const enabledCount  = SERVICE_LIST.filter((s) => isEnabled(s.id)).length;
-  const disabledCount = SERVICE_LIST.length - enabledCount;
+  const orderedServiceList = serviceConfig.sortedIds.length > 0
+    ? serviceConfig.sortedIds.map(id => SERVICE_LIST.find(s => s.id === id)).filter(Boolean)
+    : SERVICE_LIST;
+
+  const enabledCount  = orderedServiceList.filter((s) => isEnabled(s.id)).length;
+  const disabledCount = orderedServiceList.length - enabledCount;
 
   const handleLogout = () => {
     logout();
@@ -82,7 +86,7 @@ const Home = () => {
         </div>
 
         <div className="navigation-cards">
-          {SERVICE_LIST.map((svc) =>
+          {orderedServiceList.map((svc) =>
             isEnabled(svc.id) ? (
               <Link key={svc.id} to={svc.path} className={`nav-card ${svc.cardClass}`}>
                 <div className="card-icon">{svc.icon}</div>

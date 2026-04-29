@@ -876,6 +876,29 @@
   font-size: 1rem;
   font-weight: 500;
 }
+.service-order-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.order-btn {
+  padding: 0 6px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  border-radius: 4px;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.7rem;
+  cursor: pointer;
+  line-height: 1.4;
+  transition: background 0.15s;
+}
+.order-btn:hover:not(:disabled) {
+  background: rgba(255,255,255,0.3);
+}
+.order-btn:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
 .toggle-btn {
   padding: 6px 20px;
   border: none;

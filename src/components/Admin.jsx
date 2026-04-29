@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
-import { getServiceConfig, updateServiceConfig } from '../services/supabaseAdmin';
+import { getServiceConfig, updateServiceConfig, updateServiceOrder } from '../services/supabaseAdmin';
 import './Admin.css';
 
 const SERVICE_LIST = [
@@ -31,6 +31,7 @@ export default function Admin() {
 
   // 서비스 관리 탭 상태
   const [serviceConfig, setServiceConfig] = useState({});
+  const [serviceOrder, setServiceOrder] = useState([]);
   const [serviceMsg, setServiceMsg] = useState('');
 
   // 취향 알기 탭 상태
@@ -101,7 +102,12 @@ export default function Admin() {
 
   useEffect(() => {
     if (activeTab === 'service') {
-      getServiceConfig().then((cfg) => { if (cfg) setServiceConfig(cfg); });
+      getServiceConfig().then((cfg) => {
+        if (cfg) {
+          setServiceConfig(cfg.enabledMap);
+          setServiceOrder(cfg.sortedIds);
+        }
+      });
     }
     if (activeTab === 'food') {
       loadCategorizedRestaurants();
@@ -116,6 +122,26 @@ export default function Admin() {
     setServiceConfig((prev) => ({ ...prev, [serviceId]: newVal }));
     const ok = await updateServiceConfig(serviceId, newVal);
     setServiceMsg(ok ? '✅ 저장됨' : '❌ 저장 실패');
+    setTimeout(() => setServiceMsg(''), 2000);
+  };
+
+  const handleMoveUp = async (index) => {
+    if (index === 0) return;
+    const newOrder = [...serviceOrder];
+    [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
+    setServiceOrder(newOrder);
+    const ok = await updateServiceOrder(newOrder);
+    setServiceMsg(ok ? '✅ 순서 저장됨' : '❌ 순서 저장 실패');
+    setTimeout(() => setServiceMsg(''), 2000);
+  };
+
+  const handleMoveDown = async (index) => {
+    if (index === serviceOrder.length - 1) return;
+    const newOrder = [...serviceOrder];
+    [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
+    setServiceOrder(newOrder);
+    const ok = await updateServiceOrder(newOrder);
+    setServiceMsg(ok ? '✅ 순서 저장됨' : '❌ 순서 저장 실패');
     setTimeout(() => setServiceMsg(''), 2000);
   };
 
@@ -553,18 +579,34 @@ export default function Admin() {
               <p className="description">서비스를 켜거나 끄면 홈 화면에 즉시 반영됩니다.</p>
               {serviceMsg && <div className="service-save-msg">{serviceMsg}</div>}
               <div className="service-toggle-list">
-                {SERVICE_LIST.map((svc) => (
-                  <div key={svc.id} className="service-toggle-row">
-                    <span className="service-toggle-icon">{svc.icon}</span>
-                    <span className="service-toggle-title">{svc.title}</span>
-                    <button
-                      className={`toggle-btn ${serviceConfig[svc.id] ? 'on' : 'off'}`}
-                      onClick={() => handleServiceToggle(svc.id)}
-                    >
-                      {serviceConfig[svc.id] ? 'ON' : 'OFF'}
-                    </button>
-                  </div>
-                ))}
+                {(serviceOrder.length > 0 ? serviceOrder : SERVICE_LIST.map(s => s.id)).map((serviceId, index) => {
+                  const svc = SERVICE_LIST.find(s => s.id === serviceId);
+                  if (!svc) return null;
+                  return (
+                    <div key={svc.id} className="service-toggle-row">
+                      <div className="service-order-btns">
+                        <button
+                          className="order-btn"
+                          onClick={() => handleMoveUp(index)}
+                          disabled={index === 0}
+                        >▲</button>
+                        <button
+                          className="order-btn"
+                          onClick={() => handleMoveDown(index)}
+                          disabled={index === serviceOrder.length - 1}
+                        >▼</button>
+                      </div>
+                      <span className="service-toggle-icon">{svc.icon}</span>
+                      <span className="service-toggle-title">{svc.title}</span>
+                      <button
+                        className={`toggle-btn ${serviceConfig[svc.id] ? 'on' : 'off'}`}
+                        onClick={() => handleServiceToggle(svc.id)}
+                      >
+                        {serviceConfig[svc.id] ? 'ON' : 'OFF'}
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
