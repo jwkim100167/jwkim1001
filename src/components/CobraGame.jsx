@@ -243,23 +243,6 @@ export default function CobraGame() {
               autoFocus
             />
 
-            {/* ── 게임 옵션 ── */}
-            <div className="cobra-options-section">
-              <div className="cobra-options-title">게임 옵션</div>
-              <div className="cobra-option-row">
-                <div className="cobra-option-info">
-                  <div className="cobra-option-name">🃏 특수 카드 능력</div>
-                  <div className="cobra-option-desc">J 버리기: 내 카드 확인 · Q 버리기: 상대 카드 확인 · K 버리기: 카드 교환</div>
-                </div>
-                <button
-                  className={`cobra-toggle ${options.specialCards ? 'cobra-toggle-on' : ''}`}
-                  onClick={() => setOptions(o => ({ ...o, specialCards: !o.specialCards }))}
-                >
-                  {options.specialCards ? 'ON' : 'OFF'}
-                </button>
-              </div>
-            </div>
-
             {error && <div className="cobra-error">{error}</div>}
             <button className="cobra-btn cobra-btn-primary cobra-btn-full" onClick={handleCreateRoom} disabled={loading}>
               {loading ? '생성 중...' : '방 만들기'}
@@ -373,6 +356,25 @@ export default function CobraGame() {
               })}
             </div>
           </div>
+
+          {/* ── 게임 옵션 (방장만) ── */}
+          {isHost && (
+            <div className="cobra-options-section">
+              <div className="cobra-options-title">게임 옵션</div>
+              <div className="cobra-option-row">
+                <div className="cobra-option-info">
+                  <div className="cobra-option-name">🃏 특수 카드 능력</div>
+                  <div className="cobra-option-desc">J · Q · K 버릴 때 특수 능력 발동</div>
+                </div>
+                <button
+                  className={`cobra-toggle ${options.specialCards ? 'cobra-toggle-on' : ''}`}
+                  onClick={() => setOptions(o => ({ ...o, specialCards: !o.specialCards }))}
+                >
+                  {options.specialCards ? 'ON' : 'OFF'}
+                </button>
+              </div>
+            </div>
+          )}
 
           {error && <div className="cobra-error">{error}</div>}
 
