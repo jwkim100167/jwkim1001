@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import {
   getCardDisplayValue,
   getCardSuit,
-  getHandScore,
   cardsMatch,
 } from '../utils/cobraGameLogic';
 import {
@@ -647,7 +646,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
 
         {/* 내 손패 */}
         <div className="cgp-my-section">
-          <div className="cgp-pile-label">내 패 ({myHand.length}장) — {getHandScore(myHand)}점</div>
+          <div className="cgp-pile-label">내 패 ({myHand.length}장)</div>
           <div className="cgp-my-hand-row">
             {myHand.map((card, idx) => {
               // face_up(초기 공개) 또는 J/교체로 나만 아는 카드 → 내 화면에서 앞면
@@ -699,7 +698,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
                       handleHandCardClick(idx);
                     }
                   } : undefined}
-                  highlight={isMatchable || isSeonjeomTarget || isPeekOwn || isSwapStep1 || isSwapStep2Own}
+                  highlight={isMatchable || isSeonjeomTarget || isInterruptTarget || isPeekOwn || isSwapStep1 || isSwapStep2Own}
                   selected={isSwapSelected || (isAction && !isMatchable && !isSeonjeomTarget && !isSpecialActive)}
                   badge={badge}
                 />
