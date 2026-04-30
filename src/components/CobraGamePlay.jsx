@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import {
   getCardDisplayValue,
   getCardSuit,
+  getHandScore,
   cardsMatch,
 } from '../utils/cobraGameLogic';
 import {

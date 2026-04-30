@@ -212,9 +212,8 @@ export async function drawFromDeck(roomId, _playerId, gameState) {
   let discardPile = [...gameState.discard_pile];
 
   if (deck.length === 0) {
-    // 버린 패 중 맨 위 카드 제외하고 다시 섞기
     const top = discardPile.pop();
-    if (discardPile.length === 0) return; // 카드 없음 → 코브라 강제
+    if (discardPile.length === 0) return; // 수학적으로 발생 불가
     deck = discardPile.sort(() => Math.random() - 0.5);
     discardPile = top ? [top] : [];
   }
@@ -307,7 +306,6 @@ export async function resolveSpecialSwap(roomId, initiatorId, p1Id, p1Idx, p2Id,
     [p1Id]: gameState.hands[p1Id].map((c, i) => (i === p1Idx ? card2 : c)),
     [p2Id]: gameState.hands[p2Id].map((c, i) => (i === p2Idx ? card1 : c)),
   };
-  // face_up 상태는 카드와 함께 이동
   const newFaceUp = {
     ...gameState.face_up,
     [p1Id]: gameState.face_up[p1Id].map((v, i) => (i === p1Idx ? fu2 : v)),
@@ -370,7 +368,7 @@ export async function swapWithHand(roomId, playerId, handIndex, gameState) {
     seonjeom_window: true,
   };
 
-  if (newHand.length === 0) {
+  if (newHand.length === 0 && newState.phase !== 'cobra') {
     await triggerCobra(roomId, playerId, { ...newState, current_player_id: playerId });
   } else {
     await advanceTurn(roomId, playerId, newState);
@@ -401,7 +399,7 @@ export async function matchAndDiscard(roomId, playerId, handIndex, gameState) {
     seonjeom_window: true,
   };
 
-  if (newHand.length === 0) {
+  if (newHand.length === 0 && newState.phase !== 'cobra') {
     await triggerCobra(roomId, playerId, { ...newState, current_player_id: playerId });
   } else {
     await advanceTurn(roomId, playerId, newState);
@@ -441,7 +439,7 @@ export async function takeFromDiscard(roomId, playerId, handIndex, gameState) {
     seonjeom_window: false,
   };
 
-  if (newHand.length === 0) {
+  if (newHand.length === 0 && newState.phase !== 'cobra') {
     await triggerCobra(roomId, playerId, { ...newState, current_player_id: playerId });
   } else {
     await advanceTurn(roomId, playerId, newState);
@@ -477,7 +475,7 @@ export async function seonjeomInterrupt(roomId, playerId, handIndex, gameState) 
   };
 
   // 선점자의 차례를 사용한 것 → 선점자 기준으로 다음 플레이어에게 넘김
-  if (newHand.length === 0) {
+  if (newHand.length === 0 && newState.phase !== 'cobra') {
     await triggerCobra(roomId, playerId, { ...newState, current_player_id: playerId });
   } else {
     await advanceTurn(roomId, playerId, newState);
