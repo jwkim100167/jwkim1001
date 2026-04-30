@@ -85,5 +85,6 @@ export function initGame(players, options = {}) {
     options: { specialCards: options.specialCards ?? false },
     special_pending: null,      // { type: 'peek_own'|'peek_opp'|'swap', initiator_id }
     private_knowledge: {},      // { [peekerId]: { [targetPlayerId]: { [cardIdx]: true } } }
+    seonjeom_window: false,     // true면 비활성 플레이어도 즉시 선점 가능
   };
 }

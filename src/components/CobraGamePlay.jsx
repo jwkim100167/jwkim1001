@@ -17,6 +17,7 @@ import {
   resolveSpecialPeek,
   resolveSpecialSwap,
   skipSpecialAbility,
+  seonjeomInterrupt,
 } from '../services/supabaseCobra';
 import './CobraGamePlay.css';
 
@@ -221,7 +222,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
     ? gameState.discard_pile[gameState.discard_pile.length - 1]
     : null;
 
-  // 선점 가능한 내 손패 인덱스들 (face-up인 카드만)
+  // 내 차례 선점 (draw 단계에서 버린 패 top 매칭)
   const seonjeomMatchIndices = discardTop && isMyTurn && gameState.turn_phase === 'draw'
     ? myHand.reduce((acc, card, idx) => {
         const iKnowThisCard = myFaceUp[idx] || !!myJKnown[idx];
@@ -230,6 +231,16 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
       }, [])
     : [];
   const canSeonjeom = seonjeomMatchIndices.length > 0;
+
+  // 비활성 플레이어 선점 인터럽트 (seonjeom_window 열려있을 때)
+  const interruptMatchIndices = !isMyTurn && gameState.seonjeom_window && discardTop
+    ? myHand.reduce((acc, card, idx) => {
+        const iKnowThisCard = myFaceUp[idx] || !!myJKnown[idx];
+        if (iKnowThisCard && cardsMatch(card, discardTop)) acc.push(idx);
+        return acc;
+      }, [])
+    : [];
+  const canInterrupt = interruptMatchIndices.length > 0;
 
   // ── gameStateRef 최신 유지 ──
   useEffect(() => { gameStateRef.current = gameState; }, [gameState]);
@@ -511,7 +522,14 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
           )}
         </div>
 
-        {/* 선점 모드 안내 */}
+        {/* 비활성 플레이어 선점 인터럽트 배너 */}
+        {canInterrupt && (
+          <div className="cgp-seonjeom-hint cgp-interrupt-hint">
+            ⚡ 선점 가능! 아는 카드를 클릭하면 내 차례를 사용합니다
+          </div>
+        )}
+
+        {/* 내 차례 선점 모드 안내 */}
         {seonjeomMode && (
           <div className="cgp-seonjeom-hint">
             선점할 손패 카드를 선택하세요
@@ -650,6 +668,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
               // face-up 카드만 매칭 표시
               const isMatchable = isAction && faceUp && cardsMatch(card, drawnCard);
               const isSeonjeomTarget = seonjeomMode && seonjeomMatchIndices.includes(idx);
+              const isInterruptTarget = canInterrupt && interruptMatchIndices.includes(idx);
 
               let badge = null;
               if (isPeekOwn) badge = { type: 'seonjeom', text: '확인' };
@@ -658,8 +677,9 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
               else if (isMatchable) badge = { type: 'match', text: '매칭!' };
               else if (isAction && !isMatchable) badge = { type: 'swap', text: '교체' };
               else if (isSeonjeomTarget) badge = { type: 'seonjeom', text: '선점!' };
+              else if (isInterruptTarget) badge = { type: 'seonjeom', text: '선점!' };
 
-              const isClickable = isAction || seonjeomMode || isPeekOwn || isSwapStep1 || isSwapStep2Own;
+              const isClickable = isAction || seonjeomMode || isPeekOwn || isSwapStep1 || isSwapStep2Own || isInterruptTarget;
 
               return (
                 <GameCard
@@ -673,6 +693,8 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
                     } else if (isSwapStep2Own) {
                       act(() => resolveSpecialSwap(roomId, myId, swapSelection.playerId, swapSelection.cardIdx, myId, idx, gameState));
                       setSwapSelection(null);
+                    } else if (isInterruptTarget) {
+                      act(() => seonjeomInterrupt(roomId, myId, idx, gameState));
                     } else {
                       handleHandCardClick(idx);
                     }

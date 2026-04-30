@@ -226,6 +226,7 @@ export async function drawFromDeck(roomId, _playerId, gameState) {
     discard_pile: discardPile,
     drawn_card: drawnCard,
     turn_phase: 'action',
+    seonjeom_window: false, // 덱에서 뽑으면 선점 창 닫힘
   });
 }
 
@@ -260,7 +261,8 @@ export async function discardDrawn(roomId, playerId, gameState) {
     }
   }
 
-  const newState = { ...gameState, discard_pile: newDiscard, drawn_card: null, turn_phase: 'draw' };
+  // 카드 버림 → 다른 플레이어 즉시 선점 가능 창 열기
+  const newState = { ...gameState, discard_pile: newDiscard, drawn_card: null, turn_phase: 'draw', seonjeom_window: true };
   await advanceTurn(roomId, playerId, newState);
 }
 
@@ -345,7 +347,7 @@ export async function swapWithHand(roomId, playerId, handIndex, gameState) {
   const newHand = [...gameState.hands[playerId]];
   newHand[handIndex] = drawnCard;
 
-  // 교체 후 해당 위치는 새 카드 → 기존 face_up/knowledge 클리어
+  // 교체 시 손패 카드 버림 → 선점 창 열기
   const { newFaceUp, newPK: clearedPK } = clearPositionKnowledge(
     gameState.face_up, gameState.private_knowledge || {}, playerId, handIndex
   );
@@ -365,6 +367,7 @@ export async function swapWithHand(roomId, playerId, handIndex, gameState) {
     discard_pile: [...gameState.discard_pile, handCard],
     drawn_card: null,
     turn_phase: 'draw',
+    seonjeom_window: true,
   };
 
   if (newHand.length === 0) {
@@ -395,6 +398,7 @@ export async function matchAndDiscard(roomId, playerId, handIndex, gameState) {
     discard_pile: [...gameState.discard_pile, drawnCard, handCard],
     drawn_card: null,
     turn_phase: 'draw',
+    seonjeom_window: true,
   };
 
   if (newHand.length === 0) {
@@ -434,8 +438,45 @@ export async function takeFromDiscard(roomId, playerId, handIndex, gameState) {
     discard_pile: newDiscardPile,
     drawn_card: null,
     turn_phase: 'draw',
+    seonjeom_window: false,
   };
 
+  if (newHand.length === 0) {
+    await triggerCobra(roomId, playerId, { ...newState, current_player_id: playerId });
+  } else {
+    await advanceTurn(roomId, playerId, newState);
+  }
+}
+
+/**
+ * 비활성 플레이어 선점 인터럽트
+ * seonjeom_window가 열려있을 때 내 아는 카드와 버린 패 top이 같으면 즉시 선점.
+ * 선점 = 내 차례를 사용 → 다음은 내 다음 플레이어.
+ */
+export async function seonjeomInterrupt(roomId, playerId, handIndex, gameState) {
+  const discardPile = gameState.discard_pile || [];
+  if (!gameState.seonjeom_window || discardPile.length === 0) throw new Error('선점 기회가 없습니다.');
+
+  const discardTop = discardPile[discardPile.length - 1];
+  const handCard = gameState.hands[playerId][handIndex];
+  if (!cardsMatch(discardTop, handCard)) throw new Error('같은 숫자가 아닙니다.');
+
+  const newHand = gameState.hands[playerId].filter((_, i) => i !== handIndex);
+  const { newFaceUp, newPK } = removePositionKnowledge(
+    gameState.face_up, gameState.private_knowledge || {}, playerId, handIndex
+  );
+
+  const newState = {
+    ...gameState,
+    hands: { ...gameState.hands, [playerId]: newHand },
+    face_up: newFaceUp,
+    private_knowledge: newPK,
+    discard_pile: discardPile.slice(0, -1),
+    seonjeom_window: false,
+    turn_phase: 'draw',
+  };
+
+  // 선점자의 차례를 사용한 것 → 선점자 기준으로 다음 플레이어에게 넘김
   if (newHand.length === 0) {
     await triggerCobra(roomId, playerId, { ...newState, current_player_id: playerId });
   } else {
