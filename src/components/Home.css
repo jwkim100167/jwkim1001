@@ -178,6 +178,11 @@
   box-shadow: 0 20px 40px rgba(233, 69, 96, 0.15);
 }
 
+.mandalart-card:hover {
+  border-color: rgba(74, 111, 220, 0.5);
+  box-shadow: 0 20px 40px rgba(74, 111, 220, 0.15);
+}
+
 .kbo-card .card-content h2 {
   font-size: 1.4rem;
 }

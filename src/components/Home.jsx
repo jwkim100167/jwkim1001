@@ -14,6 +14,7 @@ const SERVICE_LIST = [
   { id: 'whattoeat-vip', title: '오늘 뭐 먹지?\n[멤버십]',  icon: '🍽️', path: '/momok-best',         cardClass: 'momokbest-card',  desc: '' },
   { id: 'taste',         title: '취향 알기',                icon: '💫', path: '/taste-match',        cardClass: 'taste-card',      desc: '' },
   { id: 'cobra',         title: '코브라 게임',              icon: '🐍', path: '/cobra',              cardClass: 'cobra-card',      desc: '방 만들고 친구와 함께!' },
+  { id: 'mandalart',     title: '만다라트\n[멤버십]',        icon: '🎯', path: '/mandalart',          cardClass: 'mandalart-card',  desc: '9×9 목표 관리 플래너' },
 ];
 
 const Home = () => {
@@ -29,7 +30,7 @@ const Home = () => {
   }, []);
 
   const isEnabled = (id) => {
-    if (!serviceConfig.enabledMap) return ['kbo-predict', 'kbo-result', 'world-cup-predict', 'cobra'].includes(id); // 로딩 전 기본값
+    if (!serviceConfig.enabledMap) return ['kbo-predict', 'kbo-result', 'world-cup-predict', 'cobra', 'mandalart'].includes(id); // 로딩 전 기본값
     return serviceConfig.enabledMap[id] ?? false;
   };
 

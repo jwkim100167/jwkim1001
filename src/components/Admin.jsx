@@ -16,6 +16,7 @@ const SERVICE_LIST = [
   { id: 'whattoeat-vip', title: '오늘 뭐 먹지? [멤버십]',   icon: '🍽️' },
   { id: 'taste',         title: '취향 알기',                icon: '💫' },
   { id: 'cobra',         title: '코브라 게임',              icon: '🐍' },
+  { id: 'mandalart',     title: '만다라트',                 icon: '🎯' },
 ];
 
 export default function Admin() {
