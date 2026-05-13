@@ -1,5 +1,5 @@
 import { supabase } from '../supabaseClient';
-import { notifyLogin } from './telegramNotify';
+import { notifyLogin, notifyNewUser } from './telegramNotify';
 
 /**
  * 비밀번호 강도 검사: 3종 8자 이상 또는 2종 10자 이상
@@ -282,6 +282,12 @@ export async function register(loginId, password, userName) {
     }
 
     const newUser = data[0];
+
+    const { count } = await supabase
+      .from('userTable')
+      .select('*', { count: 'exact', head: true });
+    notifyNewUser(newUser.login_id, count);
+
     return {
       success: true,
       userId: newUser.id,
