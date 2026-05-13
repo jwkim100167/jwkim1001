@@ -79,24 +79,41 @@ async function main() {
       .join('\n');
   }
 
-  // 5. 전월 신규 가입자 수
+  // 5. 서비스별 클릭 수 TOP 3
+  const { data: serviceData, error: serviceError } = await supabase
+    .from('serviceConfigTable')
+    .select('service_id, menu_click_count')
+    .order('menu_click_count', { ascending: false })
+    .limit(3);
+
+  let topServicesText = '없음';
+  if (!serviceError && serviceData?.length > 0) {
+    topServicesText = serviceData
+      .map((s, i) => `  ${i + 1}위. ${s.service_id} (${s.menu_click_count ?? 0}회)`)
+      .join('\n');
+  }
+
+  // 6. 전월 신규 가입자 수
   const { count: newUserCount } = await supabase
     .from('userTable')
     .select('*', { count: 'exact', head: true })
     .gte('created_at', start)
     .lt('created_at', end);
 
-  // 6. 현재 총 회원 수
+  // 7. 현재 총 회원 수
   const { count: totalUserCount } = await supabase
     .from('userTable')
     .select('*', { count: 'exact', head: true });
 
-  // 7. 메시지 조합
+  // 8. 메시지 조합
   const message = [
     `📊 ${label} 활동 리포트`,
     ``,
     `👤 최다 로그인 회원`,
     topUsersText,
+    ``,
+    `🎮 최다 클릭 서비스`,
+    topServicesText,
     ``,
     `📈 총 로그인 횟수: ${totalLogins}회`,
     `🆕 신규 가입자: ${newUserCount ?? 0}명`,
