@@ -1,0 +1,37 @@
+name: Monthly Activity Report
+
+on:
+  schedule:
+    # 매월 1일 09:00 KST (00:00 UTC)
+    - cron: '0 0 1 * *'
+  workflow_dispatch: # 수동 실행 가능
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Send monthly report
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: node scripts/monthly-report.js
+
+      - name: Telegram 실패 알림
+        if: failure()
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d '{"chat_id":"${{ secrets.TELEGRAM_CHAT_ID }}","text":"❌ 월간 리포트 생성 실패 — GitHub Actions 로그를 확인해주세요."}'
