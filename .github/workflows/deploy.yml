@@ -34,6 +34,8 @@ jobs:
         env:
           VITE_SUPABASE_URL: https://uustelhozdrsvbgqkmxq.supabase.co
           VITE_SUPABASE_ANON_KEY: sb_publishable_MM8rZx_T15sXAGHJrUG5Dg_jIby4HjO
+          VITE_TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          VITE_TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: npm run build
 
       - name: Setup Pages
