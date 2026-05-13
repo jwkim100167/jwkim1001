@@ -1,4 +1,5 @@
 import { supabase } from '../supabaseClient';
+import { notifyLogin } from './telegramNotify';
 
 /**
  * 비밀번호 강도 검사: 3종 8자 이상 또는 2종 10자 이상
@@ -126,6 +127,7 @@ export async function login(loginId, password) {
       }
     }
 
+    notifyLogin(user.loginId);
     return { success: true, user };
   } catch (err) {
     console.error('로그인 예외:', err);
@@ -204,6 +206,7 @@ export async function verifyAndActivate(userId, loginId, createdAt, questionId, 
       } catch {}
     }
 
+    notifyLogin(user.loginId);
     return { success: true, user };
   } catch (err) {
     console.error('인증 예외:', err);
