@@ -4,7 +4,12 @@ on:
   schedule:
     # 매월 1일 09:00 KST (00:00 UTC)
     - cron: '0 0 1 * *'
-  workflow_dispatch: # 수동 실행 가능
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: '테스트 실행 (클릭 카운트 초기화 안 함)'
+        type: boolean
+        default: true
 
 jobs:
   report:
@@ -27,6 +32,7 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
         run: node scripts/monthly-report.js
 
       - name: Telegram 실패 알림

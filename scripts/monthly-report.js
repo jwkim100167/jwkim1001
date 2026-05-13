@@ -124,11 +124,16 @@ async function main() {
   await sendTelegram(message);
   console.log('✅ 리포트 발송 완료');
 
-  // 9. 메뉴 클릭 카운트 초기화
+  // 9. 메뉴 클릭 카운트 초기화 (dry_run 시 건너뜀)
+  if (process.env.DRY_RUN === 'true') {
+    console.log('🔍 DRY RUN — 클릭 카운트 초기화 건너뜀');
+    return;
+  }
+
   const { error: resetError } = await supabase
     .from('serviceConfigTable')
     .update({ menu_click_count: 0 })
-    .neq('service_id', '');  // 전체 행 대상
+    .neq('service_id', '');
 
   if (resetError) {
     console.error('❌ 클릭 카운트 초기화 실패:', resetError.message);
