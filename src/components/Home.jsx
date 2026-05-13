@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getServiceConfig } from '../services/supabaseAdmin';
+import { getServiceConfig, incrementMenuClickCount } from '../services/supabaseAdmin';
 import './Home.css';
 
 const SERVICE_LIST = [
@@ -89,7 +89,7 @@ const Home = () => {
         <div className="navigation-cards">
           {orderedServiceList.map((svc) =>
             isEnabled(svc.id) ? (
-              <Link key={svc.id} to={svc.path} className={`nav-card ${svc.cardClass}`}>
+              <Link key={svc.id} to={svc.path} className={`nav-card ${svc.cardClass}`} onClick={() => incrementMenuClickCount(svc.id)}>
                 <div className="card-icon">{svc.icon}</div>
                 <div className="card-content">
                   <h2>{svc.title.split('\n').map((t, i) => <React.Fragment key={i}>{t}{i === 0 && svc.title.includes('\n') && <br/>}</React.Fragment>)}</h2>

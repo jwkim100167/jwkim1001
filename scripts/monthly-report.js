@@ -123,6 +123,18 @@ async function main() {
   console.log(message);
   await sendTelegram(message);
   console.log('✅ 리포트 발송 완료');
+
+  // 9. 메뉴 클릭 카운트 초기화
+  const { error: resetError } = await supabase
+    .from('serviceConfigTable')
+    .update({ menu_click_count: 0 })
+    .neq('service_id', '');  // 전체 행 대상
+
+  if (resetError) {
+    console.error('❌ 클릭 카운트 초기화 실패:', resetError.message);
+  } else {
+    console.log('🔄 메뉴 클릭 카운트 초기화 완료');
+  }
 }
 
 main().catch((err) => {

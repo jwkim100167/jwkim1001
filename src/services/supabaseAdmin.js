@@ -47,6 +47,18 @@ export async function updateServiceOrder(orderedIds) {
 }
 
 /**
+ * 메뉴 클릭 카운트 1 증가
+ * @param {string} serviceId
+ * @returns {Promise<void>}
+ */
+export async function incrementMenuClickCount(serviceId) {
+  const { error } = await supabase.rpc('increment_menu_click', { p_service_id: serviceId });
+  if (error) {
+    console.error('❌ 클릭 카운트 업데이트 실패:', error);
+  }
+}
+
+/**
  * 특정 서비스 활성화 상태 변경
  * @param {string} serviceId
  * @param {boolean} enabled
