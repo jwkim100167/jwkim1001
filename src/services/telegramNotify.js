@@ -1,8 +1,11 @@
 const BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
 const CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID;
 
+const EXCLUDED_IDS = ['admin', 'test'];
+
 export async function notifyLogin(loginId) {
   if (!BOT_TOKEN || !CHAT_ID) return;
+  if (EXCLUDED_IDS.includes(loginId)) return;
 
   try {
     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
