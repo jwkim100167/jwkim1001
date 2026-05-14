@@ -19,6 +19,11 @@ export const config = {
     apiKey: process.env.WEATHER_API_KEY ?? "",
     city: process.env.WEATHER_CITY ?? "Seoul",
   },
+  notion: {
+    apiToken: process.env.NOTION_API_TOKEN ?? "",
+    databaseId: process.env.NOTION_DATABASE_ID ?? "2a185354-810d-8047-a4c3-000bb4d65e31",
+    dateProperty: process.env.NOTION_DATE_PROPERTY ?? "날짜",
+  },
   app: {
     nodeEnv: process.env.NODE_ENV ?? "development",
     logLevel: process.env.LOG_LEVEL ?? "info",
