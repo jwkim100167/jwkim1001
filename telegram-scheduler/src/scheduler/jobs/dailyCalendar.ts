@@ -29,8 +29,17 @@ function getDateLabel(offsetDays = 0): string {
   });
 }
 
-function isFriday(): boolean {
-  return new Date().toLocaleDateString("en-US", { timeZone: "Asia/Seoul", weekday: "long" }) === "Friday";
+// 0=일, 1=월, 2=화, 3=수, 4=목, 5=금, 6=토
+function getKstDay(): number {
+  return new Date(Date.now() + 9 * 60 * 60 * 1000).getUTCDay();
+}
+
+// 오늘 요일에 따라 내일부터 몇 일치를 보여줄지 결정
+function getOffsets(): number[] {
+  const day = getKstDay();
+  if (day === 4) return [1, 2, 3]; // 목 → 금+토+일
+  if (day === 5) return [1, 2];    // 금 → 토+일
+  return [1];                       // 그 외 → 내일 하루
 }
 
 async function fetchEventsByDate(notion: Client, dateStr: string): Promise<CalendarEvent[]> {
@@ -74,7 +83,7 @@ function buildDaySection(label: string, events: CalendarEvent[]): string {
 
 export const dailyCalendarJob: ScheduleJob = {
   name: "daily-calendar",
-  cronExpression: "0 8 * * 1-5", // 주중 08:00
+  cronExpression: "31 22 * * 0,1,2,3,4,5", // 토요일 제외 매일 22:31
   timezone: "Asia/Seoul",
   enabled: true,
   execute: async () => {
@@ -84,11 +93,11 @@ export const dailyCalendarJob: ScheduleJob = {
     }
 
     const notion = new Client({ auth: config.notion.apiToken });
-    const friday = isFriday();
-
-    const dates = friday
-      ? [0, 1, 2].map((offset) => ({ offset, dateStr: getKstDateString(offset), label: getDateLabel(offset) }))
-      : [{ offset: 0, dateStr: getKstDateString(0), label: getDateLabel(0) }];
+    const offsets = getOffsets();
+    const dates = offsets.map((offset) => ({
+      dateStr: getKstDateString(offset),
+      label: getDateLabel(offset),
+    }));
 
     const sections = await Promise.all(
       dates.map(async ({ label, dateStr }) => {
@@ -97,8 +106,7 @@ export const dailyCalendarJob: ScheduleJob = {
       })
     );
 
-    const totalCount = sections.length;
-    logger.info(`Daily calendar: ${friday ? "금요일 모드 (3일치)" : "일반 모드"}, ${totalCount}개 섹션`);
+    logger.info(`Daily calendar: ${dates.length}일치 발송`);
 
     const message = sections.join("\n\n");
     await sendMessage(config.telegram.targetChatId, message);
