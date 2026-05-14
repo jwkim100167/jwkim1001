@@ -10,71 +10,50 @@ interface CalendarEvent {
   isAllDay: boolean;
 }
 
-function getTodayRange(): { start: string; end: string } {
-  const now = new Date();
+function getKstDateString(offsetDays = 0): string {
   const kstOffset = 9 * 60 * 60 * 1000;
-  const kstNow = new Date(now.getTime() + kstOffset);
-
-  const yyyy = kstNow.getUTCFullYear();
-  const mm = String(kstNow.getUTCMonth() + 1).padStart(2, "0");
-  const dd = String(kstNow.getUTCDate()).padStart(2, "0");
-
-  return {
-    start: `${yyyy}-${mm}-${dd}`,
-    end: `${yyyy}-${mm}-${dd}`,
-  };
+  const d = new Date(Date.now() + kstOffset + offsetDays * 86400000);
+  const yyyy = d.getUTCFullYear();
+  const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(d.getUTCDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
 }
 
-function getTodayLabel(): string {
-  return new Date().toLocaleDateString("ko-KR", {
+function getDateLabel(offsetDays = 0): string {
+  const d = new Date(Date.now() + offsetDays * 86400000);
+  return d.toLocaleDateString("ko-KR", {
     timeZone: "Asia/Seoul",
-    year: "numeric",
     month: "long",
     day: "numeric",
     weekday: "long",
   });
 }
 
-async function fetchTodayEvents(): Promise<CalendarEvent[]> {
-  const notion = new Client({ auth: config.notion.apiToken });
-  const { start, end } = getTodayRange();
+function isFriday(): boolean {
+  return new Date().toLocaleDateString("en-US", { timeZone: "Asia/Seoul", weekday: "long" }) === "Friday";
+}
 
+async function fetchEventsByDate(notion: Client, dateStr: string): Promise<CalendarEvent[]> {
   const response = await notion.dataSources.query({
     data_source_id: config.notion.databaseId,
     filter: {
       property: config.notion.dateProperty,
-      date: {
-        equals: start,
-      },
+      date: { equals: dateStr },
     },
-    sorts: [
-      {
-        property: config.notion.dateProperty,
-        direction: "ascending",
-      },
-    ],
+    sorts: [{ property: config.notion.dateProperty, direction: "ascending" }],
   });
 
   return response.results.map((page: any) => {
-    // 제목 추출
-    const titleProp = Object.values(page.properties).find(
-      (p: any) => p.type === "title"
-    ) as any;
-    const title =
-      titleProp?.title?.map((t: any) => t.plain_text).join("") ?? "(제목 없음)";
+    const titleProp = Object.values(page.properties).find((p: any) => p.type === "title") as any;
+    const title = titleProp?.title?.map((t: any) => t.plain_text).join("") ?? "(제목 없음)";
 
-    // 날짜 추출
     const dateProp = page.properties[config.notion.dateProperty] as any;
-    const dateValue = dateProp?.date;
-    const startDateTime: string | null = dateValue?.start ?? null;
-    const isAllDay = startDateTime
-      ? !startDateTime.includes("T")
-      : true;
+    const startDateTime: string | null = dateProp?.date?.start ?? null;
+    const isAllDay = startDateTime ? !startDateTime.includes("T") : true;
 
     let startTime: string | null = null;
     if (startDateTime && !isAllDay) {
-      const d = new Date(startDateTime);
-      startTime = d.toLocaleTimeString("ko-KR", {
+      startTime = new Date(startDateTime).toLocaleTimeString("ko-KR", {
         timeZone: "Asia/Seoul",
         hour: "2-digit",
         minute: "2-digit",
@@ -86,20 +65,11 @@ async function fetchTodayEvents(): Promise<CalendarEvent[]> {
   });
 }
 
-function buildMessage(events: CalendarEvent[]): string {
-  const dateLabel = getTodayLabel();
-  const header = `📅 오늘의 일정 - ${dateLabel}`;
-
-  if (events.length === 0) {
-    return `${header}\n\n일정이 없습니다.`;
-  }
-
-  const lines = events.map((e) => {
-    const time = e.isAllDay || !e.startTime ? "종일" : e.startTime;
-    return `• ${time}  ${e.title}`;
-  });
-
-  return [header, "", ...lines].join("\n");
+function buildDaySection(label: string, events: CalendarEvent[]): string {
+  const lines = events.length === 0
+    ? ["  일정이 없습니다."]
+    : events.map((e) => `  • ${e.isAllDay || !e.startTime ? "종일" : e.startTime}  ${e.title}`);
+  return [`📅 ${label}`, ...lines].join("\n");
 }
 
 export const dailyCalendarJob: ScheduleJob = {
@@ -113,9 +83,24 @@ export const dailyCalendarJob: ScheduleJob = {
       return;
     }
 
-    const events = await fetchTodayEvents();
-    const message = buildMessage(events);
-    logger.info(`Daily calendar: ${events.length}개 일정`);
+    const notion = new Client({ auth: config.notion.apiToken });
+    const friday = isFriday();
+
+    const dates = friday
+      ? [0, 1, 2].map((offset) => ({ offset, dateStr: getKstDateString(offset), label: getDateLabel(offset) }))
+      : [{ offset: 0, dateStr: getKstDateString(0), label: getDateLabel(0) }];
+
+    const sections = await Promise.all(
+      dates.map(async ({ label, dateStr }) => {
+        const events = await fetchEventsByDate(notion, dateStr);
+        return buildDaySection(label, events);
+      })
+    );
+
+    const totalCount = sections.length;
+    logger.info(`Daily calendar: ${friday ? "금요일 모드 (3일치)" : "일반 모드"}, ${totalCount}개 섹션`);
+
+    const message = sections.join("\n\n");
     await sendMessage(config.telegram.targetChatId, message);
   },
 };
