@@ -15,6 +15,7 @@ import {
 import CobraGamePlay, { RulesModal } from './CobraGamePlay';
 import './CobraGame.css';
 import './CobraGamePlay.css';
+import AdBanner from './AdBanner';
 
 const MAX_PLAYERS = 5;
 const PLAYER_COLORS = ['#e94560', '#f5a623', '#4ecdc4', '#a29bfe', '#55efc4'];
@@ -36,6 +37,9 @@ export default function CobraGame() {
   const [copied, setCopied] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const channelRef = useRef(null);
+  const [gameCount, setGameCount] = useState(0); // 완료된 게임 수
+  const [adCountdown, setAdCountdown] = useState(0); // 광고 카운트다운 (방장용)
+  const prevGameStateRef = useRef(null);
 
   // 방에 입장하면 데이터 로드 + 실시간 구독
   useEffect(() => {
@@ -73,6 +77,26 @@ export default function CobraGame() {
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [currentPlayer]);
+
+  // 게임이 리셋될 때(다시 하기) gameCount 증가 및 방장 카운트다운 시작
+  useEffect(() => {
+    const currentGameState = roomData?.game_state;
+    if (prevGameStateRef.current !== null && currentGameState === null) {
+      setGameCount(c => c + 1);
+    }
+    prevGameStateRef.current = currentGameState;
+  }, [roomData?.game_state]);
+
+  useEffect(() => {
+    if (gameCount === 0) return;
+    setAdCountdown(5);
+  }, [gameCount]);
+
+  useEffect(() => {
+    if (adCountdown <= 0) return;
+    const timer = setTimeout(() => setAdCountdown(c => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [adCountdown]);
 
   const handleCreateRoom = async () => {
     if (!isAuthenticated) { setShowLoginPrompt(true); return; }
@@ -378,21 +402,27 @@ export default function CobraGame() {
 
           {error && <div className="cobra-error">{error}</div>}
 
+          {gameCount > 0 && (
+            <div className="cobra-ad-section">
+              <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_COBRA} className="ad-cobra" />
+            </div>
+          )}
+
           <div className="cobra-waiting-actions">
             {isHost && (
               <button
                 className="cobra-btn cobra-btn-start"
                 onClick={handleStartGame}
-                disabled={players.length < 2 || loading}
-                title={players.length < 2 ? '2명 이상이어야 시작할 수 있습니다' : ''}
+                disabled={players.length < 2 || loading || adCountdown > 0}
+                title={players.length < 2 ? '2명 이상이어야 시작할 수 있습니다' : adCountdown > 0 ? `${adCountdown}초 후 시작 가능` : ''}
               >
-                {loading ? '시작 중...' : players.length < 2 ? '2명 이상 필요' : '게임 시작 🐍'}
+                {loading ? '시작 중...' : players.length < 2 ? '2명 이상 필요' : adCountdown > 0 ? `게임 시작 (${adCountdown}초)` : '게임 시작 🐍'}
               </button>
             )}
             {!isHost && (
               <div className="cobra-waiting-msg">
                 <span className="cobra-spinner" />
-                방장이 게임을 시작할 때까지 기다려주세요
+                {gameCount > 0 ? '게임 시작 대기중입니다' : '방장이 게임을 시작할 때까지 기다려주세요'}
               </div>
             )}
             <button className="cobra-btn cobra-btn-leave" onClick={handleLeave}>
