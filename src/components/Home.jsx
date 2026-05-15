@@ -131,6 +131,9 @@ const Home = () => {
           </div>
 
           <p className="creator">made by jwkim1001</p>
+          <p style={{ marginTop: '8px', fontSize: '0.75rem' }}>
+            <Link to="/privacy" style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'none' }}>개인정보처리방침</Link>
+          </p>
         </div>
       </div>
     </div>
