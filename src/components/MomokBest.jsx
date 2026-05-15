@@ -2,8 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../supabaseClient';
-import { getUserLife, decreaseUserLife } from '../services/authService';
+import { getUserLife, decreaseUserLife, increaseUserLife } from '../services/authService';
 import './MomokBest.css';
+import AdBanner from './AdBanner';
 
 
 export default function MomokBest() {
@@ -16,6 +17,9 @@ export default function MomokBest() {
   const [loading, setLoading] = useState(true);
   const [noLifeMsg, setNoLifeMsg] = useState(false);
   const [loginRequiredMsg, setLoginRequiredMsg] = useState(false);
+  const [showAdModal, setShowAdModal] = useState(false);
+  const [adCountdown, setAdCountdown] = useState(0);
+  const [adRewarded, setAdRewarded] = useState(false);
 
   const isExempt = user?.loginId === 'admin' || user?.loginId === 'test';
 
@@ -71,6 +75,25 @@ export default function MomokBest() {
     loadData();
   }, [loadData]);
 
+  useEffect(() => {
+    if (!showAdModal) return;
+    setAdCountdown(5);
+    setAdRewarded(false);
+  }, [showAdModal]);
+
+  useEffect(() => {
+    if (adCountdown <= 0) return;
+    const timer = setTimeout(() => setAdCountdown(c => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [adCountdown]);
+
+  const handleAdReward = async () => {
+    const next = await increaseUserLife(user.id, 5);
+    setUserLife(next);
+    setAdRewarded(true);
+    setTimeout(() => setShowAdModal(false), 1000);
+  };
+
   const handleCardClick = async (card) => {
     if (!isAuthenticated) {
       setLoginRequiredMsg(true);
@@ -78,8 +101,7 @@ export default function MomokBest() {
       return;
     }
     if (!isExempt && userLife <= 0) {
-      setNoLifeMsg(true);
-      setTimeout(() => setNoLifeMsg(false), 2500);
+      setShowAdModal(true);
       return;
     }
     if (!isExempt) {
@@ -125,6 +147,28 @@ export default function MomokBest() {
 
       {noLifeMsg && (
         <div className="mb-nolife-toast">❌ 라이프가 없습니다. 내일 다시 접속하면 충전됩니다!</div>
+      )}
+
+      {showAdModal && (
+        <div className="mb-modal-overlay" onClick={() => setShowAdModal(false)}>
+          <div className="mb-modal mb-ad-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="mb-modal-close" onClick={() => setShowAdModal(false)}>✕</button>
+            <div className="mb-ad-modal-title">❤️ 라이프 충전</div>
+            <div className="mb-ad-modal-desc">광고를 시청하면 라이프 <strong>+5</strong>를 드립니다!</div>
+            <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_MOMOK} className="ad-momok" />
+            {adRewarded ? (
+              <div className="mb-ad-reward-done">✅ 라이프 +5 지급 완료!</div>
+            ) : (
+              <button
+                className="mb-ad-reward-btn"
+                onClick={handleAdReward}
+                disabled={adCountdown > 0}
+              >
+                {adCountdown > 0 ? `라이프 받기 (${adCountdown}초)` : '❤️ 라이프 +5 받기'}
+              </button>
+            )}
+          </div>
+        </div>
       )}
 
       {/* 카드 그리드 */}

@@ -331,3 +331,13 @@ export async function decreaseUserLife(userId) {
   await supabase.from('userTable').update({ userLife: next }).eq('id', userId);
   return next;
 }
+
+/**
+ * userLife +amount 추가
+ */
+export async function increaseUserLife(userId, amount = 5) {
+  const current = await getUserLife(userId);
+  const next = current + amount;
+  await supabase.from('userTable').update({ userLife: next }).eq('id', userId);
+  return next;
+}

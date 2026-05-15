@@ -303,6 +303,49 @@
     padding: 14px;
   }
 }
+/* 광고 모달 */
+.mb-ad-modal {
+  max-width: 380px;
+  text-align: center;
+}
+.mb-ad-modal-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.mb-ad-modal-desc {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 16px;
+}
+.ad-momok {
+  margin: 16px 0;
+}
+.mb-ad-reward-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #e94560, #c0392b);
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.mb-ad-reward-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.mb-ad-reward-done {
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(78, 205, 196, 0.2);
+  color: #4ecdc4;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
 @media (max-width: 600px) {
   .mb-grid {
     grid-template-columns: repeat(4, 1fr);
