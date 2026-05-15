@@ -290,6 +290,40 @@
 }
 
 /* ========================
+   SEONJEOM POPUP (선점 팝업)
+   ======================== */
+.cgp-seonjeom-popup {
+  position: fixed;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(20, 18, 38, 0.92);
+  border: 1.5px solid rgba(245, 166, 35, 0.7);
+  border-radius: 12px;
+  padding: 12px 22px;
+  color: #f5a623;
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: 0 4px 24px rgba(245, 166, 35, 0.25);
+  animation: seonjeomPopIn 0.25s ease-out;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.cgp-seonjeom-popup-icon {
+  font-size: 1.2rem;
+}
+
+@keyframes seonjeomPopIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-10px) scale(0.9); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0)      scale(1); }
+}
+
+/* ========================
    SEONJEOM (선점)
    ======================== */
 .cgp-seonjeom-hint {

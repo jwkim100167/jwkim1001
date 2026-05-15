@@ -437,6 +437,7 @@ export async function takeFromDiscard(roomId, playerId, handIndex, gameState) {
     drawn_card: null,
     turn_phase: 'draw',
     seonjeom_window: false,
+    seonjeom_event: { player_id: playerId, at: Date.now() },
   };
 
   if (newHand.length === 0 && newState.phase !== 'cobra') {
@@ -472,6 +473,7 @@ export async function seonjeomInterrupt(roomId, playerId, handIndex, gameState) 
     discard_pile: discardPile.slice(0, -1),
     seonjeom_window: false,
     turn_phase: 'draw',
+    seonjeom_event: { player_id: playerId, at: Date.now() },
   };
 
   // 선점자의 차례를 사용한 것 → 선점자 기준으로 다음 플레이어에게 넘김

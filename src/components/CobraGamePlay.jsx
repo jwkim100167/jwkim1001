@@ -25,6 +25,27 @@ const SUIT_SYMBOLS = { H: '♥', D: '♦', C: '♣', S: '♠' };
 const PLAYER_COLORS = ['#e94560', '#f5a623', '#4ecdc4', '#a29bfe', '#55efc4'];
 const TURN_SECONDS = 20;
 
+function playSeonjeomSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const gain = ctx.createGain();
+    gain.connect(ctx.destination);
+
+    // 짧게 두 번 울리는 "전기 찍!" 느낌
+    [0, 0.13].forEach((startOffset) => {
+      const osc = ctx.createOscillator();
+      osc.connect(gain);
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(520, ctx.currentTime + startOffset);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + startOffset + 0.08);
+      gain.gain.setValueAtTime(0.18, ctx.currentTime + startOffset);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + startOffset + 0.12);
+      osc.start(ctx.currentTime + startOffset);
+      osc.stop(ctx.currentTime + startOffset + 0.12);
+    });
+  } catch { /* 오디오 재생 실패 무시 */ }
+}
+
 // ─── 카드 컴포넌트 ────────────────────────────────────
 function GameCard({ card, faceUp, onClick, highlight, selected, small, animReveal, badge, knownDot }) {
   if (!card) return null;
@@ -196,6 +217,8 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
   // 종료 애니메이션
   const [revealedCount, setRevealedCount] = useState(0);
   const [showWinner, setShowWinner] = useState(false);
+  // 선점 팝업
+  const [seonjeomPopup, setSeonjeomPopup] = useState(null); // { playerName, isMe } | null
 
   const timerRef = useRef(null);
   const gameStateRef = useRef(gameState);
@@ -244,6 +267,18 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
 
   // ── gameStateRef 최신 유지 ──
   useEffect(() => { gameStateRef.current = gameState; }, [gameState]);
+
+  // ── 선점 이벤트 팝업 + 소리 ──
+  useEffect(() => {
+    const evt = gameState.seonjeom_event;
+    if (!evt) return;
+    const playerName = playerMap[evt.player_id]?.player_name ?? '누군가';
+    const isMe = evt.player_id === myId;
+    setSeonjeomPopup({ playerName, isMe });
+    playSeonjeomSound();
+    const t = setTimeout(() => setSeonjeomPopup(null), 2500);
+    return () => clearTimeout(t);
+  }, [gameState.seonjeom_event?.at]); // eslint-disable-line
 
   // ── 에러 3초 후 자동 소멸 ──
   useEffect(() => {
@@ -495,6 +530,14 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
       {confirmDialog && <ConfirmDialog message={confirmDialog.message} onConfirm={confirmDialog.onConfirm} onCancel={confirmDialog.onCancel} />}
 
       <div className="cgp-container">
+        {/* 선점 팝업 */}
+        {seonjeomPopup && (
+          <div className="cgp-seonjeom-popup">
+            <span className="cgp-seonjeom-popup-icon">⚡</span>
+            <span>{seonjeomPopup.isMe ? '내가' : `${seonjeomPopup.playerName}이(가)`} 선점!</span>
+          </div>
+        )}
+
         {/* 코브라 배너 */}
         {gameState.phase === 'cobra' && (
           <div className="cgp-cobra-banner">
