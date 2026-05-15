@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getServiceConfig, incrementMenuClickCount } from '../services/supabaseAdmin';
 import './Home.css';
+import AdBanner from './AdBanner';
 
 const SERVICE_LIST = [
   { id: 'world-cup-predict', title: '월드컵 순위 예측',      icon: '⚽', path: '/world-cup-predict', cardClass: 'kbo-card', desc: '2026 FIFA 월드컵 1·2·3위 예측' },
@@ -86,6 +87,8 @@ const Home = () => {
 
         </div>
 
+        <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_HOME_TOP} className="ad-home-top" />
+
         <div className="navigation-cards">
           {orderedServiceList.map((svc) =>
             isEnabled(svc.id) ? (
@@ -108,6 +111,8 @@ const Home = () => {
             )
           )}
         </div>
+
+        <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_HOME_BOTTOM} className="ad-home-bottom" />
 
         <div className="home-footer">
           <div className="stats">

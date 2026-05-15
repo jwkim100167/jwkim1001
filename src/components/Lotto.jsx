@@ -14,6 +14,7 @@ import {
 } from '../services/database';
 import { getAllLottoDataFromSupabase, getLottoNumberByRoundFromSupabase, getLatestLottoNumberFromSupabase, saveGeneratedGames, getSavedGames } from '../services/supabaseLotto';
 import './Lotto.css';
+import AdBanner from './AdBanner';
 
 const Lotto = () => {
   // console.log('Lotto 컴포넌트 렌더링됨'); // 무한 렌더링 디버깅용 제거
@@ -3985,6 +3986,8 @@ const Lotto = () => {
           )}
         </div>
 
+
+        <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_LOTTO} className="ad-lotto-bottom" />
 
         <div className="navigation">
           <Link to="/" className="back-btn">
