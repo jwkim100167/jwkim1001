@@ -16,7 +16,7 @@ const SERVICE_LIST = [
   { id: 'taste',         title: '취향 알기',                icon: '💫', path: '/taste-match',        cardClass: 'taste-card',      desc: '' },
   { id: 'cobra',         title: '코브라 게임',              icon: '🐍', path: '/cobra',              cardClass: 'cobra-card',      desc: '방 만들고 친구와 함께!' },
   { id: 'mandalart',     title: '만다라트\n[멤버십]',        icon: '🎯', path: '/mandalart',          cardClass: 'mandalart-card',  desc: '9×9 목표 관리 플래너' },
-  { id: 'turneyia',      title: '터이네키아',                icon: '🏆', path: '/turneyia',           cardClass: 'turneyia-card',   desc: '연예인·운동선수·정치인 토너먼트' },
+  { id: 'turneyia',      title: '터이네키아',                icon: '🏆', path: '/turneyia',           cardClass: 'turneyia-card',   desc: '아키네이터를 거꾸로 하는 게임' },
 ];
 
 const Home = () => {
