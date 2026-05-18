@@ -181,8 +181,8 @@ async function updateGameState(roomId, gameState) {
  * 게임 시작
  * Claude API로 인물+힌트 생성 후 game_state 초기화
  */
-export async function startGame(roomId, players, category, totalRounds) {
-  const person = await generatePersonWithHints(category);
+export async function startGame(roomId, players, category, totalRounds, mode = 'static') {
+  const person = await generatePersonWithHints(category, [], mode);
   const namePattern = buildNamePattern(person.name);
 
   const scores = {};
@@ -191,6 +191,7 @@ export async function startGame(roomId, players, category, totalRounds) {
   const gameState = {
     phase: 'hinting',
     category,
+    mode,
     current_person: person,
     name_pattern: namePattern,
     hints_revealed: 1,
@@ -268,7 +269,7 @@ export async function revealAnswer(roomId, gameState) {
  */
 export async function nextRound(roomId, gameState) {
   const usedPersons = gameState.used_persons || [];
-  const person = await generatePersonWithHints(gameState.category, usedPersons);
+  const person = await generatePersonWithHints(gameState.category, usedPersons, gameState.mode || 'static');
   const namePattern = buildNamePattern(person.name);
 
   const newState = {

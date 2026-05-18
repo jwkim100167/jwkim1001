@@ -24,7 +24,7 @@ const CATEGORY_OPTIONS = [
 
 export default function TurneyKiaGame() {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const [view, setView] = useState('lobby'); // 'lobby' | 'create' | 'join' | 'waiting'
   const [playerName, setPlayerName] = useState('');
@@ -127,8 +127,9 @@ export default function TurneyKiaGame() {
   const handleStartGame = async () => {
     if (players.length < 2) { setError('2명 이상이어야 게임을 시작할 수 있습니다.'); return; }
     setGenerating(true); setError('');
+    const mode = ['admin', 'jwkim1001'].includes(user?.loginId) ? 'ai' : 'static';
     try {
-      await startGame(currentRoom.id, players, category, totalRounds);
+      await startGame(currentRoom.id, players, category, totalRounds, mode);
     } catch (e) {
       console.error('startGame error:', e);
       setError('인물 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
