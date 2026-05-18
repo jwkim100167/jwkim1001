@@ -59,17 +59,17 @@ export async function incrementMenuClickCount(serviceId) {
 }
 
 /**
- * 특정 서비스 활성화 상태 변경
+ * 특정 서비스 상태 변경
  * @param {string} serviceId
- * @param {boolean} enabled
+ * @param {'on'|'offline'|'hidden'} status
  * @returns {Promise<boolean>}
  */
-export async function updateServiceConfig(serviceId, enabled) {
+export async function updateServiceConfig(serviceId, status) {
   const now = new Date(Date.now() + 9 * 60 * 60000).toISOString().slice(0, 19).replace('T', ' ');
 
   const { error } = await supabase
     .from('serviceConfigTable')
-    .update({ enabled, updated_at: now })
+    .update({ enabled: status, updated_at: now })
     .eq('service_id', serviceId);
 
   if (error) {

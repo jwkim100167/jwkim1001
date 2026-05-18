@@ -31,17 +31,21 @@ const Home = () => {
     });
   }, []);
 
-  const isEnabled = (id) => {
-    if (!serviceConfig.enabledMap) return ['kbo-predict', 'kbo-result', 'world-cup-predict', 'cobra', 'mandalart'].includes(id); // 로딩 전 기본값
-    return serviceConfig.enabledMap[id] ?? false;
+  const getStatus = (id) => {
+    if (!serviceConfig.enabledMap) return ['kbo-predict', 'kbo-result', 'world-cup-predict', 'cobra', 'mandalart'].includes(id) ? 'on' : 'offline';
+    const val = serviceConfig.enabledMap[id];
+    if (val === true) return 'on';
+    if (val === false) return 'offline';
+    return val ?? 'offline';
   };
 
   const orderedServiceList = serviceConfig.sortedIds.length > 0
     ? serviceConfig.sortedIds.map(id => SERVICE_LIST.find(s => s.id === id)).filter(Boolean)
     : SERVICE_LIST;
 
-  const enabledCount  = orderedServiceList.filter((s) => isEnabled(s.id)).length;
-  const disabledCount = orderedServiceList.length - enabledCount;
+  const visibleList   = orderedServiceList.filter((s) => getStatus(s.id) !== 'hidden');
+  const enabledCount  = visibleList.filter((s) => getStatus(s.id) === 'on').length;
+  const disabledCount = visibleList.filter((s) => getStatus(s.id) === 'offline').length;
 
   const handleLogout = () => {
     logout();
@@ -91,12 +95,15 @@ const Home = () => {
         <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_HOME_TOP} className="ad-home-top" />
 
         <div className="navigation-cards">
-          {orderedServiceList.map((svc) =>
-            isEnabled(svc.id) ? (
+          {orderedServiceList.map((svc) => {
+            const status = getStatus(svc.id);
+            if (status === 'hidden') return null;
+            const title = svc.title.split('\n').map((t, i) => <React.Fragment key={i}>{t}{i === 0 && svc.title.includes('\n') && <br/>}</React.Fragment>);
+            return status === 'on' ? (
               <Link key={svc.id} to={svc.path} className={`nav-card ${svc.cardClass}`} onClick={() => incrementMenuClickCount(svc.id)}>
                 <div className="card-icon">{svc.icon}</div>
                 <div className="card-content">
-                  <h2>{svc.title.split('\n').map((t, i) => <React.Fragment key={i}>{t}{i === 0 && svc.title.includes('\n') && <br/>}</React.Fragment>)}</h2>
+                  <h2>{title}</h2>
                   {svc.desc && <div className="card-desc">{svc.desc}</div>}
                 </div>
                 <div className="card-arrow">→</div>
@@ -105,12 +112,12 @@ const Home = () => {
               <div key={svc.id} className={`nav-card ${svc.cardClass} disabled-card`}>
                 <div className="card-icon">{svc.icon}</div>
                 <div className="card-content">
-                  <h2>{svc.title.split('\n').map((t, i) => <React.Fragment key={i}>{t}{i === 0 && svc.title.includes('\n') && <br/>}</React.Fragment>)}</h2>
+                  <h2>{title}</h2>
                   <div className="service-status">잠시 휴업 중</div>
                 </div>
               </div>
-            )
-          )}
+            );
+          })}
         </div>
 
         <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_HOME_BOTTOM} className="ad-home-bottom" />

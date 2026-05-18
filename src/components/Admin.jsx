@@ -118,10 +118,9 @@ export default function Admin() {
     }
   }, [activeTab]);
 
-  const handleServiceToggle = async (serviceId) => {
-    const newVal = !serviceConfig[serviceId];
-    setServiceConfig((prev) => ({ ...prev, [serviceId]: newVal }));
-    const ok = await updateServiceConfig(serviceId, newVal);
+  const handleServiceStatusChange = async (serviceId, status) => {
+    setServiceConfig((prev) => ({ ...prev, [serviceId]: status }));
+    const ok = await updateServiceConfig(serviceId, status);
     setServiceMsg(ok ? '✅ 저장됨' : '❌ 저장 실패');
     setTimeout(() => setServiceMsg(''), 2000);
   };
@@ -599,12 +598,15 @@ export default function Admin() {
                       </div>
                       <span className="service-toggle-icon">{svc.icon}</span>
                       <span className="service-toggle-title">{svc.title}</span>
-                      <button
-                        className={`toggle-btn ${serviceConfig[svc.id] ? 'on' : 'off'}`}
-                        onClick={() => handleServiceToggle(svc.id)}
+                      <select
+                        className={`status-select status-${serviceConfig[svc.id] || 'on'}`}
+                        value={serviceConfig[svc.id] || 'on'}
+                        onChange={(e) => handleServiceStatusChange(svc.id, e.target.value)}
                       >
-                        {serviceConfig[svc.id] ? 'ON' : 'OFF'}
-                      </button>
+                        <option value="on">ON</option>
+                        <option value="offline">휴업중</option>
+                        <option value="hidden">숨김</option>
+                      </select>
                     </div>
                   );
                 })}

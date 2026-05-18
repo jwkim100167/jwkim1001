@@ -899,6 +899,32 @@
   opacity: 0.2;
   cursor: default;
 }
+.status-select {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.85rem;
+  cursor: pointer;
+  min-width: 80px;
+  outline: none;
+}
+.status-select.status-on {
+  background: #14b8a6;
+  color: white;
+}
+.status-select.status-offline {
+  background: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.5);
+}
+.status-select.status-hidden {
+  background: rgba(239,68,68,0.2);
+  color: #f87171;
+}
+.status-select option {
+  background: #1e293b;
+  color: white;
+}
 .toggle-btn {
   padding: 6px 20px;
   border: none;
