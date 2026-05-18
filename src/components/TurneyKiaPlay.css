@@ -494,3 +494,44 @@
   flex-direction: column;
   gap: 8px;
 }
+
+/* ── 광고 오버레이 ── */
+.tkp-ad-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 20, 0.96);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  z-index: 999;
+  padding: 24px;
+}
+
+.tkp-ad-banner {
+  width: 100%;
+  max-width: 480px;
+}
+
+.tkp-ad-countdown {
+  text-align: center;
+}
+
+.tkp-ad-countdown-num {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #facc15;
+  line-height: 1;
+}
+
+.tkp-ad-countdown-msg {
+  font-size: 0.9rem;
+  opacity: 0.5;
+  margin-top: 8px;
+}
+
+/* ── 하단 배너 ── */
+.tkp-ad-bottom {
+  margin-top: 8px;
+}

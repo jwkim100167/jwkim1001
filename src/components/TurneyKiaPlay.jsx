@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import AdBanner from './AdBanner';
 import {
   revealNextHint,
   submitAnswer,
@@ -27,9 +28,12 @@ export default function TurneyKiaPlay({
   const [answer, setAnswer] = useState('');
   const [busy, setBusy] = useState(false);
   const [timeLeft, setTimeLeft] = useState(HINT_DURATION);
-  const [wrongFeedback, setWrongFeedback] = useState(false); // "틀렸습니다" 표시
+  const [wrongFeedback, setWrongFeedback] = useState(false);
+  const [revealAdCountdown, setRevealAdCountdown] = useState(0);
   const autoAdvancedRef = useRef(false);
   const inputRef = useRef(null);
+  const prevPhaseRef = useRef(null);
+  const revealAdRef = useRef(null);
 
   const isHost = currentPlayer?.is_host;
   const myId = currentPlayer?.id;
@@ -54,6 +58,20 @@ export default function TurneyKiaPlay({
 
   const correctPlayer = players.find((p) => p.id === correct_player_id);
   const sortedPlayers = [...players].sort((a, b) => (scores?.[b.id] ?? 0) - (scores?.[a.id] ?? 0));
+
+  // reveal 진입 시 5초 광고 카운트다운
+  useEffect(() => {
+    if (phase === 'reveal' && prevPhaseRef.current !== 'reveal') {
+      setRevealAdCountdown(5);
+    }
+    prevPhaseRef.current = phase;
+  }, [phase]);
+
+  useEffect(() => {
+    if (revealAdCountdown <= 0) return;
+    revealAdRef.current = setTimeout(() => setRevealAdCountdown((n) => n - 1), 1000);
+    return () => clearTimeout(revealAdRef.current);
+  }, [revealAdCountdown]);
 
   // 힌트 바뀔 때마다 피드백 초기화 + 입력창 포커스
   useEffect(() => {
@@ -177,6 +195,21 @@ export default function TurneyKiaPlay({
     );
   }
 
+  // ─── REVEAL 광고 오버레이 ───
+  if (phase === 'reveal' && revealAdCountdown > 0) {
+    return (
+      <div className="tkp-page">
+        <div className="tkp-ad-overlay">
+          <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_TURNEYIA} className="tkp-ad-banner" />
+          <div className="tkp-ad-countdown">
+            <div className="tkp-ad-countdown-num">{revealAdCountdown}</div>
+            <p className="tkp-ad-countdown-msg">잠시 후 결과가 공개됩니다...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // ─── REVEAL ───
   if (phase === 'reveal') {
     const gained = correct_player_id ? Math.max(1, 7 - hints_revealed) : 0;
@@ -220,6 +253,8 @@ export default function TurneyKiaPlay({
             </div>
           )}
           {!isHost && <p className="tkp-waiting-msg">방장이 다음 단계를 진행 중...</p>}
+
+          <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_TURNEYIA} className="tkp-ad-bottom" />
         </div>
       </div>
     );
@@ -317,6 +352,8 @@ export default function TurneyKiaPlay({
             {Object.keys(current_hint_submissions || {}).length}/{players.length} 완료
           </span>
         </div>
+
+        <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_TURNEYIA} className="tkp-ad-bottom" />
       </div>
     </div>
   );

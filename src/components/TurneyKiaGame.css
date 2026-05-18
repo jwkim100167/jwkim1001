@@ -331,3 +331,44 @@
   0%, 100% { opacity: 0.6; }
   50% { opacity: 0.3; }
 }
+
+/* ── 광고 오버레이 ── */
+.tkg-ad-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 20, 0.96);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  z-index: 999;
+  padding: 24px;
+}
+
+.tkg-ad-banner {
+  width: 100%;
+  max-width: 480px;
+}
+
+.tkg-ad-countdown {
+  text-align: center;
+}
+
+.tkg-ad-countdown-num {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #facc15;
+  line-height: 1;
+}
+
+.tkg-ad-countdown-msg {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 8px;
+}
+
+/* ── 하단 배너 ── */
+.tkg-ad-bottom {
+  margin-top: 16px;
+}
