@@ -25,6 +25,64 @@ const SUIT_SYMBOLS = { H: '♥', D: '♦', C: '♣', S: '♠' };
 const PLAYER_COLORS = ['#e94560', '#f5a623', '#4ecdc4', '#a29bfe', '#55efc4'];
 const TURN_SECONDS = 20;
 
+// ─── BGM ─────────────────────────────────────────────
+let _bgmCtx = null;
+let _bgmMaster = null;
+
+function startBGM() {
+  if (_bgmCtx) return;
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const master = ctx.createGain();
+    master.gain.value = 0.04;
+    master.connect(ctx.destination);
+
+    // 저음 드론 + 하모닉스 (Am 펜타토닉 느낌)
+    const notes = [55, 82.5, 110, 138.6, 165];
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+
+      const gain = ctx.createGain();
+      gain.gain.value = 0.28 / (i + 1);
+
+      // 매우 느린 LFO로 숨결 효과
+      const lfo = ctx.createOscillator();
+      lfo.type = 'sine';
+      lfo.frequency.value = 0.04 + i * 0.015;
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.value = 0.08;
+      lfo.connect(lfoGain);
+      lfoGain.connect(gain.gain);
+
+      osc.connect(gain);
+      gain.connect(master);
+      osc.start();
+      lfo.start();
+    });
+
+    _bgmCtx = ctx;
+    _bgmMaster = master;
+
+    if (ctx.state === 'suspended') {
+      const resume = () => { ctx.resume(); document.removeEventListener('click', resume); };
+      document.addEventListener('click', resume, { once: true });
+    }
+  } catch { /* 오디오 재생 실패 무시 */ }
+}
+
+function stopBGM() {
+  if (!_bgmCtx) return;
+  try {
+    _bgmMaster.gain.setTargetAtTime(0, _bgmCtx.currentTime, 0.8);
+    const ctx = _bgmCtx;
+    setTimeout(() => { try { ctx.close(); } catch { /* ignore */ } }, 2000);
+  } catch { /* ignore */ }
+  _bgmCtx = null;
+  _bgmMaster = null;
+}
+
 function playSeonjeomSound() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -255,8 +313,8 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
     : [];
   const canSeonjeom = seonjeomMatchIndices.length > 0;
 
-  // 비활성 플레이어 선점 인터럽트 (seonjeom_window 열려있을 때)
-  const interruptMatchIndices = !isMyTurn && gameState.seonjeom_window && discardTop
+  // 비활성 플레이어 선점 인터럽트 (seonjeom_window 열려있을 때, 본인이 버린 패는 선점 불가)
+  const interruptMatchIndices = !isMyTurn && gameState.seonjeom_window && discardTop && myId !== gameState.last_discarder_id
     ? myHand.reduce((acc, card, idx) => {
         const iKnowThisCard = myFaceUp[idx] || !!myJKnown[idx];
         if (iKnowThisCard && cardsMatch(card, discardTop)) acc.push(idx);
@@ -264,6 +322,12 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
       }, [])
     : [];
   const canInterrupt = interruptMatchIndices.length > 0;
+
+  // ── BGM ──
+  useEffect(() => {
+    startBGM();
+    return () => stopBGM();
+  }, []); // eslint-disable-line
 
   // ── gameStateRef 최신 유지 ──
   useEffect(() => { gameStateRef.current = gameState; }, [gameState]);
@@ -524,7 +588,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
   const drawnCard = gameState.drawn_card;
 
   return (
-    <div className="cgp-wrap">
+    <div className={`cgp-wrap${isMyTurn ? ' cgp-wrap-my-turn' : ''}`}>
       <button className="cgp-rules-btn" onClick={() => setShowRules(true)}>📖</button>
       {showRules && <RulesModal onClose={() => setShowRules(false)} options={gameState.options} />}
       {confirmDialog && <ConfirmDialog message={confirmDialog.message} onConfirm={confirmDialog.onConfirm} onCancel={confirmDialog.onCancel} />}

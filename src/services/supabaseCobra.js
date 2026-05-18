@@ -225,7 +225,8 @@ export async function drawFromDeck(roomId, _playerId, gameState) {
     discard_pile: discardPile,
     drawn_card: drawnCard,
     turn_phase: 'action',
-    seonjeom_window: false, // 덱에서 뽑으면 선점 창 닫힘
+    seonjeom_window: false,
+    last_discarder_id: null, // 덱에서 뽑으면 선점 창 닫힘
   });
 }
 
@@ -261,7 +262,7 @@ export async function discardDrawn(roomId, playerId, gameState) {
   }
 
   // 카드 버림 → 다른 플레이어 즉시 선점 가능 창 열기
-  const newState = { ...gameState, discard_pile: newDiscard, drawn_card: null, turn_phase: 'draw', seonjeom_window: true };
+  const newState = { ...gameState, discard_pile: newDiscard, drawn_card: null, turn_phase: 'draw', seonjeom_window: true, last_discarder_id: playerId };
   await advanceTurn(roomId, playerId, newState);
 }
 
@@ -366,6 +367,7 @@ export async function swapWithHand(roomId, playerId, handIndex, gameState) {
     drawn_card: null,
     turn_phase: 'draw',
     seonjeom_window: true,
+    last_discarder_id: playerId,
   };
 
   if (newHand.length === 0 && newState.phase !== 'cobra') {
@@ -397,6 +399,7 @@ export async function matchAndDiscard(roomId, playerId, handIndex, gameState) {
     drawn_card: null,
     turn_phase: 'draw',
     seonjeom_window: true,
+    last_discarder_id: playerId,
   };
 
   if (newHand.length === 0 && newState.phase !== 'cobra') {
@@ -437,6 +440,7 @@ export async function takeFromDiscard(roomId, playerId, handIndex, gameState) {
     drawn_card: null,
     turn_phase: 'draw',
     seonjeom_window: false,
+    last_discarder_id: null,
     seonjeom_event: { player_id: playerId, at: Date.now() },
   };
 
@@ -472,6 +476,7 @@ export async function seonjeomInterrupt(roomId, playerId, handIndex, gameState) 
     private_knowledge: newPK,
     discard_pile: discardPile.slice(0, -1),
     seonjeom_window: false,
+    last_discarder_id: null,
     turn_phase: 'draw',
     seonjeom_event: { player_id: playerId, at: Date.now() },
   };

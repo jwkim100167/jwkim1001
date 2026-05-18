@@ -12,7 +12,30 @@
   position: relative;
 }
 
+.cgp-wrap::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(46, 213, 115, 0.13) 0%, rgba(0, 184, 148, 0.08) 50%, rgba(78, 205, 196, 0.06) 100%);
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.cgp-wrap-my-turn::before {
+  opacity: 1;
+  animation: myTurnPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes myTurnPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
 .cgp-container {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 520px;
   display: flex;
