@@ -200,7 +200,7 @@ export default function TurneyKiaPlay({
     return (
       <div className="tkp-page">
         <div className="tkp-ad-overlay">
-          <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_TURNEYIA} className="tkp-ad-banner" />
+          <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_COBRA} className="tkp-ad-banner" />
           <div className="tkp-ad-countdown">
             <div className="tkp-ad-countdown-num">{revealAdCountdown}</div>
             <p className="tkp-ad-countdown-msg">잠시 후 결과가 공개됩니다...</p>
@@ -254,7 +254,7 @@ export default function TurneyKiaPlay({
           )}
           {!isHost && <p className="tkp-waiting-msg">방장이 다음 단계를 진행 중...</p>}
 
-          <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_TURNEYIA} className="tkp-ad-bottom" />
+          <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_COBRA} className="tkp-ad-bottom" />
         </div>
       </div>
     );
@@ -353,7 +353,7 @@ export default function TurneyKiaPlay({
           </span>
         </div>
 
-        <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_TURNEYIA} className="tkp-ad-bottom" />
+        <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_COBRA} className="tkp-ad-bottom" />
       </div>
     </div>
   );

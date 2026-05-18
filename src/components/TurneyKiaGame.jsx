@@ -258,7 +258,7 @@ export default function TurneyKiaGame() {
     <div className="tkg-page">
       {startAdCountdown > 0 && (
         <div className="tkg-ad-overlay">
-          <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_TURNEYIA} className="tkg-ad-banner" />
+          <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_COBRA} className="tkg-ad-banner" />
           <div className="tkg-ad-countdown">
             <div className="tkg-ad-countdown-num">{startAdCountdown}</div>
             <p className="tkg-ad-countdown-msg">잠시 후 게임이 시작됩니다...</p>
@@ -344,7 +344,7 @@ export default function TurneyKiaGame() {
           <p className="tkg-waiting-text">방장이 게임을 시작하길 기다리는 중...</p>
         )}
 
-        <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_TURNEYIA} className="tkg-ad-bottom" />
+        <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_COBRA} className="tkg-ad-bottom" />
       </div>
     </div>
   );
