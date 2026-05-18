@@ -183,6 +183,11 @@
   box-shadow: 0 20px 40px rgba(74, 111, 220, 0.15);
 }
 
+.turneyia-card:hover {
+  border-color: rgba(250, 204, 21, 0.5);
+  box-shadow: 0 20px 40px rgba(250, 204, 21, 0.15);
+}
+
 .kbo-card .card-content h2 {
   font-size: 1.4rem;
 }

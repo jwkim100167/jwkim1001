@@ -1,0 +1,496 @@
+.tkp-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 24px 16px 40px;
+}
+
+.tkp-container {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── 헤더 ── */
+.tkp-header-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tkp-round-badge {
+  background: rgba(250, 204, 21, 0.2);
+  border: 1px solid rgba(250, 204, 21, 0.4);
+  color: #facc15;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.tkp-category-badge {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.tkp-score-mini {
+  margin-left: auto;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+/* ── 글자 패턴 ── */
+.tkp-name-pattern {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 6px;
+  color: #facc15;
+  background: rgba(250, 204, 21, 0.08);
+  border: 1px solid rgba(250, 204, 21, 0.2);
+  border-radius: 12px;
+  padding: 14px;
+  font-family: monospace;
+}
+
+/* ── 힌트 ── */
+.tkp-hints {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tkp-hint-card {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 12px 14px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.tkp-hint-hidden {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.tkp-hint-num {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #facc15;
+  opacity: 0.8;
+  white-space: nowrap;
+  margin-top: 1px;
+}
+
+.tkp-hint-text {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.tkp-hint-question {
+  font-size: 0.9rem;
+  opacity: 0.25;
+  letter-spacing: 2px;
+}
+
+/* ── 답변 폼 ── */
+.tkp-answer-form {
+  display: flex;
+  gap: 8px;
+}
+
+.tkp-answer-input {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.tkp-answer-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.tkp-answer-input:focus {
+  border-color: rgba(250, 204, 21, 0.6);
+}
+
+.tkp-submit-btn {
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(250, 204, 21, 0.5);
+  background: rgba(250, 204, 21, 0.2);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tkp-submit-btn:hover:not(:disabled) {
+  background: rgba(250, 204, 21, 0.35);
+}
+
+.tkp-submit-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── 타이머 ── */
+.tkp-timer-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tkp-timer-bar-bg {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.tkp-timer-bar {
+  height: 100%;
+  background: #60a5fa;
+  border-radius: 4px;
+  transition: width 0.5s linear, background 0.3s;
+}
+
+.tkp-timer-bar.tkp-timer-danger {
+  background: #f87171;
+}
+
+.tkp-timer-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #60a5fa;
+  white-space: nowrap;
+  min-width: 42px;
+  text-align: right;
+}
+
+.tkp-timer-danger-text {
+  color: #f87171;
+  animation: blink 0.5s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── 패스 버튼 ── */
+.tkp-pass-btn {
+  background: transparent;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.4);
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.tkp-pass-btn:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.tkp-pass-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.tkp-passed-badge {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.tkp-answer-passed {
+  opacity: 0.5;
+}
+
+.tkp-submitted-badge {
+  text-align: center;
+  padding: 12px;
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  border-radius: 10px;
+  color: #4ade80;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* ── 제출 현황 ── */
+.tkp-submit-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tkp-submit-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transition: background 0.3s;
+}
+
+.tkp-dot-correct { background: #4ade80; }
+.tkp-dot-wrong { background: #f87171; }
+.tkp-dot-pass { background: rgba(255, 255, 255, 0.4); }
+.tkp-dot-pending { background: rgba(255, 255, 255, 0.2); }
+
+/* ── 틀렸습니다 피드백 ── */
+.tkp-wrong-feedback {
+  text-align: center;
+  padding: 10px 14px;
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  border-radius: 10px;
+  color: #f87171;
+  font-weight: 600;
+  font-size: 0.9rem;
+  animation: slideIn 0.2s ease;
+}
+
+.tkp-submit-count {
+  font-size: 0.78rem;
+  opacity: 0.5;
+  margin-left: 4px;
+}
+
+/* ── 호스트 버튼 ── */
+.tkp-host-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tkp-btn {
+  padding: 13px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.tkp-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.tkp-btn-primary {
+  background: rgba(250, 204, 21, 0.2);
+  border-color: rgba(250, 204, 21, 0.5);
+}
+
+.tkp-btn-primary:hover:not(:disabled) {
+  background: rgba(250, 204, 21, 0.35);
+  box-shadow: 0 6px 18px rgba(250, 204, 21, 0.2);
+}
+
+.tkp-btn-secondary {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.tkp-btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.tkp-btn-hint {
+  background: rgba(147, 197, 253, 0.12);
+  border-color: rgba(147, 197, 253, 0.35);
+}
+
+.tkp-btn-hint:hover:not(:disabled) {
+  background: rgba(147, 197, 253, 0.22);
+}
+
+.tkp-waiting-msg {
+  text-align: center;
+  font-size: 0.85rem;
+  opacity: 0.45;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.2; }
+}
+
+/* ── JUDGING 화면 ── */
+.tkp-judging-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.tkp-answers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tkp-answer-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+
+.tkp-answer-card.tkp-answer-empty {
+  opacity: 0.45;
+}
+
+.tkp-answer-player {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.tkp-answer-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.tkp-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* ── REVEAL 화면 ── */
+.tkp-reveal-label {
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.6;
+  margin-top: 8px;
+}
+
+.tkp-reveal-name {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #facc15;
+  text-shadow: 0 0 20px rgba(250, 204, 21, 0.4);
+  animation: popIn 0.4s ease;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.tkp-reveal-category {
+  text-align: center;
+  font-size: 0.8rem;
+  opacity: 0.5;
+}
+
+.tkp-correct-banner {
+  text-align: center;
+  padding: 14px;
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #4ade80;
+}
+
+.tkp-no-correct {
+  text-align: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  font-size: 0.9rem;
+  opacity: 0.6;
+}
+
+/* ── 점수판 ── */
+.tkp-score-board {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tkp-score-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.tkp-score-row.tkp-score-me {
+  background: rgba(250, 204, 21, 0.08);
+  border: 1px solid rgba(250, 204, 21, 0.2);
+}
+
+.tkp-score-row.tkp-score-first {
+  background: rgba(250, 204, 21, 0.12);
+}
+
+.tkp-rank { font-size: 1.1rem; width: 32px; }
+.tkp-rank-sm { font-size: 0.85rem; opacity: 0.6; width: 24px; text-align: center; }
+.tkp-score-name { flex: 1; font-size: 0.95rem; }
+.tkp-score-pts { font-weight: 700; color: #facc15; }
+
+/* ── ENDED 화면 ── */
+.tkp-final-icon {
+  text-align: center;
+  font-size: 3rem;
+  margin-top: 8px;
+}
+
+.tkp-final-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.tkp-final-board {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

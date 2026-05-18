@@ -11,6 +11,7 @@
     "deploy": "vite build && gh-pages -d dist"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.96.0",
     "@sqlite.org/sqlite-wasm": "^3.50.4-build1",
     "@supabase/supabase-js": "^2.79.0",
     "dotenv": "^17.2.3",

@@ -1,0 +1,333 @@
+.tkg-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 24px 16px;
+}
+
+.tkg-container {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.tkg-container--wide {
+  max-width: 500px;
+  align-items: stretch;
+}
+
+.tkg-back-btn {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-bottom: 32px;
+  transition: background 0.2s;
+}
+
+.tkg-back-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.tkg-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.tkg-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.tkg-header h1 {
+  font-size: 1.9rem;
+  font-weight: 800;
+  margin: 0 0 6px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.tkg-subtitle {
+  font-size: 0.9rem;
+  opacity: 0.65;
+  margin: 0;
+}
+
+/* ── 로비 버튼 ── */
+.tkg-lobby-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.tkg-btn {
+  padding: 14px 24px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: white;
+}
+
+.tkg-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tkg-btn-primary {
+  background: rgba(250, 204, 21, 0.2);
+  border-color: rgba(250, 204, 21, 0.5);
+}
+
+.tkg-btn-primary:hover:not(:disabled) {
+  background: rgba(250, 204, 21, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(250, 204, 21, 0.2);
+}
+
+.tkg-btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.tkg-btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.tkg-btn-start {
+  background: rgba(250, 204, 21, 0.25);
+  border-color: rgba(250, 204, 21, 0.6);
+  font-size: 1.05rem;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+.tkg-btn-start:hover:not(:disabled) {
+  background: rgba(250, 204, 21, 0.4);
+  box-shadow: 0 8px 24px rgba(250, 204, 21, 0.25);
+}
+
+/* ── 폼 ── */
+.tkg-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.tkg-input {
+  padding: 13px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.tkg-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.tkg-input:focus {
+  border-color: rgba(250, 204, 21, 0.6);
+}
+
+.tkg-error {
+  color: #ff8a8a;
+  font-size: 0.85rem;
+  margin: 0;
+  text-align: center;
+}
+
+/* ── 대기실 ── */
+.tkg-room-code-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+}
+
+.tkg-room-code-label {
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+.tkg-room-code {
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  flex: 1;
+  text-align: center;
+}
+
+.tkg-copy-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.2s;
+}
+
+.tkg-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.tkg-section-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0.7;
+  margin: 0 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tkg-players-section,
+.tkg-category-section,
+.tkg-rounds-section {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.tkg-player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tkg-player-slot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.tkg-player-slot.tkg-player-me {
+  background: rgba(250, 204, 21, 0.1);
+  border: 1px solid rgba(250, 204, 21, 0.2);
+}
+
+.tkg-player-icon {
+  font-size: 1.1rem;
+}
+
+.tkg-player-name {
+  font-size: 0.95rem;
+  flex: 1;
+}
+
+.tkg-me-badge {
+  font-size: 0.7rem;
+  background: rgba(250, 204, 21, 0.3);
+  border: 1px solid rgba(250, 204, 21, 0.5);
+  padding: 2px 6px;
+  border-radius: 6px;
+  color: #facc15;
+}
+
+/* ── 카테고리 선택 ── */
+.tkg-category-options {
+  display: flex;
+  gap: 8px;
+}
+
+.tkg-category-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  padding: 12px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+}
+
+.tkg-category-label input {
+  display: none;
+}
+
+.tkg-category-label.tkg-category-selected {
+  background: rgba(250, 204, 21, 0.15);
+  border-color: rgba(250, 204, 21, 0.5);
+  color: #facc15;
+}
+
+.tkg-category-emoji {
+  font-size: 1.3rem;
+}
+
+/* ── 라운드 선택 ── */
+.tkg-rounds-options {
+  display: flex;
+  gap: 8px;
+}
+
+.tkg-round-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tkg-round-btn.tkg-round-selected {
+  background: rgba(250, 204, 21, 0.2);
+  border-color: rgba(250, 204, 21, 0.5);
+  color: #facc15;
+}
+
+.tkg-hint-text {
+  font-size: 0.8rem;
+  opacity: 0.5;
+  text-align: center;
+  margin: 4px 0 0;
+}
+
+.tkg-waiting-text {
+  text-align: center;
+  opacity: 0.6;
+  font-size: 0.9rem;
+  margin-top: 20px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+}
