@@ -11,7 +11,9 @@ import {
   subscribeToRoom,
   unsubscribeFromRoom,
   startGame,
+  getCobraStats,
 } from '../services/supabaseCobra';
+import { getTier } from '../utils/cobraTier';
 import CobraGamePlay, { RulesModal } from './CobraGamePlay';
 import './CobraGame.css';
 import './CobraGamePlay.css';
@@ -22,7 +24,7 @@ const PLAYER_COLORS = ['#e94560', '#f5a623', '#4ecdc4', '#a29bfe', '#55efc4'];
 
 export default function CobraGame() {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [view, setView] = useState('lobby'); // lobby | create | join | waiting
   const [playerName, setPlayerName] = useState('');
   const [options, setOptions] = useState({ specialCards: false });
@@ -40,6 +42,7 @@ export default function CobraGame() {
   const [gameCount, setGameCount] = useState(0); // 완료된 게임 수
   const [adCountdown, setAdCountdown] = useState(0); // 광고 카운트다운 (방장용)
   const prevGameStateRef = useRef(null);
+  const [playerStats, setPlayerStats] = useState({}); // { [userId]: { wins, total_games, expected_wins } }
 
   // 방에 입장하면 데이터 로드 + 실시간 구독
   useEffect(() => {
@@ -53,6 +56,13 @@ export default function CobraGame() {
         ]);
         setPlayers(playersData);
         setRoomData(roomFull);
+
+        // 로그인 유저의 전적 fetch
+        const userIds = playersData.map(p => p.user_id).filter(Boolean);
+        if (userIds.length) {
+          const stats = await getCobraStats(userIds);
+          setPlayerStats(stats);
+        }
       } catch {
         // ignore
       }
@@ -104,7 +114,7 @@ export default function CobraGame() {
     if (playerName.trim().length > 8) return setError('이름은 8자 이하로 입력해주세요.');
     setLoading(true); setError('');
     try {
-      const { room, player } = await createRoom(playerName.trim());
+      const { room, player } = await createRoom(playerName.trim(), user?.id ?? null);
       setCurrentRoom(room);
       setCurrentPlayer(player);
       setView('waiting');
@@ -121,7 +131,7 @@ export default function CobraGame() {
     if (playerName.trim().length > 8) return setError('이름은 8자 이하로 입력해주세요.');
     setLoading(true); setError('');
     try {
-      const { room, player } = await joinRoom(joinCode.trim(), playerName.trim());
+      const { room, player } = await joinRoom(joinCode.trim(), playerName.trim(), user?.id ?? null);
       setCurrentRoom(room);
       setCurrentPlayer(player);
       setView('waiting');
@@ -177,6 +187,7 @@ export default function CobraGame() {
         currentPlayer={currentPlayer}
         players={players}
         roomId={currentRoom.id}
+        playerStats={playerStats}
       />
     );
   }
@@ -366,7 +377,19 @@ export default function CobraGame() {
                           {p.id === currentPlayer.id && <span className="cobra-me-badge">나</span>}
                         </span>
                         {p.is_host && <span className="cobra-host-badge">방장</span>}
-                      </>
+                        {p.user_id && (() => {
+                          const s = playerStats[p.user_id];
+                          const tier = getTier(s?.wins ?? 0, s?.total_games ?? 0, s?.expected_wins ?? 0);
+                          return (
+                            <span
+                              className="cobra-tier-badge"
+                              style={{ color: tier.color }}
+                              title={s ? `${s.wins}승 / ${s.total_games}판` : '전적 없음'}
+                            >
+                              {tier.icon} {tier.label}
+                            </span>
+                          );
+                        })()}
                     ) : (
                       <>
                         <span className="cobra-player-avatar empty-avatar">?</span>

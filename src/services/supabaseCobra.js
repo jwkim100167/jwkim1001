@@ -65,7 +65,7 @@ async function getUniqueCode() {
 // 방 관리
 // ─────────────────────────────────────────
 
-export async function createRoom(hostName) {
+export async function createRoom(hostName, userId = null) {
   const code = await getUniqueCode();
 
   const { data: room, error: roomError } = await supabase
@@ -75,9 +75,12 @@ export async function createRoom(hostName) {
     .single();
   if (roomError) throw new Error('방 생성에 실패했습니다.');
 
+  const playerRow = { room_id: room.id, player_name: hostName, is_host: true };
+  if (userId) playerRow.user_id = userId;
+
   const { data: player, error: playerError } = await supabase
     .from('cobra_players')
-    .insert({ room_id: room.id, player_name: hostName, is_host: true })
+    .insert(playerRow)
     .select()
     .single();
   if (playerError) throw new Error('플레이어 등록에 실패했습니다.');
@@ -85,7 +88,7 @@ export async function createRoom(hostName) {
   return { room, player };
 }
 
-export async function joinRoom(code, playerName) {
+export async function joinRoom(code, playerName, userId = null) {
   const { data: room, error: roomError } = await supabase
     .from('cobra_rooms')
     .select('*')
@@ -100,9 +103,12 @@ export async function joinRoom(code, playerName) {
     .eq('room_id', room.id);
   if (count >= 5) throw new Error('방이 가득 찼습니다. (최대 5명)');
 
+  const joinRow = { room_id: room.id, player_name: playerName, is_host: false };
+  if (userId) joinRow.user_id = userId;
+
   const { data: player, error: playerError } = await supabase
     .from('cobra_players')
-    .insert({ room_id: room.id, player_name: playerName, is_host: false })
+    .insert(joinRow)
     .select()
     .single();
   if (playerError) throw new Error('입장에 실패했습니다.');
@@ -172,7 +178,10 @@ async function updateGameState(roomId, gameState) {
 /** 호스트가 게임을 시작할 때 호출 */
 export async function startGame(roomId, players, options = {}) {
   const gameState = initGame(players, options);
-  await updateGameState(roomId, gameState);
+  // 로그인 유저의 user_id 맵 (전적 기록용)
+  const userIdMap = {};
+  players.forEach(p => { if (p.user_id) userIdMap[p.id] = p.user_id; });
+  await updateGameState(roomId, { ...gameState, user_id_map: userIdMap });
 }
 
 /** 게임을 초기 대기 상태로 리셋 */
@@ -597,6 +606,9 @@ async function endGame(roomId, state) {
     revealedFaceUp[pid] = state.hands[pid].map(() => true);
   }
 
+  // 전적 기록 (game_state 업데이트 전에 처리)
+  await updateCobraStats(state, scores);
+
   await updateGameState(roomId, {
     ...state,
     phase: 'ended',
@@ -605,4 +617,56 @@ async function endGame(roomId, state) {
     drawn_card: null,
     turn_phase: null,
   });
+}
+
+/** 로그인 유저 전적 upsert */
+async function updateCobraStats(state, scores) {
+  const userIdMap = state.user_id_map || {};
+  const playerCount = state.player_order.length;
+  if (playerCount < 2) return;
+
+  const expectedWinIncrement = 1 / playerCount;
+  const sorted = [...state.player_order].sort((a, b) => (scores[a] ?? 99) - (scores[b] ?? 99));
+  const winnerId = sorted[0];
+
+  for (const pid of state.player_order) {
+    const userId = userIdMap[pid];
+    if (!userId) continue;
+
+    const isWinner = pid === winnerId;
+
+    const { data: existing } = await supabase
+      .from('cobra_stats')
+      .select('wins, total_games, expected_wins')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (existing) {
+      await supabase.from('cobra_stats').update({
+        wins: existing.wins + (isWinner ? 1 : 0),
+        total_games: existing.total_games + 1,
+        expected_wins: existing.expected_wins + expectedWinIncrement,
+        updated_at: new Date().toISOString(),
+      }).eq('user_id', userId);
+    } else {
+      await supabase.from('cobra_stats').insert({
+        user_id: userId,
+        wins: isWinner ? 1 : 0,
+        total_games: 1,
+        expected_wins: expectedWinIncrement,
+      });
+    }
+  }
+}
+
+/** 여러 userId의 전적 조회 → { [userId]: stats } */
+export async function getCobraStats(userIds) {
+  if (!userIds?.length) return {};
+  const { data } = await supabase
+    .from('cobra_stats')
+    .select('user_id, wins, total_games, expected_wins')
+    .in('user_id', userIds);
+  const map = {};
+  (data || []).forEach(s => { map[s.user_id] = s; });
+  return map;
 }

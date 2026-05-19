@@ -872,6 +872,14 @@
   gap: 6px;
 }
 
+/* Tier badge */
+.cgp-tier-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
 /* Winner badge */
 .cgp-winner-badge {
   font-size: 0.78rem;

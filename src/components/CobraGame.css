@@ -461,6 +461,14 @@
   margin-left: auto;
 }
 
+.cobra-tier-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  opacity: 0.9;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+
 /* ===========================
    LOGIN PROMPT MODAL
    =========================== */

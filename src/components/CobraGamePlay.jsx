@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { getTier } from '../utils/cobraTier';
 import {
   getCardDisplayValue,
   getCardSuit,
@@ -263,7 +264,7 @@ export function RulesModal({ onClose, options }) {
 }
 
 // ─── 메인 컴포넌트 ────────────────────────────────────
-export default function CobraGamePlay({ gameState, currentPlayer, players, roomId }) {
+export default function CobraGamePlay({ gameState, currentPlayer, players, roomId, playerStats = {} }) {
   const [busy, setBusy] = useState(false);
   const [errMsg, setErrMsg] = useState('');
   const [confirmDialog, setConfirmDialog] = useState(null);
@@ -551,6 +552,15 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
                     <span className="cgp-reveal-name" style={{ color: p?.color }}>
                       {p?.player_name}{isMe ? ' (나)' : ''}{pid === gameState.cobra_caller_id ? ' 🐍' : ''}
                     </span>
+                    {p?.user_id && (() => {
+                      const s = playerStats[p.user_id];
+                      const tier = getTier(s?.wins ?? 0, s?.total_games ?? 0, s?.expected_wins ?? 0);
+                      return (
+                        <span className="cgp-tier-badge" style={{ color: tier.color }}>
+                          {tier.icon} {tier.label}
+                        </span>
+                      );
+                    })()}
                     {isWinner && showWinner && <span className="cgp-winner-badge">🏆 우승!</span>}
                     {playerRevealed && <span className="cgp-reveal-score">{score}점</span>}
                   </div>
