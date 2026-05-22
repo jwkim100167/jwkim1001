@@ -29,6 +29,7 @@ export default function CobraGame() {
   const [playerName, setPlayerName] = useState('');
   const [options, setOptions] = useState({ specialCards: false });
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [showJoinPrompt, setShowJoinPrompt] = useState(false);
   const [joinCode, setJoinCode] = useState('');
   const [currentRoom, setCurrentRoom] = useState(null);
   const [roomData, setRoomData] = useState(null);   // full room row (game_state 포함)
@@ -206,6 +207,21 @@ export default function CobraGame() {
     </div>
   );
 
+  // ────── JOIN LOGIN PROMPT ──────
+  const joinPromptDialog = showJoinPrompt && (
+    <div className="cobra-modal-overlay">
+      <div className="cobra-modal-dialog">
+        <div className="cobra-modal-icon">🏆</div>
+        <p className="cobra-modal-title">로그인하면 더 즐길 수 있어요!</p>
+        <p className="cobra-modal-msg">로그인 시 게임 전적과 티어가 자동으로 쌓입니다.{'\n'}게스트로도 게임 참여는 가능합니다.</p>
+        <div className="cobra-modal-btns">
+          <button className="cobra-btn cobra-btn-secondary" onClick={() => { setShowJoinPrompt(false); setView('join'); }}>계속하기</button>
+          <button className="cobra-btn cobra-btn-primary" onClick={() => navigate('/login')}>로그인</button>
+        </div>
+      </div>
+    </div>
+  );
+
   const rulesBtn = <button className="cgp-rules-btn" onClick={() => setShowRules(true)}>📖</button>;
   const rulesModal = showRules && <RulesModal onClose={() => setShowRules(false)} options={options} />;
 
@@ -214,6 +230,7 @@ export default function CobraGame() {
     return (
       <div className="cobra-wrap">
         {loginPromptDialog}
+        {joinPromptDialog}
         {rulesModal}
         {rulesBtn}
         <button className="cobra-back-btn" onClick={() => navigate('/')}>← 홈으로</button>
@@ -227,7 +244,7 @@ export default function CobraGame() {
             <button className="cobra-btn cobra-btn-primary" onClick={() => isAuthenticated ? setView('create') : setShowLoginPrompt(true)}>
               <span className="cobra-btn-icon">+</span>방 만들기
             </button>
-            <button className="cobra-btn cobra-btn-secondary" onClick={() => setView('join')}>
+            <button className="cobra-btn cobra-btn-secondary" onClick={() => isAuthenticated ? setView('join') : setShowJoinPrompt(true)}>
               <span className="cobra-btn-icon">→</span>방 입장하기
             </button>
           </div>
