@@ -583,7 +583,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
 
           {showWinner && (
             currentPlayer.is_host
-              ? <button className="cgp-btn cgp-btn-primary" onClick={() => act(() => resetGame(roomId))} disabled={busy}>다시 하기</button>
+              ? <button className="cgp-btn cgp-btn-primary" onClick={() => act(() => resetGame(roomId, winnerId))} disabled={busy}>다시 하기</button>
               : <p className="cgp-hint">방장이 다시 시작하기를 기다리세요</p>
           )}
         </div>

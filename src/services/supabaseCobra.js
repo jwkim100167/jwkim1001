@@ -176,19 +176,31 @@ async function updateGameState(roomId, gameState) {
 }
 
 /** 호스트가 게임을 시작할 때 호출 */
-export async function startGame(roomId, players, options = {}) {
-  const gameState = initGame(players, options);
+export async function startGame(roomId, players, options = {}, lastWinnerPlayerId = null) {
+  // 이전 판 승자가 있으면 맨 앞으로 재배치
+  let orderedPlayers = [...players];
+  if (lastWinnerPlayerId) {
+    const idx = orderedPlayers.findIndex(p => p.id === lastWinnerPlayerId);
+    if (idx > 0) {
+      const [winner] = orderedPlayers.splice(idx, 1);
+      orderedPlayers.unshift(winner);
+    }
+  }
+  const gameState = initGame(orderedPlayers, options);
   // 로그인 유저의 user_id 맵 (전적 기록용)
   const userIdMap = {};
-  players.forEach(p => { if (p.user_id) userIdMap[p.id] = p.user_id; });
+  orderedPlayers.forEach(p => { if (p.user_id) userIdMap[p.id] = p.user_id; });
   await updateGameState(roomId, { ...gameState, user_id_map: userIdMap });
 }
 
 /** 게임을 초기 대기 상태로 리셋 */
-export async function resetGame(roomId) {
+export async function resetGame(roomId, lastWinnerPlayerId = null) {
   await supabase
     .from('cobra_rooms')
-    .update({ game_state: null, status: 'waiting' })
+    .update({
+      game_state: lastWinnerPlayerId ? { last_winner_id: lastWinnerPlayerId } : null,
+      status: 'waiting',
+    })
     .eq('id', roomId);
 }
 
