@@ -202,7 +202,7 @@ export default function CobraGame() {
 
   // ────── 게임 진행 중 ──────
   const gameState = roomData?.game_state;
-  if (view === 'waiting' && gameState && gameState.phase !== null) {
+  if (view === 'waiting' && gameState?.phase) {
     return (
       <CobraGamePlay
         gameState={gameState}
