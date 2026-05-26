@@ -395,7 +395,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
 
   // ── 종료 카드별 순차 공개 ──
   const flatRevealTotal = gameState.phase === 'ended'
-    ? gameState.player_order.reduce((s, pid) => s + (gameState.hands[pid]?.length || 0), 0)
+    ? gameState.player_order.reduce((s, pid) => s + (gameState.hands?.[pid]?.length || 0), 0)
     : 0;
 
   const revealIndexMap = {};
@@ -670,7 +670,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
         {otherPlayers.length > 0 && (
           <div className="cgp-opponents">
             {otherPlayers.map((p) => {
-              const hand = gameState.hands[p.id] || [];
+              const hand = gameState.hands?.[p.id] || [];
               const isActive = gameState.current_player_id === p.id;
               const isCobra = gameState.cobra_caller_id === p.id;
               const sp = gameState.special_pending;

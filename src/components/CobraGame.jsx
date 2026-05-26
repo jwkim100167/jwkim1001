@@ -182,7 +182,7 @@ export default function CobraGame() {
     if (players.length < 2) return;
     setLoading(true); setError('');
     try {
-      const lastWinnerId = currentRoom?.game_state?.last_winner_id ?? null;
+      const lastWinnerId = roomData?.game_state?.last_winner_id ?? null;
       await startGame(currentRoom.id, players, options, lastWinnerId);
     } catch (e) {
       setError(e.message || '게임 시작에 실패했습니다.');
