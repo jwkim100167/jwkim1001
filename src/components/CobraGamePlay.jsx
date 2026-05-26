@@ -403,7 +403,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
     let fi = 0;
     for (const pid of gameState.player_order) {
       revealIndexMap[pid] = {};
-      (gameState.hands[pid] || []).forEach((_, idx) => { revealIndexMap[pid][idx] = fi++; });
+      (gameState.hands?.[pid] || []).forEach((_, idx) => { revealIndexMap[pid][idx] = fi++; });
     }
   }
 
@@ -539,7 +539,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
           <div className="cgp-reveal-list">
             {gameState.player_order.map((pid) => {
               const p = playerMap[pid];
-              const hand = gameState.hands[pid] || [];
+              const hand = gameState.hands?.[pid] || [];
               const score = scores[pid] ?? getHandScore(hand);
               const isWinner = pid === winnerId;
               const isMe = pid === myId;
