@@ -71,7 +71,14 @@ export default function CobraGame() {
 
     loadAll();
 
-    channelRef.current = subscribeToRoom(currentRoom.id, loadAll);
+    channelRef.current = subscribeToRoom(currentRoom.id, loadAll, () => {
+      // 방장이 방을 삭제함 → 나머지 플레이어 강제 로비 이동
+      setCurrentRoom(null);
+      setRoomData(null);
+      setCurrentPlayer(null);
+      setPlayers([]);
+      setView('lobby');
+    });
 
     return () => {
       if (channelRef.current) {
@@ -108,6 +115,19 @@ export default function CobraGame() {
     const timer = setTimeout(() => setAdCountdown(c => c - 1), 1000);
     return () => clearTimeout(timer);
   }, [adCountdown]);
+
+  // 게임 시작 Realtime 이벤트 누락 대비 — 3초마다 방 데이터 재조회
+  useEffect(() => {
+    if (view !== 'waiting' || !currentRoom) return;
+    if (roomData?.game_state?.phase) return;
+    const timer = setInterval(async () => {
+      try {
+        const roomFull = await getRoomData(currentRoom.id);
+        setRoomData(roomFull);
+      } catch { /* ignore */ }
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [view, currentRoom, roomData?.game_state?.phase]); // eslint-disable-line
 
   const handleCreateRoom = async () => {
     if (!isAuthenticated) { setShowLoginPrompt(true); return; }

@@ -145,7 +145,7 @@ export async function deleteRoom(roomId) {
   await supabase.from('cobra_rooms').delete().eq('id', roomId);
 }
 
-export function subscribeToRoom(roomId, onUpdate) {
+export function subscribeToRoom(roomId, onUpdate, onRoomDeleted) {
   return supabase
     .channel(`cobra-room-${roomId}`)
     .on('postgres_changes',
@@ -155,6 +155,10 @@ export function subscribeToRoom(roomId, onUpdate) {
     .on('postgres_changes',
       { event: 'UPDATE', schema: 'public', table: 'cobra_rooms', filter: `id=eq.${roomId}` },
       onUpdate
+    )
+    .on('postgres_changes',
+      { event: 'DELETE', schema: 'public', table: 'cobra_rooms', filter: `id=eq.${roomId}` },
+      () => onRoomDeleted?.()
     )
     .subscribe();
 }
