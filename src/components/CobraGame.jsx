@@ -428,6 +428,7 @@ export default function CobraGame() {
                             </span>
                           );
                         })()}
+                      </>
                     ) : (
                       <>
                         <span className="cobra-player-avatar empty-avatar">?</span>
