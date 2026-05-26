@@ -138,6 +138,7 @@ export async function login(loginId, password) {
 function buildUser(data) {
   return {
     id: data.id,
+    uuid: data.uuid,
     loginId: data.login_id,
     userName: data.userName || data.login_id,
     createdAt: data.created_at,

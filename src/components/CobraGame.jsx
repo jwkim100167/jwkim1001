@@ -115,7 +115,7 @@ export default function CobraGame() {
     if (playerName.trim().length > 8) return setError('이름은 8자 이하로 입력해주세요.');
     setLoading(true); setError('');
     try {
-      const { room, player } = await createRoom(playerName.trim(), user?.id ?? null);
+      const { room, player } = await createRoom(playerName.trim(), user?.uuid ?? null);
       setCurrentRoom(room);
       setCurrentPlayer(player);
       setView('waiting');
@@ -132,7 +132,7 @@ export default function CobraGame() {
     if (playerName.trim().length > 8) return setError('이름은 8자 이하로 입력해주세요.');
     setLoading(true); setError('');
     try {
-      const { room, player } = await joinRoom(joinCode.trim(), playerName.trim(), user?.id ?? null);
+      const { room, player } = await joinRoom(joinCode.trim(), playerName.trim(), user?.uuid ?? null);
       setCurrentRoom(room);
       setCurrentPlayer(player);
       setView('waiting');
