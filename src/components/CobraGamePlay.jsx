@@ -504,7 +504,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
               return (
                 <GameCard
                   key={idx} card={card} faceUp={alreadyPeeked}
-                  onClick={canPeek ? () => act(() => peekCard(roomId, myId, idx, gameState)) : undefined}
+                  onClick={canPeek ? () => act(() => peekCard(roomId, myId, idx, gameStateRef.current)) : undefined}
                   highlight={canPeek}
                 />
               );
