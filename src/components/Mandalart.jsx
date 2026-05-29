@@ -453,6 +453,15 @@ const Mandalart = () => {
   const selectedCellData = selectedCell ? cells.find(c => c.id === selectedCell.id) : null;
   const selectedSectorPct = selectedCellData ? getSectorProgress(cells, selectedCellData.sectorIndex) : 0;
 
+  // 중간목표(섹터 중앙) 또는 큰 목표(core)는 달성률 자동 계산
+  const isAutoProgress = selectedCellData && isCenterOfSector(selectedCellData.row, selectedCellData.col);
+  const autoProgressValue = isAutoProgress
+    ? (selectedCellData.row === 4 && selectedCellData.col === 4
+        ? getTotalProgress(cells)
+        : getSectorAvgProgress(cells, selectedCellData.sectorIndex))
+    : null;
+  const displayProgress = autoProgressValue !== null ? autoProgressValue : panelCellProgress;
+
   if (loadingDB) {
     return (
       <div className="mandalart-app">
@@ -535,21 +544,29 @@ const Mandalart = () => {
         <div className="panel-cell-gauge">
           <div className="cell-gauge-header">
             <span className="cell-gauge-label">진행도</span>
-            <span className="cell-gauge-value">{panelCellProgress}%</span>
+            <span className="cell-gauge-value">{displayProgress}%</span>
           </div>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            step="5"
-            value={panelCellProgress}
-            onChange={handleCellProgressChange}
-            className="cell-gauge-range"
-            style={{ '--gauge-pct': `${panelCellProgress}%` }}
-          />
-          <div className="cell-gauge-track-labels">
-            <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
-          </div>
+          {isAutoProgress ? (
+            <div className="cell-gauge-auto-wrap">
+              <div className="cell-gauge-auto-bar" style={{ width: `${displayProgress}%` }} />
+            </div>
+          ) : (
+            <>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="5"
+                value={panelCellProgress}
+                onChange={handleCellProgressChange}
+                className="cell-gauge-range"
+                style={{ '--gauge-pct': `${panelCellProgress}%` }}
+              />
+              <div className="cell-gauge-track-labels">
+                <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+              </div>
+            </>
+          )}
         </div>
 
         <textarea

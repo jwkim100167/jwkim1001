@@ -395,6 +395,21 @@
   box-shadow: 0 1px 4px rgba(74, 111, 220, 0.4);
 }
 
+.cell-gauge-auto-wrap {
+  width: 100%;
+  height: 10px;
+  background: #E5E7EB;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.cell-gauge-auto-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4A6FDC, #3DB88A);
+  border-radius: 5px;
+  transition: width 0.4s ease;
+}
+
 .cell-gauge-track-labels {
   display: flex;
   justify-content: space-between;
