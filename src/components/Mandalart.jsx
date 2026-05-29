@@ -83,6 +83,7 @@ function initEmptyState() {
         row,
         col,
         text: '',
+        goal: '',
         status: null,
         note: '',
         progress: 0,
@@ -98,6 +99,7 @@ function normalizeCells(raw) {
     ...c,
     row: c.row ?? Math.floor(i / 9),
     col: c.col ?? i % 9,
+    goal: c.goal ?? '',
     progress: c.progress ?? 0,
     sectorIndex: c.sectorIndex ?? getSectorIndex(
       c.row ?? Math.floor(i / 9),
@@ -166,6 +168,7 @@ const Mandalart = () => {
   const [panelOpen, setPanelOpen] = useState(false);
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, cellId: null });
   const [panelTitle, setPanelTitle] = useState('');
+  const [panelGoal, setPanelGoal] = useState('');
   const [panelNote, setPanelNote] = useState('');
   const [panelCellProgress, setPanelCellProgress] = useState(0);
   const [focusSector, setFocusSector] = useState(null);
@@ -252,6 +255,7 @@ const Mandalart = () => {
   const openPanel = (cell) => {
     setSelectedCell(cell);
     setPanelTitle(cell.text);
+    setPanelGoal(cell.goal ?? '');
     setPanelNote(cell.note);
     setPanelCellProgress(cell.progress ?? 0);
     setPanelOpen(true);
@@ -284,6 +288,16 @@ const Mandalart = () => {
     if (selectedCell) {
       updateCell(selectedCell.id, { text: val });
       setSelectedCell(prev => ({ ...prev, text: val }));
+    }
+  };
+
+  const handlePanelGoalChange = (e) => {
+    const val = e.target.value;
+    if (val.length > 18) return;
+    setPanelGoal(val);
+    if (selectedCell) {
+      updateCell(selectedCell.id, { goal: val });
+      setSelectedCell(prev => ({ ...prev, goal: val }));
     }
   };
 
@@ -492,6 +506,17 @@ const Mandalart = () => {
             rows={2}
           />
           <span className="panel-title-count">{panelTitle.length}/18</span>
+        </div>
+
+        <div className="panel-goal-wrap">
+          <textarea
+            className="panel-goal-input"
+            placeholder="목표 (가능하면 수치화, 최대 18자)"
+            value={panelGoal}
+            onChange={handlePanelGoalChange}
+            rows={2}
+          />
+          <span className="panel-goal-count">{panelGoal.length}/18</span>
         </div>
 
         <div className="panel-status-row">
