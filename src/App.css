@@ -1,3 +1,71 @@
+/* 세션 연장 팝업 */
+.session-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.session-modal {
+  background: #fff;
+  border-radius: 14px;
+  padding: 30px 32px 24px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+.session-title {
+  margin: 0 0 14px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #111827;
+}
+.session-msg {
+  margin: 0 0 6px;
+  font-size: 15px;
+  color: #374151;
+}
+.session-countdown {
+  font-size: 24px;
+  font-weight: 700;
+  color: #EF4444;
+}
+.session-sub {
+  margin: 0 0 22px;
+  font-size: 13px;
+  color: #6B7280;
+}
+.session-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.session-btn-extend {
+  padding: 9px 22px;
+  border-radius: 8px;
+  border: none;
+  background: #4A6FDC;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.session-btn-extend:hover { background: #3a5bc9; }
+.session-btn-logout {
+  padding: 9px 22px;
+  border-radius: 8px;
+  border: 1px solid #D1D5DB;
+  background: #fff;
+  color: #374151;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.session-btn-logout:hover { background: #F3F4F6; }
+
 #root {
   max-width: 1280px;
   margin: 0 auto;

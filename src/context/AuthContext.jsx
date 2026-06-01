@@ -1,45 +1,108 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { getCurrentUser, login as loginService, logout as logoutService } from '../services/authService';
+import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
+import { getCurrentUser, login as loginService, logout as logoutService, extendSession } from '../services/authService';
+
+const SESSION_MS = 30 * 60 * 1000;   // 30분
+const WARN_BEFORE_MS = 60 * 1000;    // 만료 1분 전 경고
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showExtendModal, setShowExtendModal] = useState(false);
+  const [countdown, setCountdown] = useState(60);
+
+  const warnTimerRef = useRef(null);
+  const countdownRef = useRef(null);
+  const logoutRef = useRef(null);
+
+  const clearSessionTimers = () => {
+    if (warnTimerRef.current) clearTimeout(warnTimerRef.current);
+    if (countdownRef.current) clearInterval(countdownRef.current);
+    warnTimerRef.current = null;
+    countdownRef.current = null;
+  };
+
+  const performLogout = useCallback(() => {
+    clearSessionTimers();
+    logoutService();
+    setUser(null);
+    setShowExtendModal(false);
+  }, []);
+
+  logoutRef.current = performLogout;
+
+  const startCountdown = useCallback(() => {
+    setShowExtendModal(true);
+    setCountdown(60);
+    let secs = 60;
+    countdownRef.current = setInterval(() => {
+      secs -= 1;
+      setCountdown(secs);
+      if (secs <= 0) {
+        clearInterval(countdownRef.current);
+        countdownRef.current = null;
+        logoutRef.current();
+      }
+    }, 1000);
+  }, []);
+
+  const startSessionTimer = useCallback((loginTime) => {
+    clearSessionTimers();
+    const elapsed = Date.now() - loginTime;
+    const timeUntilWarn = SESSION_MS - WARN_BEFORE_MS - elapsed;
+
+    if (timeUntilWarn <= 0) {
+      const timeLeft = SESSION_MS - elapsed;
+      if (timeLeft <= 0) {
+        logoutRef.current();
+      } else {
+        startCountdown();
+      }
+      return;
+    }
+
+    warnTimerRef.current = setTimeout(() => {
+      startCountdown();
+    }, timeUntilWarn);
+  }, [startCountdown]);
 
   useEffect(() => {
-    // 컴포넌트 마운트 시 localStorage에서 사용자 정보 로드
     const currentUser = getCurrentUser();
     setUser(currentUser);
     setLoading(false);
-
-    // 1분마다 로그인 시간 체크
-    const intervalId = setInterval(() => {
-      const user = getCurrentUser();
-      if (!user && currentUser) {
-        // 세션 만료로 로그아웃된 경우
-        setUser(null);
-      }
-    }, 60000); // 1분마다 체크
-
-    return () => clearInterval(intervalId);
+    if (currentUser?.loginTime) {
+      startSessionTimer(currentUser.loginTime);
+    }
+    return () => clearSessionTimers();
   }, []);
 
   const login = async (loginId, password) => {
     const result = await loginService(loginId, password);
     if (result.success) {
       setUser(result.user);
+      startSessionTimer(result.user.loginTime);
     }
     return result;
   };
 
   const logout = () => {
-    logoutService();
-    setUser(null);
+    performLogout();
   };
 
   const loginDirect = (user) => {
     setUser(user);
+    if (user?.loginTime) startSessionTimer(user.loginTime);
+  };
+
+  const handleExtend = () => {
+    const ok = extendSession();
+    if (ok) {
+      clearSessionTimers();
+      setShowExtendModal(false);
+      setCountdown(60);
+      startSessionTimer(Date.now());
+    }
   };
 
   const value = {
@@ -54,6 +117,21 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider value={value}>
       {children}
+      {showExtendModal && (
+        <div className="session-overlay">
+          <div className="session-modal">
+            <h3 className="session-title">세션 만료 안내</h3>
+            <p className="session-msg">
+              <span className="session-countdown">{countdown}</span>초 후 자동 로그아웃됩니다.
+            </p>
+            <p className="session-sub">로그인을 연장하시겠습니까?</p>
+            <div className="session-buttons">
+              <button className="session-btn-extend" onClick={handleExtend}>연장하기</button>
+              <button className="session-btn-logout" onClick={performLogout}>로그아웃</button>
+            </div>
+          </div>
+        </div>
+      )}
     </AuthContext.Provider>
   );
 }

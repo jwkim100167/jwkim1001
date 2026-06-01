@@ -233,12 +233,12 @@ export function getCurrentUser() {
   try {
     const user = JSON.parse(userStr);
 
-    // 로그인 시간 체크 (1시간 = 3600000ms)
+    // 로그인 시간 체크 (30분 = 1800000ms)
     if (user.loginTime) {
       const currentTime = Date.now();
       const elapsedTime = currentTime - user.loginTime;
 
-      if (elapsedTime > 3600000) {
+      if (elapsedTime > 1800000) {
         logout();
         return null;
       }
@@ -299,6 +299,22 @@ export async function register(loginId, password, userName) {
   } catch (err) {
     console.error('회원가입 예외:', err);
     return { success: false, error: '회원가입 중 오류가 발생했습니다.' };
+  }
+}
+
+/**
+ * 세션 연장 (loginTime을 현재 시각으로 갱신)
+ */
+export function extendSession() {
+  const userStr = localStorage.getItem('user');
+  if (!userStr) return false;
+  try {
+    const user = JSON.parse(userStr);
+    user.loginTime = Date.now();
+    localStorage.setItem('user', JSON.stringify(user));
+    return true;
+  } catch {
+    return false;
   }
 }
 
