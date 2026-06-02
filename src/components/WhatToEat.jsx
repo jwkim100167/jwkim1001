@@ -433,15 +433,23 @@ export default function WhatToEat() {
   const rotationRef = useRef(0);
   const animationRef = useRef(null);
 
-  const [mealFilter, setMealFilter]   = useState('all');
-  const [activeNames, setActiveNames] = useState(() => getInitialNames('all'));
-  const [isSpinning, setIsSpinning]   = useState(false);
-  const [result, setResult]           = useState(null);
-  const [showMgmt, setShowMgmt]       = useState(false);
-  const [mgmtView, setMgmtView]       = useState('category'); // 'category' | 'on' | 'off'
+  const [mealFilter, setMealFilter]       = useState('all');
+  const [activeNames, setActiveNames]     = useState(() => getInitialNames('all'));
+  const [isSpinning, setIsSpinning]       = useState(false);
+  const [result, setResult]               = useState(null);
+  const [showMgmt, setShowMgmt]           = useState(false);
+  const [mgmtView, setMgmtView]           = useState('category'); // 'category' | 'on' | 'off'
+  const [customItems, setCustomItems]     = useState([]);
+  const [showCustomInput, setShowCustomInput] = useState(false);
+  const [customInputVal, setCustomInputVal]   = useState('');
 
-  const wheelItems = ALL_ITEMS.filter(i => activeNames.has(i.name));
-  const offItems   = ALL_ITEMS.filter(i => !activeNames.has(i.name));
+  const isCustom   = mealFilter === 'custom';
+  const wheelItems = isCustom
+    ? customItems
+    : ALL_ITEMS.filter(i => activeNames.has(i.name));
+  const offItems   = isCustom
+    ? []
+    : ALL_ITEMS.filter(i => !activeNames.has(i.name));
 
   // 카테고리별 상태 계산
   const getCatStatus = (catId) => {
@@ -459,13 +467,13 @@ export default function WhatToEat() {
     drawWheel(canvasRef.current, 0, ALL_ITEMS.filter(i => i.meal !== 'lunch' || true));
   }, []);
 
-  // activeNames 변경 시 재그리기
+  // activeNames / customItems 변경 시 재그리기
   useEffect(() => {
     if (!isSpinning) {
       drawWheel(canvasRef.current, rotationRef.current, wheelItems);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeNames]);
+  }, [activeNames, customItems]);
 
   // ── 필터 변경 ────────────────────────────────────────────────
   const handleFilter = (f) => {
@@ -533,11 +541,34 @@ export default function WhatToEat() {
 
   const respinExcluding = () => {
     if (!result) return;
-    const newNames = new Set(activeNames);
-    newNames.delete(result.name);
-    const items = ALL_ITEMS.filter(i => newNames.has(i.name));
-    setActiveNames(newNames);
-    spinWith(items);
+    if (isCustom) {
+      const items = customItems.filter(i => i.name !== result.name);
+      setCustomItems(items);
+      spinWith(items);
+    } else {
+      const newNames = new Set(activeNames);
+      newNames.delete(result.name);
+      const items = ALL_ITEMS.filter(i => newNames.has(i.name));
+      setActiveNames(newNames);
+      spinWith(items);
+    }
+  };
+
+  const addCustomItem = () => {
+    const name = customInputVal.trim();
+    if (!name || customItems.some(i => i.name === name)) return;
+    setCustomItems(prev => [...prev, {
+      name,
+      meal: 'custom',
+      catId: 'custom',
+      catName: '직접입력',
+      catColor: '#a78bfa',
+    }]);
+    setCustomInputVal('');
+  };
+
+  const removeCustomItem = (name) => {
+    setCustomItems(prev => prev.filter(i => i.name !== name));
   };
 
   // ── 렌더 ────────────────────────────────────────────────────
@@ -557,7 +588,7 @@ export default function WhatToEat() {
             { key: 'all',    label: '전체' },
             { key: 'lunch',  label: '점심' },
             { key: 'dinner', label: '저녁' },
-            { key: 'custom', label: '빈칸' },
+            { key: 'custom', label: '빈칸(지정)' },
           ].map(({ key, label }) => (
             <button
               key={key}
@@ -582,6 +613,17 @@ export default function WhatToEat() {
           >
             {isSpinning ? '···' : '돌리기'}
           </button>
+
+          {/* 빈칸(지정) + 버튼 */}
+          {isCustom && !isSpinning && !result && (
+            <button
+              className="add-custom-btn"
+              onClick={() => { setShowCustomInput(v => !v); setCustomInputVal(''); }}
+              title="메뉴 추가"
+            >
+              +
+            </button>
+          )}
 
           {/* 결과 오버레이 */}
           {result && (
@@ -616,6 +658,23 @@ export default function WhatToEat() {
             </div>
           )}
         </div>
+
+        {/* 빈칸(지정) 입력창 */}
+        {isCustom && showCustomInput && (
+          <div className="custom-input-bar">
+            <input
+              className="custom-input-field"
+              type="text"
+              placeholder="메뉴 이름 입력"
+              value={customInputVal}
+              onChange={e => setCustomInputVal(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') addCustomItem(); if (e.key === 'Escape') setShowCustomInput(false); }}
+              autoFocus
+            />
+            <button className="custom-input-add" onClick={addCustomItem}>추가</button>
+            <button className="custom-input-cancel" onClick={() => setShowCustomInput(false)}>✕</button>
+          </div>
+        )}
 
         {/* 메뉴 편집 */}
         <div className="menu-mgmt">
@@ -668,19 +727,23 @@ export default function WhatToEat() {
                 })}
 
                 {/* 원판 탭 */}
-                {mgmtView === 'on' && wheelItems.map(item => (
-                  <div key={item.name} className="mgmt-row">
-                    <span className="cat-badge" style={{ background: item.catColor }}>{item.catName}</span>
-                    <span className="mgmt-item-name">{item.name}</span>
-                    <button
-                      className="mgmt-action-btn mgmt-remove"
-                      onClick={() => removeItem(item.name)}
-                      disabled={wheelItems.length <= 2}
-                    >
-                      제거
-                    </button>
-                  </div>
-                ))}
+                {mgmtView === 'on' && (
+                  wheelItems.length === 0
+                    ? <p className="mgmt-empty">원판에 메뉴가 없습니다.<br/>+ 버튼으로 추가하세요.</p>
+                    : wheelItems.map(item => (
+                      <div key={item.name} className="mgmt-row">
+                        <span className="cat-badge" style={{ background: item.catColor }}>{item.catName}</span>
+                        <span className="mgmt-item-name">{item.name}</span>
+                        <button
+                          className="mgmt-action-btn mgmt-remove"
+                          onClick={() => isCustom ? removeCustomItem(item.name) : removeItem(item.name)}
+                          disabled={!isCustom && wheelItems.length <= 2}
+                        >
+                          제거
+                        </button>
+                      </div>
+                    ))
+                )}
 
                 {/* 제외 탭 */}
                 {mgmtView === 'off' && (
