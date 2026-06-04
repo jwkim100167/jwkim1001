@@ -179,6 +179,16 @@ async function updateGameState(roomId, gameState) {
   if (error) throw error;
 }
 
+async function fetchLatestState(roomId) {
+  const { data, error } = await supabase
+    .from('cobra_rooms')
+    .select('game_state')
+    .eq('id', roomId)
+    .single();
+  if (error) throw error;
+  return data.game_state;
+}
+
 /** 호스트가 게임을 시작할 때 호출 */
 export async function startGame(roomId, players, options = {}, lastWinnerPlayerId = null) {
   // 이전 판 승자가 있으면 맨 앞으로 재배치
@@ -212,8 +222,11 @@ export async function resetGame(roomId, lastWinnerPlayerId = null) {
 // 뷰잉 페이즈
 // ─────────────────────────────────────────
 
-/** 카드 한 장 확인 (뒤집기) — 2장 선택 시 자동 준비 완료 */
-export async function peekCard(roomId, playerId, cardIndex, gameState) {
+/** 카드 한 장 확인 (뒤집기) — 2장 선택 시 자동 준비 완료
+ *  DB에서 최신 state를 fetch한 뒤 적용 → 다중 플레이어 동시 클릭으로 인한 덮어쓰기 방지
+ */
+export async function peekCard(roomId, playerId, cardIndex) {
+  const gameState = await fetchLatestState(roomId);
   const newFaceUpArr = gameState.face_up[playerId].map((v, i) => (i === cardIndex ? true : v));
   const newFaceUp = { ...gameState.face_up, [playerId]: newFaceUpArr };
   const peekedCount = newFaceUpArr.filter(Boolean).length;

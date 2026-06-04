@@ -266,6 +266,7 @@ export function RulesModal({ onClose, options }) {
 // ─── 메인 컴포넌트 ────────────────────────────────────
 export default function CobraGamePlay({ gameState, currentPlayer, players, roomId, playerStats = {} }) {
   const [busy, setBusy] = useState(false);
+  const busyRef = useRef(false); // 동기 락 (setState는 비동기라 빠른 연속 클릭 방어 불가)
   const [errMsg, setErrMsg] = useState('');
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [showRules, setShowRules] = useState(false);
@@ -423,11 +424,12 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
 
   // ── 액션 래퍼 ──
   async function act(fn) {
-    if (busy) return;
+    if (busyRef.current) return;
+    busyRef.current = true;
     setBusy(true);
     setErrMsg('');
     try { await fn(); } catch (e) { setErrMsg(e.message || '오류가 발생했습니다.'); }
-    finally { setBusy(false); }
+    finally { busyRef.current = false; setBusy(false); }
   }
 
   // ── 손패 카드 클릭 ──
@@ -504,7 +506,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
               return (
                 <GameCard
                   key={idx} card={card} faceUp={alreadyPeeked}
-                  onClick={canPeek ? () => act(() => peekCard(roomId, myId, idx, gameStateRef.current)) : undefined}
+                  onClick={canPeek ? () => act(() => peekCard(roomId, myId, idx)) : undefined}
                   highlight={canPeek}
                 />
               );
