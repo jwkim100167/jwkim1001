@@ -322,7 +322,7 @@ const ALL_ITEMS = CATEGORIES.flatMap(cat =>
 
 // ── 헬퍼 ────────────────────────────────────────────────────────
 function getInitialNames(filter) {
-  if (filter === 'custom') return new Set();
+  if (filter === 'custom' || filter === 'jongwoong') return new Set();
   return new Set(
     ALL_ITEMS
       .filter(i => filter === 'all' || i.meal === filter || i.meal === 'both')
@@ -439,15 +439,30 @@ export default function WhatToEat() {
   const [result, setResult]               = useState(null);
   const [showMgmt, setShowMgmt]           = useState(false);
   const [mgmtView, setMgmtView]           = useState('category'); // 'category' | 'on' | 'off'
-  const [customItems, setCustomItems]     = useState([]);
+  const [customItems, setCustomItems]         = useState([]);
+  const [jongwoongItems, setJongwoongItems]   = useState([
+    { name: '남지',           meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '산산옥',         meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '족발덮밥',       meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '짬뽕지존',       meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '이태리부대찌개', meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '프리미엄레스토랑', meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '닭갈비',         meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '해탄',           meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '쌀국수',         meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+  ]);
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customInputVal, setCustomInputVal]   = useState('');
 
-  const isCustom   = mealFilter === 'custom';
+  const isCustom     = mealFilter === 'custom';
+  const isJongwoong  = mealFilter === 'jongwoong';
+  const isCustomLike = isCustom || isJongwoong;
   const wheelItems = isCustom
     ? customItems
+    : isJongwoong
+    ? jongwoongItems
     : ALL_ITEMS.filter(i => activeNames.has(i.name));
-  const offItems   = isCustom
+  const offItems = isCustomLike
     ? []
     : ALL_ITEMS.filter(i => !activeNames.has(i.name));
 
@@ -455,7 +470,7 @@ export default function WhatToEat() {
   const getCatStatus = (catId) => {
     const cat = CATEGORIES.find(c => c.id === catId);
     const mealFiltered = cat.items.filter(
-      i => mealFilter === 'all' || mealFilter === 'custom' || i.meal === mealFilter || i.meal === 'both'
+      i => mealFilter === 'all' || isCustomLike || i.meal === mealFilter || i.meal === 'both'
     );
     if (mealFiltered.length === 0) return { active: 0, total: 0, on: false };
     const active = mealFiltered.filter(i => activeNames.has(i.name)).length;
@@ -473,7 +488,7 @@ export default function WhatToEat() {
       drawWheel(canvasRef.current, rotationRef.current, wheelItems);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeNames, customItems]);
+  }, [activeNames, customItems, jongwoongItems]);
 
   // ── 필터 변경 ────────────────────────────────────────────────
   const handleFilter = (f) => {
@@ -492,7 +507,7 @@ export default function WhatToEat() {
       cat.items.forEach(i => newNames.delete(i.name));
     } else {
       cat.items
-        .filter(i => mealFilter === 'all' || mealFilter === 'custom' || i.meal === mealFilter || i.meal === 'both')
+        .filter(i => mealFilter === 'all' || isCustomLike || i.meal === mealFilter || i.meal === 'both')
         .forEach(i => newNames.add(i.name));
     }
     setActiveNames(newNames);
@@ -541,7 +556,11 @@ export default function WhatToEat() {
 
   const respinExcluding = () => {
     if (!result) return;
-    if (isCustom) {
+    if (isJongwoong) {
+      const items = jongwoongItems.filter(i => i.name !== result.name);
+      setJongwoongItems(items);
+      spinWith(items);
+    } else if (isCustom) {
       const items = customItems.filter(i => i.name !== result.name);
       setCustomItems(items);
       spinWith(items);
@@ -556,19 +575,35 @@ export default function WhatToEat() {
 
   const addCustomItem = () => {
     const name = customInputVal.trim();
-    if (!name || customItems.some(i => i.name === name)) return;
-    setCustomItems(prev => [...prev, {
-      name,
-      meal: 'custom',
-      catId: 'custom',
-      catName: '직접입력',
-      catColor: '#a78bfa',
-    }]);
+    if (!name) return;
+    if (isJongwoong) {
+      if (jongwoongItems.some(i => i.name === name)) return;
+      setJongwoongItems(prev => [...prev, {
+        name,
+        meal: 'jongwoong',
+        catId: 'jongwoong',
+        catName: '종웅점심',
+        catColor: '#86efac',
+      }]);
+    } else {
+      if (customItems.some(i => i.name === name)) return;
+      setCustomItems(prev => [...prev, {
+        name,
+        meal: 'custom',
+        catId: 'custom',
+        catName: '직접입력',
+        catColor: '#a78bfa',
+      }]);
+    }
     setCustomInputVal('');
   };
 
   const removeCustomItem = (name) => {
-    setCustomItems(prev => prev.filter(i => i.name !== name));
+    if (isJongwoong) {
+      setJongwoongItems(prev => prev.filter(i => i.name !== name));
+    } else {
+      setCustomItems(prev => prev.filter(i => i.name !== name));
+    }
   };
 
   // ── 렌더 ────────────────────────────────────────────────────
@@ -589,6 +624,7 @@ export default function WhatToEat() {
             { key: 'lunch',  label: '점심' },
             { key: 'dinner', label: '저녁' },
             { key: 'custom', label: '빈칸(지정)' },
+            { key: 'jongwoong', label: '종웅(점심)' },
           ].map(({ key, label }) => (
             <button
               key={key}
@@ -614,8 +650,8 @@ export default function WhatToEat() {
             {isSpinning ? '···' : '돌리기'}
           </button>
 
-          {/* 빈칸(지정) + 버튼 */}
-          {isCustom && !isSpinning && !result && (
+          {/* 빈칸(지정) / 종웅(점심) + 버튼 */}
+          {isCustomLike && !isSpinning && !result && (
             <button
               className="add-custom-btn"
               onClick={() => { setShowCustomInput(v => !v); setCustomInputVal(''); }}
@@ -659,8 +695,8 @@ export default function WhatToEat() {
           )}
         </div>
 
-        {/* 빈칸(지정) 입력창 */}
-        {isCustom && showCustomInput && (
+        {/* 빈칸(지정) / 종웅(점심) 입력창 */}
+        {isCustomLike && showCustomInput && (
           <div className="custom-input-bar">
             <input
               className="custom-input-field"
