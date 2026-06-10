@@ -450,6 +450,7 @@ export default function WhatToEat() {
     { name: '닭갈비',         meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
     { name: '해탄',           meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
     { name: '쌀국수',         meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '버거옥',         meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
   ]);
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customInputVal, setCustomInputVal]   = useState('');
