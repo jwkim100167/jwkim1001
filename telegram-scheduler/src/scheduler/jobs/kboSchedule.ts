@@ -88,7 +88,7 @@ async function fetchDayGames(yyyymmdd: string): Promise<Array<[number, number]>>
       const aw = (vsRaw.awayWin ?? vsRaw.lose ?? vsRaw.l ?? 0) as number;
       const d  = (vsRaw.draw ?? vsRaw.tie ?? vsRaw.d ?? 0) as number;
       if (hw + aw + d > 0) {
-        h2h = d > 0 ? `${hw}승 ${aw}패 ${d}무` : `${hw}승 ${aw}패`;
+        h2h = d > 0 ? `${hw}:${aw}:${d}` : `${hw}:${aw}`;
       }
     }
 
