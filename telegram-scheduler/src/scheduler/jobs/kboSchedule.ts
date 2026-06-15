@@ -60,22 +60,39 @@ async function fetchDayGames(yyyymmdd: string): Promise<Array<[number, number]>>
 
   logger.info(`[kbo-schedule] ${yyyymmdd}: API returned ${games.length} games`);
 
-  const matchups: Array<[number, number]> = [];
+  const matchups: Array<[number, number, string | null]> = [];
   for (const g of games) {
     const game = g as Record<string, unknown>;
-    const home = (game.homeTeam ?? game.home_team) as Record<string, string> | undefined;
-    const away = (game.awayTeam ?? game.away_team) as Record<string, string> | undefined;
-    const homeName = home?.teamName ?? home?.name ?? home?.teamKey ?? "";
-    const awayName = away?.teamName ?? away?.name ?? away?.teamKey ?? "";
+    const home = (game.homeTeam ?? game.home_team) as Record<string, unknown> | undefined;
+    const away = (game.awayTeam ?? game.away_team) as Record<string, unknown> | undefined;
+    const homeName = (home?.teamName ?? home?.name ?? home?.teamKey ?? "") as string;
+    const awayName = (away?.teamName ?? away?.name ?? away?.teamKey ?? "") as string;
 
     const homeId = toTeamId(homeName);
     const awayId = toTeamId(awayName);
 
-    if (homeId && awayId) {
-      matchups.push([homeId, awayId]);
-    } else {
+    if (!homeId || !awayId) {
       logger.warn(`[kbo-schedule] Unknown team: home="${homeName}" away="${awayName}"`);
+      continue;
     }
+
+    // 상대전적 추출 시도 (API 응답 필드명이 다를 수 있어 여러 이름 시도)
+    const vsRaw = (
+      game.homeVsAwayRecord ?? game.vsRecord ?? game.h2hRecord ??
+      game.seasonRecord ?? (home as Record<string, unknown>)?.vsRecord
+    ) as Record<string, number> | null | undefined;
+
+    let h2h: string | null = null;
+    if (vsRaw) {
+      const hw = (vsRaw.homeWin ?? vsRaw.win ?? vsRaw.w ?? 0) as number;
+      const aw = (vsRaw.awayWin ?? vsRaw.lose ?? vsRaw.l ?? 0) as number;
+      const d  = (vsRaw.draw ?? vsRaw.tie ?? vsRaw.d ?? 0) as number;
+      if (hw + aw + d > 0) {
+        h2h = d > 0 ? `${hw}승 ${aw}패 ${d}무` : `${hw}승 ${aw}패`;
+      }
+    }
+
+    matchups.push([homeId, awayId, h2h]);
   }
 
   return matchups;

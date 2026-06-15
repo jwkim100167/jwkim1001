@@ -147,7 +147,8 @@ export default function KboPredict() {
     }
     const wrapperRect = rankWrapperRef.current.getBoundingClientRect();
     const brackets = nextGames.slice(0, 5).map((game, idx) => {
-      const [teamA, teamB] = game;
+      const teamA = game[0];
+      const teamB = game[1];
       const rankA = actualRank.indexOf(teamA);
       const rankB = actualRank.indexOf(teamB);
       if (rankA === -1 || rankB === -1) return null;
@@ -208,7 +209,7 @@ export default function KboPredict() {
         <div className="kbo-header">
           <button className="back-btn" onClick={() => navigate('/')}>← 홈</button>
           <h1>⚾ 2026 KBO 순위 예측</h1>
-          <p className="kbo-subtitle">현재는 2026 시범경기 순위입니다.<br/>순위와 예측을 비교해 점수를 확인하세요.</p>
+          <p className="kbo-subtitle">순위와 예측을 비교해 점수를 확인하세요.</p>
           {isMock && <div className="mock-badge">📋 MOCK DATA</div>}
         </div>
 
@@ -430,12 +431,17 @@ export default function KboPredict() {
                 return `${d.getMonth() + 1}/${d.getDate()} 경기`;
               })()}</span>
               {nextGames.slice(0, 5).map((game, idx) => {
-                const [teamA, teamB] = game;
+                const teamA = game[0];
+                const teamB = game[1];
+                const h2h   = game[2] ?? null;
                 const color = BRACKET_COLORS[idx % BRACKET_COLORS.length];
                 return (
-                  <span key={idx} className="today-game-badge" style={{ borderColor: color, color }}>
-                    {TEAMS[teamA]?.name} vs {TEAMS[teamB]?.name}
-                  </span>
+                  <div key={idx} className="today-game-item">
+                    <span className="today-game-badge" style={{ borderColor: color, color }}>
+                      {TEAMS[teamA]?.name} vs {TEAMS[teamB]?.name}
+                    </span>
+                    {h2h && <span className="today-game-h2h">{h2h}</span>}
+                  </div>
                 );
               })}
             </div>
