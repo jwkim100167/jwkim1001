@@ -30,9 +30,9 @@ const MOCK_USERS = [
 const PODIUM_MEDALS = ['🥇', '🥈', '🥉'];
 
 const BRACKET_COLORS = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#a855f7'];
-const SVG_W = 64;
-const B_W = 10; // 브래킷 팔 너비
-const B_GAP = 2; // 브래킷 간 간격
+const SVG_W = 50;
+const B_W = 7;  // 브래킷 팔 너비
+const B_GAP = 1; // 브래킷 간 간격
 
 // 승/무/패가 동일한 팀에 같은 순위 번호 부여 → [1, 1, 3, 3, 3, 6, ...]
 // 직전 팀이 아닌 전체에서 같은 기록의 첫 번째 위치를 찾아 순위 결정
@@ -488,17 +488,19 @@ export default function KboPredict() {
                     >
                       <span className="rank-num">{isTied ? `공동${rankNum}위` : `${rankNum}위`}</span>
                       <img src={TEAMS[teamId].logo} alt={TEAMS[teamId].name} className="team-logo-sm" />
-                      <span className="rank-name">{TEAMS[teamId].name}</span>
+                      <div className="rank-name-gb">
+                        <span className="rank-name">{TEAMS[teamId].name}</span>
+                        {leaderStats && (
+                          <span className="rank-gb">
+                            {idx === 0 ? '-' : gb % 1 === 0 ? `${gb}.0` : `${gb}`}
+                          </span>
+                        )}
+                      </div>
                       {stats && (
                         <span className="rank-stats">
                           <span className="stat-w">{stats.w}승</span>
                           {stats.d > 0 && <span className="stat-d">{stats.d}무</span>}
                           <span className="stat-l">{stats.l}패</span>
-                        </span>
-                      )}
-                      {leaderStats && (
-                        <span className="rank-gb">
-                          {idx === 0 ? '-' : gb % 1 === 0 ? `${gb}.0` : `${gb}`}
                         </span>
                       )}
                       {idx < 5 && <span className="top5-badge">가을야구</span>}

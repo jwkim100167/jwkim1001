@@ -464,7 +464,7 @@
 }
 
 .rank-table-wrapper.has-brackets {
-  padding-left: 68px;
+  padding-left: 54px;
 }
 
 /* ─── 실제 순위표 ─── */
@@ -516,10 +516,18 @@
   vertical-align: middle;
 }
 
-.rank-name {
+.rank-name-gb {
   flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.rank-name {
   font-weight: 600;
   text-align: left;
+  white-space: nowrap;
 }
 
 .rank-stats {
@@ -535,10 +543,8 @@
 .stat-l { color: #f87171; font-weight: 600; }
 
 .rank-gb {
-  font-size: 0.75rem;
-  opacity: 0.6;
-  min-width: 32px;
-  text-align: right;
+  font-size: 0.72rem;
+  opacity: 0.5;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -635,7 +641,7 @@
   .section-card { padding: 16px; }
 
   /* 순위표 브래킷 여백 축소 */
-  .rank-table-wrapper.has-brackets { padding-left: 48px; }
+  .rank-table-wrapper.has-brackets { padding-left: 38px; }
 
   /* 순위 행 */
   .rank-row {
@@ -654,6 +660,7 @@
     height: 22px;
   }
 
+  .rank-name-gb { gap: 3px; }
   .rank-name { font-size: 0.82rem; }
 
   .rank-stats {
