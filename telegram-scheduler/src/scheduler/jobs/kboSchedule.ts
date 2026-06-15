@@ -17,6 +17,26 @@ const TEAM_NAME_TO_ID: Record<string, number> = {
   키움: 10, 키움히어로즈: 10,
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function fetchH2HFromDB(
+  kboSupabase: any,
+  homeId: number,
+  awayId: number,
+  season: number
+): Promise<string | null> {
+  const { data } = await kboSupabase
+    .from("kboH2H")
+    .select("wins, draws, losses")
+    .eq("season", season)
+    .eq("team_id", homeId)
+    .eq("opp_id", awayId)
+    .maybeSingle();
+  if (!data) return null;
+  const { wins, draws, losses } = data as { wins: number; draws: number; losses: number };
+  if (wins + draws + losses === 0) return null;
+  return draws > 0 ? `${wins}:${losses}:${draws}` : `${wins}:${losses}`;
+}
+
 function toTeamId(name: string): number | null {
   if (!name) return null;
   if (TEAM_NAME_TO_ID[name]) return TEAM_NAME_TO_ID[name];
@@ -88,16 +108,23 @@ export const kboScheduleJob: ScheduleJob = {
   timezone: "Asia/Seoul",
   enabled: true,
   execute: async () => {
-    const kboUrl = process.env.KBO_SUPABASE_URL ?? config.supabase.url;
-    const kboKey = process.env.KBO_SUPABASE_SERVICE_KEY ?? config.supabase.serviceKey;
-    const supabase = createClient(kboUrl, kboKey);
+    const supabase = createClient(config.kboSupabase.url, config.kboSupabase.serviceKey);
+    const season = new Date().getFullYear();
 
     // 오늘 포함 3일치 저장 (오늘 경기 없어도 다음 경기 날짜를 프론트에서 찾을 수 있도록)
     for (let offset = 0; offset <= 2; offset++) {
       const yyyymmdd = getKstYyyymmdd(offset);
       const isoDate = `${yyyymmdd.slice(0, 4)}-${yyyymmdd.slice(4, 6)}-${yyyymmdd.slice(6, 8)}`;
 
-      const games = await fetchDayGames(yyyymmdd);
+      const matchups = await fetchDayGames(yyyymmdd);
+
+      // H2H를 DB에서 병렬 조회하여 [homeId, awayId, h2h] 형태로 구성
+      const games: Array<[number, number, string | null]> = await Promise.all(
+        matchups.map(async ([homeId, awayId]) => {
+          const h2h = await fetchH2HFromDB(supabase, homeId, awayId, season);
+          return [homeId, awayId, h2h];
+        })
+      );
 
       const { error } = await supabase
         .from("kboTodaySchedule")

@@ -458,6 +458,19 @@
   white-space: nowrap;
 }
 
+.today-game-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.today-game-h2h {
+  font-size: 0.62rem;
+  opacity: 0.45;
+  white-space: nowrap;
+}
+
 /* ─── 순위표 브래킷 wrapper ─── */
 .rank-table-wrapper {
   position: relative;

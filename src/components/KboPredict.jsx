@@ -433,11 +433,15 @@ export default function KboPredict() {
               {nextGames.slice(0, 5).map((game, idx) => {
                 const teamA = game[0];
                 const teamB = game[1];
+                const h2h   = game[2] ?? null;
                 const color = BRACKET_COLORS[idx % BRACKET_COLORS.length];
                 return (
-                  <span key={idx} className="today-game-badge" style={{ borderColor: color, color }}>
-                    {TEAMS[teamA]?.name} vs {TEAMS[teamB]?.name}
-                  </span>
+                  <div key={idx} className="today-game-item">
+                    <span className="today-game-badge" style={{ borderColor: color, color }}>
+                      {TEAMS[teamA]?.name} vs {TEAMS[teamB]?.name}
+                    </span>
+                    {h2h && <span className="today-game-h2h">{h2h}</span>}
+                  </div>
                 );
               })}
             </div>

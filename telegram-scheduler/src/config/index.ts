@@ -28,6 +28,10 @@ export const config = {
     url:        requireEnv("SUPABASE_URL"),
     serviceKey: requireEnv("SUPABASE_SERVICE_KEY"),
   },
+  kboSupabase: {
+    url:        requireEnv("KBO_SUPABASE_URL"),
+    serviceKey: requireEnv("KBO_SUPABASE_SERVICE_KEY"),
+  },
   app: {
     nodeEnv: process.env.NODE_ENV ?? "development",
     logLevel: process.env.LOG_LEVEL ?? "info",
