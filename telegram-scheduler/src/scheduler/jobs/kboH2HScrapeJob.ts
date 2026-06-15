@@ -39,24 +39,15 @@ async function scrapeH2H(): Promise<Array<{
   const now = new Date().toISOString();
   const rows: ReturnType<typeof scrapeH2H> extends Promise<infer T> ? T : never = [];
 
-  // 팀간 승패표 찾기: "팀간 승패표" 텍스트를 포함하는 섹션의 table
+  // 팀간 승패표 찾기: 헤더 첫 셀이 "팀명"이고 두 번째 셀에 "(승-패-무)" 포함하는 테이블
   let h2hTable = $("table").filter((_, el) => {
-    const prev = $(el).closest("div, section, article").find("h3, h4, caption, .tit, .title").text();
-    return prev.includes("팀간 승패표");
+    const firstRow = $(el).find("tr").first();
+    const cells = firstRow.find("th, td");
+    return (
+      cells.eq(0).text().trim() === "팀명" &&
+      cells.eq(1).text().includes("승-패-무")
+    );
   }).first();
-
-  // 못 찾으면 모든 table 중 10×10 구조인 것 탐색
-  if (!h2hTable.length) {
-    $("table").each((_, el) => {
-      const tbl = $(el);
-      const headerCells = tbl.find("tr").first().find("th, td").length;
-      // 헤더 포함 11~12열 이상이면 팀간 승패표
-      if (headerCells >= 11) {
-        h2hTable = tbl;
-        return false; // break
-      }
-    });
-  }
 
   if (!h2hTable.length) {
     throw new Error("[kbo-h2h-scrape] 팀간 승패표 테이블을 찾지 못했습니다");
@@ -64,12 +55,12 @@ async function scrapeH2H(): Promise<Array<{
 
   const tableRows = h2hTable.find("tr").toArray();
 
-  // 헤더 행에서 컬럼 팀 목록 추출
+  // 헤더 행에서 컬럼 팀 목록 추출 ("LG(승-패-무)" → "LG")
   const headerRow = tableRows[0];
   const colTeamIds: Array<number | null> = [];
   $(headerRow).find("th, td").each((i, cell) => {
     if (i === 0) return; // 첫 번째 셀(팀명 레이블) 스킵
-    const text = $(cell).text().trim();
+    const text = $(cell).text().trim().replace(/\(.*\)/, "").trim();
     colTeamIds.push(toTeamId(text));
   });
 
