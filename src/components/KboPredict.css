@@ -534,6 +534,15 @@
 .stat-d { color: #facc15; font-weight: 600; }
 .stat-l { color: #f87171; font-weight: 600; }
 
+.rank-gb {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  min-width: 32px;
+  text-align: right;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 .top5-badge {
   font-size: 0.7rem;
   background: rgba(255, 214, 10, 0.3);
@@ -541,6 +550,8 @@
   padding: 2px 7px;
   border-radius: 10px;
   font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* ─── 현황판 ─── */
@@ -619,4 +630,52 @@
 
   .score-breakdown { gap: 8px; }
   .total-label { margin-left: 0; }
+
+  /* 섹션 카드 여백 축소 */
+  .section-card { padding: 16px; }
+
+  /* 순위표 브래킷 여백 축소 */
+  .rank-table-wrapper.has-brackets { padding-left: 48px; }
+
+  /* 순위 행 */
+  .rank-row {
+    gap: 6px;
+    padding: 7px 8px;
+    font-size: 0.8rem;
+  }
+
+  .rank-num {
+    min-width: 34px;
+    font-size: 0.78rem;
+  }
+
+  .team-logo-sm {
+    width: 22px;
+    height: 22px;
+  }
+
+  .rank-name { font-size: 0.82rem; }
+
+  .rank-stats {
+    gap: 3px;
+    font-size: 0.68rem;
+    margin-right: 2px;
+  }
+
+  .rank-gb {
+    font-size: 0.68rem;
+    min-width: 26px;
+  }
+
+  /* 가을야구 뱃지는 좌측 강조선으로 구분 가능하므로 모바일에서 숨김 */
+  .top5-badge { display: none; }
+
+  /* 대진 legend */
+  .today-games-legend { gap: 5px; font-size: 0.7rem; }
+  .today-game-badge { padding: 2px 6px; }
+
+  /* 포디엄 카드 */
+  .podium-header { gap: 8px; padding: 12px 10px; }
+  .score-num { font-size: 1.4rem; }
+  .podium-medal { font-size: 1.3rem; }
 }

@@ -472,10 +472,14 @@ export default function KboPredict() {
             <div className="rank-table">
               {(() => {
                 const rankNumbers = rankStats ? computeRankNumbers(rankStats) : null;
+                const leaderStats = rankStats?.[0] ?? null;
                 return actualRank.map((teamId, idx) => {
                   const stats = rankStats?.[idx] ?? null;
                   const rankNum = rankNumbers ? rankNumbers[idx] : idx + 1;
                   const isTied = rankNumbers ? rankNumbers.filter(n => n === rankNum).length > 1 : false;
+                  const gb = (idx === 0 || !stats || !leaderStats)
+                    ? null
+                    : ((leaderStats.w - stats.w) + (stats.l - leaderStats.l)) / 2;
                   return (
                     <div
                       key={teamId}
@@ -490,6 +494,11 @@ export default function KboPredict() {
                           <span className="stat-w">{stats.w}승</span>
                           {stats.d > 0 && <span className="stat-d">{stats.d}무</span>}
                           <span className="stat-l">{stats.l}패</span>
+                        </span>
+                      )}
+                      {leaderStats && (
+                        <span className="rank-gb">
+                          {idx === 0 ? '-' : gb % 1 === 0 ? `${gb}.0` : `${gb}`}
                         </span>
                       )}
                       {idx < 5 && <span className="top5-badge">가을야구</span>}
