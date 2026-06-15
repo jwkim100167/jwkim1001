@@ -440,7 +440,17 @@ export default function KboPredict() {
                     <span className="today-game-badge" style={{ borderColor: color, color }}>
                       {TEAMS[teamA]?.name} vs {TEAMS[teamB]?.name}
                     </span>
-                    {h2h && <span className="today-game-h2h">{h2h}</span>}
+                    {h2h && (
+                      <span className="today-game-h2h">
+                        {(() => {
+                          const parts = h2h.split(':');
+                          const formatted = parts.length === 3
+                            ? `${parts[0]}:${parts[1]}(${parts[2]})`
+                            : h2h;
+                          return `상대전적 ${formatted}`;
+                        })()}
+                      </span>
+                    )}
                   </div>
                 );
               })}
