@@ -543,10 +543,14 @@
 .stat-l { color: #f87171; font-weight: 600; }
 
 .rank-gb {
-  font-size: 0.72rem;
-  opacity: 0.5;
+  font-size: 0.68rem;
+  font-weight: 700;
   white-space: nowrap;
   flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.55);
+  padding: 2px 6px;
+  border-radius: 8px;
 }
 
 .top5-badge {
