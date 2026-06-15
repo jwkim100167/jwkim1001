@@ -106,6 +106,24 @@ export async function updatePrediction({ name, phone, data, myTeam, season = 202
 }
 
 /**
+ * 다음 KBO 경기 대진 가져오기 (오늘 경기 없으면 가장 가까운 미래 날짜)
+ * @returns {Promise<{date: string, games: Array<[number, number]>}|null>}
+ */
+export async function getNextSchedule() {
+  const today = new Date().toLocaleDateString('sv-SE'); // YYYY-MM-DD
+  const { data, error } = await supabase
+    .from('kboTodaySchedule')
+    .select('date, games')
+    .gte('date', today)
+    .order('date', { ascending: true })
+    .limit(5);
+
+  if (error || !data) return null;
+  const next = data.find((row) => Array.isArray(row.games) && row.games.length > 0);
+  return next ? { date: next.date, games: next.games } : null;
+}
+
+/**
  * 실제 순위 업데이트 (관리자용)
  * @param {number[]} rankOrder - 팀 ID 배열 (1위~10위)
  * @param {number} season

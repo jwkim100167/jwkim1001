@@ -5,10 +5,17 @@ import { logger } from "../logger";
 // 모든 잡을 여기에 등록
 import { morningWeatherJob } from "./jobs/morningWeather";
 import { dailyCalendarJob } from "./jobs/dailyCalendar";
+import { weeklyHeatReportJob } from "./jobs/weeklyHeatReport";
+import { burnCollectJob, burnAggregateJob } from "./jobs/burnCollect";
+import { kboScheduleJob } from "./jobs/kboSchedule";
 
 const ALL_JOBS: ScheduleJob[] = [
   morningWeatherJob,
   dailyCalendarJob,
+  weeklyHeatReportJob,
+  burnCollectJob,
+  burnAggregateJob,
+  kboScheduleJob,
   // 새 잡을 추가할 때: 파일 생성 후 여기에 추가
 ];
 

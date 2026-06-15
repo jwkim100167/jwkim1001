@@ -433,6 +433,40 @@
   font-weight: 800;
 }
 
+/* ─── 오늘 경기 대진 legend ─── */
+.today-games-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  font-size: 0.75rem;
+}
+
+.today-games-label {
+  font-weight: 700;
+  opacity: 0.65;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.today-game-badge {
+  border: 1px solid;
+  border-radius: 12px;
+  padding: 2px 9px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ─── 순위표 브래킷 wrapper ─── */
+.rank-table-wrapper {
+  position: relative;
+}
+
+.rank-table-wrapper.has-brackets {
+  padding-left: 68px;
+}
+
 /* ─── 실제 순위표 ─── */
 .rank-table {
   display: flex;
@@ -485,6 +519,7 @@
 .rank-name {
   flex: 1;
   font-weight: 600;
+  text-align: left;
 }
 
 .rank-stats {

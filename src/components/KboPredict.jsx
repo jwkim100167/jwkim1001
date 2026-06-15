@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getActualRank, getPredictions, findMyPrediction } from '../services/supabaseKbo';
+import { getActualRank, getPredictions, findMyPrediction, getNextSchedule } from '../services/supabaseKbo';
 import './KboPredict.css';
 
 const BASE = 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/KBOHome/resources/images/emblem/regular';
@@ -28,6 +28,11 @@ const MOCK_USERS = [
 ];
 
 const PODIUM_MEDALS = ['🥇', '🥈', '🥉'];
+
+const BRACKET_COLORS = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#a855f7'];
+const SVG_W = 64;
+const B_W = 10; // 브래킷 팔 너비
+const B_GAP = 2; // 브래킷 간 간격
 
 // 승/무/패가 동일한 팀에 같은 순위 번호 부여 → [1, 1, 3, 3, 3, 6, ...]
 // 직전 팀이 아닌 전체에서 같은 기록의 첫 번째 위치를 찾아 순위 결정
@@ -69,6 +74,11 @@ export default function KboPredict() {
   const [isMock, setIsMock] = useState(false);
   const [openIdx, setOpenIdx] = useState(null); // 열린 카드 인덱스
   const [showMore, setShowMore] = useState(false); // 4~5위 더보기
+  const [nextGames, setNextGames] = useState(null);   // 다음 경기 대진 [[homeId, awayId], ...]
+  const [nextGameDate, setNextGameDate] = useState(null); // 다음 경기 날짜 (YYYY-MM-DD)
+  const [svgBrackets, setSvgBrackets] = useState([]); // SVG 브래킷 위치
+  const rowRefs = useRef([]);
+  const rankWrapperRef = useRef(null);
 
   // 내 점수판
   const [myScoreOpen, setMyScoreOpen] = useState(false);
@@ -80,11 +90,17 @@ export default function KboPredict() {
 
   useEffect(() => {
     async function loadData() {
-      const [rankData, predData] = await Promise.all([getActualRank(2026), getPredictions(2026)]);
+      const [rankData, predData, schedule] = await Promise.all([
+        getActualRank(2026),
+        getPredictions(2026),
+        getNextSchedule(),
+      ]);
       setActualRank(rankData?.rankOrder ?? MOCK_ACTUAL_RANK);
       setRankStats(rankData?.rankStats ?? null);
       setUsers(predData ?? MOCK_USERS);
       setIsMock(!rankData || !predData);
+      setNextGames(schedule?.games ?? null);
+      setNextGameDate(schedule?.date ?? null);
       setLoading(false);
     }
     loadData();
@@ -122,6 +138,30 @@ export default function KboPredict() {
     });
     return count;
   }, [users]);
+
+  // 오늘 대진 브래킷 위치 계산
+  useLayoutEffect(() => {
+    if (!nextGames?.length || !actualRank || !rankWrapperRef.current) {
+      setSvgBrackets([]);
+      return;
+    }
+    const wrapperRect = rankWrapperRef.current.getBoundingClientRect();
+    const brackets = nextGames.slice(0, 5).map((game, idx) => {
+      const [teamA, teamB] = game;
+      const rankA = actualRank.indexOf(teamA);
+      const rankB = actualRank.indexOf(teamB);
+      if (rankA === -1 || rankB === -1) return null;
+      const rowA = rowRefs.current[rankA];
+      const rowB = rowRefs.current[rankB];
+      if (!rowA || !rowB) return null;
+      const rectA = rowA.getBoundingClientRect();
+      const rectB = rowB.getBoundingClientRect();
+      const yA = rectA.top - wrapperRect.top + rectA.height / 2;
+      const yB = rectB.top - wrapperRect.top + rectB.height / 2;
+      return { yA, yB, idx };
+    }).filter(Boolean);
+    setSvgBrackets(brackets);
+  }, [nextGames, actualRank]);
 
   const handleToggle = (idx) => setOpenIdx(openIdx === idx ? null : idx);
 
@@ -379,33 +419,85 @@ export default function KboPredict() {
         {/* 실제 순위표 */}
         <section className="section-card">
           <h2 className="section-title">🏆 실제 순위표</h2>
-          <div className="rank-table">
-            {(() => {
-              const rankNumbers = rankStats ? computeRankNumbers(rankStats) : null;
-              return actualRank.map((teamId, idx) => {
-              const stats = rankStats?.[idx] ?? null;
-              const rankNum = rankNumbers ? rankNumbers[idx] : idx + 1;
-              const isTied = rankNumbers ? rankNumbers.filter(n => n === rankNum).length > 1 : false;
-              return (
-                <div
-                  key={teamId}
-                  className={`rank-row ${idx < 5 ? 'top5' : ''} ${idx === 0 ? 'first-place' : ''}`}
-                >
-                  <span className="rank-num">{isTied ? `공동${rankNum}위` : `${rankNum}위`}</span>
-                  <img src={TEAMS[teamId].logo} alt={TEAMS[teamId].name} className="team-logo-sm" />
-                  <span className="rank-name">{TEAMS[teamId].name}</span>
-                  {stats && (
-                    <span className="rank-stats">
-                      <span className="stat-w">{stats.w}승</span>
-                      {stats.d > 0 && <span className="stat-d">{stats.d}무</span>}
-                      <span className="stat-l">{stats.l}패</span>
-                    </span>
-                  )}
-                  {idx < 5 && <span className="top5-badge">가을야구</span>}
-                </div>
-              );
-              });
-            })()}
+
+          {/* 다음 경기 대진 legend */}
+          {nextGames?.length > 0 && (
+            <div className="today-games-legend">
+              <span className="today-games-label">{(() => {
+                const today = new Date().toLocaleDateString('sv-SE');
+                if (!nextGameDate || nextGameDate === today) return '오늘 경기';
+                const d = new Date(nextGameDate);
+                return `${d.getMonth() + 1}/${d.getDate()} 경기`;
+              })()}</span>
+              {nextGames.slice(0, 5).map((game, idx) => {
+                const [teamA, teamB] = game;
+                const color = BRACKET_COLORS[idx % BRACKET_COLORS.length];
+                return (
+                  <span key={idx} className="today-game-badge" style={{ borderColor: color, color }}>
+                    {TEAMS[teamA]?.name} vs {TEAMS[teamB]?.name}
+                  </span>
+                );
+              })}
+            </div>
+          )}
+
+          <div className={`rank-table-wrapper${nextGames?.length > 0 ? ' has-brackets' : ''}`} ref={rankWrapperRef}>
+            {/* 브래킷 SVG overlay */}
+            {svgBrackets.length > 0 && (
+              <svg
+                className="bracket-svg"
+                width={SVG_W}
+                height={1}
+                style={{ position: 'absolute', left: 0, top: 0, overflow: 'visible', pointerEvents: 'none' }}
+              >
+                {svgBrackets.map(({ yA, yB, idx }) => {
+                  const color = BRACKET_COLORS[idx % BRACKET_COLORS.length];
+                  const xR = SVG_W; // 모든 가로선이 표 왼쪽 경계까지 동일하게
+                  const xL = xR - 4 - (idx + 1) * (B_W + B_GAP);
+                  return (
+                    <path
+                      key={idx}
+                      d={`M${xR},${yA} L${xL},${yA} L${xL},${yB} L${xR},${yB}`}
+                      fill="none"
+                      stroke={color}
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  );
+                })}
+              </svg>
+            )}
+
+            <div className="rank-table">
+              {(() => {
+                const rankNumbers = rankStats ? computeRankNumbers(rankStats) : null;
+                return actualRank.map((teamId, idx) => {
+                  const stats = rankStats?.[idx] ?? null;
+                  const rankNum = rankNumbers ? rankNumbers[idx] : idx + 1;
+                  const isTied = rankNumbers ? rankNumbers.filter(n => n === rankNum).length > 1 : false;
+                  return (
+                    <div
+                      key={teamId}
+                      ref={(el) => { rowRefs.current[idx] = el; }}
+                      className={`rank-row ${idx < 5 ? 'top5' : ''} ${idx === 0 ? 'first-place' : ''}`}
+                    >
+                      <span className="rank-num">{isTied ? `공동${rankNum}위` : `${rankNum}위`}</span>
+                      <img src={TEAMS[teamId].logo} alt={TEAMS[teamId].name} className="team-logo-sm" />
+                      <span className="rank-name">{TEAMS[teamId].name}</span>
+                      {stats && (
+                        <span className="rank-stats">
+                          <span className="stat-w">{stats.w}승</span>
+                          {stats.d > 0 && <span className="stat-d">{stats.d}무</span>}
+                          <span className="stat-l">{stats.l}패</span>
+                        </span>
+                      )}
+                      {idx < 5 && <span className="top5-badge">가을야구</span>}
+                    </div>
+                  );
+                });
+              })()}
+            </div>
           </div>
         </section>
 
