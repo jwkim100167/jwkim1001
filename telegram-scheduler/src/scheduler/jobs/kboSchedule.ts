@@ -17,11 +17,50 @@ const TEAM_NAME_TO_ID: Record<string, number> = {
   키움: 10, 키움히어로즈: 10,
 };
 
+// 팀 ID → Naver Sports 팀 코드
+const TEAM_ID_TO_CODE: Record<number, string> = {
+  1: "HT", 2: "SS", 3: "LG", 4: "OB", 5: "KT",
+  6: "HH", 7: "LT", 8: "SK", 9: "NC", 10: "WO",
+};
+
 function toTeamId(name: string): number | null {
   if (!name) return null;
   if (TEAM_NAME_TO_ID[name]) return TEAM_NAME_TO_ID[name];
   for (const [key, val] of Object.entries(TEAM_NAME_TO_ID)) {
     if (name.includes(key) || key.includes(name)) return val;
+  }
+  return null;
+}
+
+async function fetchH2H(homeId: number, awayId: number, year: number): Promise<string | null> {
+  const homeCode = TEAM_ID_TO_CODE[homeId];
+  const awayCode = TEAM_ID_TO_CODE[awayId];
+  if (!homeCode || !awayCode) return null;
+
+  try {
+    const res = await axios.get("https://api-gw.sports.naver.com/record/team/season/teamVs", {
+      params: { categoryId: "kbo", teamCode: homeCode, oppTeamCode: awayCode, seasonYear: year },
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
+        Referer: "https://sports.news.naver.com/",
+      },
+      timeout: 6000,
+    });
+
+    const record =
+      res.data?.result?.record ??
+      res.data?.result?.vsRecord ??
+      res.data?.record ??
+      res.data?.vsRecord;
+
+    if (record) {
+      const w = (record.win  ?? record.w ?? 0) as number;
+      const l = (record.lose ?? record.l ?? 0) as number;
+      const d = (record.draw ?? record.d ?? 0) as number;
+      if (w + l + d > 0) return d > 0 ? `${w}:${l}:${d}` : `${w}:${l}`;
+    }
+  } catch {
+    logger.warn(`[kbo-schedule] H2H fetch failed: ${homeCode} vs ${awayCode}`);
   }
   return null;
 }
@@ -37,7 +76,7 @@ function getKstYyyymmdd(offsetDays = 0): string {
   ].join("");
 }
 
-async function fetchDayGames(yyyymmdd: string): Promise<Array<[number, number]>> {
+async function fetchDayGames(yyyymmdd: string): Promise<Array<[number, number, string | null]>> {
   const res = await axios.get("https://api-gw.sports.naver.com/schedule/games", {
     params: {
       fields: "basic",
@@ -76,7 +115,7 @@ async function fetchDayGames(yyyymmdd: string): Promise<Array<[number, number]>>
       continue;
     }
 
-    // 상대전적 추출 시도 (API 응답 필드명이 다를 수 있어 여러 이름 시도)
+    // 1차: 스케줄 API 응답에서 상대전적 추출 시도
     const vsRaw = (
       game.homeVsAwayRecord ?? game.vsRecord ?? game.h2hRecord ??
       game.seasonRecord ?? (home as Record<string, unknown>)?.vsRecord
@@ -90,6 +129,12 @@ async function fetchDayGames(yyyymmdd: string): Promise<Array<[number, number]>>
       if (hw + aw + d > 0) {
         h2h = d > 0 ? `${hw}:${aw}:${d}` : `${hw}:${aw}`;
       }
+    }
+
+    // 2차: 스케줄 API에 없으면 별도 H2H API 호출
+    if (!h2h) {
+      const year = parseInt(yyyymmdd.slice(0, 4), 10);
+      h2h = await fetchH2H(homeId, awayId, year);
     }
 
     matchups.push([homeId, awayId, h2h]);
