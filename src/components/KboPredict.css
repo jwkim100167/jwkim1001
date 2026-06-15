@@ -450,24 +450,11 @@
   flex-shrink: 0;
 }
 
-.today-game-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
 .today-game-badge {
   border: 1px solid;
   border-radius: 12px;
   padding: 2px 9px;
   font-weight: 600;
-  white-space: nowrap;
-}
-
-.today-game-h2h {
-  font-size: 0.62rem;
-  opacity: 0.45;
   white-space: nowrap;
 }
 
