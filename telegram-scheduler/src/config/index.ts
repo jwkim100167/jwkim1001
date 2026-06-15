@@ -24,6 +24,10 @@ export const config = {
     databaseId: process.env.NOTION_DATABASE_ID ?? "2a185354-810d-8047-a4c3-000bb4d65e31",
     dateProperty: process.env.NOTION_DATE_PROPERTY ?? "날짜",
   },
+  supabase: {
+    url:        requireEnv("SUPABASE_URL"),
+    serviceKey: requireEnv("SUPABASE_SERVICE_KEY"),
+  },
   app: {
     nodeEnv: process.env.NODE_ENV ?? "development",
     logLevel: process.env.LOG_LEVEL ?? "info",

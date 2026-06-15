@@ -73,7 +73,7 @@ export const morningWeatherJob: ScheduleJob = {
   name: "morning-weather",
   cronExpression: "30 7 * * 1-5", // 월~금 07:30
   timezone: "Asia/Seoul",
-  enabled: true,
+  enabled: false,
   execute: async () => {
     if (!config.weather.apiKey) {
       logger.warn("WEATHER_API_KEY not set — sending placeholder message");
