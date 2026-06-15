@@ -424,33 +424,30 @@ export default function KboPredict() {
           {/* 다음 경기 대진 legend */}
           {nextGames?.length > 0 && (
             <div className="today-games-legend">
-              <span className="today-games-label">{(() => {
-                const today = new Date().toLocaleDateString('sv-SE');
-                if (!nextGameDate || nextGameDate === today) return '오늘 경기';
-                const d = new Date(nextGameDate);
-                return `${d.getMonth() + 1}/${d.getDate()} 경기`;
-              })()}</span>
+              <div className="today-games-label-group">
+                <span className="today-games-label">{(() => {
+                  const today = new Date().toLocaleDateString('sv-SE');
+                  if (!nextGameDate || nextGameDate === today) return '오늘 경기';
+                  const d = new Date(nextGameDate);
+                  return `${d.getMonth() + 1}/${d.getDate()} 경기`;
+                })()}</span>
+                <span className="today-games-sublabel">상대전적</span>
+              </div>
               {nextGames.slice(0, 5).map((game, idx) => {
                 const teamA = game[0];
                 const teamB = game[1];
                 const h2h   = game[2] ?? null;
                 const color = BRACKET_COLORS[idx % BRACKET_COLORS.length];
+                const parts = h2h ? h2h.split(':') : null;
+                const formatted = parts
+                  ? (parts.length === 3 ? `${parts[0]}:${parts[1]}(${parts[2]})` : h2h)
+                  : null;
                 return (
                   <div key={idx} className="today-game-item">
                     <span className="today-game-badge" style={{ borderColor: color, color }}>
                       {TEAMS[teamA]?.name} vs {TEAMS[teamB]?.name}
                     </span>
-                    {h2h && (
-                      <span className="today-game-h2h">
-                        {(() => {
-                          const parts = h2h.split(':');
-                          const formatted = parts.length === 3
-                            ? `${parts[0]}:${parts[1]}(${parts[2]})`
-                            : h2h;
-                          return `상대전적 ${formatted}`;
-                        })()}
-                      </span>
-                    )}
+                    {formatted && <span className="today-game-h2h">{formatted}</span>}
                   </div>
                 );
               })}

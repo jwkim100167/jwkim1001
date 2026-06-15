@@ -443,11 +443,24 @@
   font-size: 0.75rem;
 }
 
+.today-games-label-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
 .today-games-label {
   font-weight: 700;
   opacity: 0.65;
   white-space: nowrap;
-  flex-shrink: 0;
+}
+
+.today-games-sublabel {
+  font-size: 0.6rem;
+  opacity: 0.4;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .today-game-badge {
