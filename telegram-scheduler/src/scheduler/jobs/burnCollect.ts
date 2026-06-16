@@ -27,6 +27,16 @@ export const burnCollectJob: ScheduleJob = {
   },
 };
 
+export const burnCollectBoardJob: ScheduleJob = {
+  name: "burn-collect-board",
+  cronExpression: "0 7 * * *", // 매일 07:00 KST
+  timezone: "Asia/Seoul",
+  enabled: true,
+  execute: async () => {
+    await runPython(["-m", "collector.main", "collect-board", "1"]);
+  },
+};
+
 export const burnAggregateJob: ScheduleJob = {
   name: "burn-aggregate",
   cronExpression: "30 21 * * 6", // 매주 토요일 21:30 KST

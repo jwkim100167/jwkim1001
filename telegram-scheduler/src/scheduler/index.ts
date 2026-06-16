@@ -6,7 +6,7 @@ import { logger } from "../logger";
 import { morningWeatherJob } from "./jobs/morningWeather";
 import { dailyCalendarJob } from "./jobs/dailyCalendar";
 import { weeklyHeatReportJob } from "./jobs/weeklyHeatReport";
-import { burnCollectJob, burnAggregateJob } from "./jobs/burnCollect";
+import { burnCollectJob, burnCollectBoardJob, burnAggregateJob } from "./jobs/burnCollect";
 import { kboH2HScrapeJob } from "./jobs/kboH2HScrapeJob";
 import { kboScheduleJob } from "./jobs/kboSchedule";
 
@@ -15,6 +15,7 @@ const ALL_JOBS: ScheduleJob[] = [
   dailyCalendarJob,
   weeklyHeatReportJob,
   burnCollectJob,
+  burnCollectBoardJob,
   burnAggregateJob,
   kboH2HScrapeJob,  // 00:30 KST — 상대전적 스크래핑
   kboScheduleJob,   // 08:00 KST — 경기 일정 + H2H 저장
