@@ -25,40 +25,7 @@ async function getLatestRoundFromDB() {
   return data.number;
 }
 
-const PROXY_SERVERS = [
-  'https://api.allorigins.win/get?url=',
-  'https://cors-anywhere.herokuapp.com/',
-  'https://thingproxy.freeboard.io/fetch/'
-];
-
-async function fetchWithProxy(url) {
-  // 프록시 순차 시도
-  for (let i = 0; i < PROXY_SERVERS.length; i++) {
-    try {
-      const proxyUrl = PROXY_SERVERS[i] + encodeURIComponent(url);
-      const response = await fetch(proxyUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-      if (!response.ok) continue;
-      if (PROXY_SERVERS[i].includes('allorigins')) {
-        const wrapper = await response.json();
-        return JSON.parse(wrapper.contents);
-      }
-      return await response.json();
-    } catch (e) {
-      console.log(`프록시 ${i + 1} 실패: ${e.message}`);
-    }
-  }
-  // 직접 요청 최후 시도
-  const response = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-  if (!response.ok) throw new Error(`직접 요청 실패: ${response.status}`);
-  return await response.json();
-}
-
-async function fetchLottoRound(round) {
-  const url = `${LOTTO_API_BASE}&drwNo=${round}`;
-  const data = await fetchWithProxy(url);
-
-  if (data.returnValue !== 'success') return null;
-
+function formatLottoData(data) {
   return {
     number: data.drwNo,
     date: data.drwNoDate,
@@ -70,6 +37,43 @@ async function fetchLottoRound(round) {
     count6: data.drwtNo6,
     bonus: data.bnusNo
   };
+}
+
+async function fetchLottoRound(round) {
+  const url = `${LOTTO_API_BASE}&drwNo=${round}`;
+  const headers = { 'User-Agent': 'Mozilla/5.0' };
+
+  // 1. 직접 요청 (GitHub Actions = 서버 환경이라 CORS 없음)
+  try {
+    const res = await fetch(url, { headers });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.returnValue === 'success') return formatLottoData(data);
+      if (data.returnValue) return null; // 아직 발표 전
+    } else {
+      console.log(`직접 요청 실패: HTTP ${res.status}`);
+    }
+  } catch (e) {
+    console.log(`직접 요청 실패: ${e.message}`);
+  }
+
+  // 2. allorigins 프록시 백업 (URL 인코딩 필요)
+  try {
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    const res = await fetch(proxyUrl, { headers });
+    if (res.ok) {
+      const wrapper = await res.json();
+      const data = JSON.parse(wrapper.contents);
+      if (data.returnValue === 'success') return formatLottoData(data);
+      if (data.returnValue) return null;
+    } else {
+      console.log(`allorigins 프록시 실패: HTTP ${res.status}`);
+    }
+  } catch (e) {
+    console.log(`allorigins 프록시 실패: ${e.message}`);
+  }
+
+  throw new Error(`${round}회차 데이터를 모든 방법으로 가져오지 못했습니다.`);
 }
 
 async function main() {
