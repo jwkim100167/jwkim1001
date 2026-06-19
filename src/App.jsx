@@ -5,6 +5,7 @@ import { AuthProvider } from './context/AuthContext';
 import Home from './components/Home';
 import Dashboard from './components/Dashboard';
 import Lotto from './components/Lotto';
+import LottoMembership from './components/LottoMembership';
 import JobBoard from './components/JobBoard';
 import Komom from './components/Komom';
 import Momok from './components/Momok';
@@ -47,7 +48,8 @@ function App() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/lottoadmin" element={<LottoAdmin />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/lotto" element={<Lotto />} />
+          <Route path="/lotto" element={<LottoMembership />} />
+          <Route path="/lotto-membership" element={<Lotto />} />
           <Route path="/lotto-basic" element={<LottoBasic />} />
           <Route path="/whattoeat" element={<WhatToEat />} />
           <Route path="/komom" element={<Komom />} />
