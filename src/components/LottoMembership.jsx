@@ -28,7 +28,7 @@ const LottoMembership = () => {
 
   useEffect(() => {
     if (user?.id && lottoData?.data?.length) {
-      loadSavedGames();
+      loadSavedGames(true); // 자동 로드는 알림 없이
     }
   }, [user, lottoData]);
 
@@ -304,20 +304,37 @@ const LottoMembership = () => {
   };
 
   // ─── 저장 게임 불러오기 ──────────────────────────────────────
-  const loadSavedGames = async () => {
-    if (!user?.id || !lottoData?.data?.length) return;
-    const latestRound = Math.max(...lottoData.data.map(i => i.round));
-    const currentRound = latestRound + 1;
-    const savedGames = await getSavedGames(user.id, currentRound);
-    if (savedGames?.length > 0) {
-      const loaded = [null, null, null, null, null];
-      savedGames.forEach(g => {
-        const idx = g.g_number - 1;
-        if (idx >= 0 && idx < 5) {
-          loaded[idx] = [g.count1, g.count2, g.count3, g.count4, g.count5, g.count6];
-        }
-      });
-      setGeneratedNumbers(loaded);
+  const loadSavedGames = async (silent = false) => {
+    if (!user?.id) {
+      if (!silent) alert('로그인이 필요합니다.');
+      return;
+    }
+    if (!lottoData?.data?.length) {
+      if (!silent) alert('데이터 로딩 중입니다. 잠시 후 시도해주세요.');
+      return;
+    }
+    try {
+      const latestRound = Math.max(...lottoData.data.map(i => i.round));
+      const currentRound = latestRound + 1;
+      console.log(`📥 불러오기 시도 - userId: ${user.id}, 회차: ${currentRound}`);
+      const savedGames = await getSavedGames(user.id, currentRound);
+      console.log(`📋 조회 결과: ${savedGames?.length ?? 0}개`, savedGames);
+      if (savedGames?.length > 0) {
+        const loaded = [null, null, null, null, null];
+        savedGames.forEach(g => {
+          const idx = g.g_number - 1;
+          if (idx >= 0 && idx < 5) {
+            loaded[idx] = [g.count1, g.count2, g.count3, g.count4, g.count5, g.count6];
+          }
+        });
+        setGeneratedNumbers(loaded);
+        if (!silent) alert(`${savedGames.length}개 게임을 불러왔습니다.`);
+      } else {
+        if (!silent) alert('저장된 게임이 없습니다.');
+      }
+    } catch (err) {
+      console.error('❌ 불러오기 실패:', err);
+      if (!silent) alert('게임 불러오기에 실패했습니다.');
     }
   };
 
