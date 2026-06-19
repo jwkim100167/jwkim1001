@@ -42,7 +42,14 @@ const LottoMembership = () => {
     return 4;
   };
 
-  const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
+  const shuffle = (arr) => {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
 
   // 5개 번호를 번호대에 맞는 게임(0~4)에 1개씩 배정
   // - 해당 번호대에 후보가 있으면 랜덤 1개 → 그 게임 배정
@@ -227,8 +234,7 @@ const LottoMembership = () => {
     const confirmed = [...A, ...B1, ...B2];
 
     // Step 4: 사용자 설정 + 날짜 자동 제외 + 랜덤 20개
-    const dateExcludes = getThisSaturdayDateNumbers();
-    const allExcludes = [...new Set([...excludeNumbers, ...dateExcludes])];
+    const allExcludes = [...new Set([...excludeNumbers, ...thisSaturdayDateNums])];
     const forceInclude = mustIncludeNumbers.filter(n => !confirmed.includes(n));
     const candidatePool = shuffle(
       Array.from({ length: 45 }, (_, i) => i + 1)
@@ -282,7 +288,7 @@ const LottoMembership = () => {
     }
 
     setGeneratedNumbers(bestGames);
-    setDebugInfo({ A: [...A].sort((a,b)=>a-b), B1: [...B1].sort((a,b)=>a-b), B2: [...B2].sort((a,b)=>a-b), dateExcludes });
+    setDebugInfo({ A: [...A].sort((a,b)=>a-b), B1: [...B1].sort((a,b)=>a-b), B2: [...B2].sort((a,b)=>a-b), dateExcludes: thisSaturdayDateNums });
     setWarningMsg(exceeded ? '⚠️ 100회 시도 초과: 제약 조건을 완전히 충족하지 못한 결과입니다.' : '');
   };
 
@@ -338,19 +344,22 @@ const LottoMembership = () => {
     }
   };
 
-  // ─── 이번주 토요일 날짜 ──────────────────────────────────────
-  const getThisSaturdayStr = () => {
+  // ─── 이번주 토요일 Date 객체 ─────────────────────────────────
+  const getThisSaturday = () => {
     const today = new Date();
     const sat = new Date(today);
     sat.setDate(today.getDate() + ((6 - today.getDay() + 7) % 7));
+    return sat;
+  };
+
+  const getThisSaturdayStr = () => {
+    const sat = getThisSaturday();
     return `${sat.getFullYear()}년 ${sat.getMonth() + 1}월 ${sat.getDate()}일 (토)`;
   };
 
   // ─── 이번주 추첨날짜에서 자동 제외 번호 (월, 일) ─────────────
   const getThisSaturdayDateNumbers = () => {
-    const today = new Date();
-    const sat = new Date(today);
-    sat.setDate(today.getDate() + ((6 - today.getDay() + 7) % 7));
+    const sat = getThisSaturday();
     const month = sat.getMonth() + 1;
     const day = sat.getDate();
     const nums = [];
@@ -384,6 +393,9 @@ const LottoMembership = () => {
     setIncludeInput('');
   };
 
+  const thisSaturdayStr = getThisSaturdayStr();
+  const thisSaturdayDateNums = getThisSaturdayDateNumbers();
+
   if (isLoading) {
     return (
       <div className="lotto">
@@ -408,10 +420,10 @@ const LottoMembership = () => {
           </button>
           <h1>🎰 로또 멤버십</h1>
           <p style={{ color: '#888', marginTop: 4, fontSize: 14 }}>
-            이번주 추첨일: <strong>{getThisSaturdayStr()}</strong>
+            이번주 추첨일: <strong>{thisSaturdayStr}</strong>
           </p>
           <p style={{ color: '#aaa', marginTop: 2, fontSize: 12 }}>
-            📅 날짜 자동 제외: <strong>{getThisSaturdayDateNumbers().join(', ')}</strong>
+            📅 날짜 자동 제외: <strong>{thisSaturdayDateNums.join(', ')}</strong>
           </p>
         </div>
 
@@ -439,7 +451,7 @@ const LottoMembership = () => {
             </span>
           </div>
           <div className="gen-mgmt-btns">
-            <button className="gen-load-btn" onClick={loadSavedGames}>📥 불러오기</button>
+            <button className="gen-load-btn" onClick={() => loadSavedGames()}>📥 불러오기</button>
             <button className="gen-save-btn" onClick={handleSaveAllGames}>💾 저장</button>
           </div>
         </div>
