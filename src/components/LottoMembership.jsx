@@ -17,6 +17,7 @@ const LottoMembership = () => {
   const [includeInput, setIncludeInput] = useState('');
   const [warningMsg, setWarningMsg] = useState('');
   const [debugInfo, setDebugInfo] = useState(null);
+  const [showStrategyModal, setShowStrategyModal] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -208,7 +209,6 @@ const LottoMembership = () => {
 
   // ─── 메인 생성 함수 ───────────────────────────────────────────
   const generateMembershipGames = async () => {
-    if (!isAuthenticated) { navigate('/login'); return; }
     if (!lottoData?.data?.length) { alert('데이터 로딩 중입니다. 잠시 후 시도해주세요.'); return; }
 
     // 기존 저장 게임 확인
@@ -508,14 +508,74 @@ const LottoMembership = () => {
           <div style={{ color: '#e08800', fontSize: 13, padding: '6px 0' }}>{warningMsg}</div>
         )}
 
+        {/* 전략 확인 모달 */}
+        {showStrategyModal && (
+          <div style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999
+          }}>
+            <div style={{
+              background: '#fff', borderRadius: 14, padding: '24px 22px',
+              width: 'min(90vw, 360px)', boxShadow: '0 8px 32px rgba(0,0,0,0.18)'
+            }}>
+              <h3 style={{ margin: '0 0 14px', fontSize: 16 }}>🎲 번호 생성 전략</h3>
+              <div style={{ fontSize: 13, lineHeight: 2, color: '#444' }}>
+                <div>
+                  <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#ffd700', border: '1px solid #ccc', marginRight: 6, verticalAlign: 'middle' }} />
+                  <strong>저번주 당첨번호</strong> 7개 중 <strong>5개</strong> 선정 (번호대 분산)
+                </div>
+                <div>
+                  <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#4caf50', border: '1px solid #ccc', marginRight: 6, verticalAlign: 'middle' }} />
+                  <strong>최신최다 15주</strong> 중 <strong>2개</strong> 선정 (번호대 분산)
+                </div>
+                <div>
+                  <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#4caf50', border: '1px solid #ccc', marginRight: 6, verticalAlign: 'middle' }} />
+                  <strong>역대최다</strong> 중 <strong>3개</strong> 선정 (번호대 분산)
+                </div>
+                <div style={{ borderTop: '1px solid #eee', marginTop: 6, paddingTop: 6 }}>
+                  위 확정 <strong>10개</strong> + 랜덤 <strong>20개</strong> = 총 30개 → <strong>5게임</strong>
+                </div>
+              </div>
+              <div style={{ fontSize: 12, color: '#888', marginTop: 10, lineHeight: 1.8 }}>
+                <div>📅 날짜 자동 제외: <strong>{thisSaturdayDateNums.length > 0 ? thisSaturdayDateNums.join(', ') : '없음'}</strong></div>
+                <div>🚫 사용자 제외: <strong>{excludeNumbers.length > 0 ? excludeNumbers.join(', ') : '없음'}</strong></div>
+                <div>✅ 사용자 포함: <strong>{mustIncludeNumbers.length > 0 ? mustIncludeNumbers.join(', ') : '없음'}</strong></div>
+              </div>
+              <div style={{ display: 'flex', gap: 8, marginTop: 18 }}>
+                <button
+                  onClick={() => { setShowStrategyModal(false); generateMembershipGames(); }}
+                  style={{
+                    flex: 1, padding: '10px 0', background: '#e53935', color: '#fff',
+                    border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: 'pointer'
+                  }}
+                >
+                  생성
+                </button>
+                <button
+                  onClick={() => setShowStrategyModal(false)}
+                  style={{
+                    flex: 1, padding: '10px 0', background: '#f5f5f5', color: '#555',
+                    border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer'
+                  }}
+                >
+                  취소
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* 생성 버튼 */}
         <button
           className="generate-btn-full"
-          onClick={generateMembershipGames}
+          onClick={() => {
+            if (!isAuthenticated) { navigate('/login'); return; }
+            setShowStrategyModal(true);
+          }}
           disabled={!isAuthenticated || isLoading}
           style={{ opacity: isAuthenticated ? 1 : 0.5 }}
         >
-          🎲 멤버십 번호 생성
+          🎲 번호 생성
         </button>
 
         {/* 제외할 번호 */}
