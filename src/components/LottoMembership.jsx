@@ -18,6 +18,7 @@ const LottoMembership = () => {
   const [warningMsg, setWarningMsg] = useState('');
   const [debugInfo, setDebugInfo] = useState(null);
   const [showStrategyModal, setShowStrategyModal] = useState(false);
+  const [groupOptions, setGroupOptions] = useState({ A: '포함', B2: '포함', B1: '포함', C: '포함' });
 
   useEffect(() => {
     (async () => {
@@ -246,45 +247,74 @@ const LottoMembership = () => {
       }
     }
 
-    // Step 1: A - 저번주 당첨번호 5개
-    const A = pickFromLastWeek();
-    // Step 2: B2 - 역대최다 5개 (A 제외, 겹치면 6위→7위 순)
-    const B2 = pickAllTimeFreq5([...A]);
-    // Step 3: B1 - 최신최다 5개 (A+B2 제외, 겹치면 다음 순위)
-    const B1 = pickRecentFreq5([...A, ...B2]);
-    // Step 4: 확정 15개
-    const confirmed = [...A, ...B2, ...B1];
+    // Step 1~3: 항상 계산 (옵션에 무관하게 제외 체인 유지)
+    const A_nums  = pickFromLastWeek();
+    const B2_nums = pickAllTimeFreq5([...A_nums]);
+    const B1_nums = pickRecentFreq5([...A_nums, ...B2_nums]);
 
-    // Step 5: C - 최신 출현 번호 15개 (confirmed + 제외번호 제외, 최신순)
+    // Step 4: 옵션 적용
     const allExcludes = [...new Set([...excludeNumbers, ...thisSaturdayDateNums])];
-    const forceInclude = mustIncludeNumbers.filter(n => !confirmed.includes(n) && !allExcludes.includes(n));
-    const excludedForC = [...new Set([...confirmed, ...allExcludes, ...forceInclude])];
-    const recentNums = pickRecentNums15(excludedForC);
-    // forceInclude 앞에 붙이고 15개로 맞춤
-    const cPool = [...forceInclude, ...recentNums].slice(0, 15);
+    const A_on  = groupOptions.A  === '포함';
+    const B2_on = groupOptions.B2 === '포함';
+    const B1_on = groupOptions.B1 === '포함';
 
-    // Step 6: 배치
-    // A(저번주 5개), B2(역대최다 5개), B1(최신최다 5개): 각각 번호대별 게임 배정
-    // C(최신 15개): 셔플 후 게임별 3개씩
+    const confirmed = [
+      ...(A_on  ? A_nums  : []),
+      ...(B2_on ? B2_nums : []),
+      ...(B1_on ? B1_nums : []),
+    ];
+
+    // C 계산 (confirmed + allExcludes + forceInclude 제외)
+    const forceInclude = mustIncludeNumbers.filter(n => !confirmed.includes(n) && !allExcludes.includes(n));
+    const C_nums = pickRecentNums15([...new Set([...confirmed, ...allExcludes, ...forceInclude])]);
+    const C_on = groupOptions.C === '포함';
+    const cPool = C_on ? [...forceInclude, ...C_nums].slice(0, 15) : [];
+    if (C_on) confirmed.push(...cPool);
+
+    // 미포함 그룹 번호 → 랜덤에서도 제외
+    const mipoham = [
+      ...(groupOptions.A  === '미포함' ? A_nums  : []),
+      ...(groupOptions.B2 === '미포함' ? B2_nums : []),
+      ...(groupOptions.B1 === '미포함' ? B1_nums : []),
+      ...(groupOptions.C  === '미포함' ? C_nums  : []),
+    ];
+
+    // 랜덤 슬롯 수
+    const confirmedSlots = (A_on ? 1 : 0) + (B2_on ? 1 : 0) + (B1_on ? 1 : 0) + (C_on ? 3 : 0);
+    const randomSlotsPerGame = 6 - confirmedSlots;
+    const totalRandom = randomSlotsPerGame * 5;
+
+    const randomExcluded = [...new Set([...confirmed, ...mipoham, ...allExcludes])];
+    const forceForRandom = C_on ? [] : mustIncludeNumbers.filter(n => !randomExcluded.includes(n));
+    const randomPool = [
+      ...forceForRandom,
+      ...shuffle(Array.from({ length: 45 }, (_, i) => i + 1).filter(n => !randomExcluded.includes(n) && !forceForRandom.includes(n))),
+    ].slice(0, totalRandom);
+    // fallback
+    if (randomPool.length < totalRandom) {
+      const extra = shuffle(Array.from({ length: 45 }, (_, i) => i + 1).filter(n => !randomPool.includes(n) && !confirmed.includes(n)));
+      while (randomPool.length < totalRandom && extra.length > 0) randomPool.push(extra.shift());
+    }
+
+    // Step 5: 배치
     const prevCombos = getPreviousWinningCombinations();
     const MAX_ATTEMPTS = 100;
     let bestGames = null;
     let exceeded = false;
 
     for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-      const aAssign  = assignByDecade(A);
-      const b2Assign = assignByDecade(B2);
-      const b1Assign = assignByDecade(B1);
-      const shuffledC = shuffle(cPool);
+      const aAssign  = A_on  ? assignByDecade(A_nums)  : Array(5).fill(null);
+      const b2Assign = B2_on ? assignByDecade(B2_nums) : Array(5).fill(null);
+      const b1Assign = B1_on ? assignByDecade(B1_nums) : Array(5).fill(null);
+      const shuffledC = C_on ? shuffle(cPool) : [];
+      const shuffledR = shuffle(randomPool);
 
-      const games = Array.from({ length: 5 }, (_, i) => [
-        aAssign[i],
-        b2Assign[i],
-        b1Assign[i],
-        shuffledC[i * 3],
-        shuffledC[i * 3 + 1],
-        shuffledC[i * 3 + 2],
-      ].filter(n => n != null).sort((a, b) => a - b));
+      const games = Array.from({ length: 5 }, (_, i) => {
+        const row = [aAssign[i], b2Assign[i], b1Assign[i]];
+        if (C_on) row.push(shuffledC[i * 3], shuffledC[i * 3 + 1], shuffledC[i * 3 + 2]);
+        for (let r = 0; r < randomSlotsPerGame; r++) row.push(shuffledR[i * randomSlotsPerGame + r]);
+        return row.filter(n => n != null).sort((a, b) => a - b);
+      });
 
       if (games.every(g => !isInvalidGame(g, prevCombos))) {
         bestGames = games;
@@ -297,7 +327,13 @@ const LottoMembership = () => {
     }
 
     setGeneratedNumbers(bestGames);
-    setDebugInfo({ A: [...A].sort((a,b)=>a-b), B2: [...B2].sort((a,b)=>a-b), B1: [...B1].sort((a,b)=>a-b), C: [...cPool], dateExcludes: thisSaturdayDateNums });
+    setDebugInfo({
+      A:  A_on  ? [...A_nums].sort((a,b)=>a-b)  : null,
+      B2: B2_on ? [...B2_nums].sort((a,b)=>a-b) : null,
+      B1: B1_on ? [...B1_nums].sort((a,b)=>a-b) : null,
+      C:  C_on  ? [...cPool]                     : null,
+      dateExcludes: thisSaturdayDateNums,
+    });
     setWarningMsg(exceeded ? '⚠️ 100회 시도 초과: 제약 조건을 완전히 충족하지 못한 결과입니다.' : '');
   };
 
@@ -509,10 +545,10 @@ const LottoMembership = () => {
             background: '#f9f9f9', border: '1px solid #eee', borderRadius: 8,
             padding: '10px 14px', margin: '12px 0', fontSize: 13, color: '#555', lineHeight: 1.8
           }}>
-            <div>📌 저번주 선정 (A): <strong>[{debugInfo.A.join(', ')}]</strong></div>
-            <div>⭐ 역대최다 (B2): <strong>[{debugInfo.B2.join(', ')}]</strong></div>
-            <div>🔥 최신최다 (B1): <strong>[{debugInfo.B1.join(', ')}]</strong></div>
-            <div>🕐 최신출현 (C): <strong>[{debugInfo.C?.join(', ')}]</strong></div>
+            {debugInfo.A  && <div>📌 저번주 선정 (A): <strong>[{debugInfo.A.join(', ')}]</strong></div>}
+            {debugInfo.B2 && <div>⭐ 역대최다 (B2): <strong>[{debugInfo.B2.join(', ')}]</strong></div>}
+            {debugInfo.B1 && <div>🔥 최신최다 (B1): <strong>[{debugInfo.B1.join(', ')}]</strong></div>}
+            {debugInfo.C  && <div>🕐 최신출현 (C): <strong>[{debugInfo.C.join(', ')}]</strong></div>}
             <div>📅 날짜 자동 제외: <strong>[{debugInfo.dateExcludes.join(', ')}]</strong></div>
           </div>
         )}
@@ -520,6 +556,43 @@ const LottoMembership = () => {
         {warningMsg && (
           <div style={{ color: '#e08800', fontSize: 13, padding: '6px 0' }}>{warningMsg}</div>
         )}
+
+        {/* 그룹 옵션 */}
+        {(() => {
+          const groups = [
+            { key: 'A',  label: 'A',  desc: '저번주',   color: '#ffd700' },
+            { key: 'B2', label: 'B2', desc: '역대최다', color: '#4caf50' },
+            { key: 'B1', label: 'B1', desc: '최신최다', color: '#2196f3' },
+            { key: 'C',  label: 'C',  desc: '최신출현', color: '#9c27b0' },
+          ];
+          const opts = ['포함', '미포함', 'PASS'];
+          const btnStyle = (active) => ({
+            padding: '3px 10px', fontSize: 12, border: '1px solid #ddd', borderRadius: 6,
+            cursor: 'pointer', fontWeight: active ? 700 : 400,
+            background: active ? '#333' : '#f5f5f5',
+            color: active ? '#fff' : '#555',
+          });
+          return (
+            <div style={{ margin: '12px 0', background: '#f9f9f9', border: '1px solid #eee', borderRadius: 8, padding: '10px 14px' }}>
+              <div style={{ fontSize: 12, color: '#888', marginBottom: 8 }}>📋 그룹 옵션</div>
+              {groups.map(({ key, label, desc, color }) => (
+                <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: color, display: 'inline-block', flexShrink: 0 }} />
+                  <span style={{ fontSize: 12, fontWeight: 600, width: 22 }}>{label}</span>
+                  <span style={{ fontSize: 12, color: '#888', width: 48 }}>{desc}</span>
+                  <div style={{ display: 'flex', gap: 4 }}>
+                    {opts.map(opt => (
+                      <button key={opt} style={btnStyle(groupOptions[key] === opt)}
+                        onClick={() => setGroupOptions(prev => ({ ...prev, [key]: opt }))}>
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
 
         {/* 전략 확인 모달 */}
         {showStrategyModal && (
@@ -532,27 +605,32 @@ const LottoMembership = () => {
               width: 'min(90vw, 360px)', boxShadow: '0 8px 32px rgba(0,0,0,0.18)'
             }}>
               <h3 style={{ margin: '0 0 14px', fontSize: 16 }}>🎲 번호 생성 전략</h3>
-              <div style={{ fontSize: 13, lineHeight: 2, color: '#444' }}>
-                <div>
-                  <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#ffd700', border: '1px solid #ccc', marginRight: 6, verticalAlign: 'middle' }} />
-                  <strong>저번주 당첨번호</strong> 7개 중 <strong>5개</strong> 선정 (번호대 분산)
-                </div>
-                <div>
-                  <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#4caf50', border: '1px solid #ccc', marginRight: 6, verticalAlign: 'middle' }} />
-                  <strong>역대최다 5개</strong> 선정 (A 겹치면 6위→7위 순, 번호대 분산)
-                </div>
-                <div>
-                  <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#2196f3', border: '1px solid #ccc', marginRight: 6, verticalAlign: 'middle' }} />
-                  <strong>최신최다 15주 5개</strong> (겹치면 다음 순위)
-                </div>
-                <div>
-                  <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#9c27b0', border: '1px solid #ccc', marginRight: 6, verticalAlign: 'middle' }} />
-                  <strong>최신 출현번호 15개</strong> (확정 제외, 최신순)
-                </div>
-                <div style={{ borderTop: '1px solid #eee', marginTop: 6, paddingTop: 6 }}>
-                  확정 <strong>15개</strong> (게임당 3개) + 최신출현 <strong>15개</strong> (게임당 3개) → <strong>5게임</strong>
-                </div>
-              </div>
+              {(() => {
+                const rows = [
+                  { color: '#ffd700', label: 'A  저번주',   opt: groupOptions.A,  slots: 1 },
+                  { color: '#4caf50', label: 'B2 역대최다', opt: groupOptions.B2, slots: 1 },
+                  { color: '#2196f3', label: 'B1 최신최다', opt: groupOptions.B1, slots: 1 },
+                  { color: '#9c27b0', label: 'C  최신출현', opt: groupOptions.C,  slots: 3 },
+                ];
+                const confirmedSlots = rows.reduce((s, r) => s + (r.opt === '포함' ? r.slots : 0), 0);
+                const randomSlots = 6 - confirmedSlots;
+                return (
+                  <div style={{ fontSize: 13, lineHeight: 2.2, color: '#444' }}>
+                    {rows.map(({ color, label, opt, slots }) => (
+                      <div key={label}>
+                        <span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: color, marginRight: 6, verticalAlign: 'middle' }} />
+                        <strong>{label}</strong>
+                        <span style={{ marginLeft: 8, color: opt === '포함' ? '#333' : opt === '미포함' ? '#e53935' : '#aaa', fontWeight: 600 }}>
+                          [{opt}] {opt === '포함' ? `→ 게임당 ${slots}개` : opt === '미포함' ? '(랜덤에서도 제외)' : '(무시)'}
+                        </span>
+                      </div>
+                    ))}
+                    <div style={{ borderTop: '1px solid #eee', marginTop: 4, paddingTop: 4, fontSize: 12, color: '#666' }}>
+                      게임당 확정 <strong>{confirmedSlots}</strong>개 + 랜덤 <strong>{randomSlots}</strong>개 = 6개 × 5게임
+                    </div>
+                  </div>
+                );
+              })()}
               <div style={{ fontSize: 12, color: '#888', marginTop: 10, lineHeight: 1.8 }}>
                 <div>📅 날짜 자동 제외: <strong>{thisSaturdayDateNums.length > 0 ? thisSaturdayDateNums.join(', ') : '없음'}</strong></div>
                 <div>🚫 사용자 제외: <strong>{excludeNumbers.length > 0 ? excludeNumbers.join(', ') : '없음'}</strong></div>
