@@ -145,8 +145,8 @@ const LottoMembership = () => {
     return pickByDecade(lastWeek7, 5);
   };
 
-  // ─── Step 2a: 최신최다 2개 (B-1), A 제외 ────────────────────
-  const pickRecentFreq2 = (excludedA) => {
+  // ─── Step 2a: 최신최다 5개 (B-1), A 제외 ────────────────────
+  const pickRecentFreq5 = (excludedA) => {
     if (!lottoData?.data?.length) return [];
     const sortedData = [...lottoData.data].sort((a, b) => b.round - a.round);
     let windowSize = 15;
@@ -154,23 +154,23 @@ const LottoMembership = () => {
     while (windowSize <= sortedData.length) {
       const freq = computeFrequency(sortedData.slice(0, windowSize));
       const candidates = Object.keys(freq).map(Number).filter(n => !excludedA.includes(n));
-      if (candidates.length >= 2) {
-        const picked = pickByFreqAndDecade(freq, excludedA, 2);
-        if (picked.length >= 2) return picked;
+      if (candidates.length >= 5) {
+        const picked = pickByFreqAndDecade(freq, excludedA, 5);
+        if (picked.length >= 5) return picked;
       }
       windowSize += 5;
     }
 
     // 전체 탐색 후에도 부족하면 랜덤 fallback
     const all = Array.from({ length: 45 }, (_, i) => i + 1).filter(n => !excludedA.includes(n));
-    return shuffle(all).slice(0, 2);
+    return shuffle(all).slice(0, 5);
   };
 
-  // ─── Step 2b: 역대최다 3개 (B-2), A + B-1 제외 ──────────────
-  const pickAllTimeFreq3 = (excluded) => {
+  // ─── Step 2b: 역대최다 5개 (B-2), A + B-1 제외 ──────────────
+  const pickAllTimeFreq5 = (excluded) => {
     if (!lottoData?.data?.length) return [];
     const freq = computeFrequency(lottoData.data);
-    return pickByFreqAndDecade(freq, excluded, 3);
+    return pickByFreqAndDecade(freq, excluded, 5);
   };
 
   // ─── 연속 번호 4개 체크 ───────────────────────────────────────
@@ -224,57 +224,55 @@ const LottoMembership = () => {
       }
     }
 
-    // Step 1: A
+    // Step 1: A - 저번주 당첨번호 5개
     const A = pickFromLastWeek();
-    // Step 2a: B-1
-    const B1 = pickRecentFreq2(A);
-    // Step 2b: B-2
-    const B2 = pickAllTimeFreq3([...A, ...B1]);
-    // Step 3: 확정 10개
-    const confirmed = [...A, ...B1, ...B2];
+    // Step 2: B2 - 역대최다 5개 (A 제외, 겹치면 6위→7위 순)
+    const B2 = pickAllTimeFreq5([...A]);
+    // Step 3: B1 - 최신최다 5개 (A+B2 제외, 겹치면 다음 순위)
+    const B1 = pickRecentFreq5([...A, ...B2]);
+    // Step 4: 확정 15개
+    const confirmed = [...A, ...B2, ...B1];
 
-    // Step 4: 사용자 설정 + 날짜 자동 제외 + 랜덤 20개
+    // Step 5: 사용자 설정 + 날짜 자동 제외 + 랜덤 15개 (게임당 3개)
     const allExcludes = [...new Set([...excludeNumbers, ...thisSaturdayDateNums])];
     const forceInclude = mustIncludeNumbers.filter(n => !confirmed.includes(n));
     const candidatePool = shuffle(
       Array.from({ length: 45 }, (_, i) => i + 1)
         .filter(n => !confirmed.includes(n) && !allExcludes.includes(n) && !forceInclude.includes(n))
     );
-    const neededRandom = Math.max(0, 20 - forceInclude.length);
+    const neededRandom = Math.max(0, 15 - forceInclude.length);
     const randomPool = [...forceInclude, ...candidatePool.slice(0, neededRandom)];
 
-    // fallback: 제외 번호로 random이 20개 미만인 경우
-    if (randomPool.length < 20) {
+    // fallback: 제외 번호로 random이 15개 미만인 경우
+    if (randomPool.length < 15) {
       const extra = shuffle(
         Array.from({ length: 45 }, (_, i) => i + 1)
           .filter(n => !confirmed.includes(n) && !randomPool.includes(n))
       );
-      while (randomPool.length < 20 && extra.length > 0) randomPool.push(extra.shift());
+      while (randomPool.length < 15 && extra.length > 0) randomPool.push(extra.shift());
     }
 
-    // Step 5: 배치
-    // A(저번주 5개): 번호대에 맞는 게임에 우선 배정, 없는 게임엔 leftover
-    // B(최다 5개):  마찬가지
-    // 랜덤 20개:   게임별 4개씩 채움
+    // Step 6: 배치
+    // A(저번주 5개), B2(역대최다 5개), B1(최신최다 5개): 각각 번호대별 게임 배정
+    // 랜덤 15개: 게임별 3개씩
     const prevCombos = getPreviousWinningCombinations();
     const MAX_ATTEMPTS = 100;
     let bestGames = null;
     let exceeded = false;
 
-    const B = [...B1, ...B2];
-
     for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-      const aAssign = assignByDecade(A);           // [a0,a1,a2,a3,a4]
-      const bAssign = assignByDecade(B);           // [b0,b1,b2,b3,b4]
+      const aAssign  = assignByDecade(A);   // [a0..a4]
+      const b2Assign = assignByDecade(B2);  // [b2_0..b2_4]
+      const b1Assign = assignByDecade(B1);  // [b1_0..b1_4]
       const shuffledR = shuffle(randomPool);
 
       const games = Array.from({ length: 5 }, (_, i) => [
         aAssign[i],
-        bAssign[i],
-        shuffledR[i * 4],
-        shuffledR[i * 4 + 1],
-        shuffledR[i * 4 + 2],
-        shuffledR[i * 4 + 3],
+        b2Assign[i],
+        b1Assign[i],
+        shuffledR[i * 3],
+        shuffledR[i * 3 + 1],
+        shuffledR[i * 3 + 2],
       ].filter(n => n != null).sort((a, b) => a - b));
 
       if (games.every(g => !isInvalidGame(g, prevCombos))) {
@@ -288,7 +286,7 @@ const LottoMembership = () => {
     }
 
     setGeneratedNumbers(bestGames);
-    setDebugInfo({ A: [...A].sort((a,b)=>a-b), B1: [...B1].sort((a,b)=>a-b), B2: [...B2].sort((a,b)=>a-b), dateExcludes: thisSaturdayDateNums });
+    setDebugInfo({ A: [...A].sort((a,b)=>a-b), B2: [...B2].sort((a,b)=>a-b), B1: [...B1].sort((a,b)=>a-b), dateExcludes: thisSaturdayDateNums });
     setWarningMsg(exceeded ? '⚠️ 100회 시도 초과: 제약 조건을 완전히 충족하지 못한 결과입니다.' : '');
   };
 
@@ -464,13 +462,16 @@ const LottoMembership = () => {
               {game ? (
                 <div className="number-balls">
                   {game.map((num, numIndex) => {
-                    const isFromA = debugInfo?.A?.includes(num);
-                    const isFromB = debugInfo && [...(debugInfo.B1 || []), ...(debugInfo.B2 || [])].includes(num);
+                    const isFromA  = debugInfo?.A?.includes(num);
+                    const isFromB2 = debugInfo?.B2?.includes(num);
+                    const isFromB1 = debugInfo?.B1?.includes(num);
                     const ring = isFromA
-                      ? '0 0 0 3px #ffd700'   // 저번주: 금색 테두리
-                      : isFromB
-                        ? '0 0 0 3px #4caf50' // 최다: 초록 테두리
-                        : 'none';
+                      ? '0 0 0 3px #ffd700'   // 저번주: 금색
+                      : isFromB2
+                        ? '0 0 0 3px #4caf50' // 역대최다: 초록
+                        : isFromB1
+                          ? '0 0 0 3px #2196f3' // 최신최다: 파랑
+                          : 'none';
                     return (
                       <span
                         key={numIndex}
@@ -498,8 +499,8 @@ const LottoMembership = () => {
             padding: '10px 14px', margin: '12px 0', fontSize: 13, color: '#555', lineHeight: 1.8
           }}>
             <div>📌 저번주 선정 (A): <strong>[{debugInfo.A.join(', ')}]</strong></div>
-            <div>🔥 최신최다 15회 (B-1): <strong>[{debugInfo.B1.join(', ')}]</strong></div>
-            <div>⭐ 역대최다 (B-2): <strong>[{debugInfo.B2.join(', ')}]</strong></div>
+            <div>⭐ 역대최다 (B2): <strong>[{debugInfo.B2.join(', ')}]</strong></div>
+            <div>🔥 최신최다 15회 (B1): <strong>[{debugInfo.B1.join(', ')}]</strong></div>
             <div>📅 날짜 자동 제외: <strong>[{debugInfo.dateExcludes.join(', ')}]</strong></div>
           </div>
         )}
@@ -526,14 +527,14 @@ const LottoMembership = () => {
                 </div>
                 <div>
                   <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#4caf50', border: '1px solid #ccc', marginRight: 6, verticalAlign: 'middle' }} />
-                  <strong>최신최다 15주</strong> 중 <strong>2개</strong> 선정 (번호대 분산)
+                  <strong>역대최다 5개</strong> 선정 (A 겹치면 6위→7위 순, 번호대 분산)
                 </div>
                 <div>
-                  <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#4caf50', border: '1px solid #ccc', marginRight: 6, verticalAlign: 'middle' }} />
-                  <strong>역대최다</strong> 중 <strong>3개</strong> 선정 (번호대 분산)
+                  <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#2196f3', border: '1px solid #ccc', marginRight: 6, verticalAlign: 'middle' }} />
+                  <strong>최신최다 15주 5개</strong> 선정 (A·B2 겹치면 다음 순위, 번호대 분산)
                 </div>
                 <div style={{ borderTop: '1px solid #eee', marginTop: 6, paddingTop: 6 }}>
-                  위 확정 <strong>10개</strong> + 랜덤 <strong>20개</strong> = 총 30개 → <strong>5게임</strong>
+                  확정 <strong>15개</strong> (게임당 3개) + 랜덤 <strong>15개</strong> (게임당 3개) → <strong>5게임</strong>
                 </div>
               </div>
               <div style={{ fontSize: 12, color: '#888', marginTop: 10, lineHeight: 1.8 }}>
