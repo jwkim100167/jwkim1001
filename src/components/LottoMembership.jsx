@@ -173,6 +173,28 @@ const LottoMembership = () => {
     return pickByFreqAndDecade(freq, excluded, 5);
   };
 
+  // ─── Step C: 최신 출현 번호 15개 (confirmed + 제외 제외, 최신순) ──
+  const pickRecentNums15 = (excluded) => {
+    const sortedData = [...lottoData.data].sort((a, b) => b.round - a.round);
+    const seen = new Set(excluded);
+    const result = [];
+    for (const item of sortedData) {
+      for (const n of [item.num1, item.num2, item.num3, item.num4, item.num5, item.num6]) {
+        if (n >= 1 && n <= 45 && !seen.has(n)) {
+          seen.add(n);
+          result.push(n);
+          if (result.length >= 15) return result;
+        }
+      }
+    }
+    // 15개 미만이면 나머지를 랜덤 fallback
+    const extra = shuffle(
+      Array.from({ length: 45 }, (_, i) => i + 1).filter(n => !seen.has(n))
+    );
+    while (result.length < 15 && extra.length > 0) result.push(extra.shift());
+    return result;
+  };
+
   // ─── 연속 번호 4개 체크 ───────────────────────────────────────
   const hasConsecutiveFour = (numbers) => {
     const sorted = [...numbers].sort((a, b) => a - b);
@@ -233,46 +255,35 @@ const LottoMembership = () => {
     // Step 4: 확정 15개
     const confirmed = [...A, ...B2, ...B1];
 
-    // Step 5: 사용자 설정 + 날짜 자동 제외 + 랜덤 15개 (게임당 3개)
+    // Step 5: C - 최신 출현 번호 15개 (confirmed + 제외번호 제외, 최신순)
     const allExcludes = [...new Set([...excludeNumbers, ...thisSaturdayDateNums])];
-    const forceInclude = mustIncludeNumbers.filter(n => !confirmed.includes(n));
-    const candidatePool = shuffle(
-      Array.from({ length: 45 }, (_, i) => i + 1)
-        .filter(n => !confirmed.includes(n) && !allExcludes.includes(n) && !forceInclude.includes(n))
-    );
-    const neededRandom = Math.max(0, 15 - forceInclude.length);
-    const randomPool = [...forceInclude, ...candidatePool.slice(0, neededRandom)];
-
-    // fallback: 제외 번호로 random이 15개 미만인 경우
-    if (randomPool.length < 15) {
-      const extra = shuffle(
-        Array.from({ length: 45 }, (_, i) => i + 1)
-          .filter(n => !confirmed.includes(n) && !randomPool.includes(n))
-      );
-      while (randomPool.length < 15 && extra.length > 0) randomPool.push(extra.shift());
-    }
+    const forceInclude = mustIncludeNumbers.filter(n => !confirmed.includes(n) && !allExcludes.includes(n));
+    const excludedForC = [...new Set([...confirmed, ...allExcludes, ...forceInclude])];
+    const recentNums = pickRecentNums15(excludedForC);
+    // forceInclude 앞에 붙이고 15개로 맞춤
+    const cPool = [...forceInclude, ...recentNums].slice(0, 15);
 
     // Step 6: 배치
     // A(저번주 5개), B2(역대최다 5개), B1(최신최다 5개): 각각 번호대별 게임 배정
-    // 랜덤 15개: 게임별 3개씩
+    // C(최신 15개): 셔플 후 게임별 3개씩
     const prevCombos = getPreviousWinningCombinations();
     const MAX_ATTEMPTS = 100;
     let bestGames = null;
     let exceeded = false;
 
     for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-      const aAssign  = assignByDecade(A);   // [a0..a4]
-      const b2Assign = assignByDecade(B2);  // [b2_0..b2_4]
-      const b1Assign = assignByDecade(B1);  // [b1_0..b1_4]
-      const shuffledR = shuffle(randomPool);
+      const aAssign  = assignByDecade(A);
+      const b2Assign = assignByDecade(B2);
+      const b1Assign = assignByDecade(B1);
+      const shuffledC = shuffle(cPool);
 
       const games = Array.from({ length: 5 }, (_, i) => [
         aAssign[i],
         b2Assign[i],
         b1Assign[i],
-        shuffledR[i * 3],
-        shuffledR[i * 3 + 1],
-        shuffledR[i * 3 + 2],
+        shuffledC[i * 3],
+        shuffledC[i * 3 + 1],
+        shuffledC[i * 3 + 2],
       ].filter(n => n != null).sort((a, b) => a - b));
 
       if (games.every(g => !isInvalidGame(g, prevCombos))) {
@@ -286,7 +297,7 @@ const LottoMembership = () => {
     }
 
     setGeneratedNumbers(bestGames);
-    setDebugInfo({ A: [...A].sort((a,b)=>a-b), B2: [...B2].sort((a,b)=>a-b), B1: [...B1].sort((a,b)=>a-b), dateExcludes: thisSaturdayDateNums });
+    setDebugInfo({ A: [...A].sort((a,b)=>a-b), B2: [...B2].sort((a,b)=>a-b), B1: [...B1].sort((a,b)=>a-b), C: [...cPool], dateExcludes: thisSaturdayDateNums });
     setWarningMsg(exceeded ? '⚠️ 100회 시도 초과: 제약 조건을 완전히 충족하지 못한 결과입니다.' : '');
   };
 
@@ -500,7 +511,8 @@ const LottoMembership = () => {
           }}>
             <div>📌 저번주 선정 (A): <strong>[{debugInfo.A.join(', ')}]</strong></div>
             <div>⭐ 역대최다 (B2): <strong>[{debugInfo.B2.join(', ')}]</strong></div>
-            <div>🔥 최신최다 15회 (B1): <strong>[{debugInfo.B1.join(', ')}]</strong></div>
+            <div>🔥 최신최다 (B1): <strong>[{debugInfo.B1.join(', ')}]</strong></div>
+            <div>🕐 최신출현 (C): <strong>[{debugInfo.C?.join(', ')}]</strong></div>
             <div>📅 날짜 자동 제외: <strong>[{debugInfo.dateExcludes.join(', ')}]</strong></div>
           </div>
         )}
@@ -531,10 +543,14 @@ const LottoMembership = () => {
                 </div>
                 <div>
                   <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#2196f3', border: '1px solid #ccc', marginRight: 6, verticalAlign: 'middle' }} />
-                  <strong>최신최다 15주 5개</strong> 선정 (A·B2 겹치면 다음 순위, 번호대 분산)
+                  <strong>최신최다 15주 5개</strong> (겹치면 다음 순위)
+                </div>
+                <div>
+                  <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#9c27b0', border: '1px solid #ccc', marginRight: 6, verticalAlign: 'middle' }} />
+                  <strong>최신 출현번호 15개</strong> (확정 제외, 최신순)
                 </div>
                 <div style={{ borderTop: '1px solid #eee', marginTop: 6, paddingTop: 6 }}>
-                  확정 <strong>15개</strong> (게임당 3개) + 랜덤 <strong>15개</strong> (게임당 3개) → <strong>5게임</strong>
+                  확정 <strong>15개</strong> (게임당 3개) + 최신출현 <strong>15개</strong> (게임당 3개) → <strong>5게임</strong>
                 </div>
               </div>
               <div style={{ fontSize: 12, color: '#888', marginTop: 10, lineHeight: 1.8 }}>
