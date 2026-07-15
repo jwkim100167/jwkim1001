@@ -12,6 +12,7 @@ export default function MomokBest() {
   const { isAuthenticated, user } = useAuth();
 
   const [cards, setCards] = useState([]);
+  const [sortOrder, setSortOrder] = useState('default');
   const [userLife, setUserLife] = useState(0);
   const [selectedCard, setSelectedCard] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -171,6 +172,23 @@ export default function MomokBest() {
         </div>
       )}
 
+      {/* 정렬 버튼 */}
+      <div className="mb-sort-tabs">
+        {[
+          { key: 'default', label: '리뷰있는 순' },
+          { key: 'region',  label: '지역 순' },
+          { key: 'menu',    label: '메뉴 순' },
+        ].map(({ key, label }) => (
+          <button
+            key={key}
+            className={`mb-sort-tab${sortOrder === key ? ' active' : ''}`}
+            onClick={() => setSortOrder(key)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
       {/* 카드 그리드 */}
       {loading ? (
         <div className="mb-loading">로딩 중...</div>
@@ -178,7 +196,18 @@ export default function MomokBest() {
         <div className="mb-empty">표시할 레스토랑이 없습니다.</div>
       ) : (
         <div className="mb-grid">
-          {cards.map((card, idx) => (
+          {(sortOrder === 'region'
+            ? [...cards].sort((a, b) => {
+                const aLoc = a.location || '';
+                const bLoc = b.location || '';
+                if (aLoc === '서울' && bLoc !== '서울') return -1;
+                if (aLoc !== '서울' && bLoc === '서울') return 1;
+                return aLoc.localeCompare(bLoc, 'ko');
+              })
+            : sortOrder === 'menu'
+            ? [...cards].sort((a, b) => (a.signature || '').localeCompare(b.signature || '', 'ko'))
+            : cards
+          ).map((card, idx) => (
             <div
               key={card._rId ?? idx}
               className={`mb-card ${!isExempt && userLife <= 0 ? 'mb-card-disabled' : ''}`}
