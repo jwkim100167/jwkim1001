@@ -138,11 +138,11 @@ const LottoMembership = () => {
   };
 
   // ─── Step 1: 저번주 당첨번호 7개 중 5개 선정 (A) ────────────
-  const pickFromLastWeek = () => {
+  const pickFromLastWeek = (userExcludes = []) => {
     if (!lottoData?.data?.length) return [];
     const latest = [...lottoData.data].sort((a, b) => b.round - a.round)[0];
     const lastWeek7 = [latest.num1, latest.num2, latest.num3, latest.num4, latest.num5, latest.num6, latest.bonus]
-      .filter(n => n >= 1 && n <= 45);
+      .filter(n => n >= 1 && n <= 45 && !userExcludes.includes(n));
     return pickByDecade(lastWeek7, 5);
   };
 
@@ -247,13 +247,15 @@ const LottoMembership = () => {
       }
     }
 
-    // Step 1~3: 항상 계산 (옵션에 무관하게 제외 체인 유지)
-    const A_nums  = pickFromLastWeek();
-    const B2_nums = pickAllTimeFreq5([...A_nums]);
-    const B1_nums = pickRecentFreq5([...A_nums, ...B2_nums]);
+    // 유저 제외번호 + 날짜 제외를 먼저 계산 (A/B2/B1 선정 단계부터 반영)
+    const allExcludes = [...new Set([...excludeNumbers, ...thisSaturdayDateNums])];
+
+    // Step 1~3: 항상 계산 (옵션에 무관하게 제외 체인 유지, 유저 제외 반영)
+    const A_nums  = pickFromLastWeek(allExcludes);
+    const B2_nums = pickAllTimeFreq5([...A_nums, ...allExcludes]);
+    const B1_nums = pickRecentFreq5([...A_nums, ...B2_nums, ...allExcludes]);
 
     // Step 4: 옵션 적용
-    const allExcludes = [...new Set([...excludeNumbers, ...thisSaturdayDateNums])];
     const A_on  = groupOptions.A  === '포함';
     const B2_on = groupOptions.B2 === '포함';
     const B1_on = groupOptions.B1 === '포함';
@@ -265,7 +267,8 @@ const LottoMembership = () => {
     ];
 
     // C 계산 (confirmed + allExcludes + forceInclude 제외)
-    const forceInclude = mustIncludeNumbers.filter(n => !confirmed.includes(n) && !allExcludes.includes(n));
+    // mustIncludeNumbers는 confirmed에 이미 있으면 무시, 아니면 강제 포함 (allExcludes보다 우선)
+    const forceInclude = mustIncludeNumbers.filter(n => !confirmed.includes(n));
     const C_nums = pickRecentNums15([...new Set([...confirmed, ...allExcludes, ...forceInclude])]);
     const C_on = groupOptions.C === '포함';
     const cPool = C_on ? [...forceInclude, ...C_nums].slice(0, 15) : [];
@@ -285,7 +288,7 @@ const LottoMembership = () => {
     const totalRandom = randomSlotsPerGame * 5;
 
     const randomExcluded = [...new Set([...confirmed, ...mipoham, ...allExcludes])];
-    const forceForRandom = C_on ? [] : mustIncludeNumbers.filter(n => !randomExcluded.includes(n));
+    const forceForRandom = C_on ? [] : mustIncludeNumbers.filter(n => !confirmed.includes(n));
     const randomPool = [
       ...forceForRandom,
       ...shuffle(Array.from({ length: 45 }, (_, i) => i + 1).filter(n => !randomExcluded.includes(n) && !forceForRandom.includes(n))),
