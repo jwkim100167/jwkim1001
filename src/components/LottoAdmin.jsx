@@ -202,8 +202,8 @@ export default function LottoAdmin() {
       // 모든 사용자 가져오기 (admin, test 제외)
       const { data, error } = await supabase
         .from('userTable')
-        .select('id, login_id')
-        .not('login_id', 'in', '("admin","test")')
+        .select('id, login_id, userName')
+        .not('login_id', 'in', '(admin,test)')
         .order('login_id', { ascending: true });
 
       if (error) {
@@ -304,7 +304,7 @@ export default function LottoAdmin() {
                   <UserWinningInfo
                     key={u.id}
                     userId={u.id}
-                    loginId={u.login_id}
+                    loginId={u.login_id || u.userName || String(u.id)}
                     latestRounds={latestRounds}
                     currentRound={latestRounds[0]}
                     onForceParticipate={handleForceParticipate}
