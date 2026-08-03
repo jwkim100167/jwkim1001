@@ -2,14 +2,15 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
-import { getSavedGames, getLottoNumberByRoundFromSupabase, getLatestLottoNumberFromSupabase } from '../services/supabaseLotto';
+import { getSavedGames, getLottoNumberByRoundFromSupabase, getLatestLottoNumberFromSupabase, saveGeneratedGames, getAllLottoDataFromSupabase } from '../services/supabaseLotto';
 import './LottoAdmin.css';
 
 // 사용자별 당첨 정보 컴포넌트
-function UserWinningInfo({ userId, loginId, latestRounds }) {
+function UserWinningInfo({ userId, loginId, latestRounds, currentRound, onForceParticipate }) {
   const [userGames, setUserGames] = useState([]);
   const [winningInfo, setWinningInfo] = useState({});
   const [loading, setLoading] = useState(true);
+  const [forcing, setForcing] = useState(false);
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -109,6 +110,34 @@ function UserWinningInfo({ userId, loginId, latestRounds }) {
         latestRounds.map(round => {
           const info = winningInfo[round];
           if (!info) {
+            if (round === currentRound) {
+              return (
+                <div key={round} className="round-cell no-play">
+                  <button
+                    className="force-participate-btn"
+                    disabled={forcing}
+                    onClick={async () => {
+                      setForcing(true);
+                      await onForceParticipate(userId, currentRound);
+                      // 해당 유저 데이터 새로고침
+                      const games = await getSavedGames(userId);
+                      const filteredGames = games.filter(game => latestRounds.includes(game.l_number));
+                      setUserGames(filteredGames);
+                      const roundGames = filteredGames.filter(g => g.l_number === currentRound);
+                      if (roundGames.length > 0) {
+                        setWinningInfo(prev => ({
+                          ...prev,
+                          [currentRound]: { gameCount: roundGames.length, bestRank: '대기중' }
+                        }));
+                      }
+                      setForcing(false);
+                    }}
+                  >
+                    {forcing ? '생성 중...' : '강제 참여'}
+                  </button>
+                </div>
+              );
+            }
             return (
               <div key={round} className="round-cell no-play">
                 미참여
@@ -195,6 +224,38 @@ export default function LottoAdmin() {
     navigate('/');
   };
 
+  // 어드민 강제 번호 생성 (멤버십 알고리즘 기반, 기본 옵션)
+  const handleForceParticipate = async (userId, currentRound) => {
+    try {
+      const lottoData = await getAllLottoDataFromSupabase();
+      if (!lottoData?.data?.length) { alert('로또 데이터 로드 실패'); return; }
+
+      const sortedData = [...lottoData.data].sort((a, b) => b.round - a.round);
+
+      // Fisher-Yates shuffle
+      const shuffle = (arr) => {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      };
+
+      // 1~45 중 30개 중복 없이 랜덤 선택 → 5게임 × 6개
+      const pool = shuffle(Array.from({ length: 45 }, (_, i) => i + 1)).slice(0, 30);
+      const games = Array.from({ length: 5 }, (_, i) =>
+        pool.slice(i * 6, i * 6 + 6).sort((a, b) => a - b)
+      );
+
+      const result = await saveGeneratedGames(userId, currentRound, games);
+      if (!result.success) alert(`저장 실패: ${result.error}`);
+    } catch (e) {
+      console.error('강제 참여 실패:', e);
+      alert('번호 생성 중 오류가 발생했습니다.');
+    }
+  };
+
   // 인증 로딩 중
   if (authLoading) {
     return <div className="admin"><div className="loading">로딩 중...</div></div>;
@@ -245,6 +306,8 @@ export default function LottoAdmin() {
                     userId={u.id}
                     loginId={u.login_id}
                     latestRounds={latestRounds}
+                    currentRound={latestRounds[0]}
+                    onForceParticipate={handleForceParticipate}
                   />
                 ))
               )}
