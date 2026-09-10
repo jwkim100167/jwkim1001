@@ -82,18 +82,7 @@ export default function TypingGamePlay({
   };
 
   const handleInputChange = (e) => {
-    const val = e.target.value;
-    setInput(val);
-
-    if (capturing || phase !== 'playing') return;
-
-    // 자동 매칭 (입력 즉시)
-    const trimmed = val.trim();
-    const targetWords = mode === 'oneByOne'
-      ? (activeWord ? [activeWord] : [])
-      : words.filter(w => w.capturedBy === null);
-    const matched = targetWords.find(w => w.text === trimmed);
-    if (matched) tryCapture(val);
+    setInput(e.target.value);
   };
 
   const handleKeyDown = (e) => {
@@ -210,7 +199,7 @@ export default function TypingGamePlay({
             ref={inputRef}
             className={`tgp-input ${wrongMsg ? 'tgp-input-wrong' : ''}`}
             type="text"
-            placeholder="음식 이름 입력 후 Enter 또는 자동 완성"
+            placeholder="음식 이름 입력 후 Enter"
             value={input}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
@@ -219,7 +208,7 @@ export default function TypingGamePlay({
             spellCheck={false}
           />
           <div className={`tgp-input-hint ${wrongMsg ? 'tgp-hint-wrong' : ''}`}>
-            {wrongMsg ? '❌ 틀렸습니다! 다시 시도하세요' : '일치하면 자동 획득 · Enter로도 확인'}
+            {wrongMsg ? '❌ 틀렸습니다! 다시 시도하세요' : 'Enter를 눌러 제출'}
           </div>
         </div>
       )}
