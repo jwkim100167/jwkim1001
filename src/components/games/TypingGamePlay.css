@@ -1,0 +1,472 @@
+/* ===========================
+   GAME WRAP
+   =========================== */
+.tgp-wrap {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(135deg, #060612 0%, #0d0d24 60%, #0a1408 100%);
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ===========================
+   SCOREBOARD
+   =========================== */
+.tgp-scoreboard {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 14px 16px;
+  min-width: 160px;
+  backdrop-filter: blur(10px);
+  z-index: 100;
+}
+
+.tgp-scoreboard-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.tgp-score-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  font-size: 0.85rem;
+}
+
+.tgp-score-me {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 4px 6px;
+  margin: 0 -6px;
+}
+
+.tgp-score-rank {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.7rem;
+  width: 18px;
+  flex-shrink: 0;
+}
+
+.tgp-score-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tgp-score-name {
+  flex: 1;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80px;
+}
+
+.tgp-score-pts {
+  font-weight: 800;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.tgp-progress {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+}
+
+/* ===========================
+   WORD FIELD
+   =========================== */
+.tgp-field {
+  position: absolute;
+  inset: 0;
+  bottom: 80px; /* 입력창 위 여백 */
+}
+
+.tgp-word {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: opacity 0.4s ease, transform 0.3s ease;
+  cursor: default;
+}
+
+.tgp-word-text {
+  display: block;
+  font-weight: 800;
+  color: #fff;
+  text-shadow:
+    0 0 12px rgba(0, 210, 255, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+.tgp-word-pts {
+  font-size: 0.7em;
+  font-weight: 700;
+  color: var(--capture-color, #00d2ff);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tgp-word-owner {
+  font-size: 0.6em;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+}
+
+/* 획득된 단어 */
+.tgp-word-captured .tgp-word-text {
+  color: var(--capture-color, #aaa);
+  text-decoration: line-through;
+  text-shadow: none;
+  opacity: 0.45;
+}
+
+.tgp-word-captured .tgp-word-pts {
+  opacity: 1;
+}
+
+.tgp-word-captured .tgp-word-owner {
+  opacity: 0.7;
+}
+
+/* 획득 플래시 애니메이션 */
+.tgp-word-flash {
+  animation: tgp-pop 0.5s ease-out forwards;
+}
+
+@keyframes tgp-pop {
+  0%   { transform: rotate(var(--rot, 0deg)) scale(1); }
+  30%  { transform: rotate(var(--rot, 0deg)) scale(1.5); filter: brightness(2); }
+  100% { transform: rotate(var(--rot, 0deg)) scale(1); }
+}
+
+/* ===========================
+   INPUT BAR
+   =========================== */
+.tgp-input-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(5, 5, 20, 0.92);
+  border-top: 1px solid rgba(0, 210, 255, 0.2);
+  padding: 12px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  backdrop-filter: blur(10px);
+  z-index: 100;
+}
+
+.tgp-input {
+  width: 100%;
+  max-width: 480px;
+  padding: 12px 20px;
+  background: rgba(0, 210, 255, 0.08);
+  border: 1.5px solid rgba(0, 210, 255, 0.3);
+  border-radius: 12px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  outline: none;
+  text-align: center;
+  transition: border-color 0.2s, background 0.2s;
+  box-sizing: border-box;
+}
+
+.tgp-input:focus {
+  border-color: #00d2ff;
+  background: rgba(0, 210, 255, 0.12);
+}
+
+.tgp-input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+  font-weight: 400;
+}
+
+.tgp-input-wrong {
+  border-color: #ff6b6b !important;
+  background: rgba(255, 107, 107, 0.1) !important;
+  animation: tgp-shake 0.4s ease;
+}
+
+@keyframes tgp-shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px); }
+  60%       { transform: translateX(-5px); }
+  80%       { transform: translateX(5px); }
+}
+
+.tgp-input-hint {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.25);
+  transition: color 0.2s;
+}
+
+.tgp-hint-wrong {
+  color: #ff6b6b;
+  font-weight: 600;
+}
+
+/* ===========================
+   ONE BY ONE MODE
+   =========================== */
+.tgp-onebyone-field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 80px);
+  gap: 32px;
+  padding: 0 20px;
+}
+
+.tgp-ob-progress {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tgp-ob-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  transition: background 0.3s;
+}
+
+.tgp-ob-dot.active {
+  background: #00d2ff;
+  box-shadow: 0 0 8px rgba(0, 210, 255, 0.6);
+}
+
+.tgp-ob-dot.done {
+  opacity: 0.6;
+}
+
+.tgp-ob-word {
+  text-align: center;
+  animation: tgp-appear 0.4s ease;
+}
+
+@keyframes tgp-appear {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.tgp-ob-flash {
+  animation: tgp-ob-pop 0.5s ease forwards;
+}
+
+@keyframes tgp-ob-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.3); filter: brightness(2); }
+  100% { transform: scale(1); opacity: 0.4; }
+}
+
+.tgp-ob-text {
+  font-size: inherit;
+  font-weight: 900;
+  color: #fff;
+  text-shadow:
+    0 0 30px rgba(0, 210, 255, 0.6),
+    0 4px 8px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.tgp-ob-points {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: rgba(0, 210, 255, 0.7);
+}
+
+.tgp-ob-captured-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  max-width: 600px;
+  min-height: 28px;
+}
+
+.tgp-ob-captured-item {
+  font-size: 0.82rem;
+  font-weight: 600;
+  opacity: 0.7;
+  text-decoration: line-through;
+}
+
+.tgp-ob-captured-item span {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+/* ===========================
+   END OVERLAY
+   =========================== */
+.tgp-end-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  backdrop-filter: blur(6px);
+}
+
+.tgp-end-dialog {
+  background: linear-gradient(135deg, #111128 0%, #0d1a0d 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 36px 32px;
+  max-width: 360px;
+  width: 90%;
+  text-align: center;
+}
+
+.tgp-end-icon {
+  font-size: 3rem;
+  margin-bottom: 8px;
+}
+
+.tgp-end-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: white;
+  margin: 0 0 24px 0;
+}
+
+.tgp-end-scores {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.tgp-end-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tgp-end-winner {
+  background: rgba(0, 210, 255, 0.1);
+  border: 1px solid rgba(0, 210, 255, 0.2);
+}
+
+.tgp-end-rank {
+  font-size: 1.1rem;
+  width: 28px;
+  flex-shrink: 0;
+}
+
+.tgp-end-name {
+  flex: 1;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+.tgp-end-pts {
+  font-size: 1rem;
+  font-weight: 800;
+  color: white;
+}
+
+.tgp-end-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tgp-btn {
+  width: 100%;
+  padding: 13px;
+  border-radius: 11px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.tgp-btn-primary {
+  background: linear-gradient(135deg, #00d2ff 0%, #0080c0 100%);
+  color: #000;
+}
+
+.tgp-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4);
+}
+
+.tgp-btn-leave {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tgp-btn-leave:hover {
+  background: rgba(255, 70, 70, 0.1);
+  color: #ff6b6b;
+  border-color: rgba(255, 107, 107, 0.3);
+}
+
+.tgp-waiting-host {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0;
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+@media (max-width: 480px) {
+  .tgp-scoreboard {
+    top: 8px;
+    right: 8px;
+    padding: 10px 12px;
+    min-width: 130px;
+  }
+
+  .tgp-input-bar {
+    padding: 10px 12px 14px;
+  }
+
+  .tgp-input {
+    font-size: 1rem;
+    padding: 10px 16px;
+  }
+}

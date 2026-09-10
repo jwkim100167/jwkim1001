@@ -17,6 +17,8 @@ const SERVICE_LIST = [
   { id: 'taste',         title: '취향 알기',                icon: '💫' },
   { id: 'cobra',         title: '코브라 게임',              icon: '🐍' },
   { id: 'mandalart',     title: '만다라트',                 icon: '🎯' },
+  { id: 'turneyia',      title: '터이네키아',               icon: '🏆' },
+  { id: 'mini-arcade',   title: '두뇌 미니게임',            icon: '🧠' },
 ];
 
 export default function Admin() {

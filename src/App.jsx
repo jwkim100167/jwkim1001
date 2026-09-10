@@ -30,6 +30,7 @@ import CobraGame from './components/CobraGame';
 import Mandalart from './components/Mandalart';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TurneyKiaGame from './components/TurneyKiaGame';
+import TypingGame from './components/games/TypingGame';
 
 function App() {
   // GitHub Pages의 경우 basename 설정
@@ -67,6 +68,7 @@ function App() {
           <Route path="/mandalart" element={<Mandalart />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/turneyia" element={<TurneyKiaGame />} />
+          <Route path="/mini-arcade" element={<TypingGame />} />
         </Routes>
       </Router>
     </AuthProvider>
