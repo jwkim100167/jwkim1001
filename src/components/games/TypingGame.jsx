@@ -32,15 +32,19 @@ const GAMES = [
   { id: 'leftright', icon: '↔️', title: '좌로우로',        desc: '빠른 방향 반응',     active: false, color: '#43e97b' },
 ];
 
-/** 4×3 존 기반 랜덤 단어 배치 생성 */
+/** 존 기반 랜덤 단어 배치 생성 (count에 따라 그리드 자동 조정) */
 function generateWords(count = 10) {
-  // 화면을 4열 × 3행 = 12개 존으로 분할
+  // count에 맞게 행/열 결정 (최소 count개 존 확보)
+  const cols = count <= 5 ? 3 : count <= 10 ? 4 : 5;
+  const rows = Math.ceil(count / cols) + 1;
   const zones = [];
-  for (let row = 0; row < 3; row++) {
-    for (let col = 0; col < 4; col++) {
+  const xStep = 90 / cols;
+  const yStep = 70 / rows;
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
       zones.push({
-        xBase: col * 25 + 2,   // 0~2, 25~27, 50~52, 75~77
-        yBase: row * 28 + 8,   // 8~10, 36~38, 64~66
+        xBase: col * xStep + 2,
+        yBase: row * yStep + 8,
       });
     }
   }
@@ -83,7 +87,7 @@ export default function TypingGame() {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [selectedGame, setSelectedGame] = useState(null);
   const [showSoloConfirm, setShowSoloConfirm] = useState(false);
-  const [options, setOptions] = useState({ mode: 'oneByOne' }); // 'oneByOne' | 'all'
+  const [options, setOptions] = useState({ mode: 'oneByOne', count: 10 }); // 'oneByOne' | 'all'
 
   const channelRef = useRef(null);
 
@@ -200,7 +204,7 @@ export default function TypingGame() {
     setShowSoloConfirm(false);
     setLoading(true); setError('');
     try {
-      const words = generateWords(10);
+      const words = generateWords(options.count);
       await startGame(currentRoom.id, words, options);
     } catch (e) {
       setError(e.message || '게임 시작에 실패했습니다.');
@@ -455,7 +459,7 @@ export default function TypingGame() {
                   <div className="tg-option-info">
                     <div className="tg-option-name">🃏 출제 방식</div>
                     <div className="tg-option-desc">
-                      {options.mode === 'all' ? '10개 단어를 한번에 표시' : '단어를 하나씩 순서대로 표시'}
+                      {options.mode === 'all' ? '단어를 한번에 표시' : '단어를 하나씩 순서대로 표시'}
                     </div>
                   </div>
                   <button
@@ -464,6 +468,23 @@ export default function TypingGame() {
                   >
                     {options.mode === 'all' ? '한번에' : '순서대로'}
                   </button>
+                </div>
+                <div className="tg-option-row">
+                  <div className="tg-option-info">
+                    <div className="tg-option-name">🔢 문제 수</div>
+                    <div className="tg-option-desc">{options.count}개 출제</div>
+                  </div>
+                  <div className="tg-count-btns">
+                    {[5, 10, 20].map(n => (
+                      <button
+                        key={n}
+                        className={`tg-count-btn ${options.count === n ? 'tg-count-btn-on' : ''}`}
+                        onClick={() => setOptions(o => ({ ...o, count: n }))}
+                      >
+                        {n}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
