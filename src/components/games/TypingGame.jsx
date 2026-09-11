@@ -50,13 +50,17 @@ function generateWords(count = 10) {
   // 메뉴 풀에서 랜덤 count개 선택
   const pool = [...menuData.menus].sort(() => Math.random() - 0.5).slice(0, count);
 
+  const weights = [300, 400, 500, 600, 700, 800, 900];
+
   return pool.map((item, i) => ({
     id: i,
     text: item.name,
-    x: shuffled[i].xBase + Math.random() * 18,          // 존 내 랜덤 offset
+    x: shuffled[i].xBase + Math.random() * 18,
     y: shuffled[i].yBase + Math.random() * 18,
-    fontSize: 20 + Math.random() * 18,                   // 20~38px
-    rotation: -12 + Math.random() * 24,                  // -12~+12도
+    fontSize: 16 + Math.random() * 30,                   // 16~46px
+    rotation: -20 + Math.random() * 40,                  // -20~+20도
+    skew: -20 + Math.random() * 40,                      // -20~+20도 기울기
+    fontWeight: weights[Math.floor(Math.random() * weights.length)],
     points: item.name.length,
     capturedBy: null,
     capturedBy_name: null,

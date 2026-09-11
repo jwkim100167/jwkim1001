@@ -129,7 +129,8 @@ export default function TypingGamePlay({
                   left: `${word.x}%`,
                   top: `${word.y}%`,
                   fontSize: `${word.fontSize}px`,
-                  transform: `rotate(${word.rotation}deg)`,
+                  fontWeight: word.fontWeight || 400,
+                  transform: `rotate(${word.rotation}deg) skewX(${word.skew || 0}deg)`,
                   '--capture-color': captureColor,
                 }}
               >
@@ -165,11 +166,11 @@ export default function TypingGamePlay({
             <div
               key={activeWord.id}
               className={`tgp-ob-word ${flashWord?.id === activeWord.id ? 'tgp-ob-flash' : ''}`}
-              style={{ transform: `rotate(${activeWord.rotation}deg)` }}
+              style={{ transform: `rotate(${activeWord.rotation}deg) skewX(${activeWord.skew || 0}deg)` }}
             >
               <div
                 className="tgp-ob-text"
-                style={{ fontSize: `${activeWord.fontSize * 2.2}px` }}
+                style={{ fontSize: `${activeWord.fontSize * 2.2}px`, fontWeight: activeWord.fontWeight || 400 }}
               >
                 {activeWord.text}
               </div>
