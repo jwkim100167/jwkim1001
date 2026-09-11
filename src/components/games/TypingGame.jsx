@@ -58,8 +58,7 @@ function generateWords(count = 10) {
     x: shuffled[i].xBase + Math.random() * 18,
     y: shuffled[i].yBase + Math.random() * 18,
     fontSize: 16 + Math.random() * 30,                   // 16~46px
-    rotation: -20 + Math.random() * 40,                  // -20~+20도
-    skew: -20 + Math.random() * 40,                      // -20~+20도 기울기
+    rotation: -180 + Math.random() * 360,                 // -180~+180도
     fontWeight: weights[Math.floor(Math.random() * weights.length)],
     points: item.name.length,
     capturedBy: null,
