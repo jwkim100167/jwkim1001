@@ -21,15 +21,18 @@ import './TypingGame.css';
 const PLAYER_COLORS = ['#00d2ff', '#f7971e', '#a18cd1', '#43e97b', '#f44369', '#f093fb'];
 
 const GAMES = [
-  { id: 'typing',    icon: '⌨️', title: '한컴타자연습',   desc: '타이핑 대결',        active: true,  color: '#00d2ff' },
-  { id: 'math-odd',  icon: '➕', title: '산수홀짝',        desc: '홀수? 짝수?',        active: false, color: '#f7971e' },
-  { id: 'gugu',      icon: '✖️', title: '구구단을 하자',   desc: '빈칸을 채워라',      active: false, color: '#a18cd1' },
-  { id: 'counting',  icon: '🔢', title: '순서대로',        desc: '숫자 순서 클릭',     active: false, color: '#43e97b' },
-  { id: 'apple',     icon: '🍎', title: '사과게임',        desc: '합 10 만들기',       active: false, color: '#f44369' },
-  { id: 'memory',    icon: '🧩', title: '기억력 게임',     desc: '카드 짝 맞추기',     active: false, color: '#4facfe' },
-  { id: 'updown',    icon: '🔐', title: '비번을 맞혀라',   desc: '업앤다운 추리',      active: false, color: '#f093fb' },
-  { id: 'balloon',   icon: '🎈', title: '풍선터뜨리기',    desc: '색깔 함정 주의',     active: false, color: '#ff6b6b' },
-  { id: 'leftright', icon: '↔️', title: '좌로우로',        desc: '빠른 방향 반응',     active: false, color: '#43e97b' },
+  { id: 'typing',    icon: '⌨️', title: '한컴타자연습',   desc: '타이핑 대결',          active: true,  color: '#00d2ff' },
+  { id: 'akinator',  icon: '🎭', title: '아키네이터',      desc: 'Yes/No로 인물 맞히기', active: false, color: '#a78bfa', path: '/mini-arcade/akinator' },
+  { id: 'turneyia',  icon: '🏆', title: '터이네키아',      desc: '아키네이터를 거꾸로!',  active: true,  color: '#f7971e', path: '/turneyia' },
+  { id: 'cobra',     icon: '🐍', title: '코브라 게임',     desc: '방 만들고 친구와 함께!', active: true,  color: '#43e97b', path: '/cobra' },
+  { id: 'math-odd',  icon: '➕', title: '산수홀짝',        desc: '홀수? 짝수?',          active: false, color: '#f7971e' },
+  { id: 'gugu',      icon: '✖️', title: '구구단을 하자',   desc: '빈칸을 채워라',        active: false, color: '#a18cd1' },
+  { id: 'counting',  icon: '🔢', title: '순서대로',        desc: '숫자 순서 클릭',       active: false, color: '#43e97b' },
+  { id: 'apple',     icon: '🍎', title: '사과게임',        desc: '합 10 만들기',         active: false, color: '#f44369' },
+  { id: 'memory',    icon: '🧩', title: '기억력 게임',     desc: '카드 짝 맞추기',       active: false, color: '#4facfe' },
+  { id: 'updown',    icon: '🔐', title: '비번을 맞혀라',   desc: '업앤다운 추리',        active: false, color: '#f093fb' },
+  { id: 'balloon',   icon: '🎈', title: '풍선터뜨리기',    desc: '색깔 함정 주의',       active: false, color: '#ff6b6b' },
+  { id: 'leftright', icon: '↔️', title: '좌로우로',        desc: '빠른 방향 반응',       active: false, color: '#43e97b' },
 ];
 
 /** 존 기반 랜덤 단어 배치 생성 (count에 따라 그리드 자동 조정) */
@@ -530,7 +533,7 @@ export default function TypingGame() {
                     ${!isHost ? 'tg-game-card-readonly' : ''}
                   `}
                   style={{ '--gc': game.color }}
-                  onClick={() => isHost && game.active && setSelectedGame(game)}
+                  onClick={() => isHost && game.active && (game.path ? navigate(game.path) : setSelectedGame(game))}
                 >
                   <div className="tg-game-card-icon">{game.icon}</div>
                   <div className="tg-game-card-title">{game.title}</div>

@@ -14,9 +14,7 @@ const SERVICE_LIST = [
   { id: 'whattoeat',     title: '오늘 뭐 먹지?',            icon: '🍽️', path: '/whattoeat',          cardClass: 'momok-card',      desc: '' },
   { id: 'whattoeat-vip', title: '오늘 뭐 먹지?\n[멤버십]',  icon: '🍽️', path: '/momok-best',         cardClass: 'momokbest-card',  desc: '' },
   { id: 'taste',         title: '취향 알기',                icon: '💫', path: '/taste-match',        cardClass: 'taste-card',      desc: '' },
-  { id: 'cobra',         title: '코브라 게임',              icon: '🐍', path: '/cobra',              cardClass: 'cobra-card',      desc: '방 만들고 친구와 함께!' },
   { id: 'mandalart',     title: '만다라트\n[멤버십]',        icon: '🎯', path: '/mandalart',          cardClass: 'mandalart-card',  desc: '9×9 목표 관리 플래너' },
-  { id: 'turneyia',      title: '터이네키아',                icon: '🏆', path: '/turneyia',           cardClass: 'turneyia-card',   desc: '아키네이터를 거꾸로 하는 게임' },
   { id: 'mini-arcade',   title: '두뇌 미니게임',             icon: '🧠', path: '/mini-arcade',         cardClass: 'arcade-card',     desc: '타이핑·계산·반응속도 9종' },
 ];
 

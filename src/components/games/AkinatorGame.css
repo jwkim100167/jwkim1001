@@ -1,0 +1,332 @@
+/* ===========================
+   AKINATOR GAME - Layout
+   =========================== */
+.ak-wrap {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0d0a1a 0%, #1a0d2e 50%, #0a0d1a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  font-family: inherit;
+}
+
+.ak-wrap-waiting {
+  align-items: flex-start;
+  padding: 24px 16px;
+}
+
+.ak-back-btn {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.7);
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+  z-index: 10;
+}
+.ak-back-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+
+/* ── Container ── */
+.ak-container {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(167,139,250,0.2);
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%;
+  max-width: 560px;
+  text-align: center;
+  color: #fff;
+}
+.ak-container-sm { max-width: 400px; }
+
+/* ── Logo ── */
+.ak-logo { margin-bottom: 28px; }
+.ak-logo-icon { font-size: 52px; margin-bottom: 10px; }
+.ak-title { font-size: 28px; font-weight: 800; margin: 0 0 6px; background: linear-gradient(90deg, #a78bfa, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.ak-subtitle { color: rgba(255,255,255,0.5); font-size: 14px; margin: 0; }
+
+/* ── Description ── */
+.ak-desc-box {
+  background: rgba(167,139,250,0.07);
+  border: 1px solid rgba(167,139,250,0.15);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 0 0 28px;
+  text-align: left;
+}
+.ak-desc-item {
+  color: rgba(255,255,255,0.75);
+  font-size: 13px;
+  padding: 5px 0;
+}
+
+/* ── Lobby Actions ── */
+.ak-lobby-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+/* ── Info ── */
+.ak-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+.ak-info-item { display: flex; flex-direction: column; align-items: center; }
+.ak-info-num { font-size: 18px; font-weight: 700; color: #a78bfa; }
+.ak-info-label { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+.ak-info-divider { width: 1px; height: 32px; background: rgba(255,255,255,0.1); }
+
+/* ── Buttons ── */
+.ak-btn {
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.ak-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.ak-btn-primary {
+  background: linear-gradient(135deg, #a78bfa, #7c3aed);
+  color: #fff;
+}
+.ak-btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(167,139,250,0.4); }
+
+.ak-btn-secondary {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.85);
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.ak-btn-secondary:hover:not(:disabled) { background: rgba(255,255,255,0.13); color: #fff; }
+
+.ak-btn-start {
+  background: linear-gradient(135deg, #a78bfa, #f472b6);
+  color: #fff;
+  font-size: 16px;
+  padding: 14px 20px;
+  width: 100%;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 800;
+  transition: all 0.2s;
+}
+.ak-btn-start:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(167,139,250,0.4); }
+.ak-btn-start:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.ak-btn-leave {
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.45);
+  border: 1px solid rgba(255,255,255,0.1);
+  font-size: 13px;
+  padding: 9px 16px;
+  width: 100%;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.ak-btn-leave:hover { color: #f87171; border-color: rgba(248,113,113,0.3); }
+
+.ak-btn-full { width: 100%; }
+.ak-btn-icon { font-size: 16px; }
+
+/* ── Form ── */
+.ak-form-header { margin-bottom: 24px; color: rgba(255,255,255,0.7); }
+.ak-form-header h2 { font-size: 22px; font-weight: 700; color: #fff; margin: 8px 0 4px; }
+.ak-form-header p { font-size: 13px; margin: 0; }
+.ak-form-icon { font-size: 36px; }
+.ak-form { display: flex; flex-direction: column; gap: 12px; text-align: left; }
+.ak-label { font-size: 13px; color: rgba(255,255,255,0.55); font-weight: 600; }
+.ak-input {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: #fff;
+  font-size: 15px;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.ak-input:focus { border-color: rgba(167,139,250,0.5); }
+.ak-input-code { text-align: center; letter-spacing: 6px; font-size: 20px; font-weight: 700; }
+.ak-error { color: #f87171; font-size: 13px; text-align: center; }
+
+/* ── Waiting Room Layout ── */
+.ak-waiting-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ── Left Panel ── */
+.ak-waiting-left { display: flex; flex-direction: column; gap: 16px; }
+
+.ak-room-header {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(167,139,250,0.15);
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+}
+.ak-room-label { font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px; margin: 0 0 8px; }
+.ak-room-code-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.ak-room-code { font-size: 26px; font-weight: 800; letter-spacing: 4px; color: #a78bfa; }
+.ak-copy-btn { background: rgba(167,139,250,0.15); border: 1px solid rgba(167,139,250,0.3); color: #a78bfa; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s; }
+.ak-copy-btn:hover { background: rgba(167,139,250,0.25); }
+.ak-room-hint { font-size: 11px; color: rgba(255,255,255,0.3); margin: 8px 0 0; }
+
+.ak-players-section {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 14px;
+}
+.ak-players-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 13px; color: rgba(255,255,255,0.6); font-weight: 600; }
+.ak-player-count { background: rgba(167,139,250,0.15); color: #a78bfa; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+.ak-player-slots { display: flex; flex-direction: column; gap: 6px; }
+.ak-player-slot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border-left: 3px solid transparent;
+  background: rgba(255,255,255,0.03);
+  transition: all 0.2s;
+}
+.ak-player-slot.occupied { background: rgba(255,255,255,0.05); }
+.ak-player-slot.me { background: rgba(167,139,250,0.08); }
+.ak-player-avatar {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.empty-avatar { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.2); }
+.ak-player-name { font-size: 13px; color: rgba(255,255,255,0.85); flex: 1; display: flex; align-items: center; gap: 6px; }
+.empty-name { color: rgba(255,255,255,0.2); }
+.ak-me-badge { background: rgba(167,139,250,0.2); color: #a78bfa; padding: 1px 6px; border-radius: 8px; font-size: 10px; font-weight: 700; }
+.ak-host-badge { background: rgba(167,139,250,0.15); color: #a78bfa; padding: 1px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; margin-left: auto; }
+
+/* ── Options ── */
+.ak-options-section {
+  background: rgba(167,139,250,0.05);
+  border: 1px solid rgba(167,139,250,0.15);
+  border-radius: 14px;
+  padding: 14px;
+}
+.ak-options-title { font-size: 12px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: 600; }
+.ak-option-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.ak-option-info { flex: 1; }
+.ak-option-name { font-size: 13px; color: rgba(255,255,255,0.85); font-weight: 600; }
+.ak-option-desc { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+.ak-count-btns { display: flex; gap: 6px; }
+.ak-count-btn {
+  padding: 5px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.6);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.ak-count-btn:hover { border-color: rgba(167,139,250,0.4); color: #fff; }
+.ak-count-btn-on { background: rgba(167,139,250,0.15); border-color: rgba(167,139,250,0.6); color: #a78bfa; }
+
+/* ── Waiting Actions ── */
+.ak-waiting-actions { display: flex; flex-direction: column; gap: 10px; }
+.ak-waiting-msg { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.45); font-size: 13px; background: rgba(255,255,255,0.03); border-radius: 10px; padding: 12px; }
+.ak-spinner {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(167,139,250,0.3);
+  border-top-color: #a78bfa;
+  border-radius: 50%;
+  animation: ak-spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes ak-spin { to { transform: rotate(360deg); } }
+
+/* ── Right Panel (How To) ── */
+.ak-waiting-right {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(167,139,250,0.12);
+  border-radius: 16px;
+  padding: 24px;
+  color: #fff;
+}
+.ak-how-to { display: flex; flex-direction: column; gap: 16px; }
+.ak-how-title { font-size: 16px; font-weight: 700; color: #a78bfa; margin-bottom: 4px; }
+.ak-how-step { display: flex; gap: 14px; align-items: flex-start; }
+.ak-step-num {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, #a78bfa, #7c3aed);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.ak-how-step div { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.5; }
+.ak-how-step small { color: rgba(255,255,255,0.45); font-size: 12px; }
+.ak-score-info {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 16px;
+  background: rgba(167,139,250,0.07);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  margin-top: 8px;
+}
+.ak-score-pts { color: #a78bfa; font-weight: 700; text-align: right; }
+
+/* ── Modal ── */
+.ak-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+}
+.ak-modal-dialog {
+  background: #1a1a2e;
+  border: 1px solid rgba(167,139,250,0.3);
+  border-radius: 16px;
+  padding: 32px 28px;
+  max-width: 340px;
+  width: 90%;
+  text-align: center;
+  color: #fff;
+}
+.ak-modal-icon { font-size: 40px; margin-bottom: 12px; }
+.ak-modal-title { font-size: 18px; font-weight: 700; margin: 0 0 8px; }
+.ak-modal-msg { color: rgba(255,255,255,0.65); font-size: 14px; white-space: pre-line; margin: 0 0 20px; }
+.ak-modal-btns { display: flex; gap: 10px; }
+.ak-modal-btns .ak-btn { flex: 1; }
+
+@media (max-width: 700px) {
+  .ak-waiting-layout { grid-template-columns: 1fr; }
+  .ak-container { padding: 28px 20px; }
+}
