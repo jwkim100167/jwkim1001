@@ -18,10 +18,13 @@ import TurneyKiaPlay from './TurneyKiaPlay';
 import './TurneyKiaGame.css';
 
 const CATEGORY_OPTIONS = [
-  { value: 'celebrity', label: '연예인', emoji: '🎬' },
-  { value: 'athlete',   label: '운동선수', emoji: '🏅' },
-  { value: 'politician', label: '정치인', emoji: '🏛️' },
+  { value: 'celebrity', label: '연예인',    emoji: '🎬' },
+  { value: 'athlete',   label: '운동선수',  emoji: '🏅' },
+  { value: 'character', label: '만화캐릭터', emoji: '🎭' },
+  { value: 'random',    label: '랜덤',      emoji: '🎲' },
 ];
+
+const REAL_CATEGORIES = ['celebrity', 'athlete', 'character'];
 
 export default function TurneyKiaGame() {
   const navigate = useNavigate();
@@ -130,8 +133,11 @@ export default function TurneyKiaGame() {
   const doStartGame = useCallback(async () => {
     setGenerating(true); setError('');
     const mode = ['admin', 'jwkim1001'].includes(user?.loginId) ? 'ai' : 'static';
+    const resolvedCategory = category === 'random'
+      ? REAL_CATEGORIES[Math.floor(Math.random() * REAL_CATEGORIES.length)]
+      : category;
     try {
-      await startGame(currentRoom.id, players, category, totalRounds, mode);
+      await startGame(currentRoom.id, players, resolvedCategory, totalRounds, mode);
     } catch (e) {
       console.error('startGame error:', e);
       setError('인물 생성 중 오류가 발생했습니다. 다시 시도해주세요.');

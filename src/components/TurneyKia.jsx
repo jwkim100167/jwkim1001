@@ -18,11 +18,11 @@ const CATEGORIES = [
     colorClass: 'category-athlete',
   },
   {
-    id: 'politician',
-    emoji: '🏛️',
-    title: '정치인',
-    desc: '영향력 있는 정치인 선택',
-    colorClass: 'category-politician',
+    id: 'character',
+    emoji: '🎭',
+    title: '만화캐릭터',
+    desc: '유명 만화·영화 캐릭터',
+    colorClass: 'category-character',
   },
 ];
 
