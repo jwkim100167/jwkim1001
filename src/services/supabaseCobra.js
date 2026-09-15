@@ -171,17 +171,17 @@ export function unsubscribeFromRoom(channel) {
 // 게임 상태 관리
 // ─────────────────────────────────────────
 
-async function updateGameState(roomId, gameState) {
+async function updateGameState(roomId, gameState, table = 'cobra_rooms') {
   const { error } = await supabase
-    .from('cobra_rooms')
+    .from(table)
     .update({ game_state: gameState })
     .eq('id', roomId);
   if (error) throw error;
 }
 
-async function fetchLatestState(roomId) {
+async function fetchLatestState(roomId, table = 'cobra_rooms') {
   const { data, error } = await supabase
-    .from('cobra_rooms')
+    .from(table)
     .select('game_state')
     .eq('id', roomId)
     .single();
@@ -225,8 +225,8 @@ export async function resetGame(roomId, lastWinnerPlayerId = null) {
 /** 카드 한 장 확인 (뒤집기) — 2장 선택 시 자동 준비 완료
  *  DB에서 최신 state를 fetch한 뒤 적용 → 다중 플레이어 동시 클릭으로 인한 덮어쓰기 방지
  */
-export async function peekCard(roomId, playerId, cardIndex) {
-  const gameState = await fetchLatestState(roomId);
+export async function peekCard(roomId, playerId, cardIndex, table = 'cobra_rooms') {
+  const gameState = await fetchLatestState(roomId, table);
   const newFaceUpArr = gameState.face_up[playerId].map((v, i) => (i === cardIndex ? true : v));
   const newFaceUp = { ...gameState.face_up, [playerId]: newFaceUpArr };
   const peekedCount = newFaceUpArr.filter(Boolean).length;
@@ -245,7 +245,7 @@ export async function peekCard(roomId, playerId, cardIndex) {
 // ─────────────────────────────────────────
 
 /** 덱에서 카드 한 장 뽑기 */
-export async function drawFromDeck(roomId, _playerId, gameState) {
+export async function drawFromDeck(roomId, _playerId, gameState, table = 'cobra_rooms') {
   let deck = [...gameState.deck];
   let discardPile = [...gameState.discard_pile];
 
@@ -265,11 +265,11 @@ export async function drawFromDeck(roomId, _playerId, gameState) {
     turn_phase: 'action',
     seonjeom_window: false,
     last_discarder_id: null, // 덱에서 뽑으면 선점 창 닫힘
-  });
+  }, table);
 }
 
 /** 뽑은 카드를 버리기 (손패 유지) — J/Q/K 특수 능력 처리 포함 */
-export async function discardDrawn(roomId, playerId, gameState) {
+export async function discardDrawn(roomId, playerId, gameState, table = 'cobra_rooms') {
   const discardedCard = gameState.drawn_card;
   const newDiscard = [...gameState.discard_pile, discardedCard];
 
@@ -283,7 +283,7 @@ export async function discardDrawn(roomId, playerId, gameState) {
         const hasUnknown = gameState.hands[playerId].some((_, i) => !faceUpArr[i] && !selfKnown[i]);
         if (!hasUnknown) {
           const newState = { ...gameState, discard_pile: newDiscard, drawn_card: null, turn_phase: 'draw' };
-          await advanceTurn(roomId, playerId, newState);
+          await advanceTurn(roomId, playerId, newState, table);
           return;
         }
       }
@@ -294,21 +294,21 @@ export async function discardDrawn(roomId, playerId, gameState) {
         drawn_card: null,
         turn_phase: 'special',
         special_pending: { type, initiator_id: playerId },
-      });
+      }, table);
       return;
     }
   }
 
   // 카드 버림 → 다른 플레이어 즉시 선점 가능 창 열기
   const newState = { ...gameState, discard_pile: newDiscard, drawn_card: null, turn_phase: 'draw', seonjeom_window: true, last_discarder_id: playerId };
-  await advanceTurn(roomId, playerId, newState);
+  await advanceTurn(roomId, playerId, newState, table);
 }
 
 /** J(내 카드 확인) 또는 Q(상대 카드 확인) 특수 능력 해결
  *  - J: 자기 카드 → private_knowledge 에만 기록 (나만 앎, face_up 변경 없음)
  *  - Q: 상대 카드 → private_knowledge 에만 기록 (나만 앎, 교체되면 무효)
  */
-export async function resolveSpecialPeek(roomId, initiatorId, targetPlayerId, cardIdx, gameState) {
+export async function resolveSpecialPeek(roomId, initiatorId, targetPlayerId, cardIdx, gameState, table = 'cobra_rooms') {
   let newPrivateKnowledge = gameState.private_knowledge || {};
   // J든 Q든 모두 private_knowledge 에만 기록
   const myKnowledge = newPrivateKnowledge[initiatorId] || {};
@@ -327,14 +327,14 @@ export async function resolveSpecialPeek(roomId, initiatorId, targetPlayerId, ca
     turn_phase: 'draw',
     special_pending: null,
   };
-  await advanceTurn(roomId, initiatorId, newState);
+  await advanceTurn(roomId, initiatorId, newState, table);
 }
 
 /** K(카드 교환) 특수 능력 해결 — p1 의 p1Idx ↔ p2 의 p2Idx
  *  face_up 상태는 카드와 함께 이동 (카드의 공개 상태 유지).
  *  교환된 위치에 대한 private_knowledge 는 무효화.
  */
-export async function resolveSpecialSwap(roomId, initiatorId, p1Id, p1Idx, p2Id, p2Idx, gameState) {
+export async function resolveSpecialSwap(roomId, initiatorId, p1Id, p1Idx, p2Id, p2Idx, gameState, table = 'cobra_rooms') {
   const card1 = gameState.hands[p1Id][p1Idx];
   const card2 = gameState.hands[p2Id][p2Idx];
   const fu1 = gameState.face_up[p1Id][p1Idx];
@@ -373,11 +373,11 @@ export async function resolveSpecialSwap(roomId, initiatorId, p1Id, p1Idx, p2Id,
     turn_phase: 'draw',
     special_pending: null,
   };
-  await advanceTurn(roomId, initiatorId, newState);
+  await advanceTurn(roomId, initiatorId, newState, table);
 }
 
 /** 손패의 카드와 뽑은 카드 교체 (손패 카드가 버리기 패로) */
-export async function swapWithHand(roomId, playerId, handIndex, gameState) {
+export async function swapWithHand(roomId, playerId, handIndex, gameState, table = 'cobra_rooms') {
   const handCard = gameState.hands[playerId][handIndex];
   const drawnCard = gameState.drawn_card;
 
@@ -409,14 +409,14 @@ export async function swapWithHand(roomId, playerId, handIndex, gameState) {
   };
 
   if (newHand.length === 0 && newState.phase !== 'cobra') {
-    await triggerCobra(roomId, playerId, { ...newState, current_player_id: playerId });
+    await triggerCobra(roomId, playerId, { ...newState, current_player_id: playerId }, table);
   } else {
-    await advanceTurn(roomId, playerId, newState);
+    await advanceTurn(roomId, playerId, newState, table);
   }
 }
 
 /** 뽑은 카드와 손패 카드가 같은 숫자 → 둘 다 버리기 */
-export async function matchAndDiscard(roomId, playerId, handIndex, gameState) {
+export async function matchAndDiscard(roomId, playerId, handIndex, gameState, table = 'cobra_rooms') {
   const handCard = gameState.hands[playerId][handIndex];
   const drawnCard = gameState.drawn_card;
 
@@ -441,9 +441,9 @@ export async function matchAndDiscard(roomId, playerId, handIndex, gameState) {
   };
 
   if (newHand.length === 0 && newState.phase !== 'cobra') {
-    await triggerCobra(roomId, playerId, { ...newState, current_player_id: playerId });
+    await triggerCobra(roomId, playerId, { ...newState, current_player_id: playerId }, table);
   } else {
-    await advanceTurn(roomId, playerId, newState);
+    await advanceTurn(roomId, playerId, newState, table);
   }
 }
 
@@ -452,7 +452,7 @@ export async function matchAndDiscard(roomId, playerId, handIndex, gameState) {
  * 내 차례 draw 단계에서 버린 패 top 카드가 내 face-up 손패와 같으면
  * 덱을 뽑기 전에 선점해서 두 장 모두 버리기
  */
-export async function takeFromDiscard(roomId, playerId, handIndex, gameState) {
+export async function takeFromDiscard(roomId, playerId, handIndex, gameState, table = 'cobra_rooms') {
   const discardPile = gameState.discard_pile || [];
   if (discardPile.length === 0) throw new Error('버린 패가 없습니다.');
 
@@ -483,9 +483,9 @@ export async function takeFromDiscard(roomId, playerId, handIndex, gameState) {
   };
 
   if (newHand.length === 0 && newState.phase !== 'cobra') {
-    await triggerCobra(roomId, playerId, { ...newState, current_player_id: playerId });
+    await triggerCobra(roomId, playerId, { ...newState, current_player_id: playerId }, table);
   } else {
-    await advanceTurn(roomId, playerId, newState);
+    await advanceTurn(roomId, playerId, newState, table);
   }
 }
 
@@ -494,7 +494,7 @@ export async function takeFromDiscard(roomId, playerId, handIndex, gameState) {
  * seonjeom_window가 열려있을 때 내 아는 카드와 버린 패 top이 같으면 즉시 선점.
  * 선점 = 내 차례를 사용 → 다음은 내 다음 플레이어.
  */
-export async function seonjeomInterrupt(roomId, playerId, handIndex, gameState) {
+export async function seonjeomInterrupt(roomId, playerId, handIndex, gameState, table = 'cobra_rooms') {
   const discardPile = gameState.discard_pile || [];
   if (!gameState.seonjeom_window || discardPile.length === 0) throw new Error('선점 기회가 없습니다.');
 
@@ -521,21 +521,21 @@ export async function seonjeomInterrupt(roomId, playerId, handIndex, gameState) 
 
   // 선점자의 차례를 사용한 것 → 선점자 기준으로 다음 플레이어에게 넘김
   if (newHand.length === 0 && newState.phase !== 'cobra') {
-    await triggerCobra(roomId, playerId, { ...newState, current_player_id: playerId });
+    await triggerCobra(roomId, playerId, { ...newState, current_player_id: playerId }, table);
   } else {
-    await advanceTurn(roomId, playerId, newState);
+    await advanceTurn(roomId, playerId, newState, table);
   }
 }
 
 /** 특수 능력 패스 (K에서 교환 안 할 때) */
-export async function skipSpecialAbility(roomId, playerId, gameState) {
+export async function skipSpecialAbility(roomId, playerId, gameState, table = 'cobra_rooms') {
   const newState = { ...gameState, turn_phase: 'draw', special_pending: null };
-  await advanceTurn(roomId, playerId, newState);
+  await advanceTurn(roomId, playerId, newState, table);
 }
 
 /** 코브라 선언 */
-export async function callCobra(roomId, playerId, gameState) {
-  await triggerCobra(roomId, playerId, { ...gameState, drawn_card: null, turn_phase: 'draw' });
+export async function callCobra(roomId, playerId, gameState, table = 'cobra_rooms') {
+  await triggerCobra(roomId, playerId, { ...gameState, drawn_card: null, turn_phase: 'draw' }, table);
 }
 
 // ─────────────────────────────────────────
@@ -588,21 +588,21 @@ function removePositionKnowledge(face_up, pk, targetPlayerId, removedIdx) {
   return { newFaceUp, newPK };
 }
 
-async function advanceTurn(roomId, currentPlayerId, state) {
+async function advanceTurn(roomId, currentPlayerId, state, table = 'cobra_rooms') {
   const nextId = getNextPlayerId(state.player_order, currentPlayerId);
 
   if (state.phase === 'cobra' && nextId === state.cobra_caller_id) {
-    await endGame(roomId, state);
+    await endGame(roomId, state, table);
   } else {
     await updateGameState(roomId, {
       ...state,
       current_player_id: nextId,
       turn_phase: 'draw',
-    });
+    }, table);
   }
 }
 
-async function triggerCobra(roomId, callerId, state) {
+async function triggerCobra(roomId, callerId, state, table = 'cobra_rooms') {
   // 코브라 선언 즉시 선언자 카드 공개
   const newFaceUp = {
     ...state.face_up,
@@ -613,7 +613,7 @@ async function triggerCobra(roomId, callerId, state) {
 
   // 혼자이거나 바로 돌아오면 즉시 종료
   if (state.player_order.length === 1 || nextId === callerId) {
-    return await endGame(roomId, { ...state, face_up: newFaceUp, cobra_caller_id: callerId });
+    return await endGame(roomId, { ...state, face_up: newFaceUp, cobra_caller_id: callerId }, table);
   }
 
   await updateGameState(roomId, {
@@ -623,10 +623,10 @@ async function triggerCobra(roomId, callerId, state) {
     face_up: newFaceUp,
     current_player_id: nextId,
     turn_phase: 'draw',
-  });
+  }, table);
 }
 
-async function endGame(roomId, state) {
+async function endGame(roomId, state, table = 'cobra_rooms') {
   const scores = {};
   const revealedFaceUp = {};
 
@@ -645,7 +645,7 @@ async function endGame(roomId, state) {
     scores,
     drawn_card: null,
     turn_phase: null,
-  });
+  }, table);
 }
 
 /** 로그인 유저 전적 upsert */

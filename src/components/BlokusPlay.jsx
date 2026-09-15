@@ -91,7 +91,10 @@ function colorName(color) {
 }
 
 // ── Component ─────────────────────────────────────────────
-export default function BlokusPlay({ gameState, currentPlayer, players, roomId, onResetGame, onLeave }) {
+export default function BlokusPlay({ gameState, currentPlayer, players, roomId, onResetGame, onLeave, actions = {} }) {
+  const doPlacePiece = actions.placePiece ?? placePiece;
+  const doPassTurn = actions.passTurn ?? passTurn;
+  const doAutoPass = actions.autoPass ?? autoPass;
   const [selectedPieceId, setSelectedPieceId] = useState(null);
   const [rotation, setRotation] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -135,7 +138,7 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
       // Auto-pass (host only, once per turn)
       if (left === 0 && isHost && autoPassFiredRef.current !== gameState.turn_started_at) {
         autoPassFiredRef.current = gameState.turn_started_at;
-        autoPass(roomId, currentColor, gameState.turn_started_at);
+        doAutoPass(roomId, currentColor, gameState.turn_started_at);
       }
     };
 
@@ -180,7 +183,7 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
     if (!isMyTurn || !selectedPiece || hoveredBoardCells.length === 0 || !hoverValid) return;
     try {
       if (soundOn) playPlace();
-      await placePiece(roomId, myColor, selectedPieceId, hoveredBoardCells);
+      await doPlacePiece(roomId, myColor, selectedPieceId, hoveredBoardCells);
       setSelectedPieceId(null);
       setRotation(0);
       setFlipped(false);
@@ -194,7 +197,7 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
   const handlePass = useCallback(async () => {
     if (!isMyTurn) return;
     if (!window.confirm('정말 기권하시겠습니까?')) return;
-    await passTurn(roomId, myColor);
+    await doPassTurn(roomId, myColor);
   }, [isMyTurn, roomId, myColor]);
 
   // ── Board cell click ────────────────────────────────────

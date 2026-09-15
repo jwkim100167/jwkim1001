@@ -24,7 +24,13 @@ export default function TurneyKiaPlay({
   roomId,
   onResetGame,
   onLeave,
+  actions = {},
 }) {
+  const doRevealNextHint = actions.revealNextHint ?? revealNextHint;
+  const doSubmitAnswer = actions.submitAnswer ?? submitAnswer;
+  const doRevealAnswer = actions.revealAnswer ?? revealAnswer;
+  const doNextRound = actions.nextRound ?? nextRound;
+  const doEndGame = actions.endGame ?? endGame;
   const [answer, setAnswer] = useState('');
   const [busy, setBusy] = useState(false);
   const [timeLeft, setTimeLeft] = useState(HINT_DURATION);
@@ -98,9 +104,9 @@ export default function TurneyKiaPlay({
         autoAdvancedRef.current = true;
         clearInterval(interval);
         if (hints_revealed < hints.length) {
-          revealNextHint(roomId, gameState);
+          doRevealNextHint(roomId, gameState);
         } else {
-          revealAnswer(roomId, gameState);
+          doRevealAnswer(roomId, gameState);
         }
       }
     }, 500);
@@ -123,7 +129,7 @@ export default function TurneyKiaPlay({
     if (!answer.trim() || hasSubmittedThisHint || busy) return;
     setBusy(true);
     try {
-      const result = await submitAnswer(roomId, myId, answer.trim());
+      const result = await doSubmitAnswer(roomId, myId, answer.trim());
       if (result === 'wrong') {
         setWrongFeedback(true);
         setAnswer('');
@@ -141,7 +147,7 @@ export default function TurneyKiaPlay({
     if (hasSubmittedThisHint || busy) return;
     setBusy(true);
     try {
-      await submitAnswer(roomId, myId, '__PASS__');
+      await doSubmitAnswer(roomId, myId, '__PASS__');
     } catch (e) {
       console.error(e);
     } finally {
@@ -152,7 +158,7 @@ export default function TurneyKiaPlay({
   const handleNextRound = async () => {
     if (busy) return;
     setBusy(true);
-    try { await nextRound(roomId, gameState); }
+    try { await doNextRound(roomId, gameState); }
     catch (e) { console.error(e); }
     finally { setBusy(false); }
   };
@@ -160,7 +166,7 @@ export default function TurneyKiaPlay({
   const handleEndGame = async () => {
     if (busy) return;
     setBusy(true);
-    try { await endGame(roomId, gameState); }
+    try { await doEndGame(roomId, gameState); }
     catch (e) { console.error(e); }
     finally { setBusy(false); }
   };

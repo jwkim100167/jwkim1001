@@ -264,7 +264,13 @@ export function RulesModal({ onClose, options }) {
 }
 
 // ─── 메인 컴포넌트 ────────────────────────────────────
-export default function CobraGamePlay({ gameState, currentPlayer, players, roomId, playerStats = {} }) {
+export default function CobraGamePlay({ gameState, currentPlayer, players, roomId, playerStats = {}, actions = {} }) {
+  const cobra = {
+    peekCard, drawFromDeck, discardDrawn, swapWithHand, matchAndDiscard,
+    takeFromDiscard, callCobra, resetGame, resolveSpecialPeek, resolveSpecialSwap,
+    skipSpecialAbility, seonjeomInterrupt, ...actions,
+  };
+
   const [busy, setBusy] = useState(false);
   const busyRef = useRef(false); // 동기 락 (setState는 비동기라 빠른 연속 클릭 방어 불가)
   const [errMsg, setErrMsg] = useState('');
@@ -375,9 +381,9 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
         const gs = gameStateRef.current;
         if (gs.turn_phase === 'special') return; // 특수 능력 중 자동 처리 없음
         if (gs.turn_phase === 'draw') {
-          act(() => drawFromDeck(roomId, myId, gs));
+          act(() => cobra.drawFromDeck(roomId, myId, gs));
         } else if (gs.turn_phase === 'action' && gs.drawn_card) {
-          act(() => discardDrawn(roomId, myId, gs));
+          act(() => cobra.discardDrawn(roomId, myId, gs));
         }
       }
     }, 1000);
@@ -439,7 +445,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
     // 선점 모드: 버린 패 top과 face-up 매칭
     if (seonjeomMode) {
       if (seonjeomMatchIndices.includes(idx)) {
-        act(() => takeFromDiscard(roomId, myId, idx, gameState));
+        act(() => cobra.takeFromDiscard(roomId, myId, idx, gameState));
         setSeonjeomMode(false);
       }
       return;
@@ -450,9 +456,9 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
     // face-up 카드만 매칭 가능, 나머지는 교체
     const iKnow = myFaceUp[idx] || !!myJKnown[idx];
     if (iKnow && cardsMatch(drawnCard, myHand[idx])) {
-      act(() => matchAndDiscard(roomId, myId, idx, gameState));
+      act(() => cobra.matchAndDiscard(roomId, myId, idx, gameState));
     } else {
-      act(() => swapWithHand(roomId, myId, idx, gameState));
+      act(() => cobra.swapWithHand(roomId, myId, idx, gameState));
     }
   };
 
@@ -464,11 +470,11 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
     if (faceUpMatchIdx >= 0) {
       setConfirmDialog({
         message: `오픈된 '${getCardDisplayValue(myHand[faceUpMatchIdx])}'와 매칭 가능합니다.\n정말 그냥 버리시겠습니까?`,
-        onConfirm: () => { setConfirmDialog(null); act(() => discardDrawn(roomId, myId, gameState)); },
+        onConfirm: () => { setConfirmDialog(null); act(() => cobra.discardDrawn(roomId, myId, gameState)); },
         onCancel: () => setConfirmDialog(null),
       });
     } else {
-      act(() => discardDrawn(roomId, myId, gameState));
+      act(() => cobra.discardDrawn(roomId, myId, gameState));
     }
   };
 
@@ -477,7 +483,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
     if (!canSeonjeom) return;
     if (seonjeomMatchIndices.length === 1) {
       // 매칭 카드가 하나면 바로 실행
-      act(() => takeFromDiscard(roomId, myId, seonjeomMatchIndices[0], gameState));
+      act(() => cobra.takeFromDiscard(roomId, myId, seonjeomMatchIndices[0], gameState));
     } else {
       // 여러 개면 선택 모드
       setSeonjeomMode(true);
@@ -506,7 +512,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
               return (
                 <GameCard
                   key={idx} card={card} faceUp={alreadyPeeked}
-                  onClick={canPeek ? () => act(() => peekCard(roomId, myId, idx)) : undefined}
+                  onClick={canPeek ? () => act(() => cobra.peekCard(roomId, myId, idx)) : undefined}
                   highlight={canPeek}
                 />
               );
@@ -585,7 +591,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
 
           {showWinner && (
             currentPlayer.is_host
-              ? <button className="cgp-btn cgp-btn-primary" onClick={() => act(() => resetGame(roomId, winnerId))} disabled={busy}>다시 하기</button>
+              ? <button className="cgp-btn cgp-btn-primary" onClick={() => act(() => cobra.resetGame(roomId, winnerId))} disabled={busy}>다시 하기</button>
               : <p className="cgp-hint">방장이 다시 시작하기를 기다리세요</p>
           )}
         </div>
@@ -664,7 +670,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
             initiatorName={playerMap[gameState.special_pending.initiator_id]?.player_name ?? ''}
             swapSelection={swapSelection}
             onCancelSwap={() => setSwapSelection(null)}
-            onSkip={() => act(() => skipSpecialAbility(roomId, myId, gameState))}
+            onSkip={() => act(() => cobra.skipSpecialAbility(roomId, myId, gameState))}
           />
         )}
 
@@ -703,9 +709,9 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
                           highlight={isSelectable}
                           onClick={isSelectable ? () => {
                             if (canPeekOpp) {
-                              act(() => resolveSpecialPeek(roomId, myId, p.id, idx, gameState));
+                              act(() => cobra.resolveSpecialPeek(roomId, myId, p.id, idx, gameState));
                             } else if (canSwapTarget) {
-                              act(() => resolveSpecialSwap(roomId, myId, swapSelection.playerId, swapSelection.cardIdx, p.id, idx, gameState));
+                              act(() => cobra.resolveSpecialSwap(roomId, myId, swapSelection.playerId, swapSelection.cardIdx, p.id, idx, gameState));
                               setSwapSelection(null);
                             }
                           } : undefined}
@@ -728,7 +734,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
             <div
               className={`cgp-deck-card ${isMyTurn && gameState.turn_phase === 'draw' && !seonjeomMode ? 'cgp-clickable cgp-highlight' : ''}`}
               onClick={isMyTurn && gameState.turn_phase === 'draw' && !seonjeomMode
-                ? () => act(() => drawFromDeck(roomId, myId, gameState))
+                ? () => act(() => cobra.drawFromDeck(roomId, myId, gameState))
                 : undefined}
             >🐍</div>
           </div>
@@ -806,14 +812,14 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
                   knownDot={isKnown && !badge}
                   onClick={isClickable ? () => {
                     if (isPeekOwn) {
-                      act(() => resolveSpecialPeek(roomId, myId, myId, idx, gameState));
+                      act(() => cobra.resolveSpecialPeek(roomId, myId, myId, idx, gameState));
                     } else if (isSwapStep1) {
                       setSwapSelection({ playerId: myId, cardIdx: idx });
                     } else if (isSwapStep2Own) {
-                      act(() => resolveSpecialSwap(roomId, myId, swapSelection.playerId, swapSelection.cardIdx, myId, idx, gameState));
+                      act(() => cobra.resolveSpecialSwap(roomId, myId, swapSelection.playerId, swapSelection.cardIdx, myId, idx, gameState));
                       setSwapSelection(null);
                     } else if (isInterruptTarget) {
-                      act(() => seonjeomInterrupt(roomId, myId, idx, gameState));
+                      act(() => cobra.seonjeomInterrupt(roomId, myId, idx, gameState));
                     } else {
                       handleHandCardClick(idx);
                     }
@@ -832,10 +838,10 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
           <div className="cgp-action-bar">
             {gameState.turn_phase === 'draw' && (
               <>
-                <button className="cgp-btn cgp-btn-draw" onClick={() => act(() => drawFromDeck(roomId, myId, gameState))} disabled={busy}>
+                <button className="cgp-btn cgp-btn-draw" onClick={() => act(() => cobra.drawFromDeck(roomId, myId, gameState))} disabled={busy}>
                   덱에서 뽑기
                 </button>
-                <button className="cgp-btn cgp-btn-cobra" onClick={() => act(() => callCobra(roomId, myId, gameState))} disabled={busy || gameState.phase === 'cobra'}>
+                <button className="cgp-btn cgp-btn-cobra" onClick={() => act(() => cobra.callCobra(roomId, myId, gameState))} disabled={busy || gameState.phase === 'cobra'}>
                   🐍 코브라!
                 </button>
               </>

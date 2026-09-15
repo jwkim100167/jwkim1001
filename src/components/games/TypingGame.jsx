@@ -9,12 +9,21 @@ import {
   leaveRoom,
   deleteRoom,
   startGame,
+  startUnifiedGame,
   resetToWaiting,
   subscribeToRoom,
   unsubscribeFromRoom,
   MAX_PLAYERS,
+  blokusPlacePiece, blokusPassTurn, blokusAutoPass,
+  turneyiaRevealNextHint, turneyiaSubmitAnswer, turneyiaRevealAnswer, turneyiaNextRound, turneyiaEndGame,
+  cobraPeekCard, cobraDrawFromDeck, cobraDiscardDrawn, cobraSwapWithHand, cobraMatchAndDiscard,
+  cobraTakeFromDiscard, cobraSeonjeomInterrupt, cobraResolveSpecialPeek, cobraResolveSpecialSwap,
+  cobraSkipSpecialAbility, cobraCallCobra,
 } from '../../services/supabaseTyping';
 import TypingGamePlay from './TypingGamePlay';
+import BlokusPlay from '../BlokusPlay';
+import TurneyKiaPlay from '../TurneyKiaPlay';
+import CobraGamePlay from '../CobraGamePlay';
 import menuData from '../../data/menuDatabase.json';
 import './TypingGame.css';
 
@@ -22,10 +31,9 @@ const PLAYER_COLORS = ['#00d2ff', '#f7971e', '#a18cd1', '#43e97b', '#f44369', '#
 
 const GAMES = [
   { id: 'typing',    icon: '⌨️', title: '한컴타자연습',   desc: '타이핑 대결',          active: true,  color: '#00d2ff' },
-  { id: 'akinator',  icon: '🎭', title: '아키네이터',      desc: 'Yes/No로 인물 맞히기', active: false, color: '#a78bfa', path: '/mini-arcade/akinator' },
-  { id: 'turneyia',  icon: '🏆', title: '터이네키아',      desc: '아키네이터를 거꾸로!',  active: true,  color: '#f7971e', path: '/turneyia' },
-  { id: 'cobra',     icon: '🐍', title: '코브라 게임',     desc: '방 만들고 친구와 함께!', active: true,  color: '#43e97b', path: '/cobra' },
-  { id: 'blokus',    icon: '🟦', title: '블로커스',        desc: '전략 타일 배치 대결',    active: true,  color: '#3b82f6', path: '/blokus' },
+  { id: 'turneyia',  icon: '🏆', title: '터이네키아',      desc: '아키네이터를 거꾸로!',  active: true,  color: '#f7971e' },
+  { id: 'cobra',     icon: '🐍', title: '코브라 게임',     desc: '카드 게임 대결',        active: true,  color: '#43e97b' },
+  { id: 'blokus',    icon: '🟦', title: '블로커스',        desc: '전략 타일 배치 대결',   active: true,  color: '#3b82f6' },
   { id: 'math-odd',  icon: '➕', title: '산수홀짝',        desc: '홀수? 짝수?',          active: false, color: '#f7971e' },
   { id: 'gugu',      icon: '✖️', title: '구구단을 하자',   desc: '빈칸을 채워라',        active: false, color: '#a18cd1' },
   { id: 'counting',  icon: '🔢', title: '순서대로',        desc: '숫자 순서 클릭',       active: false, color: '#43e97b' },
@@ -91,7 +99,8 @@ export default function TypingGame() {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [selectedGame, setSelectedGame] = useState(null);
   const [showSoloConfirm, setShowSoloConfirm] = useState(false);
-  const [options, setOptions] = useState({ mode: 'oneByOne', count: 10 }); // 'oneByOne' | 'all'
+  const [options, setOptions] = useState({ mode: 'oneByOne', count: 10 }); // typing options
+  const [gameOptions, setGameOptions] = useState({}); // per-game options (blokus/turneyia/cobra)
 
   const channelRef = useRef(null);
 
@@ -208,8 +217,12 @@ export default function TypingGame() {
     setShowSoloConfirm(false);
     setLoading(true); setError('');
     try {
-      const words = generateWords(options.count);
-      await startGame(currentRoom.id, words, options);
+      if (!selectedGame || selectedGame.id === 'typing') {
+        const words = generateWords(options.count);
+        await startGame(currentRoom.id, words, options);
+      } else {
+        await startUnifiedGame(currentRoom.id, selectedGame.id, players, gameOptions);
+      }
     } catch (e) {
       setError(e.message || '게임 시작에 실패했습니다.');
     } finally {
@@ -226,22 +239,94 @@ export default function TypingGame() {
 
   const goToLobby = () => { setError(''); setView('lobby'); };
 
-  // ────── 게임 진행 중 → TypingGamePlay ──────
+  // ────── 게임 진행 중 → 각 게임 컴포넌트 ──────
   const gameState = roomData?.game_state;
-  if (view === 'waiting' && (gameState?.phase === 'playing' || gameState?.phase === 'ended')) {
-    return (
-      <TypingGamePlay
-        gameState={gameState}
-        currentPlayer={currentPlayer}
-        players={players}
-        roomId={currentRoom.id}
-        isHost={currentPlayer?.is_host}
-        onLeave={handleLeave}
-        onRestart={async () => {
-          try { await resetToWaiting(currentRoom.id); } catch { /* ignore */ }
-        }}
-      />
-    );
+  if (view === 'waiting' && gameState) {
+    const sel = gameState.selected_game;
+    const phase = gameState.phase;
+    const isActive = phase === 'playing' || phase === 'ended' || phase === 'viewing' || phase === 'hinting' || phase === 'reveal' || phase === 'cobra';
+
+    if (isActive) {
+      const handleResetToWaiting = async () => {
+        try { await resetToWaiting(currentRoom.id); } catch { /* ignore */ }
+      };
+
+      if (sel === 'blokus') {
+        const playerColors = gameState.player_colors || {};
+        const enrichedPlayers = players.map((p) => ({ ...p, color: playerColors[p.id] ?? p.color }));
+        return (
+          <BlokusPlay
+            gameState={gameState}
+            currentPlayer={currentPlayer}
+            players={enrichedPlayers}
+            roomId={currentRoom.id}
+            onResetGame={currentPlayer?.is_host ? handleResetToWaiting : null}
+            onLeave={handleLeave}
+            actions={{ placePiece: blokusPlacePiece, passTurn: blokusPassTurn, autoPass: blokusAutoPass }}
+          />
+        );
+      }
+
+      if (sel === 'turneyia') {
+        return (
+          <TurneyKiaPlay
+            gameState={gameState}
+            currentPlayer={currentPlayer}
+            players={players}
+            roomId={currentRoom.id}
+            onResetGame={currentPlayer?.is_host ? handleResetToWaiting : null}
+            onLeave={handleLeave}
+            actions={{
+              revealNextHint: turneyiaRevealNextHint,
+              submitAnswer: turneyiaSubmitAnswer,
+              revealAnswer: turneyiaRevealAnswer,
+              nextRound: turneyiaNextRound,
+              endGame: turneyiaEndGame,
+            }}
+          />
+        );
+      }
+
+      if (sel === 'cobra') {
+        return (
+          <CobraGamePlay
+            gameState={gameState}
+            currentPlayer={currentPlayer}
+            players={players}
+            roomId={currentRoom.id}
+            actions={{
+              peekCard: cobraPeekCard,
+              drawFromDeck: cobraDrawFromDeck,
+              discardDrawn: cobraDiscardDrawn,
+              swapWithHand: cobraSwapWithHand,
+              matchAndDiscard: cobraMatchAndDiscard,
+              takeFromDiscard: cobraTakeFromDiscard,
+              seonjeomInterrupt: cobraSeonjeomInterrupt,
+              resolveSpecialPeek: cobraResolveSpecialPeek,
+              resolveSpecialSwap: cobraResolveSpecialSwap,
+              skipSpecialAbility: cobraSkipSpecialAbility,
+              callCobra: cobraCallCobra,
+              resetGame: currentPlayer?.is_host ? handleResetToWaiting : () => Promise.resolve(),
+            }}
+          />
+        );
+      }
+
+      // 기본: 타자연습 (selected_game 없거나 'typing')
+      if (!sel || sel === 'typing') {
+        return (
+          <TypingGamePlay
+            gameState={gameState}
+            currentPlayer={currentPlayer}
+            players={players}
+            roomId={currentRoom.id}
+            isHost={currentPlayer?.is_host}
+            onLeave={handleLeave}
+            onRestart={handleResetToWaiting}
+          />
+        );
+      }
+    }
   }
 
   // ────── LOGIN PROMPT ──────
@@ -310,19 +395,18 @@ export default function TypingGame() {
           </div>
 
           <div className="tg-direct-games">
-            <p className="tg-direct-label">바로 플레이</p>
+            <p className="tg-direct-label">미니게임 목록</p>
             <div className="tg-direct-grid">
-              {GAMES.filter((g) => g.path && g.active).map((game) => (
-                <button
+              {GAMES.filter((g) => g.active).map((game) => (
+                <div
                   key={game.id}
                   className="tg-direct-card"
                   style={{ '--gc': game.color }}
-                  onClick={() => navigate(game.path)}
                 >
                   <span className="tg-direct-icon">{game.icon}</span>
                   <span className="tg-direct-title">{game.title}</span>
                   <span className="tg-direct-desc">{game.desc}</span>
-                </button>
+                </div>
               ))}
             </div>
           </div>
@@ -477,37 +561,106 @@ export default function TypingGame() {
             {isHost && selectedGame && (
               <div className="tg-options-section">
                 <div className="tg-options-title">게임 옵션</div>
-                <div className="tg-option-row">
-                  <div className="tg-option-info">
-                    <div className="tg-option-name">🃏 출제 방식</div>
-                    <div className="tg-option-desc">
-                      {options.mode === 'all' ? '단어를 한번에 표시' : '단어를 하나씩 순서대로 표시'}
+
+                {/* 타자연습 옵션 */}
+                {selectedGame.id === 'typing' && (<>
+                  <div className="tg-option-row">
+                    <div className="tg-option-info">
+                      <div className="tg-option-name">🃏 출제 방식</div>
+                      <div className="tg-option-desc">
+                        {options.mode === 'all' ? '단어를 한번에 표시' : '단어를 하나씩 순서대로 표시'}
+                      </div>
+                    </div>
+                    <button
+                      className={`tg-toggle ${options.mode === 'all' ? 'tg-toggle-on' : ''}`}
+                      onClick={() => setOptions(o => ({ ...o, mode: o.mode === 'oneByOne' ? 'all' : 'oneByOne' }))}
+                    >
+                      {options.mode === 'all' ? '한번에' : '순서대로'}
+                    </button>
+                  </div>
+                  <div className="tg-option-row">
+                    <div className="tg-option-info">
+                      <div className="tg-option-name">🔢 문제 수</div>
+                      <div className="tg-option-desc">{options.count}개 출제</div>
+                    </div>
+                    <div className="tg-count-btns">
+                      {[5, 10, 20].map(n => (
+                        <button key={n}
+                          className={`tg-count-btn ${options.count === n ? 'tg-count-btn-on' : ''}`}
+                          onClick={() => setOptions(o => ({ ...o, count: n }))}
+                        >{n}</button>
+                      ))}
                     </div>
                   </div>
-                  <button
-                    className={`tg-toggle ${options.mode === 'all' ? 'tg-toggle-on' : ''}`}
-                    onClick={() => setOptions(o => ({ ...o, mode: o.mode === 'oneByOne' ? 'all' : 'oneByOne' }))}
-                  >
-                    {options.mode === 'all' ? '한번에' : '순서대로'}
-                  </button>
-                </div>
-                <div className="tg-option-row">
-                  <div className="tg-option-info">
-                    <div className="tg-option-name">🔢 문제 수</div>
-                    <div className="tg-option-desc">{options.count}개 출제</div>
+                </>)}
+
+                {/* 블로커스 옵션 */}
+                {selectedGame.id === 'blokus' && (
+                  <div className="tg-option-row">
+                    <div className="tg-option-info">
+                      <div className="tg-option-name">⏱️ 턴 타이머</div>
+                      <div className="tg-option-desc">{gameOptions.timerSeconds || 30}초</div>
+                    </div>
+                    <div className="tg-count-btns">
+                      {[20, 30, 60].map(n => (
+                        <button key={n}
+                          className={`tg-count-btn ${(gameOptions.timerSeconds || 30) === n ? 'tg-count-btn-on' : ''}`}
+                          onClick={() => setGameOptions(o => ({ ...o, timerSeconds: n }))}
+                        >{n}s</button>
+                      ))}
+                    </div>
                   </div>
-                  <div className="tg-count-btns">
-                    {[5, 10, 20].map(n => (
-                      <button
-                        key={n}
-                        className={`tg-count-btn ${options.count === n ? 'tg-count-btn-on' : ''}`}
-                        onClick={() => setOptions(o => ({ ...o, count: n }))}
-                      >
-                        {n}
-                      </button>
-                    ))}
+                )}
+
+                {/* 터이네키아 옵션 */}
+                {selectedGame.id === 'turneyia' && (<>
+                  <div className="tg-option-row">
+                    <div className="tg-option-info">
+                      <div className="tg-option-name">🎭 카테고리</div>
+                      <div className="tg-option-desc">
+                        {{ celebrity: '연예인', athlete: '운동선수', politician: '정치인' }[gameOptions.category || 'celebrity']}
+                      </div>
+                    </div>
+                    <div className="tg-count-btns">
+                      {[['celebrity','연예인'],['athlete','운동선수'],['politician','정치인']].map(([v,l]) => (
+                        <button key={v}
+                          className={`tg-count-btn ${(gameOptions.category || 'celebrity') === v ? 'tg-count-btn-on' : ''}`}
+                          onClick={() => setGameOptions(o => ({ ...o, category: v }))}
+                        >{l}</button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                  <div className="tg-option-row">
+                    <div className="tg-option-info">
+                      <div className="tg-option-name">🔢 라운드 수</div>
+                      <div className="tg-option-desc">{gameOptions.totalRounds || 3}라운드</div>
+                    </div>
+                    <div className="tg-count-btns">
+                      {[1, 3, 5].map(n => (
+                        <button key={n}
+                          className={`tg-count-btn ${(gameOptions.totalRounds || 3) === n ? 'tg-count-btn-on' : ''}`}
+                          onClick={() => setGameOptions(o => ({ ...o, totalRounds: n }))}
+                        >{n}</button>
+                      ))}
+                    </div>
+                  </div>
+                </>)}
+
+                {/* 코브라 옵션 */}
+                {selectedGame.id === 'cobra' && (
+                  <div className="tg-option-row">
+                    <div className="tg-option-info">
+                      <div className="tg-option-name">🃏 스페셜 카드</div>
+                      <div className="tg-option-desc">J/Q/K 특수 능력 {gameOptions.specialCards === false ? 'OFF' : 'ON'}</div>
+                    </div>
+                    <button
+                      className={`tg-toggle ${gameOptions.specialCards !== false ? 'tg-toggle-on' : ''}`}
+                      onClick={() => setGameOptions(o => ({ ...o, specialCards: o.specialCards === false ? true : false }))}
+                    >
+                      {gameOptions.specialCards === false ? 'OFF' : 'ON'}
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
@@ -543,7 +696,7 @@ export default function TypingGame() {
               {isHost ? '게임 선택' : '게임 목록'}
             </div>
             <div className="tg-game-grid">
-              {GAMES.filter((g) => !g.path).map((game) => (
+              {GAMES.map((game) => (
                 <div
                   key={game.id}
                   className={`tg-game-card
@@ -552,7 +705,7 @@ export default function TypingGame() {
                     ${!isHost ? 'tg-game-card-readonly' : ''}
                   `}
                   style={{ '--gc': game.color }}
-                  onClick={() => isHost && game.active && (game.path ? navigate(game.path) : setSelectedGame(game))}
+                  onClick={() => isHost && game.active && setSelectedGame(game)}
                 >
                   <div className="tg-game-card-icon">{game.icon}</div>
                   <div className="tg-game-card-title">{game.title}</div>
