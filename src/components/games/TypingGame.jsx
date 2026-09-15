@@ -543,7 +543,7 @@ export default function TypingGame() {
               {isHost ? '게임 선택' : '게임 목록'}
             </div>
             <div className="tg-game-grid">
-              {GAMES.map((game) => (
+              {GAMES.filter((g) => !g.path).map((game) => (
                 <div
                   key={game.id}
                   className={`tg-game-card
