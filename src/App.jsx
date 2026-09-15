@@ -32,6 +32,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import TurneyKiaGame from './components/TurneyKiaGame';
 import TypingGame from './components/games/TypingGame';
 import AkinatorGame from './components/games/AkinatorGame';
+import BlokusGame from './components/BlokusGame';
 
 function App() {
   // GitHub Pages의 경우 basename 설정
@@ -71,6 +72,7 @@ function App() {
           <Route path="/turneyia" element={<TurneyKiaGame />} />
           <Route path="/mini-arcade" element={<TypingGame />} />
           <Route path="/mini-arcade/akinator" element={<AkinatorGame />} />
+          <Route path="/blokus" element={<BlokusGame />} />
         </Routes>
       </Router>
     </AuthProvider>

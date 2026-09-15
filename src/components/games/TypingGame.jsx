@@ -25,6 +25,7 @@ const GAMES = [
   { id: 'akinator',  icon: '🎭', title: '아키네이터',      desc: 'Yes/No로 인물 맞히기', active: false, color: '#a78bfa', path: '/mini-arcade/akinator' },
   { id: 'turneyia',  icon: '🏆', title: '터이네키아',      desc: '아키네이터를 거꾸로!',  active: true,  color: '#f7971e', path: '/turneyia' },
   { id: 'cobra',     icon: '🐍', title: '코브라 게임',     desc: '방 만들고 친구와 함께!', active: true,  color: '#43e97b', path: '/cobra' },
+  { id: 'blokus',    icon: '🟦', title: '블로커스',        desc: '전략 타일 배치 대결',    active: true,  color: '#3b82f6', path: '/blokus' },
   { id: 'math-odd',  icon: '➕', title: '산수홀짝',        desc: '홀수? 짝수?',          active: false, color: '#f7971e' },
   { id: 'gugu',      icon: '✖️', title: '구구단을 하자',   desc: '빈칸을 채워라',        active: false, color: '#a18cd1' },
   { id: 'counting',  icon: '🔢', title: '순서대로',        desc: '숫자 순서 클릭',       active: false, color: '#43e97b' },
