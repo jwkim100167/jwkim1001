@@ -35,6 +35,12 @@ import * as cobraService from './supabaseCobra';
 
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const MAX_PLAYERS = 6;
+const TURNEYIA_REAL_CATEGORIES = ['celebrity', 'athlete', 'character'];
+function resolveTurneyiaCategory(cat) {
+  return cat === 'random'
+    ? TURNEYIA_REAL_CATEGORIES[Math.floor(Math.random() * TURNEYIA_REAL_CATEGORIES.length)]
+    : cat;
+}
 
 function generateCode() {
   let code = '';
@@ -152,6 +158,14 @@ export async function leaveRoom(playerId) {
 
 export async function deleteRoom(roomId) {
   await supabase.from('typing_rooms').delete().eq('id', roomId);
+}
+
+export async function promoteToHost(playerId) {
+  const { error } = await supabase
+    .from('typing_players')
+    .update({ is_host: true })
+    .eq('id', playerId);
+  if (error) console.error('promoteToHost error:', error);
 }
 
 // ─────────────────────────────────────────
@@ -280,8 +294,8 @@ function _blokusCalcScores(state) {
     let score = -penalty;
     if (usedAll) {
       score += 15;
-      const lastUsed = [...remaining].reverse().findIndex((u) => !u);
-      if (remaining.length - 1 - lastUsed === 0) score += 5;
+      // +5 bonus if last placed piece was the monomino (piece id 0)
+      if (state.last_piece_id?.[color] === 0) score += 5;
     }
     scores[color] = score;
   }
@@ -326,9 +340,10 @@ export async function startUnifiedGame(roomId, selectedGame, players, options = 
       corners, remaining, scores, player_colors: playerColors,
     };
   } else if (selectedGame === 'turneyia') {
-    const category = options.category || 'celebrity';
+    const rawCategory = options.category || 'celebrity';
     const totalRounds = options.totalRounds || 3;
     const mode = options.mode || 'static';
+    const category = resolveTurneyiaCategory(rawCategory);
     const person = await generatePersonWithHints(category, [], mode);
     const namePattern = buildNamePattern(person.name);
     const scores = {};
@@ -336,6 +351,7 @@ export async function startUnifiedGame(roomId, selectedGame, players, options = 
     gameState = {
       selected_game: 'turneyia',
       phase: 'hinting', category, mode,
+      random_mode: rawCategory === 'random',
       current_person: person, name_pattern: namePattern,
       hints_revealed: 1, hint_started_at: Date.now(),
       answers: {}, current_hint_submissions: {}, correct_player_id: null,
@@ -368,6 +384,8 @@ export async function blokusPlacePiece(roomId, color, pieceId, cells) {
   if (state.turn_order[state.turn_index] !== color) throw new Error('지금 내 차례가 아닙니다.');
   cells.forEach(([r, c]) => { state.board[r][c] = color; });
   state.remaining[color][pieceId] = false;
+  if (!state.last_piece_id) state.last_piece_id = {};
+  state.last_piece_id[color] = pieceId;
   const { nextIndex, nextPassed } = _blokusAdvanceTurn(state);
   state.turn_index = nextIndex;
   state.passed = nextPassed;
@@ -431,14 +449,16 @@ export async function turneyiaSubmitAnswer(roomId, playerId, answer) {
     personName.toLowerCase().replace(/\s/g, '')
   );
 
-  const newSubmissions = { ...(gameState.current_hint_submissions || {}), [playerId]: correct ? 'correct' : 'wrong' };
+  const newSubmissions = { ...(gameState.current_hint_submissions || {}), [playerId]: correct ? 'correct' : (isPass ? 'pass' : 'wrong') };
   const newAnswers = { ...(gameState.answers || {}), [playerId]: answer };
   let newCorrectId = gameState.correct_player_id;
   let newScores = { ...(gameState.scores || {}) };
   let newPhase = gameState.phase;
 
+  let correctAtHint = gameState.correct_at_hint ?? null;
   if (correct && !newCorrectId) {
     newCorrectId = playerId;
+    correctAtHint = gameState.hints_revealed;
     const maxHints = gameState.current_person.hints.length;
     const scoreGain = Math.max(1, maxHints - gameState.hints_revealed + 1);
     newScores[playerId] = (newScores[playerId] || 0) + scoreGain;
@@ -449,7 +469,10 @@ export async function turneyiaSubmitAnswer(roomId, playerId, answer) {
     ...gameState, phase: newPhase,
     answers: newAnswers, current_hint_submissions: newSubmissions,
     correct_player_id: newCorrectId, scores: newScores,
+    correct_at_hint: correctAtHint,
   });
+
+  return correct ? 'correct' : 'wrong';
 }
 
 export async function turneyiaRevealAnswer(roomId, gameState) {
@@ -458,13 +481,18 @@ export async function turneyiaRevealAnswer(roomId, gameState) {
 
 export async function turneyiaNextRound(roomId, gameState) {
   const usedPersons = gameState.used_persons || [];
-  const person = await generatePersonWithHints(gameState.category, usedPersons, gameState.mode || 'static');
+  const category = gameState.random_mode
+    ? resolveTurneyiaCategory('random')
+    : gameState.category;
+  const person = await generatePersonWithHints(category, usedPersons, gameState.mode || 'static');
   const namePattern = buildNamePattern(person.name);
   await updateGameState(roomId, {
     ...gameState, phase: 'hinting',
+    category,
     current_person: person, name_pattern: namePattern,
     hints_revealed: 1, hint_started_at: Date.now(),
     current_hint_submissions: {}, answers: {}, correct_player_id: null,
+    correct_at_hint: null,
     round: gameState.round + 1, used_persons: [...usedPersons, person.name],
   });
 }

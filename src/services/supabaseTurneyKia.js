@@ -47,6 +47,13 @@
 import { supabase } from '../supabaseClient';
 import { generatePersonWithHints, buildNamePattern } from './turneyKiaAI';
 
+const REAL_CATEGORIES = ['celebrity', 'athlete', 'character'];
+function resolveCategory(cat) {
+  return cat === 'random'
+    ? REAL_CATEGORIES[Math.floor(Math.random() * REAL_CATEGORIES.length)]
+    : cat;
+}
+
 // ─────────────────────────────────────────
 // 코드 생성
 // ─────────────────────────────────────────
@@ -182,7 +189,8 @@ async function updateGameState(roomId, gameState) {
  * Claude API로 인물+힌트 생성 후 game_state 초기화
  */
 export async function startGame(roomId, players, category, totalRounds, mode = 'static') {
-  const person = await generatePersonWithHints(category, [], mode);
+  const resolvedCategory = resolveCategory(category);
+  const person = await generatePersonWithHints(resolvedCategory, [], mode);
   const namePattern = buildNamePattern(person.name);
 
   const scores = {};
@@ -190,7 +198,8 @@ export async function startGame(roomId, players, category, totalRounds, mode = '
 
   const gameState = {
     phase: 'hinting',
-    category,
+    category: resolvedCategory,
+    random_mode: category === 'random',
     mode,
     current_person: person,
     name_pattern: namePattern,
@@ -198,6 +207,7 @@ export async function startGame(roomId, players, category, totalRounds, mode = '
     hint_started_at: Date.now(),
     answers: {},
     correct_player_id: null,
+    correct_at_hint: null,
     scores,
     round: 1,
     total_rounds: totalRounds,
@@ -236,19 +246,59 @@ export async function revealNextHint(roomId, gameState) {
   }
 }
 
+async function fetchLatestState(roomId) {
+  const { data } = await supabase
+    .from('turneyia_rooms')
+    .select('game_state')
+    .eq('id', roomId)
+    .single();
+  return data?.game_state ?? null;
+}
+
 /**
- * 답변 제출 (RPC)
- * 정답이면 RPC 내부에서 즉시 phase='reveal' + 점수 계산
+ * 답변 제출 (클라이언트 로직)
  * 반환값: 'correct' | 'wrong' | 'already'
  */
 export async function submitAnswer(roomId, playerId, answer) {
-  const { data, error } = await supabase.rpc('submit_turneyia_answer', {
-    p_room_id: roomId,
-    p_player_id: playerId,
-    p_answer: answer,
+  const gameState = await fetchLatestState(roomId);
+  if (!gameState || gameState.phase !== 'hinting') return 'wrong';
+
+  const isPass = answer === '__PASS__';
+  if (gameState.current_hint_submissions?.[playerId]) return 'already';
+
+  const personName = gameState.current_person?.name ?? '';
+  const correct = !isPass &&
+    answer.toLowerCase().replace(/\s/g, '').includes(personName.toLowerCase().replace(/\s/g, ''));
+
+  const newSubmissions = {
+    ...(gameState.current_hint_submissions || {}),
+    [playerId]: correct ? 'correct' : (isPass ? 'pass' : 'wrong'),
+  };
+
+  let newPhase = gameState.phase;
+  let newScores = { ...(gameState.scores || {}) };
+  let newCorrectId = gameState.correct_player_id;
+
+  let correctAtHint = gameState.correct_at_hint ?? null;
+  if (correct && !newCorrectId) {
+    newCorrectId = playerId;
+    correctAtHint = gameState.hints_revealed;
+    const maxHints = gameState.current_person?.hints?.length ?? 6;
+    const scoreGain = Math.max(1, maxHints - gameState.hints_revealed + 1);
+    newScores[playerId] = (newScores[playerId] ?? 0) + scoreGain;
+    newPhase = 'reveal';
+  }
+
+  await updateGameState(roomId, {
+    ...gameState,
+    phase: newPhase,
+    current_hint_submissions: newSubmissions,
+    correct_player_id: newCorrectId,
+    scores: newScores,
+    correct_at_hint: correctAtHint,
   });
-  if (error) throw error;
-  return data; // 'correct' | 'wrong' | 'already'
+
+  return correct ? 'correct' : (isPass ? 'wrong' : 'wrong');
 }
 
 /**
@@ -269,12 +319,14 @@ export async function revealAnswer(roomId, gameState) {
  */
 export async function nextRound(roomId, gameState) {
   const usedPersons = gameState.used_persons || [];
-  const person = await generatePersonWithHints(gameState.category, usedPersons, gameState.mode || 'static');
+  const category = gameState.random_mode ? resolveCategory('random') : gameState.category;
+  const person = await generatePersonWithHints(category, usedPersons, gameState.mode || 'static');
   const namePattern = buildNamePattern(person.name);
 
   const newState = {
     ...gameState,
     phase: 'hinting',
+    category,
     current_person: person,
     name_pattern: namePattern,
     hints_revealed: 1,
@@ -282,6 +334,7 @@ export async function nextRound(roomId, gameState) {
     current_hint_submissions: {},
     answers: {},
     correct_player_id: null,
+    correct_at_hint: null,
     round: gameState.round + 1,
     used_persons: [...usedPersons, person.name],
   };

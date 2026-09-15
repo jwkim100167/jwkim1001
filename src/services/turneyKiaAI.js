@@ -5,6 +5,7 @@ const CATEGORY_LABEL = {
   celebrity: '연예인 (가수, 배우, 방송인 등 한국 연예계 인물)',
   athlete:   '운동선수 (모든 종목, 한국 및 세계)',
   politician: '정치인 (한국 역사 인물 및 현대 정치인)',
+  character: '만화/애니/게임 캐릭터 (한국인에게 잘 알려진 캐릭터)',
 };
 
 async function generateFromAI(category, usedNames = []) {

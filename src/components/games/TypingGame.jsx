@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../supabaseClient';
 import {
   createRoom,
   joinRoom,
@@ -8,6 +9,7 @@ import {
   getRoomData,
   leaveRoom,
   deleteRoom,
+  promoteToHost,
   startGame,
   startUnifiedGame,
   resetToWaiting,
@@ -101,8 +103,12 @@ export default function TypingGame() {
   const [showSoloConfirm, setShowSoloConfirm] = useState(false);
   const [options, setOptions] = useState({ mode: 'oneByOne', count: 10 }); // typing options
   const [gameOptions, setGameOptions] = useState({}); // per-game options (blokus/turneyia/cobra)
+  const [onlinePlayerIds, setOnlinePlayerIds] = useState(null);
 
   const channelRef = useRef(null);
+  const presenceChannelRef = useRef(null);
+  const currentPlayerRef = useRef(null);
+  useEffect(() => { currentPlayerRef.current = currentPlayer; }, [currentPlayer]);
 
   useEffect(() => {
     if (!currentRoom) return;
@@ -115,6 +121,24 @@ export default function TypingGame() {
         ]);
         setPlayers(playersData);
         setRoomData(roomFull);
+
+        // currentPlayer 최신 상태 동기화 (is_host 변경 반영)
+        const self = currentPlayerRef.current;
+        if (self) {
+          const freshSelf = playersData.find((p) => p.id === self.id);
+          if (freshSelf && freshSelf.is_host !== self.is_host) {
+            setCurrentPlayer(freshSelf);
+            currentPlayerRef.current = freshSelf;
+          }
+
+          // 호스트 이탈 시 첫 번째 플레이어가 자동 승계
+          const hasHost = playersData.some((p) => p.is_host);
+          if (!hasHost && playersData.length > 0 && freshSelf) {
+            if (playersData[0].id === freshSelf.id) {
+              await promoteToHost(freshSelf.id);
+            }
+          }
+        }
       } catch { /* ignore */ }
     };
 
@@ -135,6 +159,35 @@ export default function TypingGame() {
       }
     };
   }, [currentRoom]);
+
+  // Presence 추적: 온라인 플레이어 ID 목록 관리
+  useEffect(() => {
+    if (!currentRoom || !currentPlayer) {
+      setOnlinePlayerIds(null);
+      return;
+    }
+    if (presenceChannelRef.current) {
+      supabase.removeChannel(presenceChannelRef.current);
+    }
+    const channel = supabase.channel(`presence:${currentRoom.id}`, {
+      config: { presence: { key: currentPlayer.id } },
+    });
+    channel
+      .on('presence', { event: 'sync' }, () => {
+        const ids = Object.keys(channel.presenceState());
+        setOnlinePlayerIds(ids.length > 0 ? ids : null);
+      })
+      .subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+          await channel.track({ online: true });
+        }
+      });
+    presenceChannelRef.current = channel;
+    return () => {
+      supabase.removeChannel(channel);
+      presenceChannelRef.current = null;
+    };
+  }, [currentRoom?.id, currentPlayer?.id]);
 
   useEffect(() => {
     if (!currentPlayer) return;
@@ -276,6 +329,7 @@ export default function TypingGame() {
             roomId={currentRoom.id}
             onResetGame={currentPlayer?.is_host ? handleResetToWaiting : null}
             onLeave={handleLeave}
+            onlinePlayerIds={onlinePlayerIds}
             actions={{
               revealNextHint: turneyiaRevealNextHint,
               submitAnswer: turneyiaSubmitAnswer,
@@ -618,11 +672,11 @@ export default function TypingGame() {
                     <div className="tg-option-info">
                       <div className="tg-option-name">🎭 카테고리</div>
                       <div className="tg-option-desc">
-                        {{ celebrity: '연예인', athlete: '운동선수', politician: '정치인' }[gameOptions.category || 'celebrity']}
+                        {{ celebrity: '연예인', athlete: '운동선수', character: '만화캐릭터', random: '랜덤' }[gameOptions.category || 'celebrity']}
                       </div>
                     </div>
                     <div className="tg-count-btns">
-                      {[['celebrity','연예인'],['athlete','운동선수'],['politician','정치인']].map(([v,l]) => (
+                      {[['celebrity','연예인'],['athlete','운동선수'],['character','만화캐릭터'],['random','랜덤']].map(([v,l]) => (
                         <button key={v}
                           className={`tg-count-btn ${(gameOptions.category || 'celebrity') === v ? 'tg-count-btn-on' : ''}`}
                           onClick={() => setGameOptions(o => ({ ...o, category: v }))}

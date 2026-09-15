@@ -230,6 +230,8 @@ export async function placePiece(roomId, color, pieceId, cells) {
 
   // Mark piece as used
   state.remaining[color][pieceId] = false;
+  if (!state.last_piece_id) state.last_piece_id = {};
+  state.last_piece_id[color] = pieceId;
 
   // Advance turn
   const { nextIndex, nextPassed } = advanceTurn(state);
@@ -386,10 +388,8 @@ function calcScores(state) {
     let score = -penalty;
     if (usedAll) {
       score += 15;
-      // Last piece mono bonus
-      const lastUsed = [...remaining].reverse().findIndex((used) => !used);
-      const lastPieceIdx = remaining.length - 1 - lastUsed;
-      if (lastPieceIdx === 0) score += 5; // piece id 0 = monomino
+      // +5 bonus if last placed piece was the monomino (piece id 0)
+      if (state.last_piece_id?.[color] === 0) score += 5;
     }
     scores[color] = score;
   }

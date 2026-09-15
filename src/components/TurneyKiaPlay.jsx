@@ -24,6 +24,7 @@ export default function TurneyKiaPlay({
   roomId,
   onResetGame,
   onLeave,
+  onlinePlayerIds = null,
   actions = {},
 }) {
   const doRevealNextHint = actions.revealNextHint ?? revealNextHint;
@@ -46,7 +47,7 @@ export default function TurneyKiaPlay({
   const {
     phase, current_person, name_pattern, hints_revealed,
     current_hint_submissions, correct_player_id, scores,
-    round, total_rounds, category,
+    round, total_rounds, category, correct_at_hint,
   } = gameState;
 
   const hints = current_person?.hints || [];
@@ -58,9 +59,12 @@ export default function TurneyKiaPlay({
   const mySubmission = current_hint_submissions?.[myId]; // 'correct' | 'wrong' | undefined
   const hasSubmittedThisHint = !!mySubmission;
 
-  // 모든 플레이어가 이번 힌트에 제출 완료했는지
-  const allTriedThisHint = players.length > 0 &&
-    players.every((p) => !!current_hint_submissions?.[p.id]);
+  // 모든 플레이어가 이번 힌트에 제출 완료했는지 (연결 끊긴 플레이어 제외)
+  const activePlayers = onlinePlayerIds && onlinePlayerIds.length > 0
+    ? players.filter((p) => onlinePlayerIds.includes(p.id))
+    : players;
+  const allTriedThisHint = activePlayers.length > 0 &&
+    activePlayers.every((p) => !!current_hint_submissions?.[p.id]);
 
   const correctPlayer = players.find((p) => p.id === correct_player_id);
   const sortedPlayers = [...players].sort((a, b) => (scores?.[b.id] ?? 0) - (scores?.[a.id] ?? 0));
@@ -119,9 +123,9 @@ export default function TurneyKiaPlay({
     if (phase !== 'hinting' || !isHost || !allTriedThisHint || autoAdvancedRef.current) return;
     autoAdvancedRef.current = true;
     if (hints_revealed < hints.length) {
-      revealNextHint(roomId, gameState);
+      doRevealNextHint(roomId, gameState);
     } else {
-      revealAnswer(roomId, gameState);
+      doRevealAnswer(roomId, gameState);
     }
   }, [allTriedThisHint, phase]);
 
@@ -218,7 +222,7 @@ export default function TurneyKiaPlay({
 
   // ─── REVEAL ───
   if (phase === 'reveal') {
-    const gained = correct_player_id ? Math.max(1, 7 - hints_revealed) : 0;
+    const gained = correct_player_id ? Math.max(1, hints.length - hints_revealed + 1) : 0;
     return (
       <div className="tkp-page">
         <div className="tkp-container">
@@ -230,6 +234,9 @@ export default function TurneyKiaPlay({
           {correct_player_id ? (
             <div className="tkp-correct-banner">
               🎉 <strong>{correctPlayer?.player_name}</strong>님 정답! +{gained}점
+              {correct_at_hint && (
+                <span className="tkp-correct-at-hint"> (힌트 {correct_at_hint}번째)</span>
+              )}
             </div>
           ) : (
             <div className="tkp-no-correct">아무도 맞추지 못했습니다 😅</div>
@@ -241,6 +248,16 @@ export default function TurneyKiaPlay({
                 <span className="tkp-rank-sm">{idx + 1}</span>
                 <span className="tkp-score-name">{p.player_name}</span>
                 <span className="tkp-score-pts">{scores?.[p.id] ?? 0}점</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="tkp-reveal-hints-section">
+            <div className="tkp-reveal-hints-title">힌트 복기</div>
+            {hints.map((hint, i) => (
+              <div key={i} className={`tkp-reveal-hint-row ${correct_at_hint === i + 1 ? 'tkp-reveal-hint-correct' : ''}`}>
+                <span className="tkp-hint-num">힌트 {i + 1}</span>
+                <span className="tkp-reveal-hint-text">{hint}</span>
               </div>
             ))}
           </div>

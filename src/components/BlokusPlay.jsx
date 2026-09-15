@@ -204,9 +204,19 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
   const handleBoardCellClick = (r, c) => {
     if (!isMyTurn || !selectedPiece) return;
     setHoverCell([r, c]);
-    // Try place on click if valid
-    if (hoveredBoardCells.length > 0 && hoverValid) {
-      handlePlace();
+    // Compute cells fresh from click position (avoids stale hoverCell state)
+    const clickedCells = currentCells.map(([dr, dc]) => [dr + r, dc + c]);
+    const clickValid = isValidPlacement(gameState.board, clickedCells, myColor, isFirstMove, cornerCell, gameState.remaining[myColor]);
+    if (clickValid) {
+      if (soundOn) playPlace();
+      doPlacePiece(roomId, myColor, selectedPieceId, clickedCells)
+        .then(() => {
+          setSelectedPieceId(null);
+          setRotation(0);
+          setFlipped(false);
+          setHoverCell(null);
+        })
+        .catch((e) => console.error('placePiece error:', e));
     }
   };
 
