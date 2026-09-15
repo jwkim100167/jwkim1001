@@ -30,7 +30,8 @@ export default function TurneyKiaGame() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
 
-  const [view, setView] = useState('lobby'); // 'lobby' | 'create' | 'join' | 'waiting'
+  const [view, setView] = useState('lobby'); // 'lobby' | 'waiting'
+  const [showJoinInput, setShowJoinInput] = useState(false);
   const [playerName, setPlayerName] = useState('');
   const [joinCode, setJoinCode] = useState('');
   const [currentRoom, setCurrentRoom] = useState(null);
@@ -128,6 +129,7 @@ export default function TurneyKiaGame() {
     setPlayers([]);
     setRoomData(null);
     setView('lobby');
+    setShowJoinInput(false);
   };
 
   const doStartGame = useCallback(async () => {
@@ -203,56 +205,43 @@ export default function TurneyKiaGame() {
             <h1>터이네키아</h1>
             <p className="tkg-subtitle">힌트를 보고 인물을 맞춰보세요!</p>
           </div>
-          <div className="tkg-lobby-actions">
-            <button className="tkg-btn tkg-btn-primary" onClick={() => { setView('create'); setError(''); }}>
-              방 만들기
-            </button>
-            <button className="tkg-btn tkg-btn-secondary" onClick={() => { setView('join'); setError(''); }}>
-              방 입장하기
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ─── CREATE / JOIN ───
-  if (view === 'create' || view === 'join') {
-    return (
-      <div className="tkg-page">
-        <div className="tkg-container">
-          <button className="tkg-back-btn" onClick={() => { setView('lobby'); setError(''); }}>← 뒤로</button>
-          <div className="tkg-header">
-            <div className="tkg-icon">{view === 'create' ? '🏠' : '🚪'}</div>
-            <h1>{view === 'create' ? '방 만들기' : '방 입장하기'}</h1>
-          </div>
-
           <div className="tkg-form">
-            {view === 'join' && (
-              <input
-                className="tkg-input"
-                placeholder="방 코드 6자리"
-                value={joinCode}
-                onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                maxLength={6}
-              />
-            )}
             <input
               className="tkg-input"
               placeholder="닉네임 (최대 8자)"
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
               maxLength={8}
-              onKeyDown={(e) => e.key === 'Enter' && (view === 'create' ? handleCreateRoom() : handleJoinRoom())}
+              onKeyDown={(e) => e.key === 'Enter' && handleCreateRoom()}
             />
+            {showJoinInput && (
+              <input
+                className="tkg-input"
+                placeholder="방 코드 6자리"
+                value={joinCode}
+                onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                maxLength={6}
+                onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
+                autoFocus
+              />
+            )}
             {error && <p className="tkg-error">{error}</p>}
-            <button
-              className="tkg-btn tkg-btn-primary"
-              onClick={view === 'create' ? handleCreateRoom : handleJoinRoom}
-              disabled={loading}
-            >
-              {loading ? '처리 중...' : view === 'create' ? '방 만들기' : '입장하기'}
-            </button>
+            <div className="tkg-lobby-actions">
+              <button
+                className="tkg-btn tkg-btn-primary"
+                onClick={handleCreateRoom}
+                disabled={loading}
+              >
+                {loading ? '처리 중...' : '방 만들기'}
+              </button>
+              <button
+                className="tkg-btn tkg-btn-secondary"
+                onClick={showJoinInput ? handleJoinRoom : () => { setShowJoinInput(true); setError(''); }}
+                disabled={loading}
+              >
+                {loading ? '처리 중...' : showJoinInput ? '입장하기' : '방 입장하기'}
+              </button>
+            </div>
           </div>
         </div>
       </div>
