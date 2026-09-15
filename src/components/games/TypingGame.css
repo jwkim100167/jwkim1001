@@ -204,6 +204,57 @@
 }
 
 /* ===========================
+   DIRECT GAMES (LOBBY)
+   =========================== */
+.tg-direct-games {
+  margin-top: 24px;
+  width: 100%;
+}
+.tg-direct-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0 0 10px;
+  text-align: left;
+}
+.tg-direct-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.tg-direct-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 14px 14px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.18s;
+  text-align: left;
+}
+.tg-direct-card:hover {
+  border-color: var(--gc);
+  background: color-mix(in srgb, var(--gc) 15%, transparent);
+  transform: translateY(-2px);
+}
+.tg-direct-icon {
+  font-size: 1.5rem;
+}
+.tg-direct-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+}
+.tg-direct-desc {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* ===========================
    FORM (CREATE / JOIN)
    =========================== */
 .tg-form-header {

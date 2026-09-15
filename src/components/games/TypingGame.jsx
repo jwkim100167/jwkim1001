@@ -308,6 +308,24 @@ export default function TypingGame() {
               <span className="tg-info-label">미니게임</span>
             </div>
           </div>
+
+          <div className="tg-direct-games">
+            <p className="tg-direct-label">바로 플레이</p>
+            <div className="tg-direct-grid">
+              {GAMES.filter((g) => g.path && g.active).map((game) => (
+                <button
+                  key={game.id}
+                  className="tg-direct-card"
+                  style={{ '--gc': game.color }}
+                  onClick={() => navigate(game.path)}
+                >
+                  <span className="tg-direct-icon">{game.icon}</span>
+                  <span className="tg-direct-title">{game.title}</span>
+                  <span className="tg-direct-desc">{game.desc}</span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );
