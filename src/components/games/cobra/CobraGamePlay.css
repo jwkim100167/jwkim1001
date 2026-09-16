@@ -919,7 +919,7 @@
 /* ========================
    RESPONSIVE
    ======================== */
-@media (max-width: 400px) {
+@media (max-width: 480px) {
   .cgp-card { width: 54px; height: 76px; }
   .cgp-deck-card { width: 54px; height: 76px; }
   .cgp-empty-pile { width: 54px; height: 76px; }

@@ -453,18 +453,27 @@
 /* ===========================
    RESPONSIVE
    =========================== */
-@media (max-width: 480px) {
+@media (max-width: 640px) {
+  /* 스코어보드 최소화 — 단어 영역 최대 확보 */
   .tgp-scoreboard {
     top: 8px;
     right: 8px;
-    padding: 10px 12px;
-    min-width: 130px;
+    padding: 8px 10px;
+    min-width: 80px;
+    max-width: 80px;
+    border-radius: 10px;
   }
+  .tgp-scoreboard-title { display: none; }
+  .tgp-score-row { font-size: 0.75rem; gap: 4px; padding: 2px 0; }
+  .tgp-score-name { max-width: 40px; }
+  .tgp-score-pts { font-size: 0.8rem; }
+  .tgp-score-rank { display: none; }
+  .tgp-score-dot { width: 6px; height: 6px; }
 
+  /* 입력창 — 노치폰 safe-area 대응 */
   .tgp-input-bar {
-    padding: 10px 12px 14px;
+    padding: 10px 12px max(14px, env(safe-area-inset-bottom));
   }
-
   .tgp-input {
     font-size: 1rem;
     padding: 10px 16px;
