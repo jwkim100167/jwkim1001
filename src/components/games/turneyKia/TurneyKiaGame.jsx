@@ -49,31 +49,33 @@ export default function TurneyKiaGame() {
   const channelRef = useRef(null);
   const startAdRef = useRef(null);
 
-  // 실시간 구독
+  // 방 데이터 갱신 (Realtime + 폴링 공용)
+  const loadRoom = useCallback(async () => {
+    if (!currentRoom) return;
+    try {
+      const [playersData, roomFull] = await Promise.all([
+        getRoomPlayers(currentRoom.id),
+        getRoomData(currentRoom.id),
+      ]);
+      setPlayers(playersData);
+      setRoomData(roomFull);
+    } catch {
+      // ignore
+    }
+  }, [currentRoom]);
+
+  // 실시간 구독 + 3초 폴링 fallback
   useEffect(() => {
     if (!currentRoom) return;
-
-    const loadAll = async () => {
-      try {
-        const [playersData, roomFull] = await Promise.all([
-          getRoomPlayers(currentRoom.id),
-          getRoomData(currentRoom.id),
-        ]);
-        setPlayers(playersData);
-        setRoomData(roomFull);
-      } catch {
-        // ignore
-      }
-    };
-
-    loadAll();
-    channelRef.current = subscribeToRoom(currentRoom.id, loadAll);
-
+    loadRoom();
+    channelRef.current = subscribeToRoom(currentRoom.id, loadRoom);
+    const pollId = setInterval(loadRoom, 3000);
     return () => {
       unsubscribeFromRoom(channelRef.current);
       channelRef.current = null;
+      clearInterval(pollId);
     };
-  }, [currentRoom]);
+  }, [currentRoom, loadRoom]);
 
   // 페이지 이탈 시 정리
   useEffect(() => {
@@ -140,13 +142,14 @@ export default function TurneyKiaGame() {
       : category;
     try {
       await startGame(currentRoom.id, players, resolvedCategory, totalRounds, mode);
+      await loadRoom(); // Realtime에 의존하지 않고 즉시 갱신
     } catch (e) {
       console.error('startGame error:', e);
       setError('인물 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
     } finally {
       setGenerating(false);
     }
-  }, [currentRoom, players, category, totalRounds, user]);
+  }, [currentRoom, players, category, totalRounds, user, loadRoom]);
 
   const handleStartGame = () => {
     if (players.length < 2) { setError('2명 이상이어야 게임을 시작할 수 있습니다.'); return; }

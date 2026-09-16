@@ -214,10 +214,11 @@ export async function startGame(roomId, players, category, totalRounds, mode = '
     used_persons: [person.name],
   };
 
-  await supabase
+  const { error: updateError } = await supabase
     .from('turneyia_rooms')
     .update({ game_state: gameState, status: 'playing' })
     .eq('id', roomId);
+  if (updateError) throw new Error('게임 시작에 실패했습니다.');
 }
 
 /**

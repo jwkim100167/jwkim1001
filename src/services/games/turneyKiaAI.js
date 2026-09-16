@@ -31,7 +31,11 @@ async function generateFromAI(category, usedNames = []) {
     }],
   });
 
-  return JSON.parse(message.content[0].text);
+  try {
+    return JSON.parse(message.content[0].text);
+  } catch {
+    throw new Error('AI 인물 생성 실패: 응답 형식 오류');
+  }
 }
 
 /**
