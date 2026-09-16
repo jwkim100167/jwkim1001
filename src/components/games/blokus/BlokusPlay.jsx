@@ -318,6 +318,21 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
         <div className={`blk-timer ${timerUrgent ? 'blk-timer-urgent' : ''}`}>
           {timeLeft !== null ? timeLeft : '--'}s
         </div>
+        <div className="blk-topbar-players">
+          {gameState.turn_order.map((color) => {
+            const p = players.find((pl) => pl.color === color);
+            const hasPassed = gameState.passed.includes(color);
+            const remainingCount = gameState.remaining[color]?.filter(Boolean).length ?? 0;
+            return (
+              <span
+                key={color}
+                className="blk-topbar-player-dot"
+                style={{ background: COLOR_HEX[color], opacity: hasPassed ? 0.3 : 1 }}
+                title={`${p?.player_name || colorName(color)}: ${remainingCount}개`}
+              />
+            );
+          })}
+        </div>
         <button
           className="blk-sound-btn"
           onClick={() => setSoundOn((v) => !v)}
@@ -341,7 +356,7 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
         {/* Right Panel */}
         <div className="blk-panel">
           {/* Players */}
-          <div className="blk-panel-section">
+          <div className="blk-panel-section blk-players-section">
             <div className="blk-panel-label">플레이어</div>
             {gameState.turn_order.map((color) => {
               const p = players.find((pl) => pl.color === color);

@@ -66,6 +66,18 @@
 }
 .blk-sound-btn:hover { opacity: 1; }
 
+/* Topbar player dots — hidden on desktop, shown on mobile */
+.blk-topbar-players {
+  display: none;
+}
+.blk-topbar-player-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
 /* ── Layout ── */
 .blk-play-layout {
   flex: 1;
@@ -366,23 +378,165 @@
 
 /* ── Responsive ── */
 @media (max-width: 640px) {
-  .blk-board {
-    width: calc(100vw - 10px);
-    height: calc(100vw - 10px);
-  }
-  .blk-play-layout {
+  /* Stage 1: Viewport lock — no scroll */
+  .blk-play-page {
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
     flex-direction: column;
   }
+
+  .blk-play-layout {
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  /* Stage 2: Board wrap fills remaining space */
+  .blk-board-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    min-height: 0;
+  }
+
+  /* Stage 2: Board size — max available after topbar (44px) + panel (150px) */
+  .blk-board {
+    width: min(calc(100vw - 8px), calc(100dvh - 44px - 150px));
+    height: min(calc(100vw - 8px), calc(100dvh - 44px - 150px));
+  }
+
+  /* Stage 3: Panel — fixed height at bottom */
   .blk-panel {
     width: 100%;
+    flex: 0 0 auto;
+    max-height: 155px;
     border-left: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    padding: 6px 8px;
+    padding-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
   }
-  .blk-board-wrap {
-    padding: 4px;
+
+  /* Stage 3: Hide player list from panel (shown in topbar instead) */
+  .blk-players-section {
+    display: none;
   }
+
+  /* Stage 3: Controls in one row */
+  .blk-panel-section {
+    padding: 4px 0;
+    border-bottom: none;
+  }
+
+  .blk-controls {
+    margin-bottom: 4px;
+    gap: 4px;
+  }
+
+  .blk-ctrl-btn {
+    padding: 6px 4px;
+    font-size: 0.7rem;
+  }
+
+  .blk-place-btn {
+    padding: 7px;
+    font-size: 0.8rem;
+  }
+
+  .blk-pass-btn {
+    margin: 4px 0 0;
+    padding: 6px;
+    font-size: 0.75rem;
+  }
+
+  .blk-panel-label {
+    font-size: 0.65rem;
+    margin-bottom: 4px;
+  }
+
+  /* Stage 4: Pieces — horizontal scroll strip */
+  .blk-pieces-section {
+    overflow: hidden;
+    flex: 1;
+    min-height: 0;
+  }
+
   .blk-pieces-grid {
-    grid-template-columns: repeat(7, 1fr);
-    max-height: 120px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 4px;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    max-height: unset;
+    grid-template-columns: unset;
+  }
+
+  .blk-pieces-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .blk-piece-btn {
+    flex: 0 0 48px;
+    height: 48px;
+    min-width: 48px;
+    padding: 3px;
+    aspect-ratio: unset;
+  }
+
+  /* Stage 5: Topbar — show player dots */
+  .blk-topbar {
+    padding: 0 8px;
+    height: 44px;
+    flex-shrink: 0;
+    gap: 6px;
+  }
+
+  .blk-turn-badge {
+    padding: 5px 8px;
+    font-size: 0.8rem;
+  }
+
+  .blk-timer {
+    font-size: 1rem;
+    min-width: 36px;
+  }
+
+  .blk-topbar-players {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .blk-waiting-msg {
+    padding: 8px 0;
+    font-size: 0.8rem;
+  }
+}
+
+/* ── Tablet (641~1024px) ── */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .blk-panel {
+    width: 200px;
+    min-width: 160px;
+  }
+
+  .blk-board {
+    width: min(calc(100vw - 220px), calc(100vh - 80px));
+    height: min(calc(100vw - 220px), calc(100vh - 80px));
+  }
+
+  .blk-pieces-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
