@@ -32,6 +32,14 @@ import { PIECES, COLOR_CORNERS, TWO_PLAYER_PAIRS } from '../data/blokusPieces';
 import { generatePersonWithHints, buildNamePattern } from './turneyKiaAI';
 import { initGame } from '../utils/cobraGameLogic';
 import * as cobraService from './supabaseCobra';
+import {
+  dealCards as halliDeal,
+  checkBellCondition,
+  collectCards as halliCollect,
+  penalizeWrongBell,
+  discardTopCards as halliDiscard,
+  advanceTurn as halliAdvanceTurn,
+} from '../utils/halliGalliGameLogic';
 
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const MAX_PLAYERS = 6;
@@ -357,6 +365,27 @@ export async function startUnifiedGame(roomId, selectedGame, players, options = 
       answers: {}, current_hint_submissions: {}, correct_player_id: null,
       scores, round: 1, total_rounds: totalRounds, used_persons: [person.name],
     };
+  } else if (selectedGame === 'halligalli') {
+    const playerIds = _shuffle(players.map((p) => p.id));
+    const { decks, top_cards } = halliDeal(playerIds);
+    const card_counts = {};
+    playerIds.forEach((id) => { card_counts[id] = decks[id].length; });
+    gameState = {
+      selected_game: 'halligalli',
+      phase: 'playing',
+      decks,
+      top_cards,
+      turn_order: playerIds,
+      turn_index: 0,
+      last_flip_at: null,
+      bell_winner: null,
+      second_bell_winner: null,
+      bell_window_closes_at: null,
+      bell_correct: null,
+      card_counts,
+      eliminated: [],
+      options: { secondPlace: options.secondPlace ?? false },
+    };
   } else if (selectedGame === 'cobra') {
     const cobraOptions = { specialCards: options.specialCards ?? true };
     const rawState = initGame(players, cobraOptions);
@@ -527,3 +556,137 @@ export const cobraSkipSpecialAbility = (roomId, playerId, gameState) =>
   cobraService.skipSpecialAbility(roomId, playerId, gameState, 'typing_rooms');
 export const cobraCallCobra = (roomId, playerId, gameState) =>
   cobraService.callCobra(roomId, playerId, gameState, 'typing_rooms');
+
+// ─────────────────────────────────────────
+// 할리갈리 액션 (typing_rooms)
+// ─────────────────────────────────────────
+/*
+ * Supabase SQL Editor에서 실행 (벨 동시성 처리):
+ *
+ * CREATE OR REPLACE FUNCTION ring_halligalli_bell(
+ *   p_room_id uuid, p_player_id text
+ * ) RETURNS text AS $$
+ * DECLARE v_gs jsonb; v_window bigint := 1500;
+ * BEGIN
+ *   SELECT game_state INTO v_gs FROM typing_rooms WHERE id = p_room_id FOR UPDATE;
+ *   IF v_gs->>'phase' = 'playing' AND v_gs->'bell_winner' IS NULL THEN
+ *     v_gs := jsonb_set(v_gs, '{phase}', '"bell_resolving"');
+ *     v_gs := jsonb_set(v_gs, '{bell_winner}', to_jsonb(p_player_id));
+ *     IF (v_gs->'options'->'secondPlace')::boolean THEN
+ *       v_gs := jsonb_set(v_gs, '{bell_window_closes_at}',
+ *         to_jsonb(EXTRACT(EPOCH FROM NOW())*1000 + v_window));
+ *     END IF;
+ *     UPDATE typing_rooms SET game_state = v_gs WHERE id = p_room_id;
+ *     RETURN 'first';
+ *   END IF;
+ *   IF v_gs->>'phase' = 'bell_resolving'
+ *     AND (v_gs->'options'->'secondPlace')::boolean
+ *     AND v_gs->'second_bell_winner' IS NULL
+ *     AND v_gs->>'bell_winner' != p_player_id
+ *     AND EXTRACT(EPOCH FROM NOW())*1000 < (v_gs->>'bell_window_closes_at')::bigint
+ *   THEN
+ *     v_gs := jsonb_set(v_gs, '{second_bell_winner}', to_jsonb(p_player_id));
+ *     UPDATE typing_rooms SET game_state = v_gs WHERE id = p_room_id;
+ *     RETURN 'second';
+ *   END IF;
+ *   RETURN 'late';
+ * END;
+ * $$ LANGUAGE plpgsql;
+ */
+
+export async function halligalliFlipCard(roomId, playerId) {
+  const state = JSON.parse(JSON.stringify(await fetchLatestState(roomId)));
+  if (!state || state.phase !== 'playing') return;
+  if (state.turn_order[state.turn_index] !== playerId) return;
+
+  if (state.decks[playerId].length > 0) {
+    const card = state.decks[playerId].shift();
+    state.top_cards[playerId] = card;
+  }
+  // 덱이 비어도 top_card가 있으면 계속 참여 (탈락 아님)
+  // 탈락 체크는 bell resolve 시 처리
+
+  const next = halliAdvanceTurn(state, state.turn_index);
+  state.turn_index = next;
+  state.last_flip_at = Date.now();
+  await updateGameState(roomId, state);
+}
+
+export async function halligalliRingBell(roomId, playerId) {
+  // RPC 시도 (atomic)
+  try {
+    const { data, error } = await supabase.rpc('ring_halligalli_bell', {
+      p_room_id: roomId,
+      p_player_id: playerId,
+    });
+    if (!error) return data; // 'first' | 'second' | 'late'
+  } catch { /* RPC 미배포 시 폴백 */ }
+
+  // 폴백: 클라이언트 로직
+  const state = await fetchLatestState(roomId);
+  if (!state) return 'late';
+  if (state.phase === 'playing' && !state.bell_winner) {
+    await updateGameState(roomId, {
+      ...state,
+      phase: 'bell_resolving',
+      bell_winner: playerId,
+      bell_window_closes_at: state.options?.secondPlace ? Date.now() + 1500 : null,
+    });
+    return 'first';
+  }
+  if (
+    state.phase === 'bell_resolving' &&
+    state.options?.secondPlace &&
+    !state.second_bell_winner &&
+    state.bell_winner !== playerId &&
+    state.bell_window_closes_at &&
+    Date.now() < state.bell_window_closes_at
+  ) {
+    await updateGameState(roomId, { ...state, second_bell_winner: playerId });
+    return 'second';
+  }
+  return 'late';
+}
+
+export async function halligalliResolveBell(roomId) {
+  const state = JSON.parse(JSON.stringify(await fetchLatestState(roomId)));
+  if (!state || state.phase !== 'bell_resolving') return;
+
+  const correct = checkBellCondition(state.top_cards);
+  const actualWinner =
+    state.options?.secondPlace && state.second_bell_winner
+      ? state.second_bell_winner
+      : state.bell_winner;
+
+  let newState = correct
+    ? halliCollect(state, actualWinner)
+    : penalizeWrongBell(state, state.bell_winner);
+
+  newState.bell_correct = correct;
+  newState.bell_winner = null;
+  newState.second_bell_winner = null;
+  newState.bell_window_closes_at = null;
+  newState.last_flip_at = null;
+
+  const active = newState.turn_order.filter((id) => !newState.eliminated.includes(id));
+  if (active.length <= 1) {
+    newState.phase = 'ended';
+    newState.winner_id = active[0] ?? null;
+  } else {
+    newState.phase = 'playing';
+    // 다음 활성 플레이어부터 시작
+    const prevIdx = state.turn_order.indexOf(state.bell_winner ?? state.turn_order[state.turn_index]);
+    newState.turn_index = halliAdvanceTurn(newState, prevIdx);
+  }
+
+  await updateGameState(roomId, newState);
+}
+
+export async function halligalliDiscardTopCards(roomId) {
+  const state = await fetchLatestState(roomId);
+  if (!state || state.phase !== 'playing') return;
+  if (!state.last_flip_at || Date.now() - state.last_flip_at < 10000) return;
+  const newState = halliDiscard(state);
+  newState.last_flip_at = null;
+  await updateGameState(roomId, newState);
+}

@@ -21,11 +21,13 @@ import {
   cobraPeekCard, cobraDrawFromDeck, cobraDiscardDrawn, cobraSwapWithHand, cobraMatchAndDiscard,
   cobraTakeFromDiscard, cobraSeonjeomInterrupt, cobraResolveSpecialPeek, cobraResolveSpecialSwap,
   cobraSkipSpecialAbility, cobraCallCobra,
+  halligalliFlipCard, halligalliRingBell, halligalliResolveBell, halligalliDiscardTopCards,
 } from '../../services/supabaseTyping';
 import TypingGamePlay from './TypingGamePlay';
 import BlokusPlay from '../BlokusPlay';
 import TurneyKiaPlay from '../TurneyKiaPlay';
 import CobraGamePlay from '../CobraGamePlay';
+import HalliGalliPlay from '../HalliGalliPlay';
 import menuData from '../../data/menuDatabase.json';
 import './TypingGame.css';
 
@@ -36,6 +38,7 @@ const GAMES = [
   { id: 'turneyia',  icon: '🏆', title: '터이네키아',      desc: '아키네이터를 거꾸로!',  active: true,  color: '#f7971e' },
   { id: 'cobra',     icon: '🐍', title: '코브라 게임',     desc: '카드 게임 대결',        active: true,  color: '#43e97b' },
   { id: 'blokus',    icon: '🟦', title: '블로커스',        desc: '전략 타일 배치 대결',   active: true,  color: '#3b82f6' },
+  { id: 'halligalli', icon: '🔔', title: '할리갈리',       desc: '과일 5개면 벨!',        active: true,  color: '#d97706' },
   { id: 'math-odd',  icon: '➕', title: '산수홀짝',        desc: '홀수? 짝수?',          active: false, color: '#f7971e' },
   { id: 'gugu',      icon: '✖️', title: '구구단을 하자',   desc: '빈칸을 채워라',        active: false, color: '#a18cd1' },
   { id: 'counting',  icon: '🔢', title: '순서대로',        desc: '숫자 순서 클릭',       active: false, color: '#43e97b' },
@@ -297,7 +300,7 @@ export default function TypingGame() {
   if (view === 'waiting' && gameState) {
     const sel = gameState.selected_game;
     const phase = gameState.phase;
-    const isActive = phase === 'playing' || phase === 'ended' || phase === 'viewing' || phase === 'hinting' || phase === 'reveal' || phase === 'cobra';
+    const isActive = phase === 'playing' || phase === 'ended' || phase === 'viewing' || phase === 'hinting' || phase === 'reveal' || phase === 'cobra' || phase === 'bell_resolving';
 
     if (isActive) {
       const handleResetToWaiting = async () => {
@@ -361,6 +364,25 @@ export default function TypingGame() {
               skipSpecialAbility: cobraSkipSpecialAbility,
               callCobra: cobraCallCobra,
               resetGame: currentPlayer?.is_host ? handleResetToWaiting : () => Promise.resolve(),
+            }}
+          />
+        );
+      }
+
+      if (sel === 'halligalli') {
+        return (
+          <HalliGalliPlay
+            gameState={gameState}
+            currentPlayer={currentPlayer}
+            players={players}
+            roomId={currentRoom.id}
+            onResetGame={currentPlayer?.is_host ? handleResetToWaiting : null}
+            onLeave={handleLeave}
+            actions={{
+              flipCard: halligalliFlipCard,
+              ringBell: halligalliRingBell,
+              resolveBell: halligalliResolveBell,
+              discardTopCards: halligalliDiscardTopCards,
             }}
           />
         );
@@ -699,6 +721,24 @@ export default function TypingGame() {
                     </div>
                   </div>
                 </>)}
+
+                {/* 할리갈리 옵션 */}
+                {selectedGame.id === 'halligalli' && (
+                  <div className="tg-option-row">
+                    <div className="tg-option-info">
+                      <div className="tg-option-name">⚡ 2등 역전</div>
+                      <div className="tg-option-desc">
+                        {gameOptions.secondPlace ? '2등이 카드 전부 가져감' : '1등이 카드 가져감 (기본)'}
+                      </div>
+                    </div>
+                    <button
+                      className={`tg-toggle ${gameOptions.secondPlace ? 'tg-toggle-on' : ''}`}
+                      onClick={() => setGameOptions(o => ({ ...o, secondPlace: !o.secondPlace }))}
+                    >
+                      {gameOptions.secondPlace ? 'ON' : 'OFF'}
+                    </button>
+                  </div>
+                )}
 
                 {/* 코브라 옵션 */}
                 {selectedGame.id === 'cobra' && (
