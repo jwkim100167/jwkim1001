@@ -26,6 +26,10 @@ export default function Admin() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('profile');
 
+  // 회원 목록 탭 상태
+  const [members, setMembers] = useState([]);
+  const [membersLoading, setMembersLoading] = useState(false);
+
   // 비밀번호 변경 상태
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -117,6 +121,9 @@ export default function Admin() {
     }
     if (activeTab === 'taste') {
       loadTasteQuestions();
+    }
+    if (activeTab === 'members') {
+      loadMembers();
     }
   }, [activeTab]);
 
@@ -412,6 +419,21 @@ export default function Admin() {
     }
   };
 
+  const loadMembers = async () => {
+    setMembersLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('userTable')
+        .select('id, loginId, userName, createdAt')
+        .order('createdAt', { ascending: false });
+      if (!error) setMembers(data || []);
+    } catch (e) {
+      console.error('회원 목록 로드 실패:', e);
+    } finally {
+      setMembersLoading(false);
+    }
+  };
+
   const handleLogout = () => {
     logout();
     navigate('/');
@@ -496,12 +518,6 @@ export default function Admin() {
             서비스
           </button>
           <button
-            className={`tab-btn ${activeTab === 'lotto' ? 'active' : ''}`}
-            onClick={() => navigate('/lottoadmin')}
-          >
-            로또
-          </button>
-          <button
             className={`tab-btn ${activeTab === 'food' ? 'active' : ''}`}
             onClick={() => setActiveTab('food')}
           >
@@ -513,24 +529,18 @@ export default function Admin() {
           >
             취향 알기
           </button>
+          <button
+            className={`tab-btn ${activeTab === 'members' ? 'active' : ''}`}
+            onClick={() => setActiveTab('members')}
+          >
+            👥 회원
+          </button>
         </div>
 
         <div className="tab-content">
           {/* 기본정보 탭 */}
           {activeTab === 'profile' && (
             <div className="profile-tab">
-              <div className="user-info-card">
-                <h2>관리자 정보</h2>
-                <div className="info-item">
-                  <span className="label">아이디:</span>
-                  <span className="value">{user.loginId}</span>
-                </div>
-                <div className="info-item">
-                  <span className="label">가입일:</span>
-                  <span className="value">{new Date(user.createdAt).toLocaleDateString('ko-KR')}</span>
-                </div>
-              </div>
-
               <div className="password-change-card">
                 <h2>비밀번호 변경</h2>
                 <form onSubmit={handlePasswordChange}>
@@ -580,6 +590,11 @@ export default function Admin() {
               <h2>🔧 서비스 관리</h2>
               <p className="description">서비스를 켜거나 끄면 홈 화면에 즉시 반영됩니다.</p>
               {serviceMsg && <div className="service-save-msg">{serviceMsg}</div>}
+              <div className="external-admin-links">
+                <button className="ext-link-btn" onClick={() => navigate('/lottoadmin')}>
+                  🎰 로또 관리 페이지 →
+                </button>
+              </div>
               <div className="service-toggle-list">
                 {(serviceOrder.length > 0 ? serviceOrder : SERVICE_LIST.map(s => s.id)).map((serviceId, index) => {
                   const svc = SERVICE_LIST.find(s => s.id === serviceId);
@@ -622,7 +637,7 @@ export default function Admin() {
               <div className="food-admin-card">
                 <h2>✏️ 오늘 뭐먹지 - 카테고리 관리</h2>
                 <p className="description">
-                  restaurantCategoryTable에 등록된 레스토랑의 카테고리를 수정합니다.
+                  등록된 식당의 분류 정보를 수정합니다.
                 </p>
 
                 {loadingRestaurants ? (
@@ -630,7 +645,7 @@ export default function Admin() {
                 ) : (
                   <div className="form-section">
                     <div className="form-group">
-                      <label>MOMOK-멤버십 노출 필터 (bobYN)</label>
+                      <label>멤버십 노출 필터</label>
                       <div className="radio-group">
                         <label>
                           <input type="radio" name="filterBobYN" value="all"
@@ -733,7 +748,7 @@ export default function Admin() {
                           </div>
                         </div>
                         <div className="form-group">
-                          <label>MOMOK-멤버십 노출 (bobYN)</label>
+                          <label>멤버십 노출</label>
                           <div className="radio-group">
                             <label>
                               <input type="radio" name="bobYN" value="true"
@@ -913,6 +928,43 @@ export default function Admin() {
                   </>
                 )}
               </div>
+            </div>
+          )}
+          {/* 회원 목록 탭 */}
+          {activeTab === 'members' && (
+            <div className="members-tab">
+              <h2>👥 회원 목록</h2>
+              <p className="description">가입된 모든 회원을 확인합니다.</p>
+              <button className="members-refresh-btn" onClick={loadMembers}>
+                🔄 새로고침
+              </button>
+              {membersLoading ? (
+                <div className="loading">로딩 중...</div>
+              ) : (
+                <>
+                  <div className="members-count">총 {members.length}명</div>
+                  <table className="members-table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>아이디</th>
+                        <th>이름</th>
+                        <th>가입일</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {members.map((m, i) => (
+                        <tr key={m.id}>
+                          <td>{i + 1}</td>
+                          <td>{m.loginId}</td>
+                          <td>{m.userName || '-'}</td>
+                          <td>{new Date(m.createdAt).toLocaleDateString('ko-KR')}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
+              )}
             </div>
           )}
         </div>
