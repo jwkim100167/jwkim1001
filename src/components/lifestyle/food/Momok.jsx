@@ -12,13 +12,11 @@ const Momok = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({
-    mealTime: null,      // 점심/저녁 (데이터 없음)
-    mealKind: null,      // 식사 종류 (데이터 없음)
-    location: null,      // 위치 (대분류)
-    location2: null,     // 위치 (소분류)
-    drinkYN: null,       // 주류가능 여부
-    category: null,      // 카테고리
-    signature: null      // 대표메뉴
+    location: null,
+    location2: null,
+    drinkYN: null,
+    category: null,
+    signature: null
   });
   const [result, setResult] = useState(null);
   const [candidateRestaurants, setCandidateRestaurants] = useState([]); // 3개 이하일 때 선택지
@@ -58,12 +56,6 @@ const Momok = () => {
     if (answers.location2 && answers.location2 !== '상관없음') {
       filtered = filtered.filter(r => r.location2 === answers.location2);
     }
-    if (answers.mealTime && answers.mealTime !== '상관없음') {
-      filtered = filtered.filter(r => r.mealTime === answers.mealTime);
-    }
-    if (answers.mealKind && answers.mealKind !== '상관없음') {
-      filtered = filtered.filter(r => r.mealKind === answers.mealKind);
-    }
     if (answers.drinkYN && answers.drinkYN !== '상관없음') {
       const drinkValue = answers.drinkYN === '예';
       filtered = filtered.filter(r => r.drinkYN === drinkValue);
@@ -91,31 +83,6 @@ const Momok = () => {
     return [...getUniqueValues(data, 'location2'), '상관없음'];
   };
 
-  const getMealTimeOptions = () => {
-    let data = [...restaurantData];
-    if (answers.location && answers.location !== '상관없음') {
-      data = data.filter(r => r.location === answers.location);
-    }
-    if (answers.location2 && answers.location2 !== '상관없음') {
-      data = data.filter(r => r.location2 === answers.location2);
-    }
-    return getUniqueValues(data, 'mealTime');
-  };
-
-  const getMealKindOptions = () => {
-    let data = [...restaurantData];
-    if (answers.location && answers.location !== '상관없음') {
-      data = data.filter(r => r.location === answers.location);
-    }
-    if (answers.location2 && answers.location2 !== '상관없음') {
-      data = data.filter(r => r.location2 === answers.location2);
-    }
-    if (answers.mealTime && answers.mealTime !== '상관없음') {
-      data = data.filter(r => r.mealTime === answers.mealTime);
-    }
-    return [...getUniqueValues(data, 'mealKind'), '상관없음'];
-  };
-
   const getCategoryOptions = () => {
     let data = [...restaurantData];
     if (answers.location && answers.location !== '상관없음') {
@@ -123,12 +90,6 @@ const Momok = () => {
     }
     if (answers.location2 && answers.location2 !== '상관없음') {
       data = data.filter(r => r.location2 === answers.location2);
-    }
-    if (answers.mealTime && answers.mealTime !== '상관없음') {
-      data = data.filter(r => r.mealTime === answers.mealTime);
-    }
-    if (answers.mealKind && answers.mealKind !== '상관없음') {
-      data = data.filter(r => r.mealKind === answers.mealKind);
     }
     if (answers.drinkYN && answers.drinkYN !== '상관없음') {
       const drinkValue = answers.drinkYN === '예';
@@ -145,21 +106,12 @@ const Momok = () => {
     if (answers.location2 && answers.location2 !== '상관없음') {
       data = data.filter(r => r.location2 === answers.location2);
     }
-    if (answers.mealTime && answers.mealTime !== '상관없음') {
-      data = data.filter(r => r.mealTime === answers.mealTime);
-    }
-    if (answers.mealKind && answers.mealKind !== '상관없음') {
-      data = data.filter(r => r.mealKind === answers.mealKind);
-    }
 
-    // drinkYN 값의 고유값 확인
     const uniqueDrinkValues = [...new Set(data.map(r => r.drinkYN))];
     const options = [];
-
     if (uniqueDrinkValues.includes(true)) options.push('예');
     if (uniqueDrinkValues.includes(false)) options.push('아니오');
     options.push('상관없음');
-
     return options;
   };
 
@@ -170,12 +122,6 @@ const Momok = () => {
     }
     if (answers.location2 && answers.location2 !== '상관없음') {
       data = data.filter(r => r.location2 === answers.location2);
-    }
-    if (answers.mealTime && answers.mealTime !== '상관없음') {
-      data = data.filter(r => r.mealTime === answers.mealTime);
-    }
-    if (answers.mealKind && answers.mealKind !== '상관없음') {
-      data = data.filter(r => r.mealKind === answers.mealKind);
     }
     if (answers.drinkYN && answers.drinkYN !== '상관없음') {
       const drinkValue = answers.drinkYN === '예';
@@ -195,22 +141,10 @@ const Momok = () => {
       getOptions: getLocationOptions
     },
     {
-      id: 'mealTime',
-      question: '점심인가요, 저녁인가요?',
-      icon: '🍽️',
-      getOptions: getMealTimeOptions
-    },
-    {
       id: 'location2',
       question: '더 구체적인 위치는?',
       icon: '🗺️',
       getOptions: getLocation2Options
-    },
-    {
-      id: 'mealKind',
-      question: '어떤 종류의 식사를 원하시나요?',
-      icon: '🍴',
-      getOptions: getMealKindOptions
     },
     {
       id: 'drinkYN',
@@ -258,12 +192,6 @@ const Momok = () => {
     }
     if (newAnswers.location2 && newAnswers.location2 !== '상관없음') {
       filtered = filtered.filter(r => r.location2 === newAnswers.location2);
-    }
-    if (newAnswers.mealTime && newAnswers.mealTime !== '상관없음') {
-      filtered = filtered.filter(r => r.mealTime === newAnswers.mealTime);
-    }
-    if (newAnswers.mealKind && newAnswers.mealKind !== '상관없음') {
-      filtered = filtered.filter(r => r.mealKind === newAnswers.mealKind);
     }
     if (newAnswers.drinkYN && newAnswers.drinkYN !== '상관없음') {
       const drinkValue = newAnswers.drinkYN === '예';
@@ -349,16 +277,6 @@ const Momok = () => {
       );
     }
 
-    // 점심/저녁 필터링
-    if (userAnswers.mealTime && userAnswers.mealTime !== '상관없음') {
-      filteredRestaurants = filteredRestaurants.filter(r => r.mealTime === userAnswers.mealTime);
-    }
-
-    // 식사 종류 필터링
-    if (userAnswers.mealKind && userAnswers.mealKind !== '상관없음') {
-      filteredRestaurants = filteredRestaurants.filter(r => r.mealKind === userAnswers.mealKind);
-    }
-
     // 주류가능 필터링
     if (userAnswers.drinkYN && userAnswers.drinkYN !== '상관없음') {
       const drinkValue = userAnswers.drinkYN === '예';
@@ -438,8 +356,6 @@ const Momok = () => {
   const handleReset = () => {
     setStep(0);
     setAnswers({
-      mealTime: null,
-      mealKind: null,
       location: null,
       location2: null,
       drinkYN: null,
@@ -515,7 +431,7 @@ const Momok = () => {
               {step + 1} / {questions.length}
             </div>
 
-            {currentFilteredCount > 0 && answers.mealKind && (
+            {currentFilteredCount > 0 && answers.location && (
               <div className="filtered-count">
                 선택 조건으로 검색된 레스토랑 : {currentFilteredCount}개
               </div>
