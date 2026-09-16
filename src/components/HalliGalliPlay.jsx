@@ -24,11 +24,14 @@ export default function HalliGalliPlay({
   const [discardOverlay, setDiscardOverlay] = useState(false);
   const [windowPct, setWindowPct] = useState(100);
   const [timeLeft, setTimeLeft] = useState(null);
+  const [autoFlipLeft, setAutoFlipLeft] = useState(null);
   const [busy, setBusy] = useState(false);
 
   const resolveCalledRef = useRef(false);
   const overlayTimerRef = useRef(null);
   const windowTimerRef = useRef(null);
+  const autoFlipCalledRef = useRef(false);
+  const autoFlipFiredRef = useRef(false);
 
   const myId = currentPlayer?.id;
   const isHost = currentPlayer?.is_host;
@@ -36,14 +39,49 @@ export default function HalliGalliPlay({
   const {
     phase, turn_order, turn_index, top_cards, card_counts,
     eliminated, bell_winner, second_bell_winner, bell_window_closes_at,
-    bell_correct, options, winner_id, last_flip_at,
+    bell_correct, options, winner_id, last_flip_at, turn_started_at,
+    last_bell_winner_id, last_bell_second_winner_id,
   } = gameState;
+
+  const autoFlipSec = options?.autoFlipSeconds ?? 5;
 
   const currentTurnId = turn_order?.[turn_index];
   const isMyTurn = currentTurnId === myId;
   const isBellResolving = phase === 'bell_resolving';
   const fruitCounts = getFruitCounts(top_cards || {});
   const bellValid = checkBellCondition(top_cards || {});
+
+  // Bug 1 fix: 내 차례인데 덱이 비어 flip 버튼이 비활성 → 자동 턴 패스
+  useEffect(() => {
+    if (phase !== 'playing' || !isMyTurn) { autoFlipCalledRef.current = false; return; }
+    const deckEmpty = (gameState.decks?.[myId]?.length ?? 0) === 0;
+    if (deckEmpty && !autoFlipCalledRef.current) {
+      autoFlipCalledRef.current = true;
+      doFlipCard(roomId, myId);
+    }
+  }, [phase, isMyTurn, gameState.decks]);
+
+  // 자동 뒤집기 카운트다운
+  useEffect(() => {
+    if (!options?.autoFlip || phase !== 'playing' || !isMyTurn || !turn_started_at) {
+      setAutoFlipLeft(null);
+      autoFlipFiredRef.current = false;
+      return;
+    }
+    const totalMs = autoFlipSec * 1000;
+    const tick = () => {
+      const elapsed = Date.now() - turn_started_at;
+      const left = Math.max(0, totalMs - elapsed);
+      setAutoFlipLeft(Math.ceil(left / 1000));
+      if (left === 0 && !autoFlipFiredRef.current && !busy) {
+        autoFlipFiredRef.current = true;
+        doFlipCard(roomId, myId);
+      }
+    };
+    tick();
+    const id = setInterval(tick, 200);
+    return () => clearInterval(id);
+  }, [options?.autoFlip, phase, isMyTurn, turn_started_at]);
 
   // 10초 카운트다운 타이머
   useEffect(() => {
@@ -112,16 +150,16 @@ export default function HalliGalliPlay({
     return () => clearInterval(id);
   }, [phase, bell_window_closes_at]);
 
-  // bell_correct 변경 시 오버레이 표시
+  // bell_correct 변경 시 오버레이 표시 (resolve 후 last_bell_winner_id 사용)
   useEffect(() => {
     if (bell_correct === null || bell_correct === undefined) return;
     if (phase === 'bell_resolving') return; // 아직 결과 처리 중
-    const firstName = players.find((p) => p.id === bell_winner)?.player_name ?? '?';
-    const secondName = players.find((p) => p.id === second_bell_winner)?.player_name;
+    const firstName = players.find((p) => p.id === last_bell_winner_id)?.player_name ?? '?';
+    const secondName = players.find((p) => p.id === last_bell_second_winner_id)?.player_name;
     setOverlay({ correct: bell_correct, firstName, secondName, secondPlace: options?.secondPlace });
     clearTimeout(overlayTimerRef.current);
     overlayTimerRef.current = setTimeout(() => setOverlay(null), 2500);
-  }, [bell_correct, phase]);
+  }, [last_bell_winner_id, bell_correct, phase]);
 
   const handleBell = async () => {
     if (busy || isBellResolving) return;
@@ -264,14 +302,24 @@ export default function HalliGalliPlay({
                   {p?.player_name ?? id}
                 </div>
 
-                <div className="hg-top-card" style={{ background: topCard ? '#3d2000' : undefined }}>
+                <div
+                  className={`hg-top-card${topCard?.fruit === 'joker' ? ' hg-top-card-joker' : ''}`}
+                  style={{ background: topCard && topCard.fruit !== 'joker' ? '#3d2000' : undefined }}
+                >
                   {topCard ? (
-                    <>
-                      <span>{FRUIT_EMOJI[topCard.fruit]}</span>
-                      <span className="hg-top-card-count">
-                        {'●'.repeat(topCard.count)}
-                      </span>
-                    </>
+                    topCard.fruit === 'joker' ? (
+                      <>
+                        <span>🃏</span>
+                        <span className="hg-top-card-count" style={{ color: '#a78bfa' }}>ALL</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>{FRUIT_EMOJI[topCard.fruit]}</span>
+                        <span className="hg-top-card-count">
+                          {'●'.repeat(topCard.count)}
+                        </span>
+                      </>
+                    )
                   ) : (
                     <span style={{ opacity: 0.3, fontSize: '1rem' }}>—</span>
                   )}
@@ -308,6 +356,26 @@ export default function HalliGalliPlay({
           </div>
         )}
 
+        {/* 내 차례 예고 배너 */}
+        {isMyTurn && phase === 'playing' && !isBellResolving && (
+          <div className="hg-turn-banner">
+            ⚡ 내 차례!
+            {options?.autoFlip && autoFlipLeft !== null && (
+              <span className="hg-turn-banner-timer"> ({autoFlipLeft}초 후 자동)</span>
+            )}
+          </div>
+        )}
+
+        {/* 자동 뒤집기 진행 바 */}
+        {options?.autoFlip && isMyTurn && phase === 'playing' && autoFlipLeft !== null && (
+          <div className="hg-autofill-bar">
+            <div
+              className="hg-autofill-fill"
+              style={{ width: `${(autoFlipLeft / autoFlipSec) * 100}%` }}
+            />
+          </div>
+        )}
+
         {/* 액션 버튼 */}
         <div className="hg-action-row">
           <button
@@ -318,7 +386,7 @@ export default function HalliGalliPlay({
             🔔 <span className="hg-bell-btn-text">벨!</span>
           </button>
           <button
-            className="hg-flip-btn"
+            className={`hg-flip-btn${isMyTurn && !isBellResolving ? ' hg-flip-btn-active' : ''}`}
             onClick={handleFlip}
             disabled={!canFlip || busy}
           >

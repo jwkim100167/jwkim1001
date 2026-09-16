@@ -723,7 +723,7 @@ export default function TypingGame() {
                 </>)}
 
                 {/* 할리갈리 옵션 */}
-                {selectedGame.id === 'halligalli' && (
+                {selectedGame.id === 'halligalli' && (<>
                   <div className="tg-option-row">
                     <div className="tg-option-info">
                       <div className="tg-option-name">⚡ 2등 역전</div>
@@ -738,7 +738,43 @@ export default function TypingGame() {
                       {gameOptions.secondPlace ? 'ON' : 'OFF'}
                     </button>
                   </div>
-                )}
+                  <div className="tg-option-row">
+                    <div className="tg-option-info">
+                      <div className="tg-option-name">🔄 자동 뒤집기</div>
+                      <div className="tg-option-desc">
+                        {gameOptions.autoFlip
+                          ? `${gameOptions.autoFlipSeconds ?? 5}초마다 자동으로 카드를 뒤집음`
+                          : '직접 버튼을 눌러 카드를 뒤집음 (기본)'}
+                      </div>
+                    </div>
+                    <button
+                      className={`tg-toggle ${gameOptions.autoFlip ? 'tg-toggle-on' : ''}`}
+                      onClick={() => setGameOptions(o => ({ ...o, autoFlip: !o.autoFlip }))}
+                    >
+                      {gameOptions.autoFlip ? 'ON' : 'OFF'}
+                    </button>
+                  </div>
+                  {gameOptions.autoFlip && (
+                    <div className="tg-option-row">
+                      <div className="tg-option-info">
+                        <div className="tg-option-name">⏱ 자동 뒤집기 속도</div>
+                        <div className="tg-option-desc">차례당 뒤집기 대기 시간</div>
+                      </div>
+                      <div style={{ display: 'flex', gap: 6 }}>
+                        {[3, 5, 8].map(sec => (
+                          <button
+                            key={sec}
+                            className={`tg-toggle ${(gameOptions.autoFlipSeconds ?? 5) === sec ? 'tg-toggle-on' : ''}`}
+                            style={{ minWidth: 40 }}
+                            onClick={() => setGameOptions(o => ({ ...o, autoFlipSeconds: sec }))}
+                          >
+                            {sec}s
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>)}
 
                 {/* 코브라 옵션 */}
                 {selectedGame.id === 'cobra' && (

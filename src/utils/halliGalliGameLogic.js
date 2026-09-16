@@ -1,6 +1,6 @@
 export const FRUITS = ['strawberry', 'banana', 'lime', 'plum'];
-export const FRUIT_EMOJI = { strawberry: '🍓', banana: '🍌', lime: '🍋', plum: '🍇' };
-export const FRUIT_LABEL = { strawberry: '딸기', banana: '바나나', lime: '라임', plum: '자두' };
+export const FRUIT_EMOJI = { strawberry: '🍓', banana: '🍌', lime: '🍋', plum: '🍇', joker: '🃏' };
+export const FRUIT_LABEL = { strawberry: '딸기', banana: '바나나', lime: '라임', plum: '자두', joker: '조커' };
 
 function shuffle(arr) {
   const a = [...arr];
@@ -15,7 +15,7 @@ function deepClone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-// 56장 덱 생성: 4종류 × [1×3, 2×3, 3×3, 4×2, 5×3]
+// 60장 덱 생성: 4종류 × [1×3, 2×3, 3×3, 4×2, 5×3] + 조커 4장
 export function buildDeck() {
   const distribution = [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 5, 5, 5];
   const deck = [];
@@ -24,6 +24,8 @@ export function buildDeck() {
       deck.push({ fruit, count });
     }
   }
+  // 조커 4장 (모든 과일에 +1 효과)
+  for (let i = 0; i < 4; i++) deck.push({ fruit: 'joker', count: 1 });
   return shuffle(deck);
 }
 
@@ -40,11 +42,16 @@ export function dealCards(playerIds) {
   return { decks, top_cards };
 }
 
-// 현재 공개된 카드에서 과일 합계 계산
+// 현재 공개된 카드에서 과일 합계 계산 (조커 = 모든 과일에 +1)
 export function getFruitCounts(topCards) {
   const counts = { strawberry: 0, banana: 0, lime: 0, plum: 0 };
   for (const card of Object.values(topCards)) {
-    if (card) counts[card.fruit] += card.count;
+    if (!card) continue;
+    if (card.fruit === 'joker') {
+      for (const fruit of FRUITS) counts[fruit] += 1;
+    } else {
+      counts[card.fruit] += card.count;
+    }
   }
   return counts;
 }
@@ -97,7 +104,7 @@ export function penalizeWrongBell(state, loserId) {
       s.decks[otherId].push(card);
     }
   }
-  for (const id of Object.keys(s.top_cards)) s.top_cards[id] = null;
+  // top_cards는 그대로 유지 (틀린 벨 후에도 공개 카드는 테이블에 남음)
   return checkEliminations(recalcCardCounts(s));
 }
 

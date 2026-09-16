@@ -377,6 +377,7 @@ export async function startUnifiedGame(roomId, selectedGame, players, options = 
       top_cards,
       turn_order: playerIds,
       turn_index: 0,
+      turn_started_at: Date.now(),
       last_flip_at: null,
       bell_winner: null,
       second_bell_winner: null,
@@ -384,7 +385,11 @@ export async function startUnifiedGame(roomId, selectedGame, players, options = 
       bell_correct: null,
       card_counts,
       eliminated: [],
-      options: { secondPlace: options.secondPlace ?? false },
+      options: {
+        secondPlace: options.secondPlace ?? false,
+        autoFlip: options.autoFlip ?? false,
+        autoFlipSeconds: options.autoFlipSeconds ?? 5,
+      },
     };
   } else if (selectedGame === 'cobra') {
     const cobraOptions = { specialCards: options.specialCards ?? true };
@@ -609,6 +614,7 @@ export async function halligalliFlipCard(roomId, playerId) {
   const next = halliAdvanceTurn(state, state.turn_index);
   state.turn_index = next;
   state.last_flip_at = Date.now();
+  state.turn_started_at = Date.now();
   await updateGameState(roomId, state);
 }
 
@@ -663,10 +669,13 @@ export async function halligalliResolveBell(roomId) {
     : penalizeWrongBell(state, state.bell_winner);
 
   newState.bell_correct = correct;
+  newState.last_bell_winner_id = state.bell_winner;
+  newState.last_bell_second_winner_id = state.second_bell_winner ?? null;
   newState.bell_winner = null;
   newState.second_bell_winner = null;
   newState.bell_window_closes_at = null;
   newState.last_flip_at = null;
+  newState.turn_started_at = Date.now();
 
   const active = newState.turn_order.filter((id) => !newState.eliminated.includes(id));
   if (active.length <= 1) {
@@ -688,5 +697,6 @@ export async function halligalliDiscardTopCards(roomId) {
   if (!state.last_flip_at || Date.now() - state.last_flip_at < 10000) return;
   const newState = halliDiscard(state);
   newState.last_flip_at = null;
+  newState.turn_started_at = Date.now();
   await updateGameState(roomId, newState);
 }

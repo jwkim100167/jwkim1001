@@ -287,6 +287,62 @@
   transition: width 0.1s linear;
 }
 
+/* ── 내 차례 예고 배너 ── */
+.hg-turn-banner {
+  background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(52,211,153,0.08));
+  border: 1px solid rgba(52,211,153,0.4);
+  border-radius: 10px;
+  padding: 8px 14px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #34d399;
+  animation: hg-turn-in 0.25s ease;
+}
+.hg-turn-banner-timer {
+  font-weight: 600;
+  opacity: 0.8;
+}
+@keyframes hg-turn-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── 자동 뒤집기 진행 바 ── */
+.hg-autofill-bar {
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: -4px;
+}
+.hg-autofill-fill {
+  height: 100%;
+  background: #34d399;
+  border-radius: 2px;
+  transition: width 0.2s linear;
+}
+
+/* ── 조커 카드 ── */
+.hg-top-card-joker {
+  background: linear-gradient(135deg, #312e81, #4c1d95) !important;
+  border-color: #a78bfa !important;
+  animation: hg-joker-glow 1s ease infinite alternate;
+}
+@keyframes hg-joker-glow {
+  from { box-shadow: 0 0 6px rgba(167,139,250,0.4); }
+  to   { box-shadow: 0 0 16px rgba(167,139,250,0.8); }
+}
+
+/* ── 내 차례 flip 버튼 pulse ── */
+.hg-flip-btn-active {
+  animation: hg-flip-pulse 1.2s ease infinite alternate;
+}
+@keyframes hg-flip-pulse {
+  from { box-shadow: 0 4px 20px rgba(5,150,105,0.35); }
+  to   { box-shadow: 0 4px 28px rgba(52,211,153,0.7); }
+}
+
 /* ── 결과 화면 ── */
 .hg-result-page {
   min-height: 100vh;
