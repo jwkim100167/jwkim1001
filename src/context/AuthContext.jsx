@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
-import { getCurrentUser, login as loginService, logout as logoutService, extendSession } from '../services/authService';
+import { getCurrentUser, login as loginService, logout as logoutService, extendSession } from '../services/core/authService';
 
 const SESSION_MS = 30 * 60 * 1000;   // 30분
 const WARN_BEFORE_MS = 60 * 1000;    // 만료 1분 전 경고

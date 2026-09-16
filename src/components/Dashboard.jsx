@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import ExchangeRate from './ExchangeRate';
 import FearGreedIndex from './FearGreedIndex';
 import VixIndex from './VixIndex';
-import TrafficLight from './TrafficLight';
-import NotificationPopup from './NotificationPopup';
-import { checkAllRangeChanges } from '../utils/notificationUtils';
+import TrafficLight from './common/TrafficLight';
+import NotificationPopup from './common/NotificationPopup';
+import { checkAllRangeChanges } from '../utils/common/notificationUtils';
 import './Dashboard.css';
 
 const Dashboard = () => {

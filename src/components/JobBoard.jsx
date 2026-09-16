@@ -6,10 +6,10 @@ import {
   loadJobData, 
   shouldUpdateJobData,
   loadUserPreferences 
-} from '../utils/jobAPI';
+} from '../utils/common/jobAPI';
 import JobFilters from './JobFilters';
 import JobSettings from './JobSettings';
-import NotificationPopup from './NotificationPopup';
+import NotificationPopup from './common/NotificationPopup';
 import './JobBoard.css';
 
 const JobBoard = () => {

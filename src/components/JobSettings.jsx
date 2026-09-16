@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadUserPreferences, updateUserPreferences } from '../utils/jobAPI';
+import { loadUserPreferences, updateUserPreferences } from '../utils/common/jobAPI';
 import './JobSettings.css';
 
 const JobSettings = ({ isOpen, onClose, onSave }) => {

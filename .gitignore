@@ -44,3 +44,10 @@ list-*.js
 get-*.js
 create-*.js
 rebuild-*.js
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

@@ -1,0 +1,5 @@
+Always explain the reason before changing code.
+
+Keep changes minimal and avoid unnecessary refactors.
+
+If unsure, ask a clarifying question before editing.

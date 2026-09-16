@@ -7,36 +7,94 @@ import { logger } from "../../logger";
 interface SectorStat {
   sector_id: string;
   mention_count: number;
-  rank: number;
+  community_count: number;
   sectors: { sector_name: string } | { sector_name: string }[] | null;
 }
 
-function getThisWeekStart(): string {
+interface EnrichedStat {
+  sectorId: string;
+  name: string;
+  thisWeek: number;
+  lastWeek: number;
+  delta: number;
+  rate: number; // %
+}
+
+// 임시 섹터 → 대표 ETF 매핑 (추후 DB/프로세스로 교체)
+const SECTOR_ETF: Record<string, string> = {
+  "반도체":     "KODEX 반도체",
+  "2차전지":    "KODEX 2차전지산업",
+  "바이오":     "KODEX 바이오",
+  "IT":         "KODEX IT",
+  "소프트웨어": "KODEX 소프트웨어",
+  "자동차":     "KODEX 자동차",
+  "금융":       "KODEX 은행",
+  "에너지":     "KODEX 에너지화학",
+  "철강":       "KODEX 철강",
+  "건설":       "KODEX 건설",
+  "유통":       "KODEX 유통",
+  "음식료":     "KODEX 음식료&농업",
+  "화학":       "KODEX 에너지화학",
+  "헬스케어":   "KODEX 헬스케어",
+  "게임":       "KODEX 게임산업",
+  "미디어":     "KODEX 미디어&엔터테인먼트",
+  "통신":       "KODEX 통신",
+  "조선":       "KODEX 조선",
+  "항공":       "TIGER 항공사",
+  "증권":       "KODEX 증권",
+  "보험":       "KODEX 보험",
+  "기계":       "KODEX 기계장비",
+  "유틸리티":   "TIGER 유틸리티",
+  "부동산":     "TIGER 부동산리츠부동산인프라",
+};
+
+function getWeekStart(offsetWeeks = 0): string {
   const now = new Date();
-  const day = now.getDay(); // 0=일, 1=월
-  const diff = day === 0 ? -6 : 1 - day; // ISO 주 시작: 월요일
+  const day = now.getUTCDay();
+  const diff = day === 0 ? -6 : 1 - day;
   const monday = new Date(now);
-  monday.setDate(now.getDate() + diff);
+  monday.setUTCDate(now.getUTCDate() + diff + offsetWeeks * 7);
   return monday.toISOString().slice(0, 10);
 }
 
-function buildMessage(stats: SectorStat[], weekStart: string): string {
+function getSectorName(stat: SectorStat): string {
+  const s = stat.sectors;
+  return (Array.isArray(s) ? s[0]?.sector_name : s?.sector_name) ?? stat.sector_id;
+}
+
+function isEtc(name: string): boolean {
+  return name.includes("기타") || name.toLowerCase() === "etc" || name.includes("나스닥");
+}
+
+function top3Lines(
+  items: EnrichedStat[],
+  key: keyof Pick<EnrichedStat, "thisWeek" | "delta" | "rate">,
+  formatter: (v: number) => string
+): string[] {
+  const sorted = [...items].sort((a, b) => b[key] - a[key]).slice(0, 3);
+  if (sorted.length === 0) return ["  데이터 없음"];
+  return sorted.map((s, i) => `  ${i + 1}위  <b>${s.name}</b>  ${formatter(s[key])}`);
+}
+
+function buildMessage(enriched: EnrichedStat[], weekStart: string): string {
+  const top1 = [...enriched].sort((a, b) => b.thisWeek - a.thisWeek)[0];
+  const etfName = top1 ? (SECTOR_ETF[top1.name] ?? "—") : "—";
+
   const lines: string[] = [
-    `<b>이번 주 가장 뜨거운 섹터 TOP 3</b>`,
-    `(${weekStart} 기준)`,
+    `<b>📊 주간 섹터 리포트</b>  (${weekStart} 기준)`,
     ``,
+    `<b>🔢 언급량 TOP 3</b>`,
+    ...top3Lines(enriched, "thisWeek", (v) => `${v.toLocaleString()}건`),
+    ``,
+    `<b>📈 언급증가량 TOP 3</b>`,
+    ...top3Lines(enriched, "delta", (v) => `${v > 0 ? "+" : ""}${v.toLocaleString()}건`),
+    ``,
+    `<b>🚀 언급증가율 TOP 3</b>`,
+    ...top3Lines(enriched, "rate", (v) => `${v > 0 ? "+" : ""}${v.toFixed(1)}%`),
+    ``,
+    `<b>🏆 이번 주 관심 ETF</b>  <i>(임시)</i>`,
+    `  ${top1?.name ?? "—"} 1위 → <b>${etfName}</b>`,
   ];
-
-  const medals = ["1", "2", "3"];
-  stats.forEach((stat, i) => {
-    const s = stat.sectors;
-    const name = (Array.isArray(s) ? s[0]?.sector_name : s?.sector_name) ?? stat.sector_id;
-    lines.push(`${medals[i]}위  <b>${name}</b>  ${stat.mention_count}건`);
-  });
-
-  if (stats.length === 0) {
-    lines.push("이번 주 집계 데이터가 아직 없습니다.");
-  }
 
   return lines.join("\n");
 }
@@ -52,21 +110,48 @@ export const weeklyHeatReportJob: ScheduleJob = {
       config.supabase.serviceKey
     );
 
-    const weekStart = getThisWeekStart();
+    const thisWeekStart = getWeekStart(0);
+    const lastWeekStart = getWeekStart(-1);
 
-    const { data, error } = await supabase
-      .from("weekly_sector_stats")
-      .select("sector_id, mention_count, rank, sectors(sector_name)")
-      .eq("week_start", weekStart)
-      .order("rank", { ascending: true })
-      .limit(3);
+    const [thisRes, lastRes] = await Promise.all([
+      supabase
+        .from("weekly_sector_stats")
+        .select("sector_id, mention_count, community_count, sectors(sector_name)")
+        .eq("week_start", thisWeekStart),
+      supabase
+        .from("weekly_sector_stats")
+        .select("sector_id, mention_count, community_count, sectors(sector_name)")
+        .eq("week_start", lastWeekStart),
+    ]);
 
-    if (error) {
-      logger.error("weekly_sector_stats 조회 실패", error);
-      throw error;
+    if (thisRes.error) {
+      logger.error("이번 주 weekly_sector_stats 조회 실패", thisRes.error);
+      throw thisRes.error;
     }
 
-    const message = buildMessage((data as SectorStat[]) ?? [], weekStart);
+    const thisWeekMap = new Map<string, SectorStat>(
+      ((thisRes.data ?? []) as SectorStat[]).map((s) => [s.sector_id, s])
+    );
+    const lastWeekMap = new Map<string, SectorStat>(
+      ((lastRes.data ?? []) as SectorStat[]).map((s) => [s.sector_id, s])
+    );
+
+    const enriched: EnrichedStat[] = [];
+    for (const [sectorId, stat] of thisWeekMap) {
+      const name = getSectorName(stat);
+      if (isEtc(name)) continue;
+
+      const thisWeek = (stat.mention_count ?? 0) - (stat.community_count ?? 0);
+      const lastStat = lastWeekMap.get(sectorId);
+      const lastWeek = (lastStat?.mention_count ?? 0) - (lastStat?.community_count ?? 0);
+      const delta = thisWeek - lastWeek;
+      const rate = lastWeek > 0 ? (delta / lastWeek) * 100 : 0;
+
+      enriched.push({ sectorId, name, thisWeek, lastWeek, delta, rate });
+    }
+
+    const message = buildMessage(enriched, thisWeekStart);
+    logger.info(`[weekly-heat-report] 전송:\n${message}`);
     await sendMessage(config.telegram.targetChatId, message, {
       parseMode: "HTML",
     });
