@@ -442,7 +442,7 @@ export default function TypingGame() {
         <div className="tg-container">
           <div className="tg-logo">
             <div className="tg-logo-icon">🧠</div>
-            <h1 className="tg-title">두뇌 미니게임</h1>
+            <h1 className="tg-title">미니게임천국</h1>
             <p className="tg-subtitle">방을 만들고 함께 즐기세요</p>
           </div>
           <div className="tg-lobby-actions">

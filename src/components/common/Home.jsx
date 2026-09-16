@@ -15,7 +15,7 @@ const SERVICE_LIST = [
   { id: 'whattoeat-vip', title: '오늘 뭐 먹지?\n[멤버십]',  icon: '🍽️', path: '/momok-best',         cardClass: 'momokbest-card',  desc: '' },
   { id: 'taste',         title: '취향 알기',                icon: '💫', path: '/taste-match',        cardClass: 'taste-card',      desc: '' },
   { id: 'mandalart',     title: '만다라트\n[멤버십]',        icon: '🎯', path: '/mandalart',          cardClass: 'mandalart-card',  desc: '9×9 목표 관리 플래너' },
-  { id: 'mini-arcade',   title: '두뇌 미니게임',             icon: '🧠', path: '/mini-arcade',         cardClass: 'arcade-card',     desc: '타이핑·계산·반응속도 9종' },
+  { id: 'mini-arcade',   title: '미니게임천국',              icon: '🧠', path: '/mini-arcade',         cardClass: 'arcade-card',     desc: '실시간 멀티플레이 미니게임 6종' },
 ];
 
 const Home = () => {
@@ -87,7 +87,7 @@ const Home = () => {
         </div>
 
         <div className="home-header">
-          <h1>🎯 미니게임천국</h1>
+          <h1>🎯 JW클럽하우스</h1>
 
         </div>
 

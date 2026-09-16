@@ -40,10 +40,10 @@ export default function PrivacyPolicy() {
         </div>
 
         <Section title="1. 개요">
-          <p>미니게임천국(이하 "서비스")은 이용자의 개인정보를 소중히 여기며, 「개인정보 보호법」을 준수합니다.</p>
+          <p>JW클럽하우스(이하 "서비스")은 이용자의 개인정보를 소중히 여기며, 「개인정보 보호법」을 준수합니다.</p>
           <p>본 방침은 서비스가 수집하는 개인정보의 항목, 수집 및 이용 목적, 보유 기간, 제3자 제공 여부 등을 안내합니다.</p>
           <Info>
-            <Row label="서비스명" value="미니게임천국 (jwkim100167.github.io)" />
+            <Row label="서비스명" value="JW클럽하우스 (jwkim100167.github.io)" />
             <Row label="운영자" value="jwkim100167" />
             <Row label="시행일" value="2026년 5월 15일" />
           </Info>
