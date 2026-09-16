@@ -621,9 +621,14 @@
     font-size: 1.55rem;
   }
 
+  .filter-tabs {
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+
   .filter-tab {
-    padding: 7px 20px;
-    font-size: 0.9rem;
+    padding: 6px 12px;
+    font-size: 0.8rem;
   }
 
   .center-spin-btn {

@@ -441,16 +441,17 @@ export default function WhatToEat() {
   const [mgmtView, setMgmtView]           = useState('category'); // 'category' | 'on' | 'off'
   const [customItems, setCustomItems]         = useState([]);
   const [jongwoongItems, setJongwoongItems]   = useState([
-    { name: '남지',           meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
-    { name: '산산옥',         meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
-    { name: '족발덮밥',       meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
-    { name: '짬뽕지존',       meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
-    { name: '이태리부대찌개', meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
-    { name: '프리미엄레스토랑', meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
-    { name: '닭갈비',         meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
-    { name: '해탄',           meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
-    { name: '쌀국수',         meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
-    { name: '버거옥',         meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '버거옥',           meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '남지',             meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '산산옥',           meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '족발덮밥',         meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '짬뽕',             meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '부자돈가스',       meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '홍반점',           meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '물회',             meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '프리미엄직원식당', meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '뼈해장국',         meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
+    { name: '이태리부대찌개',   meal: 'jongwoong', catId: 'jongwoong', catName: '종웅점심', catColor: '#86efac' },
   ]);
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customInputVal, setCustomInputVal]   = useState('');
