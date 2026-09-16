@@ -465,7 +465,7 @@ const Mandalart = () => {
   }
 
   return (
-    <div className="mandalart-app">
+    <div className={`mandalart-app${panelOpen ? ' panel-open' : ''}`}>
       <div className="mandalart-header">
         <div className="header-top">
           <Link to="/" className="back-btn">← 홈</Link>
