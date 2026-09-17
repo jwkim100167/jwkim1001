@@ -619,39 +619,15 @@ export async function halligalliFlipCard(roomId, playerId) {
 }
 
 export async function halligalliRingBell(roomId, playerId) {
-  // RPC 시도 (atomic)
-  try {
-    const { data, error } = await supabase.rpc('ring_halligalli_bell', {
-      p_room_id: roomId,
-      p_player_id: playerId,
-    });
-    if (!error) return data; // 'first' | 'second' | 'late'
-  } catch { /* RPC 미배포 시 폴백 */ }
-
-  // 폴백: 클라이언트 로직
-  const state = await fetchLatestState(roomId);
-  if (!state) return 'late';
-  if (state.phase === 'playing' && !state.bell_winner) {
-    await updateGameState(roomId, {
-      ...state,
-      phase: 'bell_resolving',
-      bell_winner: playerId,
-      bell_window_closes_at: state.options?.secondPlace ? Date.now() + 1500 : null,
-    });
-    return 'first';
+  const { data, error } = await supabase.rpc('ring_halligalli_bell', {
+    p_room_id: roomId,
+    p_player_id: playerId,
+  });
+  if (error) {
+    console.error('ring_halligalli_bell RPC 실패:', error);
+    return 'late';
   }
-  if (
-    state.phase === 'bell_resolving' &&
-    state.options?.secondPlace &&
-    !state.second_bell_winner &&
-    state.bell_winner !== playerId &&
-    state.bell_window_closes_at &&
-    Date.now() < state.bell_window_closes_at
-  ) {
-    await updateGameState(roomId, { ...state, second_bell_winner: playerId });
-    return 'second';
-  }
-  return 'late';
+  return data; // 'first' | 'second' | 'late'
 }
 
 export async function halligalliResolveBell(roomId) {
