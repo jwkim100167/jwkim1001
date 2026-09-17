@@ -106,6 +106,8 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
   const autoPassFiredRef = useRef(null);
   const prevTurnStartedAt = useRef(null);
   const endPlayedRef = useRef(false);
+  const boardRef = useRef(null);
+  const selectedPieceIdRef = useRef(null);
 
   const myColor = players.find((p) => p.id === currentPlayer?.id)?.color;
   const currentColor = gameState.turn_order[gameState.turn_index];
@@ -160,6 +162,18 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
     setFlipped(false);
     setHoverCell(null);
   }, [gameState.turn_index, gameState.turn_started_at]);
+
+  // Keep ref in sync for passive touch handler
+  useEffect(() => { selectedPieceIdRef.current = selectedPieceId; }, [selectedPieceId]);
+
+  // Prevent page scroll when dragging piece over board (requires passive: false)
+  useEffect(() => {
+    const board = boardRef.current;
+    if (!board) return;
+    const prevent = (e) => { if (selectedPieceIdRef.current !== null) e.preventDefault(); };
+    board.addEventListener('touchmove', prevent, { passive: false });
+    return () => board.removeEventListener('touchmove', prevent);
+  }, []);
 
   const selectedPiece = selectedPieceId !== null ? PIECES[selectedPieceId] : null;
   const currentCells = selectedPiece
@@ -217,6 +231,50 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
           setHoverCell(null);
         })
         .catch((e) => console.error('placePiece error:', e));
+    }
+  };
+
+  // ── Touch handlers (mobile piece preview + placement) ──
+  const getCellFromTouch = (touch) => {
+    const board = boardRef.current;
+    if (!board) return null;
+    const rect = board.getBoundingClientRect();
+    const c = Math.floor(((touch.clientX - rect.left) / rect.width) * BOARD_SIZE);
+    const r = Math.floor(((touch.clientY - rect.top) / rect.height) * BOARD_SIZE);
+    return (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE) ? [r, c] : null;
+  };
+
+  const handleBoardTouchStart = (e) => {
+    if (!isMyTurn || !selectedPiece) return;
+    const cell = getCellFromTouch(e.touches[0]);
+    if (cell) setHoverCell(cell);
+  };
+
+  const handleBoardTouchMove = (e) => {
+    if (!isMyTurn || !selectedPiece) return;
+    const cell = getCellFromTouch(e.touches[0]);
+    if (cell) setHoverCell(cell);
+  };
+
+  const handleBoardTouchEnd = (e) => {
+    if (!isMyTurn || !selectedPiece) return;
+    e.preventDefault(); // prevent subsequent click event
+    const touch = e.changedTouches[0];
+    if (!touch) return;
+    const cell = getCellFromTouch(touch);
+    if (!cell) return;
+    const clickedCells = currentCells.map(([dr, dc]) => [dr + cell[0], dc + cell[1]]);
+    const valid = isValidPlacement(gameState.board, clickedCells, myColor, isFirstMove, cornerCell, gameState.remaining[myColor]);
+    if (valid) {
+      if (soundOn) playPlace();
+      doPlacePiece(roomId, myColor, selectedPieceId, clickedCells)
+        .then(() => {
+          setSelectedPieceId(null);
+          setRotation(0);
+          setFlipped(false);
+          setHoverCell(null);
+        })
+        .catch((err) => console.error('placePiece error:', err));
     }
   };
 
@@ -348,7 +406,13 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
           className={`blk-board-wrap ${isMyTurn ? 'blk-board-my-turn' : ''}`}
           style={{ '--my-color': myColor ? COLOR_HEX[myColor] : '#6366f1' }}
         >
-          <div className="blk-board">
+          <div
+            className="blk-board"
+            ref={boardRef}
+            onTouchStart={handleBoardTouchStart}
+            onTouchMove={handleBoardTouchMove}
+            onTouchEnd={handleBoardTouchEnd}
+          >
             {boardCells}
           </div>
         </div>
