@@ -68,7 +68,14 @@ function calculateType(answers) {
   const suffix  = suffixX  >  suffixC  ? 'X' : 'C';
   const resolve = resolveK >= resolveD ? 'K' : 'D';
 
-  return { code: `${world}${sense}${tone}${rhythm}`, suffix, resolve };
+  const tiedDims = [
+    ...(worldR  === worldF  ? ['세계관']     : []),
+    ...(senseH  === senseM  ? ['감성 방식']  : []),
+    ...(toneL   === toneN   ? ['분위기']     : []),
+    ...(rhythmP === rhythmS ? ['리듬']       : []),
+  ];
+
+  return { code: `${world}${sense}${tone}${rhythm}`, suffix, resolve, tiedDims };
 }
 
 export default function MovieRecommend() {
@@ -86,8 +93,11 @@ export default function MovieRecommend() {
   const [showGroupIntro, setShowGroupIntro] = useState(false);
   const [retryMode, setRetryMode] = useState(false);
   const [moviePool, setMoviePool] = useState([]);
+  const [moviePoolFetched, setMoviePoolFetched] = useState(false);
+  const [moviePoolError, setMoviePoolError] = useState(false);
   const [recommendedMovies, setRecommendedMovies] = useState([]);
   const [eraFilter, setEraFilter] = useState('all');
+  const [showMoviesSection, setShowMoviesSection] = useState(false);
 
   // 연도 필터 변경 시 추천 영화 재셔플
   useEffect(() => {
@@ -111,7 +121,7 @@ export default function MovieRecommend() {
     if (currentQ < QUESTIONS.length - 1) {
       const nextQ = QUESTIONS[currentQ + 1];
       const nextGroup = nextQ.group;
-      if (nextGroup !== currentGroup && nextGroup !== 'subtag' && nextGroup !== 'movie_vs') {
+      if (nextGroup !== currentGroup) {
         setPrevGroup(currentGroup);
         setShowGroupIntro(true);
         setTimeout(() => {
@@ -160,22 +170,28 @@ export default function MovieRecommend() {
   };
 
   const finishQuiz = async (finalAnswers) => {
-    const { code, suffix, resolve } = calculateType(finalAnswers);
+    const { code, suffix, resolve, tiedDims } = calculateType(finalAnswers);
     const typeData = findType(code);
-    setTypeResult({ code, suffix, resolve, typeData, finalAnswers });
+    setTypeResult({ code, suffix, resolve, tiedDims, typeData, finalAnswers });
     setPhase('result');
 
     // DB에서 추천 영화 조회 (release_month 포함)
-    const { data: movieData } = await supabase
+    const { data: movieData, error: movieError } = await supabase
       .from('movies')
       .select('title, title_en, year, director, release_month')
       .contains('type_codes', [code])
       .in('suffix', [suffix, 'both']);
 
-    if (movieData && movieData.length > 0) {
+    setMoviePoolFetched(true);
+    if (movieError) {
+      setMoviePool([]);
+      setMoviePoolError(true);
+    } else if (movieData && movieData.length > 0) {
       setMoviePool(movieData);
       const shuffled = [...movieData].sort(() => Math.random() - 0.5);
       setRecommendedMovies(shuffled.slice(0, 5));
+    } else {
+      setMoviePool([]);
     }
 
     // 로그인한 경우 자동 저장
@@ -213,8 +229,11 @@ export default function MovieRecommend() {
     setShowGroupIntro(false);
     setRetryMode(false);
     setMoviePool([]);
+    setMoviePoolFetched(false);
+    setMoviePoolError(false);
     setRecommendedMovies([]);
     setEraFilter('all');
+    setShowMoviesSection(false);
     setIsSaved(false);
   };
 
@@ -237,6 +256,7 @@ export default function MovieRecommend() {
               {QUESTIONS.length}가지 질문으로<br />
               <span className="mr-desc-accent">32가지 영화 유형</span> 중 나의 타입을 찾아드려요
             </p>
+            <div className="mr-time-badge">⏱ 약 5분 · {QUESTIONS.length}개 질문</div>
             <div className="mr-groups-preview">
               {GROUP_ORDER.filter(g => g !== 'subtag').map(g => (
                 <span key={g} className="mr-group-chip">
@@ -279,18 +299,21 @@ export default function MovieRecommend() {
         <div className="mr-container group-intro">
           <div className="mr-group-intro-icon">{GROUP_ICONS[nextGroup]}</div>
           <div className="mr-group-intro-label">
-            {nextGroup === 'sense'   ? '감성 방식' :
-             nextGroup === 'tone'    ? '분위기' :
-             nextGroup === 'rhythm'  ? '리듬' :
-             nextGroup === 'suffix'  ? '자극 수용도' :
-             nextGroup === 'resolve' ? '감정 해소 시점' : '영화 선택 기준'}
+            {nextGroup === 'sense'    ? '감성 방식' :
+             nextGroup === 'tone'     ? '분위기' :
+             nextGroup === 'rhythm'   ? '리듬' :
+             nextGroup === 'suffix'   ? '자극 수용도' :
+             nextGroup === 'resolve'  ? '감정 해소 시점' :
+             nextGroup === 'subtag'   ? '영화 선택 기준' : '영화 VS 영화'}
           </div>
           <div className="mr-group-intro-desc">
-            {nextGroup === 'sense'   ? '영화를 어떻게 느끼나요?' :
-             nextGroup === 'tone'    ? '어떤 분위기를 원하나요?' :
-             nextGroup === 'rhythm'  ? '어떤 템포를 좋아하나요?' :
-             nextGroup === 'suffix'  ? '어느 정도까지 괜찮아요?' :
-             nextGroup === 'resolve' ? '감동이 언제 찾아오나요?' : ''}
+            {nextGroup === 'sense'    ? '영화를 어떻게 느끼나요?' :
+             nextGroup === 'tone'     ? '어떤 분위기를 원하나요?' :
+             nextGroup === 'rhythm'   ? '어떤 템포를 좋아하나요?' :
+             nextGroup === 'suffix'   ? '어느 정도까지 괜찮아요?' :
+             nextGroup === 'resolve'  ? '감동이 언제 찾아오나요?' :
+             nextGroup === 'subtag'   ? '점수에 반영되지 않는 세부 취향 질문이에요' :
+             '영화 예시로 취향을 비교해요'}
           </div>
         </div>
       </div>
@@ -312,6 +335,8 @@ export default function MovieRecommend() {
       q.group === 'suffix'   ? '자극 수용도' :
       q.group === 'resolve'  ? '감정 해소 시점' :
       q.group === 'movie_vs' ? '영화 VS 영화' : '영화 선택 기준';
+    const groupQCount = QUESTIONS.filter(q2 => q2.group === q.group).length;
+    const posInGroup = QUESTIONS.filter((q2, i) => q2.group === q.group && i <= currentQ).length;
 
     return (
       <div className="mr-wrap">
@@ -327,12 +352,20 @@ export default function MovieRecommend() {
           {/* 그룹 라벨 */}
           <div className="mr-group-label">
             {groupIcon} {groupLabel}
+            <span className="mr-group-pos"> ({posInGroup}/{groupQCount})</span>
           </div>
 
           {/* 질문 */}
           <div className="mr-question" key={currentQ}>
             {q.q}
           </div>
+
+          {/* 영화 예시 질문 힌트 */}
+          {q.movieA && q.group !== 'movie_vs' && (
+            <div className="mr-movie-hint">
+              본 적 없는 영화라면 '안 봤어요'를 선택하면 다른 예시로 바꿔드려요
+            </div>
+          )}
 
           {/* 선택 카드 */}
           {q.movieA ? (() => {
@@ -415,7 +448,7 @@ export default function MovieRecommend() {
   // RENDER — 결과 화면
   // ═══════════════════════════════════════════════════════════
   if (phase === 'result' && typeResult) {
-    const { code, suffix, resolve, typeData } = typeResult;
+    const { code, suffix, resolve, tiedDims, typeData } = typeResult;
     const suffixLabel = SUFFIX_LABELS[suffix];
     const resolveLabel = RESOLVE_LABELS[resolve];
     const resolveData = typeData?.resolve?.[resolve];
@@ -431,11 +464,37 @@ export default function MovieRecommend() {
           <div className="mr-result-badge">
             <span className="mr-code">[{code}-{suffix}]</span>
             <span className={`mr-suffix-tag ${suffix === 'X' ? 'hot' : 'mild'}`}>{suffixLabel}</span>
+            <span className="mr-resolve-tag">⚡ {resolveLabel}</span>
           </div>
+
+          {/* 동점 안내 */}
+          {tiedDims && tiedDims.length > 0 && (
+            <div className="mr-tied-notice">
+              {tiedDims.join(', ')} 취향이 비슷해서 기본값이 적용됐어요
+            </div>
+          )}
 
           {/* 유형 이름 */}
           <div className="mr-type-name">{typeData?.name}</div>
           <div className="mr-tagline">"{typeData?.tagline}"</div>
+
+          {/* 궁합 유형 — 상단 배치 */}
+          <div className="mr-compat">
+            {bestMatchData && (
+              <div className="mr-compat-card best">
+                <div className="mr-compat-label">💛 잘 맞는 유형</div>
+                <div className="mr-compat-code">{typeData.best_match}</div>
+                <div className="mr-compat-name">{bestMatchData.name}</div>
+              </div>
+            )}
+            {oppositeData && (
+              <div className="mr-compat-card opposite">
+                <div className="mr-compat-label">🔄 반대 유형</div>
+                <div className="mr-compat-code">{typeData.opposite}</div>
+                <div className="mr-compat-name">{oppositeData.name}</div>
+              </div>
+            )}
+          </div>
 
           {/* 설명 */}
           <div className="mr-description">{typeData?.description}</div>
@@ -456,55 +515,73 @@ export default function MovieRecommend() {
             </div>
           )}
 
-          {/* 추천 영화 */}
+          {/* 추천 영화 (접힘 토글) */}
           <div className="mr-movies-section">
-            <div className="mr-movies-title-row">
-              <span className="mr-movies-title">🎬 이런 영화를 좋아할 거예요</span>
-              {filteredPool.length > 5 && (
-                <button className="mr-shuffle-btn" onClick={shuffleMovies}>
-                  🔀 다른 영화
-                </button>
+            <button
+              className="mr-movies-toggle"
+              onClick={() => setShowMoviesSection(v => !v)}
+            >
+              🎬 이런 영화를 좋아할 거예요
+              <span className="mr-movies-toggle-arrow">{showMoviesSection ? '▲' : '▼'}</span>
+              {moviePool.length > 0 && (
+                <span className="mr-movies-count">{moviePool.length}편</span>
               )}
-            </div>
+            </button>
 
-            {/* 연도 필터 */}
-            <div className="mr-era-filter">
-              {ERA_OPTIONS.map(opt => {
-                const count = opt.key === 'all'
-                  ? moviePool.length
-                  : moviePool.filter(m => m.year >= opt.min && m.year <= opt.max).length;
-                if (count === 0 && opt.key !== 'all') return null;
-                return (
-                  <button
-                    key={opt.key}
-                    className={`mr-era-chip ${eraFilter === opt.key ? 'active' : ''}`}
-                    onClick={() => setEraFilter(opt.key)}
-                  >
-                    {opt.label}
-                    {opt.key !== 'all' && <span className="mr-era-count">{count}</span>}
-                  </button>
-                );
-              })}
-            </div>
+            {showMoviesSection && (
+              <>
+                <div className="mr-movies-title-row">
+                  {filteredPool.length > 5 && (
+                    <button className="mr-shuffle-btn" onClick={shuffleMovies}>
+                      🔀 다른 영화
+                    </button>
+                  )}
+                </div>
 
-            {recommendedMovies.length > 0 ? (
-              <div className="mr-movies-list">
-                {recommendedMovies.map((movie, i) => (
-                  <div key={i} className="mr-movie-card">
-                    <div className="mr-movie-rank">{i + 1}</div>
-                    <div className="mr-movie-info">
-                      <div className="mr-movie-title">{movie.title}</div>
-                      <div className="mr-movie-meta">
-                        {formatReleaseDate(movie.year, movie.release_month)} · {movie.director}
+                {/* 연도 필터 */}
+                <div className="mr-era-filter">
+                  {ERA_OPTIONS.map(opt => {
+                    const count = opt.key === 'all'
+                      ? moviePool.length
+                      : moviePool.filter(m => m.year >= opt.min && m.year <= opt.max).length;
+                    if (count === 0 && opt.key !== 'all') return null;
+                    return (
+                      <button
+                        key={opt.key}
+                        className={`mr-era-chip ${eraFilter === opt.key ? 'active' : ''}`}
+                        onClick={() => setEraFilter(opt.key)}
+                      >
+                        {opt.label}
+                        {opt.key !== 'all' && <span className="mr-era-count">{count}</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {moviePoolError ? (
+                  <div className="mr-movies-error">추천 영화를 불러오지 못했습니다. 나중에 다시 시도해주세요.</div>
+                ) : !moviePoolFetched ? (
+                  <div className="mr-movies-loading">불러오는 중...</div>
+                ) : recommendedMovies.length > 0 ? (
+                  <div className="mr-movies-list">
+                    {recommendedMovies.map((movie, i) => (
+                      <div key={i} className="mr-movie-card">
+                        <div className="mr-movie-rank">{i + 1}</div>
+                        <div className="mr-movie-info">
+                          <div className="mr-movie-title">{movie.title}</div>
+                          <div className="mr-movie-meta">
+                            {formatReleaseDate(movie.year, movie.release_month)} · {movie.director}
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            ) : moviePool.length > 0 ? (
-              <div className="mr-movies-loading">해당 시대 추천 영화가 없어요</div>
-            ) : (
-              <div className="mr-movies-loading">불러오는 중...</div>
+                ) : filteredPool.length === 0 && moviePool.length > 0 ? (
+                  <div className="mr-movies-loading">해당 시대 추천 영화가 없어요</div>
+                ) : (
+                  <div className="mr-movies-loading">해당 유형의 추천 영화 데이터가 없어요</div>
+                )}
+              </>
             )}
           </div>
 
@@ -525,24 +602,6 @@ export default function MovieRecommend() {
               </div>
             </div>
           )}
-
-          {/* 궁합 유형 */}
-          <div className="mr-compat">
-            {bestMatchData && (
-              <div className="mr-compat-card best">
-                <div className="mr-compat-label">💛 잘 맞는 유형</div>
-                <div className="mr-compat-code">{typeData.best_match}</div>
-                <div className="mr-compat-name">{bestMatchData.name}</div>
-              </div>
-            )}
-            {oppositeData && (
-              <div className="mr-compat-card opposite">
-                <div className="mr-compat-label">🔄 반대 유형</div>
-                <div className="mr-compat-code">{typeData.opposite}</div>
-                <div className="mr-compat-name">{oppositeData.name}</div>
-              </div>
-            )}
-          </div>
 
           {/* 저장 섹션 */}
           {user ? (

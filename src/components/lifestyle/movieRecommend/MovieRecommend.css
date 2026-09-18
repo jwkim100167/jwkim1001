@@ -458,8 +458,8 @@
 .mr-movies-title-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
+  justify-content: flex-end;
+  margin: 10px 0 6px;
 }
 
 .mr-movies-title {
@@ -657,6 +657,98 @@
 .mr-era-count {
   font-size: 0.68rem;
   opacity: 0.65;
+}
+
+/* 소요 시간 배지 */
+.mr-time-badge {
+  display: inline-block;
+  background: rgba(255, 200, 80, 0.1);
+  border: 1px solid rgba(255, 200, 80, 0.2);
+  color: rgba(255, 220, 100, 0.75);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 0.8rem;
+  margin-bottom: 24px;
+}
+
+/* 영화 예시 힌트 */
+.mr-movie-hint {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  margin: -16px 0 16px;
+  line-height: 1.5;
+}
+
+/* 그룹 내 위치 */
+.mr-group-pos {
+  font-size: 0.72rem;
+  color: rgba(255, 200, 80, 0.5);
+  margin-left: 4px;
+}
+
+/* 동점 안내 */
+.mr-tied-notice {
+  font-size: 0.76rem;
+  color: rgba(255, 200, 80, 0.55);
+  background: rgba(255, 200, 80, 0.06);
+  border: 1px solid rgba(255, 200, 80, 0.15);
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin-bottom: 14px;
+}
+
+/* resolve 태그 (배지 줄) */
+.mr-resolve-tag {
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 20px;
+  padding: 3px 12px;
+  background: rgba(255, 200, 50, 0.12);
+  border: 1px solid rgba(255, 200, 50, 0.3);
+  color: #ffd54f;
+}
+
+/* 영화 섹션 토글 버튼 */
+.mr-movies-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 200, 80, 0.06);
+  border: 1px solid rgba(255, 200, 80, 0.2);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: rgba(255, 200, 80, 0.85);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s;
+  margin-bottom: 0;
+}
+.mr-movies-toggle:hover {
+  background: rgba(255, 200, 80, 0.12);
+}
+
+.mr-movies-toggle-arrow {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: rgba(255, 200, 80, 0.5);
+}
+
+.mr-movies-count {
+  font-size: 0.72rem;
+  color: rgba(255, 200, 80, 0.5);
+  font-weight: 400;
+}
+
+/* 영화 에러 */
+.mr-movies-error {
+  font-size: 0.82rem;
+  color: rgba(255, 100, 80, 0.7);
+  text-align: center;
+  padding: 16px 0;
 }
 
 /* 게스트 저장 프롬프트 */
