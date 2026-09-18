@@ -127,7 +127,10 @@ export default function MovieRecommend() {
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle()
-      .then(({ data }) => setSavedResult(data || null));
+      .then(({ data, error }) => {
+        console.log('[savedResult] data:', data, 'error:', error, 'user.id:', user?.id);
+        setSavedResult(data || null);
+      });
   }, [user?.id]);
 
   // 연도 필터 변경 시 추천 영화 재셔플
