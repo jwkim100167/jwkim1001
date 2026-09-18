@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../supabaseClient';
 import { getServiceConfig, incrementMenuClickCount } from '../../services/core/supabaseAdmin';
+import { sortMoviesByMatch, getMatchBadge } from '../../utils/movieMatch';
 import './Home.css';
 import AdBanner from './AdBanner';
 
@@ -24,12 +26,62 @@ const Home = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
   const [serviceConfig, setServiceConfig] = useState({ enabledMap: null, sortedIds: [] });
+  const [newMovies, setNewMovies]           = useState([]);
+  const [userMovieResult, setUserMovieResult] = useState(null);
+  const [newMoviesLoading, setNewMoviesLoading] = useState(true);
 
   useEffect(() => {
     getServiceConfig().then((cfg) => {
       if (cfg) setServiceConfig(cfg);
     });
   }, []);
+
+  // 신규 개봉 영화 + 사용자 취향 결과 병렬 조회
+  useEffect(() => {
+    if (isAuthenticated === undefined) return; // auth 로딩 중
+
+    const fetchData = async () => {
+      setNewMoviesLoading(true);
+      const currentYear = new Date().getFullYear();
+
+      const [moviesRes, resultRes] = await Promise.all([
+        supabase
+          .from('movies')
+          .select('title, title_en, year, release_month, type_codes, suffix, director')
+          .gte('year', currentYear - 1)
+          .not('release_month', 'is', null)
+          .order('year', { ascending: false })
+          .order('release_month', { ascending: false })
+          .limit(20),
+        isAuthenticated && user?.id
+          ? supabase
+              .from('movie_recommend_results')
+              .select('type_code, suffix')
+              .eq('user_id', String(user.id))
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .maybeSingle()
+          : Promise.resolve({ data: null }),
+      ]);
+
+      const result = resultRes.data || null;
+      setUserMovieResult(result);
+
+      const rawMovies = moviesRes.data || [];
+      const processed = sortMoviesByMatch(rawMovies, result?.type_code, result?.suffix);
+      // 미분류 영화도 최대 3편 보충
+      const unclassified = rawMovies
+        .filter(m => !m.type_codes || m.type_codes.length === 0)
+        .slice(0, 3);
+      const combined = processed.length > 0
+        ? processed
+        : unclassified.slice(0, 5);
+      setNewMovies(combined);
+      setNewMoviesLoading(false);
+    };
+
+    fetchData();
+  }, [isAuthenticated, user?.id]);
 
   const getStatus = (id) => {
     if (!serviceConfig.enabledMap) return ['kbo-predict', 'kbo-result', 'world-cup-predict', 'cobra', 'mandalart'].includes(id) ? 'on' : 'offline';
@@ -124,6 +176,60 @@ const Home = () => {
             );
           })}
         </div>
+
+        {/* 신규 개봉 · 취향 매칭 섹션 */}
+        {!newMoviesLoading && (
+          <div className="new-movies-section">
+            <div className="new-movies-header">
+              <span className="new-movies-title">🎬 최근 개봉 영화</span>
+              {userMovieResult && (
+                <span className="new-movies-subtitle">
+                  {userMovieResult.type_code}-{userMovieResult.suffix} 기준 매칭
+                </span>
+              )}
+            </div>
+
+            {isAuthenticated && !userMovieResult ? (
+              <div className="new-movies-no-result">
+                <span>영화 취향 검사 후 나에게 맞는 영화를 확인하세요</span>
+                <Link to="/movie-recommend" className="new-movies-cta">취향 검사하기 →</Link>
+              </div>
+            ) : newMovies.length > 0 ? (
+              <div className="new-movies-list">
+                {newMovies.map((movie, i) => {
+                  const badge = (movie.score != null) ? getMatchBadge(movie.score, movie.suffixOk) : null;
+                  const dateStr = movie.release_month
+                    ? `${movie.year}.${String(movie.release_month).padStart(2, '0')}`
+                    : `${movie.year}`;
+                  return (
+                    <div key={i} className="new-movie-item">
+                      <div className="new-movie-info">
+                        <div className="new-movie-title">{movie.title}</div>
+                        <div className="new-movie-meta">{dateStr}{movie.director ? ` · ${movie.director}` : ''}</div>
+                      </div>
+                      <div className="new-movie-badges">
+                        {badge ? (
+                          <span className={`new-match-badge match-${movie.score}`}>
+                            {badge.emoji} {badge.label}
+                          </span>
+                        ) : (!movie.type_codes || movie.type_codes.length === 0) ? (
+                          <span className="new-match-badge unclassified">분류 중</span>
+                        ) : null}
+                        {badge && movie.suffixOk && movie.suffix !== 'both' && (
+                          <span className="new-suffix-ok">
+                            {movie.suffix === 'C' ? '순한맛' : '매운맛'}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="new-movies-empty">최근 개봉 영화 정보가 없어요</div>
+            )}
+          </div>
+        )}
 
         <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_HOME_BOTTOM} className="ad-home-bottom" />
 
