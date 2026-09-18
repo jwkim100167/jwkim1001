@@ -18,7 +18,8 @@ const SERVICE_LIST = [
   { id: 'cobra',         title: '코브라 게임',              icon: '🐍' },
   { id: 'mandalart',     title: '만다라트',                 icon: '🎯' },
   { id: 'turneyia',      title: '터이네키아',               icon: '🏆' },
-  { id: 'mini-arcade',   title: '미니게임천국',             icon: '🧠' },
+  { id: 'mini-arcade',      title: '미니게임천국',    icon: '🧠' },
+  { id: 'movie-recommend',  title: '영화 추천받기',   icon: '🎬' },
 ];
 
 export default function Admin() {
@@ -596,7 +597,10 @@ export default function Admin() {
                 </button>
               </div>
               <div className="service-toggle-list">
-                {(serviceOrder.length > 0 ? serviceOrder : SERVICE_LIST.map(s => s.id)).map((serviceId, index) => {
+                {(serviceOrder.length > 0
+                  ? [...serviceOrder, ...SERVICE_LIST.map(s => s.id).filter(id => !serviceOrder.includes(id))]
+                  : SERVICE_LIST.map(s => s.id)
+                ).map((serviceId, index) => {
                   const svc = SERVICE_LIST.find(s => s.id === serviceId);
                   if (!svc) return null;
                   return (

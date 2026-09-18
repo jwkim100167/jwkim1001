@@ -193,6 +193,15 @@
   box-shadow: 0 20px 40px rgba(0, 210, 255, 0.15);
 }
 
+.movie-card {
+  border-color: rgba(255, 200, 80, 0.2);
+}
+
+.movie-card:hover {
+  border-color: rgba(255, 200, 80, 0.5);
+  box-shadow: 0 20px 40px rgba(255, 200, 80, 0.15);
+}
+
 .kbo-card .card-content h2 {
   font-size: 1.4rem;
 }

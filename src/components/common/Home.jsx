@@ -16,6 +16,7 @@ const SERVICE_LIST = [
   { id: 'taste',         title: '취향 알기',                icon: '💫', path: '/taste-match',        cardClass: 'taste-card',      desc: '' },
   { id: 'mandalart',     title: '만다라트\n[멤버십]',        icon: '🎯', path: '/mandalart',          cardClass: 'mandalart-card',  desc: '9×9 목표 관리 플래너' },
   { id: 'mini-arcade',   title: '미니게임천국',              icon: '🧠', path: '/mini-arcade',         cardClass: 'arcade-card',     desc: '실시간 멀티플레이 미니게임 6종' },
+  { id: 'movie-recommend', title: '영화 추천받기',           icon: '🎬', path: '/movie-recommend',     cardClass: 'movie-card',      desc: '나의 영화 취향 유형 찾기' },
 ];
 
 const Home = () => {
@@ -33,13 +34,18 @@ const Home = () => {
   const getStatus = (id) => {
     if (!serviceConfig.enabledMap) return ['kbo-predict', 'kbo-result', 'world-cup-predict', 'cobra', 'mandalart'].includes(id) ? 'on' : 'offline';
     const val = serviceConfig.enabledMap[id];
-    if (val === true) return 'on';
-    if (val === false) return 'offline';
-    return val ?? 'offline';
+    if (val === undefined) return 'on'; // DB에 없는 서비스는 기본 ON
+    if (val === true  || val === 'on')      return 'on';
+    if (val === false || val === 'offline') return 'offline';
+    if (val === 'hidden') return 'hidden';
+    return 'on';
   };
 
   const orderedServiceList = serviceConfig.sortedIds.length > 0
-    ? serviceConfig.sortedIds.map(id => SERVICE_LIST.find(s => s.id === id)).filter(Boolean)
+    ? [
+        ...serviceConfig.sortedIds.map(id => SERVICE_LIST.find(s => s.id === id)).filter(Boolean),
+        ...SERVICE_LIST.filter(s => !serviceConfig.sortedIds.includes(s.id)),
+      ]
     : SERVICE_LIST;
 
   const visibleList   = orderedServiceList.filter((s) => getStatus(s.id) !== 'hidden');
