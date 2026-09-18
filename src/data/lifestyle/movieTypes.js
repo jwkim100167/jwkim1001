@@ -364,14 +364,14 @@ export const QUESTIONS = [
   {
     id: 8, group: 'sense', groupLabel: '감성 방식',
     q: '예상 못한 반전의 소름 vs 예상했던 감동이 찾아오는 따뜻함, 어느 쪽이 더 좋아?',
-    a: '감동이 찾아오는 따뜻함', b: '반전의 소름',
-    dim: 'sense', aDir: 'H', bDir: 'M',
+    a: '반전의 소름', b: '감동이 찾아오는 따뜻함',
+    dim: 'sense', aDir: 'M', bDir: 'H',
   },
   {
     id: 9, group: 'sense', groupLabel: '감성 방식',
     q: '복잡한 서사 구조(비선형, 다시점) vs 단순하고 명확한 이야기 전개, 어느 쪽이 더 좋아?',
-    a: '단순하고 명확한 이야기', b: '복잡한 구조의 퍼즐',
-    dim: 'sense', aDir: 'H', bDir: 'M',
+    a: '복잡한 구조의 퍼즐', b: '단순하고 명확한 이야기',
+    dim: 'sense', aDir: 'M', bDir: 'H',
   },
   // ── 그룹 3: 분위기 (Tone) ──────────────────────────────────
   {

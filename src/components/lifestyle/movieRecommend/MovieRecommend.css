@@ -217,6 +217,22 @@
   animation: questionSlide 0.3s ease;
 }
 
+.mr-q-part {
+  display: block;
+  line-height: 1.55;
+}
+
+.mr-q-inline-vs {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: rgba(255, 200, 80, 0.6);
+  letter-spacing: 0.25em;
+  text-align: center;
+  margin: 5px 0;
+  text-transform: uppercase;
+}
+
 @keyframes questionSlide {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -232,12 +248,13 @@
 
 .mr-card {
   width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
-  padding: 16px 20px;
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.95rem;
+  padding: 18px 22px;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1rem;
+  font-weight: 600;
   text-align: left;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s, transform 0.15s;
@@ -271,9 +288,9 @@
 
 .mr-vs {
   font-size: 0.75rem;
-  font-weight: 700;
-  color: rgba(255, 200, 80, 0.4);
-  letter-spacing: 0.1em;
+  font-weight: 800;
+  color: rgba(255, 200, 80, 0.7);
+  letter-spacing: 0.15em;
   margin: 10px 0;
 }
 

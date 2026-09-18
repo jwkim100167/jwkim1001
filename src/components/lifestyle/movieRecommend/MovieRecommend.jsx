@@ -29,6 +29,21 @@ function formatReleaseDate(year, releaseMonth) {
   return `${year}`;
 }
 
+// 질문 텍스트 " vs " 기준 분리 렌더링
+function renderQuestionText(text) {
+  const vsIdx = text.indexOf(' vs ');
+  if (vsIdx === -1) return text;
+  const before = text.slice(0, vsIdx);
+  const after = text.slice(vsIdx + 4);
+  return (
+    <>
+      <span className="mr-q-part">{before}</span>
+      <span className="mr-q-inline-vs">vs</span>
+      <span className="mr-q-part">{after}</span>
+    </>
+  );
+}
+
 // 연도 필터 적용
 function getFilteredPool(pool, era) {
   if (era === 'all') return pool;
@@ -357,7 +372,7 @@ export default function MovieRecommend() {
 
           {/* 질문 */}
           <div className="mr-question" key={currentQ}>
-            {q.q}
+            {renderQuestionText(q.q)}
           </div>
 
           {/* 영화 예시 질문 힌트 */}
