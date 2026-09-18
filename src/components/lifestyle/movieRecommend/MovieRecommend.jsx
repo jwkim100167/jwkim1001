@@ -6,7 +6,7 @@ import { QUESTIONS, MOVIE_TYPES, SUFFIX_LABELS, RESOLVE_LABELS, GROUP_ICONS, fin
 import './MovieRecommend.css';
 
 // 그룹 순서
-const GROUP_ORDER = ['world', 'sense', 'tone', 'rhythm', 'suffix', 'resolve', 'subtag', 'movie_vs', 'movie_pick'];
+const GROUP_ORDER = ['world', 'sense', 'tone', 'rhythm', 'suffix', 'resolve', 'subtag', 'movie_vs'];
 
 const SESSION_KEY = 'movie_quiz_pending';
 
@@ -359,8 +359,7 @@ export default function MovieRecommend() {
                     g === 'tone'     ? '분위기' :
                     g === 'rhythm'   ? '리듬' :
                     g === 'suffix'   ? '자극 수용도' :
-                    g === 'resolve'     ? '감정 해소 시점' :
-                    g === 'movie_vs'   ? '영화 VS 영화' : '영화 선택'
+                    g === 'resolve'   ? '감정 해소 시점' : '영화 VS 영화'
                   }
                 </span>
               ))}
@@ -409,17 +408,15 @@ export default function MovieRecommend() {
              nextGroup === 'rhythm'   ? '리듬' :
              nextGroup === 'suffix'   ? '자극 수용도' :
              nextGroup === 'resolve'  ? '감정 해소 시점' :
-             nextGroup === 'subtag'      ? '영화 선택 기준' :
-             nextGroup === 'movie_pick'  ? '영화 선택' : '영화 VS 영화'}
+             nextGroup === 'subtag'   ? '영화 선택 기준' : '영화 VS 영화'}
           </div>
           <div className="mr-group-intro-desc">
-            {nextGroup === 'sense'      ? '영화를 어떻게 느끼나요?' :
-             nextGroup === 'tone'       ? '어떤 분위기를 원하나요?' :
-             nextGroup === 'rhythm'     ? '어떤 템포를 좋아하나요?' :
-             nextGroup === 'suffix'     ? '어느 정도까지 괜찮아요?' :
-             nextGroup === 'resolve'    ? '감동이 언제 찾아오나요?' :
-             nextGroup === 'subtag'     ? '점수에 반영되지 않는 세부 취향 질문이에요' :
-             nextGroup === 'movie_pick' ? '영화 예시로 취향을 확인해요 · 못 본 영화는 다른 예시로 바꿔드려요' :
+            {nextGroup === 'sense'   ? '영화를 어떻게 느끼나요?' :
+             nextGroup === 'tone'    ? '어떤 분위기를 원하나요?' :
+             nextGroup === 'rhythm'  ? '어떤 템포를 좋아하나요?' :
+             nextGroup === 'suffix'  ? '어느 정도까지 괜찮아요?' :
+             nextGroup === 'resolve' ? '감동이 언제 찾아오나요?' :
+             nextGroup === 'subtag'  ? '점수에 반영되지 않는 세부 취향 질문이에요' :
              '영화 예시로 취향을 비교해요'}
           </div>
         </div>
@@ -441,8 +438,7 @@ export default function MovieRecommend() {
       q.group === 'rhythm'   ? '리듬' :
       q.group === 'suffix'   ? '자극 수용도' :
       q.group === 'resolve'  ? '감정 해소 시점' :
-      q.group === 'movie_vs'   ? '영화 VS 영화' :
-      q.group === 'movie_pick' ? '영화 선택' : '영화 선택 기준';
+      q.group === 'movie_vs' ? '영화 VS 영화' : '영화 선택 기준';
     const groupQCount = QUESTIONS.filter(q2 => q2.group === q.group).length;
     const posInGroup = QUESTIONS.filter((q2, i) => q2.group === q.group && i <= currentQ).length;
 
@@ -469,7 +465,7 @@ export default function MovieRecommend() {
           </div>
 
           {/* 영화 예시 시도 표시 */}
-          {q.group === 'movie_pick' && (
+          {!!q.retryMovieA && (
             <div className="mr-attempt-row">
               <span className={`mr-attempt-badge ${!retryMode ? 'active' : ''}`}>① 1번째</span>
               <span className="mr-attempt-arrow">→</span>
@@ -658,7 +654,7 @@ export default function MovieRecommend() {
                         onClick={() => setEraFilter(opt.key)}
                       >
                         {opt.label}
-                        {opt.key !== 'all' && <span className="mr-era-count">{count}</span>}
+                        {opt.key !== 'all' && user && <span className="mr-era-count">{count}</span>}
                       </button>
                     );
                   })}
@@ -679,7 +675,7 @@ export default function MovieRecommend() {
                       <div key={i} className="mr-movie-card">
                         <div className="mr-movie-rank">{i + 1}</div>
                         <div className="mr-movie-info">
-                          <div className="mr-movie-title">{movie.title}</div>
+                          <div className="mr-movie-title">{movie.title?.trim()}</div>
                           <div className="mr-movie-meta">
                             {formatReleaseDate(movie.year, movie.release_month)} · {movie.director}
                           </div>
@@ -740,6 +736,13 @@ export default function MovieRecommend() {
               🏠 홈으로
             </button>
           </div>
+
+          {user?.loginId === 'admin' && (
+            <button className="mr-review-btn" disabled>
+              🔍 신규 영화 검토하기
+              <span className="mr-wip-badge">개발 진행 중</span>
+            </button>
+          )}
         </div>
       </div>
     );

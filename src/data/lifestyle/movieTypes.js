@@ -322,6 +322,15 @@ export const QUESTIONS = [
     a: '판타지적 비현실 주인공', b: '현실적인 직업의 주인공',
     dim: 'world', aDir: 'F', bDir: 'R',
   },
+  {
+    id: 3, group: 'world', groupLabel: '세계관',
+    q: '어느 세계관이 더 끌려?',
+    dim: 'world', aDir: 'R', bDir: 'F',
+    movieA: { title: '국제시장', year: 2014, reason: '실제 역사 속 한 사람의 삶을 따라가는 영화' },
+    movieB: { title: '아바타', year: 2009, reason: '완전히 새로운 외계 행성 세계를 탐험하는 영화' },
+    retryMovieA: { title: '변호인', year: 2013, reason: '실화 기반의 현실적인 법정 드라마' },
+    retryMovieB: { title: '스타워즈: 새로운 희망', year: 1977, reason: '은하계를 무대로 한 SF 서사시' },
+  },
   // ── 그룹 2: 감성 방식 (Sense) ──────────────────────────────
   {
     id: 4, group: 'sense', groupLabel: '감성 방식',
@@ -353,6 +362,15 @@ export const QUESTIONS = [
     a: '복잡한 구조의 퍼즐', b: '단순하고 명확한 이야기',
     dim: 'sense', aDir: 'M', bDir: 'H',
   },
+  {
+    id: 9, group: 'sense', groupLabel: '감성 방식',
+    q: '어떻게 감상하고 싶어?',
+    dim: 'sense', aDir: 'H', bDir: 'M',
+    movieA: { title: '타이타닉', year: 1997, reason: '사랑과 이별에 온전히 감정을 맡기는 영화' },
+    movieB: { title: '소셜 네트워크', year: 2010, reason: '관계와 배신의 구조를 분석하게 만드는 영화' },
+    retryMovieA: { title: '라이온 킹', year: 2019, reason: '성장과 가족에 감정이 따라가는 영화' },
+    retryMovieB: { title: '나이브스 아웃', year: 2019, reason: '복선과 반전을 추리하며 즐기는 영화' },
+  },
   // ── 그룹 3: 분위기 (Tone) ──────────────────────────────────
   {
     id: 10, group: 'tone', groupLabel: '분위기',
@@ -377,6 +395,15 @@ export const QUESTIONS = [
     q: '선악이 명확하고 정의가 이기는 이야기 vs 선악이 모호하고 현실적인 이야기, 어느 쪽이 더 끌려?',
     a: '정의가 이기는 명쾌한 이야기', b: '선악이 모호한 현실적 이야기',
     dim: 'tone', aDir: 'L', bDir: 'N',
+  },
+  {
+    id: 14, group: 'tone', groupLabel: '분위기',
+    q: '어떤 분위기의 영화가 더 끌려?',
+    dim: 'tone', aDir: 'L', bDir: 'N',
+    movieA: { title: '라라랜드', year: 2016, reason: '설레고 따뜻한 감성으로 가득 찬 영화' },
+    movieB: { title: '조커', year: 2019, reason: '어둡고 무거운 심리를 파고드는 영화' },
+    retryMovieA: { title: '겨울왕국', year: 2013, reason: '밝고 따뜻한 판타지 세계의 이야기' },
+    retryMovieB: { title: '올드보이', year: 2003, reason: '충격적이고 어두운 분위기의 스릴러' },
   },
   // ── 그룹 4: 리듬 (Rhythm) ──────────────────────────────────
   {
@@ -403,6 +430,15 @@ export const QUESTIONS = [
     a: '빠르게 지나간 느낌', b: '시간이 천천히 흐른 느낌',
     dim: 'rhythm', aDir: 'P', bDir: 'S',
   },
+  {
+    id: 19, group: 'rhythm', groupLabel: '리듬',
+    q: '어느 템포의 영화가 더 편해?',
+    dim: 'rhythm', aDir: 'P', bDir: 'S',
+    movieA: { title: '매드 맥스: 분노의 도로', year: 2015, reason: '2시간 내내 숨 막히게 몰아치는 전개' },
+    movieB: { title: '리틀 포레스트', year: 2018, reason: '계절의 속도대로 천천히 흘러가는 영화' },
+    retryMovieA: { title: '어벤져스: 인피니티 워', year: 2018, reason: '쉼 없이 사건이 터지는 대규모 전개' },
+    retryMovieB: { title: '카모메 식당', year: 2006, reason: '핀란드 카페에서 펼쳐지는 조용하고 잔잔한 이야기' },
+  },
   // ── 그룹 5: 자극 수용도 (Suffix) ──────────────────────────
   {
     id: 20, group: 'suffix', groupLabel: '자극 수용도',
@@ -422,6 +458,15 @@ export const QUESTIONS = [
     a: '어두운 면도 담겨야 해', b: '영화 안에서는 벗어나고 싶어',
     dim: 'suffix', aDir: 'X', bDir: 'C',
   },
+  {
+    id: 23, group: 'suffix', groupLabel: '자극 수용도',
+    q: '어느 쪽이 더 잘 맞아?',
+    dim: 'suffix', aDir: 'X', bDir: 'C',
+    movieA: { title: '추격자', year: 2008, reason: '잔혹하고 불편하지만 강렬하게 각인되는 영화' },
+    movieB: { title: '해리 포터와 마법사의 돌', year: 2001, reason: '자극 없이 순수하게 빠져드는 마법 세계' },
+    retryMovieA: { title: '아저씨', year: 2010, reason: '폭력적이지만 이야기의 일부로 몰입하게 되는 영화' },
+    retryMovieB: { title: '코코', year: 2017, reason: '불편한 장면 없이 감동과 음악만으로 완성된 영화' },
+  },
   // ── 그룹 6: 감정 해소 시점 (Resolve) ──────────────────────
   {
     id: 24, group: 'resolve', groupLabel: '감정 해소 시점',
@@ -440,6 +485,15 @@ export const QUESTIONS = [
     q: '같은 영화, 본 직후 vs 1년 뒤 다시 떠올렸을 때 — 언제가 더 좋게 느껴졌으면 해?',
     a: '본 직후 가장 강렬하고 선명한 게 좋아', b: '시간이 지나 다시 떠올렸을 때 더 좋게 느껴지는 게 좋아',
     dim: 'resolve', aDir: 'K', bDir: 'D',
+  },
+  {
+    id: 27, group: 'resolve', groupLabel: '감정 해소 시점',
+    q: '어느 영화의 감동 방식이 더 좋아?',
+    dim: 'resolve', aDir: 'K', bDir: 'D',
+    movieA: { title: '어벤져스: 엔드게임', year: 2019, reason: '클라이맥스에서 그 자리에서 눈물이 터지는 즉각적 감동' },
+    movieB: { title: '컨택트', year: 2016, reason: '보고 난 뒤 며칠을 계속 생각하게 만드는 숙성형 감동' },
+    retryMovieA: { title: '국가대표', year: 2009, reason: '역전의 순간 바로 그 자리에서 눈물이 나는 영화' },
+    retryMovieB: { title: '헤어질 결심', year: 2022, reason: '보고 난 뒤 계속 생각나고 시간이 지날수록 더 좋아지는 영화' },
   },
   // ── 서브태그 전용 ────────────────────────────────────────────
   {
@@ -508,61 +562,6 @@ export const QUESTIONS = [
     movieA: { title: '센과 치히로의 행방불명', year: 2001, reason: '불편한 장면 없이 순수하게 빠져드는 세계' },
     movieB: { title: '기생충', year: 2019, reason: '불편하지만 강렬하게 각인되는 충격' },
   },
-  // ── 영화 선택 (각 분류 영화 예시) ────────────────────────────
-  {
-    id: 32, group: 'movie_pick', groupLabel: '영화 선택',
-    q: '어느 세계관이 더 끌려?',
-    dim: 'world', aDir: 'R', bDir: 'F',
-    movieA: { title: '국제시장', year: 2014, reason: '실제 역사 속 한 사람의 삶을 따라가는 영화' },
-    movieB: { title: '아바타', year: 2009, reason: '완전히 새로운 외계 행성 세계를 탐험하는 영화' },
-    retryMovieA: { title: '변호인', year: 2013, reason: '실화 기반의 현실적인 법정 드라마' },
-    retryMovieB: { title: '스타워즈: 새로운 희망', year: 1977, reason: '은하계를 무대로 한 SF 서사시' },
-  },
-  {
-    id: 33, group: 'movie_pick', groupLabel: '영화 선택',
-    q: '어떻게 감상하고 싶어?',
-    dim: 'sense', aDir: 'H', bDir: 'M',
-    movieA: { title: '타이타닉', year: 1997, reason: '사랑과 이별에 온전히 감정을 맡기는 영화' },
-    movieB: { title: '소셜 네트워크', year: 2010, reason: '관계와 배신의 구조를 분석하게 만드는 영화' },
-    retryMovieA: { title: '라이온 킹', year: 2019, reason: '성장과 가족에 감정이 따라가는 영화' },
-    retryMovieB: { title: '나이브스 아웃', year: 2019, reason: '복선과 반전을 추리하며 즐기는 영화' },
-  },
-  {
-    id: 34, group: 'movie_pick', groupLabel: '영화 선택',
-    q: '어떤 분위기의 영화가 더 끌려?',
-    dim: 'tone', aDir: 'L', bDir: 'N',
-    movieA: { title: '라라랜드', year: 2016, reason: '설레고 따뜻한 감성으로 가득 찬 영화' },
-    movieB: { title: '조커', year: 2019, reason: '어둡고 무거운 심리를 파고드는 영화' },
-    retryMovieA: { title: '겨울왕국', year: 2013, reason: '밝고 따뜻한 판타지 세계의 이야기' },
-    retryMovieB: { title: '올드보이', year: 2003, reason: '충격적이고 어두운 분위기의 스릴러' },
-  },
-  {
-    id: 35, group: 'movie_pick', groupLabel: '영화 선택',
-    q: '어느 템포의 영화가 더 편해?',
-    dim: 'rhythm', aDir: 'P', bDir: 'S',
-    movieA: { title: '매드 맥스: 분노의 도로', year: 2015, reason: '2시간 내내 숨 막히게 몰아치는 전개' },
-    movieB: { title: '리틀 포레스트', year: 2018, reason: '계절의 속도대로 천천히 흘러가는 영화' },
-    retryMovieA: { title: '어벤져스: 인피니티 워', year: 2018, reason: '쉼 없이 사건이 터지는 대규모 전개' },
-    retryMovieB: { title: '카모메 식당', year: 2006, reason: '핀란드 카페에서 펼쳐지는 조용하고 잔잔한 이야기' },
-  },
-  {
-    id: 36, group: 'movie_pick', groupLabel: '영화 선택',
-    q: '어느 쪽이 더 잘 맞아?',
-    dim: 'suffix', aDir: 'X', bDir: 'C',
-    movieA: { title: '추격자', year: 2008, reason: '잔혹하고 불편하지만 강렬하게 각인되는 영화' },
-    movieB: { title: '해리 포터와 마법사의 돌', year: 2001, reason: '자극 없이 순수하게 빠져드는 마법 세계' },
-    retryMovieA: { title: '아저씨', year: 2010, reason: '폭력적이지만 이야기의 일부로 몰입하게 되는 영화' },
-    retryMovieB: { title: '코코', year: 2017, reason: '불편한 장면 없이 감동과 음악만으로 완성된 영화' },
-  },
-  {
-    id: 37, group: 'movie_pick', groupLabel: '영화 선택',
-    q: '어느 영화의 감동 방식이 더 좋아?',
-    dim: 'resolve', aDir: 'K', bDir: 'D',
-    movieA: { title: '어벤져스: 엔드게임', year: 2019, reason: '클라이맥스에서 그 자리에서 눈물이 터지는 즉각적 감동' },
-    movieB: { title: '컨택트', year: 2016, reason: '보고 난 뒤 며칠을 계속 생각하게 만드는 숙성형 감동' },
-    retryMovieA: { title: '국가대표', year: 2009, reason: '역전의 순간 바로 그 자리에서 눈물이 나는 영화' },
-    retryMovieB: { title: '헤어질 결심', year: 2022, reason: '보고 난 뒤 계속 생각나고 시간이 지날수록 더 좋아지는 영화' },
-  },
 ];
 
 export const GROUP_ICONS = {
@@ -572,7 +571,6 @@ export const GROUP_ICONS = {
   rhythm:   '🎬',
   suffix:   '🔥',
   resolve:  '⚡',
-  subtag:     '🎯',
-  movie_vs:   '🎥',
-  movie_pick: '🍿',
+  subtag:   '🎯',
+  movie_vs: '🎥',
 };
