@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Login.css';
 
@@ -11,6 +11,7 @@ export default function Login() {
 
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +21,8 @@ export default function Login() {
     const result = await login(loginId, password);
 
     if (result.success) {
-      navigate('/');
+      const next = new URLSearchParams(location.search).get('next');
+      navigate(next || '/');
     } else if (result.needsPasswordChange) {
       navigate('/change-password', {
         state: {

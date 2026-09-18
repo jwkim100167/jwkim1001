@@ -8,6 +8,8 @@ import './MovieRecommend.css';
 // 그룹 순서
 const GROUP_ORDER = ['world', 'sense', 'tone', 'rhythm', 'suffix', 'resolve', 'subtag', 'movie_vs'];
 
+const SESSION_KEY = 'movie_quiz_pending';
+
 // 연도 필터 옵션
 const ERA_OPTIONS = [
   { key: 'all',     label: '전체' },
@@ -125,6 +127,18 @@ export default function MovieRecommend() {
     const shuffled = [...filtered].sort(() => Math.random() - 0.5);
     setRecommendedMovies(shuffled.slice(0, 5));
   }, [eraFilter, moviePool]);
+
+  // 로그인 후 미저장 결과 복원
+  useEffect(() => {
+    if (!user?.id) return;
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    if (!raw) return;
+    sessionStorage.removeItem(SESSION_KEY);
+    try {
+      const { finalAnswers } = JSON.parse(raw);
+      if (finalAnswers) finishQuiz(finalAnswers);
+    } catch (e) { /* ignore */ }
+  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 그룹 전환 감지
   const currentQuestion = QUESTIONS[currentQ];
@@ -627,7 +641,10 @@ export default function MovieRecommend() {
           ) : (
             <div className="mr-save-prompt">
               <span className="mr-save-prompt-text">결과를 저장하려면 로그인이 필요해요</span>
-              <button className="mr-login-save-btn" onClick={() => navigate('/login')}>
+              <button className="mr-login-save-btn" onClick={() => {
+                sessionStorage.setItem(SESSION_KEY, JSON.stringify({ finalAnswers: typeResult.finalAnswers }));
+                navigate('/login?next=/movie-recommend');
+              }}>
                 🔐 로그인하고 저장하기
               </button>
             </div>
