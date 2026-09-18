@@ -380,10 +380,15 @@
   border: 1px solid rgba(80, 200, 120, 0.35);
   color: #6ddb8e;
 }
-.new-match-badge.match-75 {
+.new-match-badge.match-83 {
   background: rgba(255, 160, 60, 0.15);
   border: 1px solid rgba(255, 160, 60, 0.3);
   color: #ffaa55;
+}
+.new-match-badge.match-67 {
+  background: rgba(180, 120, 255, 0.13);
+  border: 1px solid rgba(180, 120, 255, 0.28);
+  color: #c490ff;
 }
 .new-match-badge.match-50 {
   background: rgba(80, 180, 255, 0.12);

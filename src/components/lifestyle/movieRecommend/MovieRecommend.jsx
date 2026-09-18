@@ -204,7 +204,7 @@ export default function MovieRecommend() {
         .eq('user_id', String(user.id))
         .limit(1);
 
-      const payload = { user_id: String(user.id), answers: finalAnswers, type_code: code, suffix };
+      const payload = { user_id: String(user.id), answers: finalAnswers, type_code: code, suffix, resolve };
 
       if (existing && existing.length > 0) {
         await supabase.from('movie_recommend_results').update(payload).eq('id', existing[0].id);

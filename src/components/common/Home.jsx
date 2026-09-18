@@ -47,7 +47,7 @@ const Home = () => {
       const [moviesRes, resultRes] = await Promise.all([
         supabase
           .from('movies')
-          .select('title, title_en, year, release_month, type_codes, suffix, director')
+          .select('title, title_en, year, release_month, type_codes, suffix, resolve, director')
           .gte('year', currentYear - 1)
           .not('release_month', 'is', null)
           .order('year', { ascending: false })
@@ -56,7 +56,7 @@ const Home = () => {
         isAuthenticated && user?.id
           ? supabase
               .from('movie_recommend_results')
-              .select('type_code, suffix')
+              .select('type_code, suffix, resolve')
               .eq('user_id', String(user.id))
               .order('created_at', { ascending: false })
               .limit(1)
@@ -68,7 +68,7 @@ const Home = () => {
       setUserMovieResult(result);
 
       const rawMovies = moviesRes.data || [];
-      const processed = sortMoviesByMatch(rawMovies, result?.type_code, result?.suffix);
+      const processed = sortMoviesByMatch(rawMovies, result?.type_code, result?.suffix, result?.resolve);
       // 미분류 영화도 최대 3편 보충
       const unclassified = rawMovies
         .filter(m => !m.type_codes || m.type_codes.length === 0)
@@ -184,7 +184,7 @@ const Home = () => {
               <span className="new-movies-title">🎬 최근 개봉 영화</span>
               {userMovieResult && (
                 <span className="new-movies-subtitle">
-                  {userMovieResult.type_code}-{userMovieResult.suffix} 기준 매칭
+                  {userMovieResult.type_code}-{userMovieResult.suffix}{userMovieResult.resolve ? `-${userMovieResult.resolve}` : ''} 기준 매칭
                 </span>
               )}
             </div>
@@ -197,7 +197,7 @@ const Home = () => {
             ) : newMovies.length > 0 ? (
               <div className="new-movies-list">
                 {newMovies.map((movie, i) => {
-                  const badge = (movie.score != null) ? getMatchBadge(movie.score, movie.suffixOk) : null;
+                  const badge = (movie.score != null) ? getMatchBadge(movie.score) : null;
                   const dateStr = movie.release_month
                     ? `${movie.year}.${String(movie.release_month).padStart(2, '0')}`
                     : `${movie.year}`;
@@ -215,11 +215,6 @@ const Home = () => {
                         ) : (!movie.type_codes || movie.type_codes.length === 0) ? (
                           <span className="new-match-badge unclassified">분류 중</span>
                         ) : null}
-                        {badge && movie.suffixOk && movie.suffix !== 'both' && (
-                          <span className="new-suffix-ok">
-                            {movie.suffix === 'C' ? '순한맛' : '매운맛'}
-                          </span>
-                        )}
                       </div>
                     </div>
                   );

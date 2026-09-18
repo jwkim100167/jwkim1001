@@ -16,24 +16,24 @@ if (!TMDB_API_KEY)     { console.error('TMDB_API_KEY 없음'); process.exit(1); 
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
 // TMDB 장르 ID → 각 차원 투표
-// world: R/F, sense: H/M, tone: L/N, rhythm: P/S, suffix: C/X
+// world: R/F, sense: H/M, tone: L/N, rhythm: P/S, suffix: C/X, resolve: K/D
 const GENRE_VOTES = {
-  28:    { rhythm: 'P', tone: 'N' },                           // Action
-  12:    { world: 'F', rhythm: 'P' },                         // Adventure
-  16:    { world: 'F', tone: 'L', suffix: 'C' },              // Animation
-  35:    { tone: 'L', suffix: 'C' },                          // Comedy
-  80:    { world: 'R', sense: 'M', tone: 'N', suffix: 'X' },  // Crime
-  99:    { world: 'R', rhythm: 'S' },                         // Documentary
-  18:    { world: 'R', sense: 'H' },                          // Drama
-  10751: { tone: 'L', suffix: 'C', rhythm: 'S' },             // Family
-  14:    { world: 'F' },                                       // Fantasy
-  27:    { tone: 'N', suffix: 'X' },                          // Horror
-  9648:  { sense: 'M', tone: 'N' },                           // Mystery
-  10749: { sense: 'H', tone: 'L', rhythm: 'S', suffix: 'C' },// Romance
-  878:   { world: 'F' },                                       // Sci-Fi
-  53:    { sense: 'M', tone: 'N', rhythm: 'P', suffix: 'X' }, // Thriller
-  10752: { world: 'R', tone: 'N', suffix: 'X' },              // War
-  37:    { world: 'R', tone: 'N' },                           // Western
+  28:    { rhythm: 'P', tone: 'N', resolve: 'K' },                           // Action
+  12:    { world: 'F', rhythm: 'P', resolve: 'K' },                          // Adventure
+  16:    { world: 'F', tone: 'L', suffix: 'C', resolve: 'K' },               // Animation
+  35:    { tone: 'L', suffix: 'C', resolve: 'K' },                           // Comedy
+  80:    { world: 'R', sense: 'M', tone: 'N', suffix: 'X' },                 // Crime
+  99:    { world: 'R', rhythm: 'S', resolve: 'D' },                          // Documentary
+  18:    { world: 'R', sense: 'H', resolve: 'D' },                           // Drama
+  10751: { tone: 'L', suffix: 'C', rhythm: 'S' },                            // Family
+  14:    { world: 'F' },                                                       // Fantasy
+  27:    { tone: 'N', suffix: 'X', resolve: 'K' },                           // Horror
+  9648:  { sense: 'M', tone: 'N', resolve: 'D' },                            // Mystery
+  10749: { sense: 'H', tone: 'L', rhythm: 'S', suffix: 'C', resolve: 'D' }, // Romance
+  878:   { world: 'F' },                                                       // Sci-Fi
+  53:    { sense: 'M', tone: 'N', rhythm: 'P', suffix: 'X', resolve: 'K' },  // Thriller
+  10752: { world: 'R', tone: 'N', suffix: 'X', resolve: 'D' },               // War
+  37:    { world: 'R', tone: 'N' },                                           // Western
 };
 
 // 동점 기본값
@@ -41,11 +41,12 @@ const DEFAULTS = { world: 'R', sense: 'H', tone: 'L', rhythm: 'S' };
 
 function classifyByGenres(genreIds) {
   const v = {
-    world:  { R: 0, F: 0 },
-    sense:  { H: 0, M: 0 },
-    tone:   { L: 0, N: 0 },
-    rhythm: { S: 0, P: 0 },
-    suffix: { C: 0, X: 0 },
+    world:   { R: 0, F: 0 },
+    sense:   { H: 0, M: 0 },
+    tone:    { L: 0, N: 0 },
+    rhythm:  { S: 0, P: 0 },
+    suffix:  { C: 0, X: 0 },
+    resolve: { K: 0, D: 0 },
   };
 
   for (const gid of genreIds) {
@@ -75,6 +76,13 @@ function classifyByGenres(genreIds) {
                : (cVotes - xVotes > 1) ? 'C'
                : 'both';
 
+  // resolve: margin > 1이면 명확, 그 이하면 'both'
+  const kVotes = v.resolve.K;
+  const dVotes = v.resolve.D;
+  const resolve = (kVotes - dVotes > 1) ? 'K'
+                : (dVotes - kVotes > 1) ? 'D'
+                : 'both';
+
   // 인접 유형: 투표 마진이 ≤1인 차원을 뒤집은 코드 포함
   const dims = [
     { pos: 0, key: 'world',  a: 'R', b: 'F' },
@@ -93,7 +101,7 @@ function classifyByGenres(genreIds) {
   }
 
   const typeCodes = [...new Set([code, ...adjacents.slice(0, 2)])];
-  return { typeCodes, suffix };
+  return { typeCodes, suffix, resolve };
 }
 
 async function fetchTMDBGenres(tmdbId) {
@@ -135,11 +143,11 @@ for (const movie of (movies ?? [])) {
     continue;
   }
 
-  const { typeCodes, suffix } = classifyByGenres(genreIds);
+  const { typeCodes, suffix, resolve } = classifyByGenres(genreIds);
 
   const { error: err } = await supabase
     .from('movies')
-    .update({ type_codes: typeCodes, suffix })
+    .update({ type_codes: typeCodes, suffix, resolve })
     .eq('id', movie.id);
 
   if (err) {
