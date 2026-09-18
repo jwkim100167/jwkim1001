@@ -262,6 +262,47 @@
   line-height: 1.55;
 }
 
+.mr-q-tail {
+  display: block;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 8px;
+  font-weight: 400;
+}
+
+.mr-attempt-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mr-attempt-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 200, 80, 0.25);
+  color: rgba(255, 200, 80, 0.4);
+  background: rgba(255, 200, 80, 0.05);
+  transition: all 0.2s;
+}
+
+.mr-attempt-badge.active {
+  color: #ffc850;
+  border-color: rgba(255, 200, 80, 0.6);
+  background: rgba(255, 200, 80, 0.12);
+}
+
+.mr-attempt-badge.dim {
+  opacity: 0.4;
+}
+
+.mr-attempt-arrow {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.2);
+}
+
 .mr-q-inline-vs {
   display: block;
   font-size: 0.62rem;

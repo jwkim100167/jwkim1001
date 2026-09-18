@@ -6,7 +6,7 @@ import { QUESTIONS, MOVIE_TYPES, SUFFIX_LABELS, RESOLVE_LABELS, GROUP_ICONS, fin
 import './MovieRecommend.css';
 
 // 그룹 순서
-const GROUP_ORDER = ['world', 'sense', 'tone', 'rhythm', 'suffix', 'resolve', 'subtag', 'movie_vs'];
+const GROUP_ORDER = ['world', 'sense', 'tone', 'rhythm', 'suffix', 'resolve', 'subtag', 'movie_vs', 'movie_pick'];
 
 const SESSION_KEY = 'movie_quiz_pending';
 
@@ -31,17 +31,32 @@ function formatReleaseDate(year, releaseMonth) {
   return `${year}`;
 }
 
-// 질문 텍스트 " vs " 기준 분리 렌더링
+// 질문 텍스트 " vs " 기준 분리 렌더링 (꼬리 질문도 별도 줄)
 function renderQuestionText(text) {
   const vsIdx = text.indexOf(' vs ');
   if (vsIdx === -1) return text;
   const before = text.slice(0, vsIdx);
-  const after = text.slice(vsIdx + 4);
+  const afterFull = text.slice(vsIdx + 4);
+
+  // B파트와 꼬리 질문 분리: " — " 우선, 없으면 마지막 ", "
+  let after = afterFull;
+  let tail = null;
+  const dashIdx = afterFull.indexOf(' — ');
+  const commaIdx = afterFull.lastIndexOf(', ');
+  if (dashIdx !== -1) {
+    after = afterFull.slice(0, dashIdx);
+    tail = afterFull.slice(dashIdx + 3);
+  } else if (commaIdx !== -1) {
+    after = afterFull.slice(0, commaIdx);
+    tail = afterFull.slice(commaIdx + 2);
+  }
+
   return (
     <>
       <span className="mr-q-part">{before}</span>
       <span className="mr-q-inline-vs">vs</span>
       <span className="mr-q-part">{after}</span>
+      {tail && <span className="mr-q-tail">{tail}</span>}
     </>
   );
 }
@@ -344,7 +359,8 @@ export default function MovieRecommend() {
                     g === 'tone'     ? '분위기' :
                     g === 'rhythm'   ? '리듬' :
                     g === 'suffix'   ? '자극 수용도' :
-                    g === 'resolve'  ? '감정 해소 시점' : '영화 VS 영화'
+                    g === 'resolve'     ? '감정 해소 시점' :
+                    g === 'movie_vs'   ? '영화 VS 영화' : '영화 선택'
                   }
                 </span>
               ))}
@@ -393,15 +409,17 @@ export default function MovieRecommend() {
              nextGroup === 'rhythm'   ? '리듬' :
              nextGroup === 'suffix'   ? '자극 수용도' :
              nextGroup === 'resolve'  ? '감정 해소 시점' :
-             nextGroup === 'subtag'   ? '영화 선택 기준' : '영화 VS 영화'}
+             nextGroup === 'subtag'      ? '영화 선택 기준' :
+             nextGroup === 'movie_pick'  ? '영화 선택' : '영화 VS 영화'}
           </div>
           <div className="mr-group-intro-desc">
-            {nextGroup === 'sense'    ? '영화를 어떻게 느끼나요?' :
-             nextGroup === 'tone'     ? '어떤 분위기를 원하나요?' :
-             nextGroup === 'rhythm'   ? '어떤 템포를 좋아하나요?' :
-             nextGroup === 'suffix'   ? '어느 정도까지 괜찮아요?' :
-             nextGroup === 'resolve'  ? '감동이 언제 찾아오나요?' :
-             nextGroup === 'subtag'   ? '점수에 반영되지 않는 세부 취향 질문이에요' :
+            {nextGroup === 'sense'      ? '영화를 어떻게 느끼나요?' :
+             nextGroup === 'tone'       ? '어떤 분위기를 원하나요?' :
+             nextGroup === 'rhythm'     ? '어떤 템포를 좋아하나요?' :
+             nextGroup === 'suffix'     ? '어느 정도까지 괜찮아요?' :
+             nextGroup === 'resolve'    ? '감동이 언제 찾아오나요?' :
+             nextGroup === 'subtag'     ? '점수에 반영되지 않는 세부 취향 질문이에요' :
+             nextGroup === 'movie_pick' ? '영화 예시로 취향을 확인해요 · 못 본 영화는 다른 예시로 바꿔드려요' :
              '영화 예시로 취향을 비교해요'}
           </div>
         </div>
@@ -423,7 +441,8 @@ export default function MovieRecommend() {
       q.group === 'rhythm'   ? '리듬' :
       q.group === 'suffix'   ? '자극 수용도' :
       q.group === 'resolve'  ? '감정 해소 시점' :
-      q.group === 'movie_vs' ? '영화 VS 영화' : '영화 선택 기준';
+      q.group === 'movie_vs'   ? '영화 VS 영화' :
+      q.group === 'movie_pick' ? '영화 선택' : '영화 선택 기준';
     const groupQCount = QUESTIONS.filter(q2 => q2.group === q.group).length;
     const posInGroup = QUESTIONS.filter((q2, i) => q2.group === q.group && i <= currentQ).length;
 
@@ -449,10 +468,12 @@ export default function MovieRecommend() {
             {renderQuestionText(q.q)}
           </div>
 
-          {/* 영화 예시 질문 힌트 */}
-          {q.movieA && q.group !== 'movie_vs' && (
-            <div className="mr-movie-hint">
-              본 적 없는 영화라면 '안 봤어요'를 선택하면 다른 예시로 바꿔드려요
+          {/* 영화 예시 시도 표시 */}
+          {q.group === 'movie_pick' && (
+            <div className="mr-attempt-row">
+              <span className={`mr-attempt-badge ${!retryMode ? 'active' : ''}`}>① 1번째</span>
+              <span className="mr-attempt-arrow">→</span>
+              <span className={`mr-attempt-badge ${retryMode ? 'active' : 'dim'}`}>② 2번째</span>
             </div>
           )}
 
