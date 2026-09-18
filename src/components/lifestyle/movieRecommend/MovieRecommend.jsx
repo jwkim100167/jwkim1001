@@ -114,7 +114,7 @@ export default function MovieRecommend() {
   const [moviePoolError, setMoviePoolError] = useState(false);
   const [recommendedMovies, setRecommendedMovies] = useState([]);
   const [eraFilter, setEraFilter] = useState('all');
-  const [showMoviesSection, setShowMoviesSection] = useState(false);
+  const [showMoviesSection, setShowMoviesSection] = useState(true);
 
   // 연도 필터 변경 시 추천 영화 재셔플
   useEffect(() => {
@@ -563,15 +563,7 @@ export default function MovieRecommend() {
 
             {showMoviesSection && (
               <>
-                <div className="mr-movies-title-row">
-                  {filteredPool.length > 5 && (
-                    <button className="mr-shuffle-btn" onClick={shuffleMovies}>
-                      🔀 다른 영화
-                    </button>
-                  )}
-                </div>
-
-                {/* 연도 필터 */}
+                {/* 연도 필터 + 셔플 버튼 한 줄 */}
                 <div className="mr-era-filter">
                   {ERA_OPTIONS.map(opt => {
                     const count = opt.key === 'all'
@@ -589,6 +581,11 @@ export default function MovieRecommend() {
                       </button>
                     );
                   })}
+                  {filteredPool.length > 5 && (
+                    <button className="mr-shuffle-btn" onClick={shuffleMovies}>
+                      🔀 다른 영화
+                    </button>
+                  )}
                 </div>
 
                 {moviePoolError ? (

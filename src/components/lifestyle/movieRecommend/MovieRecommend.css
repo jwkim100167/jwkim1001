@@ -479,18 +479,6 @@
   margin-bottom: 24px;
 }
 
-.mr-movies-title-row {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin: 10px 0 6px;
-}
-
-.mr-movies-title {
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: rgba(255, 200, 80, 0.85);
-}
 
 .mr-shuffle-btn {
   background: rgba(255, 200, 80, 0.1);
@@ -652,7 +640,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin: 10px 0 14px;
+  margin: 8px 0 10px;
 }
 
 .mr-era-chip {
