@@ -294,6 +294,13 @@
   margin: 10px 0;
 }
 
+.mr-vs-or {
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.2em;
+  margin: 4px 0;
+}
+
 /* ── 중립 버튼 (둘 다 / 잘 모르겠어) ── */
 .mr-neutral-btn {
   text-align: center;

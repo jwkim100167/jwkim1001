@@ -430,6 +430,8 @@ export default function MovieRecommend() {
                   <span className="mr-duel-reason">{movieB.reason}</span>
                 </button>
 
+                <div className="mr-vs mr-vs-or">or</div>
+
                 <button
                   className={`mr-card mr-neutral-btn ${selected === 'C' ? 'selected' : ''} ${selected && selected !== 'C' ? 'dimmed' : ''}`}
                   onClick={() => handleSelect('C')}
@@ -458,6 +460,8 @@ export default function MovieRecommend() {
               >
                 <span className="mr-card-text">{q.b}</span>
               </button>
+
+              <div className="mr-vs mr-vs-or">or</div>
 
               <button
                 className={`mr-card mr-neutral-btn ${selected === 'C' ? 'selected' : ''} ${selected && selected !== 'C' ? 'dimmed' : ''}`}
