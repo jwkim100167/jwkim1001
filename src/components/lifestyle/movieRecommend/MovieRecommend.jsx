@@ -262,6 +262,38 @@ export default function MovieRecommend() {
     }
   };
 
+  const handleViewSavedResult = async () => {
+    if (!savedResult) return;
+    if (savedResult.answers && Object.keys(savedResult.answers).length > 0) {
+      // answers가 있으면 재계산
+      finishQuiz(savedResult.answers);
+    } else {
+      // answers 없이 type_code로 직접 결과 로드
+      const { code, suffix, resolve } = {
+        code: savedResult.type_code,
+        suffix: savedResult.suffix || 'C',
+        resolve: savedResult.resolve || 'K',
+      };
+      const typeData = findType(code);
+      setTypeResult({ code, suffix, resolve, tiedDims: [], typeData, finalAnswers: {} });
+      setPhase('result');
+      setIsSaved(true);
+      const { data: movieData, error: movieError } = await supabase
+        .from('movies')
+        .select('title, title_en, year, director, release_month')
+        .contains('type_codes', [code])
+        .in('suffix', [suffix, 'both']);
+      setMoviePoolFetched(true);
+      if (movieError) {
+        setMoviePoolError(true);
+      } else if (movieData && movieData.length > 0) {
+        setMoviePool(movieData);
+        const shuffled = [...movieData].sort(() => Math.random() - 0.5);
+        setRecommendedMovies(shuffled.slice(0, 5));
+      }
+    }
+  };
+
   const handleRestart = () => {
     setPhase('start');
     setCurrentQ(0);
@@ -323,9 +355,9 @@ export default function MovieRecommend() {
                 🎬 로그인 없이도 즐길 수 있어요 · 결과 저장은 로그인 후 가능
               </div>
             )}
-            {user && savedResult ? (
+            {user && savedResult?.type_code ? (
               <div className="mr-start-actions">
-                <button className="mr-view-result-btn" onClick={() => finishQuiz(savedResult.answers)}>
+                <button className="mr-view-result-btn" onClick={handleViewSavedResult}>
                   📊 내 결과 보기
                 </button>
                 <button className="mr-start-btn mr-start-btn-secondary" onClick={() => setPhase('quiz')}>
