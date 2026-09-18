@@ -299,32 +299,26 @@ export function findType(code) {
   return MOVIE_TYPES.find(t => t.code === code) || null;
 }
 
-// 51개 질문 정의 (각 그룹 중간에 영화 예시 질문 1개씩 삽입)
+// 38개 질문 정의 (각 그룹 중간에 영화 예시 질문 1개씩 삽입)
 // dim: 'world' | 'sense' | 'tone' | 'rhythm' | 'suffix' | 'resolve'
 // movieA/movieB: 영화 예시 질문 (retryMovieA/B: 안 봤어요 시 재시도용)
 export const QUESTIONS = [
   // ── 그룹 1: 세계관 (World) ──────────────────────────────────
   {
     id: 0, group: 'world', groupLabel: '세계관',
-    q: '현실에서 일어날 법한 이야기 vs 마법/SF/초능력 같은 비현실 세계, 어느 쪽이 더 끌려?',
-    a: '현실에 발 붙인 이야기', b: '상상 속 다른 세계 이야기',
-    dim: 'world', aDir: 'R', bDir: 'F',
-  },
-  {
-    id: 1, group: 'world', groupLabel: '세계관',
     q: 'SF, 판타지 vs 현실 기반 드라마, 어느 쪽이 더 재밌어?',
     a: 'SF/판타지 세계관', b: '현실 기반 드라마',
     dim: 'world', aDir: 'F', bDir: 'R',
   },
   {
-    id: 2, group: 'world', groupLabel: '세계관',
+    id: 1, group: 'world', groupLabel: '세계관',
     q: '역사 속 실제 시대 배경 vs 존재하지 않는 세계(미래/외계/마법) 배경, 어느 쪽이 더 좋아?',
     a: '역사적 사실 배경', b: '완전히 새로운 세계',
     dim: 'world', aDir: 'R', bDir: 'F',
   },
   // 영화 예시
   {
-    id: 3, group: 'world', groupLabel: '세계관',
+    id: 2, group: 'world', groupLabel: '세계관',
     q: '어느 세계관이 더 끌려?',
     dim: 'world', aDir: 'R', bDir: 'F',
     movieA: { title: '국제시장', year: 2014, reason: '실제 역사 속 한 사람의 삶을 따라가는 영화' },
@@ -333,39 +327,33 @@ export const QUESTIONS = [
     retryMovieB: { title: '스타워즈: 새로운 희망', year: 1977, reason: '은하계를 무대로 한 SF 서사시' },
   },
   {
-    id: 4, group: 'world', groupLabel: '세계관',
-    q: '"이런 일이 실제로 있을 수 있을까?" 하는 현실감 vs "이런 세계가 있다면?" 하는 상상력, 어느 쪽이 영화를 더 풍요롭게 해?',
-    a: '현실감이 몰입을 높여', b: '상상력이 영화를 빛나게 해',
-    dim: 'world', aDir: 'R', bDir: 'F',
-  },
-  {
-    id: 5, group: 'world', groupLabel: '세계관',
+    id: 3, group: 'world', groupLabel: '세계관',
     q: '외계인/타임머신/마법사 vs 형사/기업가/의사 — 주인공이라면 어느 쪽이 더 끌려?',
     a: '판타지적 비현실 주인공', b: '현실적인 직업의 주인공',
     dim: 'world', aDir: 'F', bDir: 'R',
   },
   // ── 그룹 2: 감성 방식 (Sense) ──────────────────────────────
   {
-    id: 6, group: 'sense', groupLabel: '감성 방식',
+    id: 4, group: 'sense', groupLabel: '감성 방식',
     q: '인물에게 감정이입해서 같이 울고 웃는 것 vs 이야기 구조와 복선을 파악하며 분석하는 것, 어느 쪽이 더 재밌어?',
     a: '감정이입이 먼저', b: '분석이 더 재밌어',
     dim: 'sense', aDir: 'H', bDir: 'M',
   },
   {
-    id: 7, group: 'sense', groupLabel: '감성 방식',
+    id: 5, group: 'sense', groupLabel: '감성 방식',
     q: '"이 장면에서 왜 저러는지 이해된다" vs "이 복선이 여기서 회수되는구나", 어느 쪽 쾌감이 더 커?',
     a: '감정 공감의 쾌감', b: '구조 파악의 쾌감',
     dim: 'sense', aDir: 'H', bDir: 'M',
   },
   {
-    id: 8, group: 'sense', groupLabel: '감성 방식',
+    id: 6, group: 'sense', groupLabel: '감성 방식',
     q: '보고 나서 감정이 찡하게 남는 것 vs 보고 나서 생각이 계속 이어지는 것, 어느 쪽이 더 좋아?',
     a: '감정의 여운', b: '생각의 여운',
     dim: 'sense', aDir: 'H', bDir: 'M',
   },
   // 영화 예시
   {
-    id: 9, group: 'sense', groupLabel: '감성 방식',
+    id: 7, group: 'sense', groupLabel: '감성 방식',
     q: '어떻게 감상하고 싶어?',
     dim: 'sense', aDir: 'H', bDir: 'M',
     movieA: { title: '타이타닉', year: 1997, reason: '사랑과 이별에 온전히 감정을 맡기는 영화' },
@@ -374,51 +362,33 @@ export const QUESTIONS = [
     retryMovieB: { title: '나이브스 아웃', year: 2019, reason: '복선과 반전을 추리하며 즐기는 영화' },
   },
   {
-    id: 10, group: 'sense', groupLabel: '감성 방식',
+    id: 8, group: 'sense', groupLabel: '감성 방식',
     q: '예상 못한 반전의 소름 vs 예상했던 감동이 찾아오는 따뜻함, 어느 쪽이 더 좋아?',
     a: '감동이 찾아오는 따뜻함', b: '반전의 소름',
     dim: 'sense', aDir: 'H', bDir: 'M',
   },
   {
-    id: 11, group: 'sense', groupLabel: '감성 방식',
-    q: '인물의 심리를 끝까지 해석해보고 싶은 영화 vs 인물의 감정에 그냥 휩쓸리는 영화, 어느 쪽?',
-    a: '감정에 그냥 휩쓸리는 것', b: '심리를 해석하고 싶은 것',
-    dim: 'sense', aDir: 'H', bDir: 'M',
-  },
-  {
-    id: 12, group: 'sense', groupLabel: '감성 방식',
-    q: '배우의 눈빛과 감정 표현이 더 기억에 남는 것 vs 각본과 연출의 설계가 더 기억에 남는 것, 어느 쪽?',
-    a: '배우의 감정 표현', b: '각본/연출의 설계',
-    dim: 'sense', aDir: 'H', bDir: 'M',
-  },
-  {
-    id: 13, group: 'sense', groupLabel: '감성 방식',
+    id: 9, group: 'sense', groupLabel: '감성 방식',
     q: '복잡한 서사 구조(비선형, 다시점) vs 단순하고 명확한 이야기 전개, 어느 쪽이 더 좋아?',
     a: '단순하고 명확한 이야기', b: '복잡한 구조의 퍼즐',
     dim: 'sense', aDir: 'H', bDir: 'M',
   },
   // ── 그룹 3: 분위기 (Tone) ──────────────────────────────────
   {
-    id: 14, group: 'tone', groupLabel: '분위기',
+    id: 10, group: 'tone', groupLabel: '분위기',
     q: '밝고 따뜻한 분위기 vs 어둡고 긴장된 분위기, 어느 쪽이 더 끌려?',
     a: '밝고 따뜻하게', b: '어둡고 긴장되게',
     dim: 'tone', aDir: 'L', bDir: 'N',
   },
   {
-    id: 15, group: 'tone', groupLabel: '분위기',
-    q: '유쾌한 코미디/힐링 vs 긴장감 있는 공포/스릴러, 어느 쪽을 더 자주 봐?',
-    a: '코미디/힐링', b: '공포/스릴러',
-    dim: 'tone', aDir: 'L', bDir: 'N',
-  },
-  {
-    id: 16, group: 'tone', groupLabel: '분위기',
+    id: 11, group: 'tone', groupLabel: '분위기',
     q: '해피엔딩 vs 여운 있는 열린 결말 or 새드엔딩, 어느 쪽이 더 좋아?',
     a: '기분 좋게 끝나는 해피엔딩', b: '여운 남는 열린/새드 결말',
     dim: 'tone', aDir: 'L', bDir: 'N',
   },
   // 영화 예시
   {
-    id: 17, group: 'tone', groupLabel: '분위기',
+    id: 12, group: 'tone', groupLabel: '분위기',
     q: '어떤 분위기의 영화가 더 끌려?',
     dim: 'tone', aDir: 'L', bDir: 'N',
     movieA: { title: '라라랜드', year: 2016, reason: '설레고 따뜻한 감성으로 가득 찬 영화' },
@@ -427,51 +397,33 @@ export const QUESTIONS = [
     retryMovieB: { title: '올드보이', year: 2003, reason: '충격적이고 어두운 분위기의 스릴러' },
   },
   {
-    id: 18, group: 'tone', groupLabel: '분위기',
+    id: 13, group: 'tone', groupLabel: '분위기',
     q: '설레는 로맨스 영화 vs 냉혹한 범죄/느와르 영화, 어느 쪽이 더 끌려?',
     a: '설레는 로맨스', b: '냉혹한 범죄/느와르',
     dim: 'tone', aDir: 'L', bDir: 'N',
   },
   {
-    id: 19, group: 'tone', groupLabel: '분위기',
-    q: '따뜻하게 위로받는 기분 vs 속 시원하게 카타르시스가 터지는 기분, 어느 쪽을 더 원해?',
-    a: '따뜻한 위로', b: '시원한 카타르시스',
-    dim: 'tone', aDir: 'L', bDir: 'N',
-  },
-  {
-    id: 20, group: 'tone', groupLabel: '분위기',
+    id: 14, group: 'tone', groupLabel: '분위기',
     q: '선악이 명확하고 정의가 이기는 이야기 vs 선악이 모호하고 현실적인 이야기, 어느 쪽이 더 끌려?',
     a: '정의가 이기는 명쾌한 이야기', b: '선악이 모호한 현실적 이야기',
     dim: 'tone', aDir: 'L', bDir: 'N',
   },
-  {
-    id: 21, group: 'tone', groupLabel: '분위기',
-    q: '나쁜 놈은 확실히 나쁜 통쾌한 이야기 vs 악당도 이해되는 복잡한 도덕, 어느 쪽?',
-    a: '선악 명확한 통쾌함', b: '악당도 이해되는 복잡함',
-    dim: 'tone', aDir: 'L', bDir: 'N',
-  },
   // ── 그룹 4: 리듬 (Rhythm) ──────────────────────────────────
   {
-    id: 22, group: 'rhythm', groupLabel: '리듬',
+    id: 15, group: 'rhythm', groupLabel: '리듬',
     q: '빠르게 몰아치는 전개 vs 천천히 쌓아가는 전개, 어느 쪽이 더 좋아?',
     a: '숨 막히게 빠른 전개', b: '천천히 쌓아가는 전개',
     dim: 'rhythm', aDir: 'P', bDir: 'S',
   },
   {
-    id: 23, group: 'rhythm', groupLabel: '리듬',
-    q: '쉬지 않고 긴장감이 몰아치는 것 vs 찻잔 들고 여유롭게 감상하는 것, 어느 쪽?',
-    a: '쉼 없이 몰아치는 긴장감', b: '여유로운 감상 분위기',
-    dim: 'rhythm', aDir: 'P', bDir: 'S',
-  },
-  {
-    id: 24, group: 'rhythm', groupLabel: '리듬',
+    id: 16, group: 'rhythm', groupLabel: '리듬',
     q: '터지는 액션과 빠른 컷 편집 vs 긴 호흡의 롱테이크와 정적인 장면, 어느 쪽이 더 좋아?',
     a: '빠른 편집과 액션', b: '긴 호흡의 정적인 장면',
     dim: 'rhythm', aDir: 'P', bDir: 'S',
   },
   // 영화 예시
   {
-    id: 25, group: 'rhythm', groupLabel: '리듬',
+    id: 17, group: 'rhythm', groupLabel: '리듬',
     q: '어느 템포의 영화가 더 편해?',
     dim: 'rhythm', aDir: 'P', bDir: 'S',
     movieA: { title: '매드 맥스: 분노의 도로', year: 2015, reason: '2시간 내내 숨 막히게 몰아치는 전개' },
@@ -480,45 +432,33 @@ export const QUESTIONS = [
     retryMovieB: { title: '카모메 식당', year: 2006, reason: '핀란드 카페에서 펼쳐지는 조용하고 잔잔한 이야기' },
   },
   {
-    id: 26, group: 'rhythm', groupLabel: '리듬',
-    q: '신나고 에너지 넘치는 분위기 vs 조용하고 서정적인 분위기, 어느 쪽?',
-    a: '신나고 에너지 넘치게', b: '조용하고 서정적으로',
-    dim: 'rhythm', aDir: 'P', bDir: 'S',
-  },
-  {
-    id: 27, group: 'rhythm', groupLabel: '리듬',
+    id: 18, group: 'rhythm', groupLabel: '리듬',
     q: '2시간 내내 사건이 쏟아지는 vs 2시간 동안 한 가지 이야기를 깊이 파는, 어느 쪽?',
     a: '사건이 계속 쏟아지는 전개', b: '하나의 이야기를 깊이 파는 것',
     dim: 'rhythm', aDir: 'P', bDir: 'S',
   },
   {
-    id: 28, group: 'rhythm', groupLabel: '리듬',
+    id: 19, group: 'rhythm', groupLabel: '리듬',
     q: '영화가 끝난 뒤 "빠르게 지나갔다" vs "시간이 천천히 흘렀다", 어느 쪽 느낌이 더 좋아?',
     a: '빠르게 지나간 느낌', b: '시간이 천천히 흐른 느낌',
     dim: 'rhythm', aDir: 'P', bDir: 'S',
   },
   // ── 그룹 5: 자극 수용도 (Suffix) ──────────────────────────
   {
-    id: 29, group: 'suffix', groupLabel: '자극 수용도',
+    id: 20, group: 'suffix', groupLabel: '자극 수용도',
     q: '잔인하거나 불편한 장면도 이야기의 일부로 받아들일 수 있어 vs 자극적인 장면 없이 이야기로만 몰입하는 게 더 좋아?',
     a: '이야기 일부로 받아들여', b: '자극 없이 이야기로만',
     dim: 'suffix', aDir: 'X', bDir: 'C',
   },
   {
-    id: 30, group: 'suffix', groupLabel: '자극 수용도',
+    id: 21, group: 'suffix', groupLabel: '자극 수용도',
     q: '도덕적으로 불편한 주인공(빌런 시점, 반사회적 캐릭터)도 따라갈 수 있어 vs 공감 가는 주인공이어야 몰입이 돼?',
     a: '불편한 주인공도 따라가', b: '공감 가는 주인공이어야 해',
     dim: 'suffix', aDir: 'X', bDir: 'C',
   },
-  {
-    id: 31, group: 'suffix', groupLabel: '자극 수용도',
-    q: '어두운 결말, 비극, 충격적 반전도 더 강렬하게 기억에 남는다면 OK vs 불편함이 남는 영화는 별로야?',
-    a: '강렬하게 남는다면 OK', b: '불편함이 남는 건 싫어',
-    dim: 'suffix', aDir: 'X', bDir: 'C',
-  },
   // 영화 예시
   {
-    id: 32, group: 'suffix', groupLabel: '자극 수용도',
+    id: 22, group: 'suffix', groupLabel: '자극 수용도',
     q: '어느 쪽이 더 잘 맞아?',
     dim: 'suffix', aDir: 'X', bDir: 'C',
     movieA: { title: '추격자', year: 2008, reason: '잔혹하고 불편하지만 강렬하게 각인되는 영화' },
@@ -527,39 +467,27 @@ export const QUESTIONS = [
     retryMovieB: { title: '코코', year: 2017, reason: '불편한 장면 없이 감동과 음악만으로 완성된 영화' },
   },
   {
-    id: 33, group: 'suffix', groupLabel: '자극 수용도',
-    q: '"이 장면 좀 힘들었지만 덕분에 영화가 더 강렬했다"고 느낀 적 있어 vs 불편한 장면은 오히려 몰입을 깨뜨려?',
-    a: '강렬함을 위해 감수해', b: '불편한 장면은 몰입을 깨',
-    dim: 'suffix', aDir: 'X', bDir: 'C',
-  },
-  {
-    id: 34, group: 'suffix', groupLabel: '자극 수용도',
+    id: 23, group: 'suffix', groupLabel: '자극 수용도',
     q: '현실의 추악함이나 인간의 어두운 면까지 담은 영화 vs 영화 안에서는 그런 것에서 벗어나고 싶어?',
     a: '어두운 면도 담겨야 해', b: '영화 안에서는 벗어나고 싶어',
     dim: 'suffix', aDir: 'X', bDir: 'C',
   },
   // ── 그룹 6: 감정 해소 시점 (Resolve) ──────────────────────
   {
-    id: 35, group: 'resolve', groupLabel: '감정 해소 시점',
+    id: 24, group: 'resolve', groupLabel: '감정 해소 시점',
     q: '영화를 보는 중 vs 보고 난 뒤, 감동이 더 강하게 느껴지는 건 언제야?',
     a: '보는 내내 그 자리에서 감동이 몰려온다', b: '보고 난 뒤 시간이 지날수록 더 깊어진다',
     dim: 'resolve', aDir: 'K', bDir: 'D',
   },
   {
-    id: 36, group: 'resolve', groupLabel: '감정 해소 시점',
-    q: '영화 직후 vs 며칠 뒤, 언제 더 강렬하게 기억에 남아?',
-    a: '본 직후가 가장 강렬하다', b: '시간이 지날수록 더 선명해진다',
-    dim: 'resolve', aDir: 'K', bDir: 'D',
-  },
-  {
-    id: 37, group: 'resolve', groupLabel: '감정 해소 시점',
+    id: 25, group: 'resolve', groupLabel: '감정 해소 시점',
     q: '감동은 "그 장면에서" 터지는 게 좋아 vs "나중에 문득" 생각날 때 더 크게 느껴지는 게 좋아?',
     a: '그 순간에 터지는 즉각적인 감동', b: '나중에 문득 떠올랐을 때 더 크게 느껴지는 것',
     dim: 'resolve', aDir: 'K', bDir: 'D',
   },
   // 영화 예시
   {
-    id: 38, group: 'resolve', groupLabel: '감정 해소 시점',
+    id: 26, group: 'resolve', groupLabel: '감정 해소 시점',
     q: '어느 영화의 감동 방식이 더 좋아?',
     dim: 'resolve', aDir: 'K', bDir: 'D',
     movieA: { title: '어벤져스: 엔드게임', year: 2019, reason: '클라이맥스에서 그 자리에서 눈물이 터지는 즉각적 감동' },
@@ -568,79 +496,73 @@ export const QUESTIONS = [
     retryMovieB: { title: '헤어질 결심', year: 2022, reason: '보고 난 뒤 계속 생각나고 시간이 지날수록 더 좋아지는 영화' },
   },
   {
-    id: 39, group: 'resolve', groupLabel: '감정 해소 시점',
-    q: '엔딩 크레딧이 올라갈 때 이미 마음이 꽉 찬 느낌 vs 집에 돌아와서야 서서히 감동이 스미는 느낌, 어느 쪽?',
-    a: '크레딧에서 이미 가득 차는 것', b: '집에 돌아와서야 서서히 스미는 것',
-    dim: 'resolve', aDir: 'K', bDir: 'D',
-  },
-  {
-    id: 40, group: 'resolve', groupLabel: '감정 해소 시점',
+    id: 27, group: 'resolve', groupLabel: '감정 해소 시점',
     q: '같은 영화, 본 직후 vs 1년 뒤 다시 떠올렸을 때 — 언제가 더 좋게 느껴졌으면 해?',
     a: '본 직후 가장 강렬하고 선명한 게 좋아', b: '시간이 지나 다시 떠올렸을 때 더 좋게 느껴지는 게 좋아',
     dim: 'resolve', aDir: 'K', bDir: 'D',
   },
   // ── 서브태그 전용 ────────────────────────────────────────────
   {
-    id: 41, group: 'subtag', groupLabel: '영화 선택 기준',
+    id: 28, group: 'subtag', groupLabel: '영화 선택 기준',
     q: '감독 vs 주연배우, 영화 선택에 어느 쪽이 더 영향을 줘?',
     a: '감독의 스타일과 연출력', b: '주연 배우의 존재감',
     dim: null, aDir: 'director', bDir: 'actor',
   },
   {
-    id: 42, group: 'subtag', groupLabel: '영화 선택 기준',
+    id: 29, group: 'subtag', groupLabel: '영화 선택 기준',
     q: '영상미/미술 vs 음악/OST, 어느 쪽에 더 끌려?',
     a: '눈을 사로잡는 영상미', b: '귀를 사로잡는 음악/OST',
     dim: null, aDir: 'visual', bDir: 'music',
   },
   {
-    id: 43, group: 'subtag', groupLabel: '영화 선택 기준',
+    id: 30, group: 'subtag', groupLabel: '영화 선택 기준',
     q: '배우 연기력 vs 각본/대사, 어느 쪽이 더 중요해?',
     a: '배우들의 살아있는 연기', b: '잘 쓰인 각본과 대사',
     dim: null, aDir: 'acting', bDir: 'script',
   },
   {
-    id: 44, group: 'subtag', groupLabel: '영화 선택 기준',
+    id: 31, group: 'subtag', groupLabel: '영화 선택 기준',
     q: '분위기/톤 vs 스토리, 영화 고를 때 어느 쪽을 더 먼저 봐?',
     a: '영화의 분위기와 톤', b: '이야기의 탄탄함',
     dim: null, aDir: 'mood', bDir: 'story',
   },
   {
-    id: 45, group: 'subtag', groupLabel: '영화 선택 기준',
+    id: 32, group: 'subtag', groupLabel: '영화 선택 기준',
     q: '내 취향/장르 vs 평점/수상 이력, 어느 쪽을 더 믿어?',
     a: '내가 좋아하는 장르', b: '평론가 평점/수상 이력',
     dim: null, aDir: 'taste', bDir: 'rating',
   },
   // ── 영화 VS 영화 ─────────────────────────────────────────────
   {
-    id: 46, group: 'movie_vs', groupLabel: '영화 VS 영화',
+    id: 33, group: 'movie_vs', groupLabel: '영화 VS 영화',
     q: '어느 영화가 더 끌려?',
     dim: 'world', aDir: 'R', bDir: 'F',
     movieA: { title: '기생충', year: 2019, reason: '현실 속 계급의 날카로운 풍자' },
     movieB: { title: '반지의 제왕: 반지 원정대', year: 2001, reason: '완전히 새로운 세계의 서사시' },
   },
   {
-    id: 47, group: 'movie_vs', groupLabel: '영화 VS 영화',
+    id: 34, group: 'movie_vs', groupLabel: '영화 VS 영화',
     q: '어느 영화가 더 끌려?',
     dim: 'sense', aDir: 'H', bDir: 'M',
     movieA: { title: '코코', year: 2017, reason: '가족과 이별에 눈물이 터지는 감동' },
     movieB: { title: '인셉션', year: 2010, reason: '구조를 파악할 때 느끼는 지적 쾌감' },
   },
   {
-    id: 48, group: 'movie_vs', groupLabel: '영화 VS 영화',
+    id: 35, group: 'movie_vs', groupLabel: '영화 VS 영화',
     q: '어느 영화가 더 끌려?',
     dim: 'tone', aDir: 'L', bDir: 'N',
     movieA: { title: '토이 스토리', year: 1995, reason: '밝고 따뜻하게 마음이 채워지는 느낌' },
     movieB: { title: '다크 나이트', year: 2008, reason: '어둡고 긴장된 분위기 속 묵직한 여운' },
   },
   {
-    id: 49, group: 'movie_vs', groupLabel: '영화 VS 영화',
+    id: 36, group: 'movie_vs', groupLabel: '영화 VS 영화',
     q: '어느 영화가 더 끌려?',
     dim: 'rhythm', aDir: 'S', bDir: 'P',
     movieA: { title: '비포 선라이즈', year: 1995, reason: '두 사람의 대화가 천천히 쌓아가는 여운' },
     movieB: { title: '탑건: 매버릭', year: 2022, reason: '숨막히는 장면이 쉼 없이 몰아치는 쾌감' },
   },
   {
-    id: 50, group: 'movie_vs', groupLabel: '영화 VS 영화',
+    id: 37, group: 'movie_vs', groupLabel: '영화 VS 영화',
     q: '어느 영화가 더 끌려?',
     dim: 'suffix', aDir: 'C', bDir: 'X',
     movieA: { title: '센과 치히로의 행방불명', year: 2001, reason: '불편한 장면 없이 순수하게 빠져드는 세계' },

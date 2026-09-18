@@ -256,7 +256,7 @@ export default function MovieRecommend() {
               {QUESTIONS.length}가지 질문으로<br />
               <span className="mr-desc-accent">32가지 영화 유형</span> 중 나의 타입을 찾아드려요
             </p>
-            <div className="mr-time-badge">⏱ 약 5분 · {QUESTIONS.length}개 질문</div>
+            <div className="mr-time-badge">⏱ 약 3분 · {QUESTIONS.length}개 질문</div>
             <div className="mr-groups-preview">
               {GROUP_ORDER.filter(g => g !== 'subtag').map(g => (
                 <span key={g} className="mr-group-chip">
