@@ -122,6 +122,46 @@
   box-shadow: 0 6px 28px rgba(255, 200, 80, 0.5);
 }
 
+.mr-start-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+.mr-view-result-btn {
+  background: linear-gradient(135deg, #d4a017, #ffc850);
+  color: #0a0a0f;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 40px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(255, 200, 80, 0.35);
+  width: 100%;
+  max-width: 280px;
+}
+.mr-view-result-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 28px rgba(255, 200, 80, 0.5);
+}
+
+.mr-start-btn-secondary {
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  width: 100%;
+  max-width: 280px;
+}
+.mr-start-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: none !important;
+}
+
 /* ══════════════════════════════════════════
    그룹 전환 인트로
 ══════════════════════════════════════════ */

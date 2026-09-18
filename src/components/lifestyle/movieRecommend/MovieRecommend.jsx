@@ -115,6 +115,20 @@ export default function MovieRecommend() {
   const [recommendedMovies, setRecommendedMovies] = useState([]);
   const [eraFilter, setEraFilter] = useState('all');
   const [showMoviesSection, setShowMoviesSection] = useState(true);
+  const [savedResult, setSavedResult] = useState(null);
+
+  // 로그인한 경우 기존 저장 결과 조회
+  useEffect(() => {
+    if (!user?.id) return;
+    supabase
+      .from('movie_recommend_results')
+      .select('answers, type_code, suffix, resolve')
+      .eq('user_id', String(user.id))
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => setSavedResult(data || null));
+  }, [user?.id]);
 
   // 연도 필터 변경 시 추천 영화 재셔플
   useEffect(() => {
@@ -309,9 +323,20 @@ export default function MovieRecommend() {
                 🎬 로그인 없이도 즐길 수 있어요 · 결과 저장은 로그인 후 가능
               </div>
             )}
-            <button className="mr-start-btn" onClick={() => setPhase('quiz')}>
-              🎬 시작하기
-            </button>
+            {user && savedResult ? (
+              <div className="mr-start-actions">
+                <button className="mr-view-result-btn" onClick={() => finishQuiz(savedResult.answers)}>
+                  📊 내 결과 보기
+                </button>
+                <button className="mr-start-btn mr-start-btn-secondary" onClick={() => setPhase('quiz')}>
+                  🔄 다시 하기
+                </button>
+              </div>
+            ) : (
+              <button className="mr-start-btn" onClick={() => setPhase('quiz')}>
+                🎬 시작하기
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -581,7 +606,7 @@ export default function MovieRecommend() {
                       </button>
                     );
                   })}
-                  {filteredPool.length > 5 && (
+                  {user && filteredPool.length > 5 && (
                     <button className="mr-shuffle-btn" onClick={shuffleMovies}>
                       🔀 다른 영화
                     </button>
