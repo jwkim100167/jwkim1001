@@ -7,7 +7,6 @@ import AdBanner from './AdBanner';
 
 const SERVICE_LIST = [
   { id: 'bonus',         title: '보너스',                   icon: '🎁', path: '/bonus',              cardClass: 'bonus-card',      desc: '로또 번호 · 오늘 메뉴 한 번에' },
-  { id: 'taste',         title: '취향 알기',                icon: '💫', path: '/taste-match',        cardClass: 'taste-card',      desc: '' },
   { id: 'gatsaeng',      title: '갓생',                     icon: '💪', path: '/gatsaeng',           cardClass: 'gatsaeng-card',   desc: '목표 설정 · 자기계발 한 곳에' },
   { id: 'mini-arcade',   title: '미니게임천국',              icon: '🧠', path: '/mini-arcade',         cardClass: 'arcade-card',     desc: '실시간 멀티플레이 미니게임 6종' },
   { id: 'taste-lab',     title: '취향연구소',                icon: '🔬', path: '/taste-lab',           cardClass: 'taste-lab-card',  desc: '영화 · 스포츠 · 음식 취향 한 곳에' },

@@ -1,7 +1,16 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getServiceConfig } from '../../services/core/supabaseAdmin';
 import './TasteHub.css';
 
 const HUB_SERVICES = [
+  {
+    id: 'taste',
+    icon: '💫',
+    title: '취향 알기',
+    desc: 'JW가 선택한 취향 질문',
+    links: [{ label: '시작하기 →', path: '/taste-match' }],
+  },
   {
     id: 'movie',
     icon: '🎬',
@@ -30,6 +39,24 @@ const HUB_SERVICES = [
 
 export default function TasteHub() {
   const navigate = useNavigate();
+  const [orderedServices, setOrderedServices] = useState(HUB_SERVICES);
+
+  useEffect(() => {
+    getServiceConfig().then(cfg => {
+      const dbOrder = cfg?.childrenMap?.['taste-lab'];
+      if (dbOrder?.length > 0) {
+        setOrderedServices(
+          [...HUB_SERVICES].sort((a, b) => {
+            const ai = dbOrder.indexOf(a.id);
+            const bi = dbOrder.indexOf(b.id);
+            if (ai === -1) return 1;
+            if (bi === -1) return -1;
+            return ai - bi;
+          })
+        );
+      }
+    });
+  }, []);
 
   return (
     <div className="th-page">
@@ -45,7 +72,7 @@ export default function TasteHub() {
         </div>
 
         <div className="th-cards">
-          {HUB_SERVICES.map((svc) => (
+          {orderedServices.map((svc) => (
             <div key={svc.id} className="th-card">
               <div className="th-card-icon">{svc.icon}</div>
               <div className="th-card-body">

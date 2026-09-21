@@ -926,6 +926,58 @@
   background: white;
   color: #333;
 }
+/* 서비스 트리 (2단 드래그) */
+.service-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.service-tree-hub {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background: #fafafa;
+  overflow: hidden;
+  cursor: grab;
+}
+.service-tree-hub:active { cursor: grabbing; }
+.service-tree-hub[draggable]:hover { border-color: #a5b4fc; }
+.service-tree-hub-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #f4f4f4;
+}
+.service-tree-children {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid #e8e8e8;
+}
+.service-tree-child-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #ffffff;
+  cursor: grab;
+}
+.service-tree-child-row:last-child { border-bottom: none; }
+.service-tree-child-row:active { cursor: grabbing; }
+.service-tree-child-row[draggable]:hover { background: #f0f4ff; }
+.drag-handle {
+  color: #bbb;
+  font-size: 1.1rem;
+  cursor: grab;
+  user-select: none;
+  line-height: 1;
+}
+.child-indent {
+  color: #bbb;
+  font-size: 0.95rem;
+  margin-left: 8px;
+}
+
 .toggle-btn {
   padding: 6px 20px;
   border: none;

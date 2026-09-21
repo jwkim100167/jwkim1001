@@ -1,4 +1,6 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getServiceConfig } from '../../services/core/supabaseAdmin';
 import './GatsaengHub.css';
 
 const HUB_SERVICES = [
@@ -13,6 +15,24 @@ const HUB_SERVICES = [
 
 export default function GatsaengHub() {
   const navigate = useNavigate();
+  const [orderedServices, setOrderedServices] = useState(HUB_SERVICES);
+
+  useEffect(() => {
+    getServiceConfig().then(cfg => {
+      const dbOrder = cfg?.childrenMap?.['gatsaeng'];
+      if (dbOrder?.length > 0) {
+        setOrderedServices(
+          [...HUB_SERVICES].sort((a, b) => {
+            const ai = dbOrder.indexOf(a.id);
+            const bi = dbOrder.indexOf(b.id);
+            if (ai === -1) return 1;
+            if (bi === -1) return -1;
+            return ai - bi;
+          })
+        );
+      }
+    });
+  }, []);
 
   return (
     <div className="gh-page">
@@ -28,7 +48,7 @@ export default function GatsaengHub() {
         </div>
 
         <div className="gh-cards">
-          {HUB_SERVICES.map((svc) => (
+          {orderedServices.map((svc) => (
             <div key={svc.id} className="gh-card">
               <div className="gh-card-icon">{svc.icon}</div>
               <div className="gh-card-body">

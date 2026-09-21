@@ -1,4 +1,6 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getServiceConfig } from '../../services/core/supabaseAdmin';
 import './BonusHub.css';
 
 const HUB_SERVICES = [
@@ -26,6 +28,24 @@ const HUB_SERVICES = [
 
 export default function BonusHub() {
   const navigate = useNavigate();
+  const [orderedServices, setOrderedServices] = useState(HUB_SERVICES);
+
+  useEffect(() => {
+    getServiceConfig().then(cfg => {
+      const dbOrder = cfg?.childrenMap?.['bonus'];
+      if (dbOrder?.length > 0) {
+        setOrderedServices(
+          [...HUB_SERVICES].sort((a, b) => {
+            const ai = dbOrder.indexOf(a.id);
+            const bi = dbOrder.indexOf(b.id);
+            if (ai === -1) return 1;
+            if (bi === -1) return -1;
+            return ai - bi;
+          })
+        );
+      }
+    });
+  }, []);
 
   return (
     <div className="bh-page">
@@ -41,7 +61,7 @@ export default function BonusHub() {
         </div>
 
         <div className="bh-cards">
-          {HUB_SERVICES.map((svc) => (
+          {orderedServices.map((svc) => (
             <div key={svc.id} className="bh-card">
               <div className="bh-card-icon">{svc.icon}</div>
               <div className="bh-card-body">

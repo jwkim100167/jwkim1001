@@ -1,17 +1,26 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { supabase } from '../../supabaseClient';
-import { getServiceConfig, updateServiceConfig, updateServiceOrder } from '../../services/core/supabaseAdmin';
+import { getServiceConfig, updateServiceConfig, updateServiceOrder, updateChildOrder } from '../../services/core/supabaseAdmin';
 import './Admin.css';
 
-const SERVICE_LIST = [
-  { id: 'bonus',         title: '보너스',                   icon: '🎁' },
-  { id: 'taste',         title: '취향 알기',                icon: '💫' },
-  { id: 'gatsaeng',      title: '갓생',                     icon: '💪' },
-  { id: 'mini-arcade',   title: '미니게임천국',             icon: '🧠' },
-  { id: 'taste-lab',     title: '취향연구소',               icon: '🔬' },
-];
+// 전체 서비스 계층 정의 (코드 기준 단일 소스)
+const MASTER_SERVICE_MAP = {
+  'bonus':       { title: '보너스',                  icon: '🎁',  parent: null },
+  'taste-lab':   { title: '취향연구소',               icon: '🔬',  parent: null },
+  'gatsaeng':    { title: '갓생',                    icon: '💪',  parent: null },
+  'mini-arcade': { title: '미니게임천국',              icon: '🧠',  parent: null },
+  'lotto':       { title: '로또',                    icon: '🎰',  parent: 'bonus' },
+  'food':        { title: '오늘 뭐 먹지?',           icon: '🍽️', parent: 'bonus' },
+  'taste':       { title: '취향 알기',               icon: '💫',  parent: 'taste-lab' },
+  'movie':       { title: '영화 취향 찾기',           icon: '🎬',  parent: 'taste-lab' },
+  'kbo':         { title: 'KBO 순위 예측',            icon: '⚾',  parent: 'taste-lab' },
+  'food-vip':    { title: '오늘 뭐 먹지? [멤버십]',  icon: '🍽️', parent: 'taste-lab' },
+  'mandalart':   { title: '만다라트',                icon: '🎯',  parent: 'gatsaeng' },
+};
+
+const TOP_IDS = Object.keys(MASTER_SERVICE_MAP).filter(id => !MASTER_SERVICE_MAP[id].parent);
 
 export default function Admin() {
   const { user, logout, loading: authLoading } = useAuth();
@@ -30,8 +39,10 @@ export default function Admin() {
 
   // 서비스 관리 탭 상태
   const [serviceConfig, setServiceConfig] = useState({});
-  const [serviceOrder, setServiceOrder] = useState([]);
+  const [topOrder, setTopOrder] = useState([]);
+  const [childrenOrder, setChildrenOrder] = useState({});
   const [serviceMsg, setServiceMsg] = useState('');
+  const dragItem = useRef(null);
 
   // 취향 알기 탭 상태
   const [tasteQuestions, setTasteQuestions] = useState([]);
@@ -104,14 +115,22 @@ export default function Admin() {
       getServiceConfig().then((cfg) => {
         if (cfg) {
           setServiceConfig(cfg.enabledMap);
-          const allIds = SERVICE_LIST.map(s => s.id);
-          const fullOrder = cfg.sortedIds.length > 0
-            ? [
-                ...cfg.sortedIds.filter(id => allIds.includes(id)),
-                ...allIds.filter(id => !cfg.sortedIds.includes(id)),
-              ]
-            : allIds;
-          setServiceOrder(fullOrder);
+          // 최상위 순서
+          const fullTopOrder = cfg.sortedIds.length > 0
+            ? [...cfg.sortedIds.filter(id => TOP_IDS.includes(id)), ...TOP_IDS.filter(id => !cfg.sortedIds.includes(id))]
+            : TOP_IDS;
+          setTopOrder(fullTopOrder);
+          // 하위 항목 순서
+          const newChildrenOrder = {};
+          TOP_IDS.forEach(parentId => {
+            const allChildren = Object.keys(MASTER_SERVICE_MAP).filter(id => MASTER_SERVICE_MAP[id].parent === parentId);
+            const dbChildren = cfg.childrenMap?.[parentId] || [];
+            newChildrenOrder[parentId] = [
+              ...dbChildren.filter(id => allChildren.includes(id)),
+              ...allChildren.filter(id => !dbChildren.includes(id)),
+            ];
+          });
+          setChildrenOrder(newChildrenOrder);
         }
       });
     }
@@ -133,24 +152,44 @@ export default function Admin() {
     setTimeout(() => setServiceMsg(''), 2000);
   };
 
-  const handleMoveUp = async (index) => {
-    if (index === 0) return;
-    const newOrder = [...serviceOrder];
-    [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
-    setServiceOrder(newOrder);
-    const ok = await updateServiceOrder(newOrder);
-    setServiceMsg(ok ? '✅ 순서 저장됨' : '❌ 순서 저장 실패');
-    setTimeout(() => setServiceMsg(''), 2000);
+  const handleDragStart = (e, type, id, parentId) => {
+    dragItem.current = { type, id, parentId };
+    e.dataTransfer.effectAllowed = 'move';
   };
 
-  const handleMoveDown = async (index) => {
-    if (index === serviceOrder.length - 1) return;
-    const newOrder = [...serviceOrder];
-    [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
-    setServiceOrder(newOrder);
-    const ok = await updateServiceOrder(newOrder);
-    setServiceMsg(ok ? '✅ 순서 저장됨' : '❌ 순서 저장 실패');
-    setTimeout(() => setServiceMsg(''), 2000);
+  const handleDragEnd = () => { dragItem.current = null; };
+
+  const handleDragOver = (e) => { e.preventDefault(); };
+
+  const handleDrop = async (e, type, targetId, parentId) => {
+    e.preventDefault();
+    if (!dragItem.current) return;
+    const { type: srcType, id: srcId, parentId: srcParent } = dragItem.current;
+    dragItem.current = null;
+
+    if (srcType === 'top' && type === 'top' && srcId !== targetId) {
+      const arr = [...topOrder];
+      const from = arr.indexOf(srcId);
+      const to = arr.indexOf(targetId);
+      if (from === -1 || to === -1) return;
+      arr.splice(from, 1);
+      arr.splice(to, 0, srcId);
+      setTopOrder(arr);
+      const ok = await updateServiceOrder(arr);
+      setServiceMsg(ok ? '✅ 순서 저장됨' : '❌ 순서 저장 실패');
+      setTimeout(() => setServiceMsg(''), 2000);
+    } else if (srcType === 'child' && type === 'child' && srcParent === parentId && srcId !== targetId) {
+      const arr = [...(childrenOrder[parentId] || [])];
+      const from = arr.indexOf(srcId);
+      const to = arr.indexOf(targetId);
+      if (from === -1 || to === -1) return;
+      arr.splice(from, 1);
+      arr.splice(to, 0, srcId);
+      setChildrenOrder(prev => ({ ...prev, [parentId]: arr }));
+      const ok = await updateChildOrder(parentId, arr);
+      setServiceMsg(ok ? '✅ 순서 저장됨' : '❌ 순서 저장 실패');
+      setTimeout(() => setServiceMsg(''), 2000);
+    }
   };
 
   // 취향 알기 문항 로드
@@ -594,35 +633,68 @@ export default function Admin() {
                   🎰 로또 관리 페이지 →
                 </button>
               </div>
-              <div className="service-toggle-list">
-                {serviceOrder.map((serviceId, index) => {
-                  const svc = SERVICE_LIST.find(s => s.id === serviceId);
-                  if (!svc) return null;
+              <div className="service-tree">
+                {topOrder.map((parentId) => {
+                  const hub = MASTER_SERVICE_MAP[parentId];
+                  if (!hub) return null;
+                  const children = childrenOrder[parentId] || [];
                   return (
-                    <div key={svc.id} className="service-toggle-row">
-                      <div className="service-order-btns">
-                        <button
-                          className="order-btn"
-                          onClick={() => handleMoveUp(index)}
-                          disabled={index === 0}
-                        >▲</button>
-                        <button
-                          className="order-btn"
-                          onClick={() => handleMoveDown(index)}
-                          disabled={index === serviceOrder.length - 1}
-                        >▼</button>
+                    <div
+                      key={parentId}
+                      className="service-tree-hub"
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, 'top', parentId, null)}
+                      onDragEnd={handleDragEnd}
+                      onDragOver={handleDragOver}
+                      onDrop={(e) => handleDrop(e, 'top', parentId, null)}
+                    >
+                      <div className="service-tree-hub-row">
+                        <span className="drag-handle">⠿</span>
+                        <span className="service-toggle-icon">{hub.icon}</span>
+                        <span className="service-toggle-title">{hub.title}</span>
+                        <select
+                          className={`status-select status-${serviceConfig[parentId] || 'on'}`}
+                          value={serviceConfig[parentId] || 'on'}
+                          onChange={(e) => handleServiceStatusChange(parentId, e.target.value)}
+                        >
+                          <option value="on">ON</option>
+                          <option value="offline">휴업중</option>
+                          <option value="hidden">숨김</option>
+                        </select>
                       </div>
-                      <span className="service-toggle-icon">{svc.icon}</span>
-                      <span className="service-toggle-title">{svc.title}</span>
-                      <select
-                        className={`status-select status-${serviceConfig[svc.id] || 'on'}`}
-                        value={serviceConfig[svc.id] || 'on'}
-                        onChange={(e) => handleServiceStatusChange(svc.id, e.target.value)}
-                      >
-                        <option value="on">ON</option>
-                        <option value="offline">휴업중</option>
-                        <option value="hidden">숨김</option>
-                      </select>
+                      {children.length > 0 && (
+                        <div className="service-tree-children">
+                          {children.map((childId) => {
+                            const child = MASTER_SERVICE_MAP[childId];
+                            if (!child) return null;
+                            return (
+                              <div
+                                key={childId}
+                                className="service-tree-child-row"
+                                draggable
+                                onDragStart={(e) => { e.stopPropagation(); handleDragStart(e, 'child', childId, parentId); }}
+                                onDragEnd={handleDragEnd}
+                                onDragOver={(e) => { e.stopPropagation(); handleDragOver(e); }}
+                                onDrop={(e) => { e.stopPropagation(); handleDrop(e, 'child', childId, parentId); }}
+                              >
+                                <span className="child-indent">└</span>
+                                <span className="drag-handle">⠿</span>
+                                <span className="service-toggle-icon">{child.icon}</span>
+                                <span className="service-toggle-title">{child.title}</span>
+                                <select
+                                  className={`status-select status-${serviceConfig[childId] || 'on'}`}
+                                  value={serviceConfig[childId] || 'on'}
+                                  onChange={(e) => handleServiceStatusChange(childId, e.target.value)}
+                                >
+                                  <option value="on">ON</option>
+                                  <option value="offline">휴업중</option>
+                                  <option value="hidden">숨김</option>
+                                </select>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   );
                 })}

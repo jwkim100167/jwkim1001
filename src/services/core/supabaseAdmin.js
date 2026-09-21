@@ -7,7 +7,7 @@ import { supabase } from '../../supabaseClient';
 export async function getServiceConfig() {
   const { data, error } = await supabase
     .from('serviceConfigTable')
-    .select('service_id, enabled, sort_order')
+    .select('service_id, enabled, sort_order, parent_id')
     .order('sort_order', { ascending: true });
 
   if (error) {
@@ -16,12 +16,20 @@ export async function getServiceConfig() {
   }
 
   const enabledMap = {};
-  const sortedIds = [];
+  const sortedIds = [];   // 최상위(parent_id = null)만
+  const childrenMap = {}; // { parentId: [childId, ...] }
+
   data.forEach((row) => {
     enabledMap[row.service_id] = row.enabled;
-    sortedIds.push(row.service_id);
+    if (!row.parent_id) {
+      sortedIds.push(row.service_id);
+    } else {
+      if (!childrenMap[row.parent_id]) childrenMap[row.parent_id] = [];
+      childrenMap[row.parent_id].push(row.service_id);
+    }
   });
-  return { enabledMap, sortedIds };
+
+  return { enabledMap, sortedIds, childrenMap };
 }
 
 /**
@@ -53,6 +61,40 @@ export async function updateServiceOrder(orderedIds) {
   const hasError = results.some(({ error }) => error);
   if (hasError) {
     console.error('❌ 서비스 순서 업데이트 실패');
+    return false;
+  }
+  return true;
+}
+
+/**
+ * 하위 서비스 순서 일괄 업데이트
+ * @param {string} parentId - 부모 service_id
+ * @param {string[]} childIds - 순서대로 나열된 하위 service_id 배열
+ * @returns {Promise<boolean>}
+ */
+export async function updateChildOrder(parentId, childIds) {
+  const results = await Promise.all(
+    childIds.map(async (serviceId, index) => {
+      const { data: updated, error: updateError } = await supabase
+        .from('serviceConfigTable')
+        .update({ sort_order: index + 1, parent_id: parentId })
+        .eq('service_id', serviceId)
+        .select();
+
+      if (updateError) return { error: updateError };
+
+      if (!updated || updated.length === 0) {
+        return supabase
+          .from('serviceConfigTable')
+          .insert({ service_id: serviceId, sort_order: index + 1, enabled: 'on', parent_id: parentId });
+      }
+
+      return { error: null };
+    })
+  );
+  const hasError = results.some(({ error }) => error);
+  if (hasError) {
+    console.error('❌ 하위 서비스 순서 업데이트 실패');
     return false;
   }
   return true;
