@@ -6,7 +6,6 @@ import './Home.css';
 import AdBanner from './AdBanner';
 
 const SERVICE_LIST = [
-  { id: 'world-cup-predict', title: '월드컵 순위 예측',      icon: '⚽', path: '/world-cup-predict', cardClass: 'kbo-card', desc: '2026 FIFA 월드컵 1·2·3위 예측' },
   { id: 'lotto',         title: '로또 서비스',              icon: '🎰', path: '/lotto-basic',        cardClass: 'lotto-card',      desc: '' },
   { id: 'lotto-vip',     title: '로또 서비스\n[멤버십]',    icon: '🎰', path: '/lotto',              cardClass: 'lotto-card',      desc: '' },
   { id: 'whattoeat',     title: '오늘 뭐 먹지?',            icon: '🍽️', path: '/whattoeat',          cardClass: 'momok-card',      desc: '' },

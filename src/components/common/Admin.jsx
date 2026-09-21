@@ -6,8 +6,6 @@ import { getServiceConfig, updateServiceConfig, updateServiceOrder } from '../..
 import './Admin.css';
 
 const SERVICE_LIST = [
-  { id: 'world-cup-predict', title: '월드컵 순위 예측',    icon: '⚽' },
-  { id: 'world-cup-result',  title: '월드컵 점수 확인',    icon: '🏆' },
   { id: 'lotto',         title: '로또 서비스',              icon: '🎰' },
   { id: 'lotto-vip',     title: '로또 서비스 [멤버십]',     icon: '🎰' },
   { id: 'whattoeat',     title: '오늘 뭐 먹지?',            icon: '🍽️' },
