@@ -937,17 +937,17 @@
   border-radius: 12px;
   background: #fafafa;
   overflow: hidden;
-  cursor: grab;
 }
-.service-tree-hub:active { cursor: grabbing; }
-.service-tree-hub[draggable]:hover { border-color: #a5b4fc; }
 .service-tree-hub-row {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 12px 14px;
   background: #f4f4f4;
+  cursor: grab;
 }
+.service-tree-hub-row:active { cursor: grabbing; }
+.service-tree-hub-row[draggable]:hover { background: #ececff; }
 .service-tree-children {
   display: flex;
   flex-direction: column;

@@ -640,16 +640,15 @@ export default function Admin() {
                   if (!hub) return null;
                   const children = childrenOrder[parentId] || [];
                   return (
-                    <div
-                      key={parentId}
-                      className="service-tree-hub"
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, 'top', parentId, null)}
-                      onDragEnd={handleDragEnd}
-                      onDragOver={handleDragOver}
-                      onDrop={(e) => handleDrop(e, 'top', parentId, null)}
-                    >
-                      <div className="service-tree-hub-row">
+                    <div key={parentId} className="service-tree-hub">
+                      <div
+                        className="service-tree-hub-row"
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, 'top', parentId, null)}
+                        onDragEnd={handleDragEnd}
+                        onDragOver={handleDragOver}
+                        onDrop={(e) => handleDrop(e, 'top', parentId, null)}
+                      >
                         <span className="drag-handle">⠿</span>
                         <span className="service-toggle-icon">{hub.icon}</span>
                         <span className="service-toggle-title">{hub.title}</span>
