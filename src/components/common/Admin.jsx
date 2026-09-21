@@ -113,7 +113,11 @@ export default function Admin() {
       getServiceConfig().then((cfg) => {
         if (cfg) {
           setServiceConfig(cfg.enabledMap);
-          setServiceOrder(cfg.sortedIds);
+          const allIds = SERVICE_LIST.map(s => s.id);
+          const fullOrder = cfg.sortedIds.length > 0
+            ? [...cfg.sortedIds, ...allIds.filter(id => !cfg.sortedIds.includes(id))]
+            : allIds;
+          setServiceOrder(fullOrder);
         }
       });
     }
@@ -597,10 +601,7 @@ export default function Admin() {
                 </button>
               </div>
               <div className="service-toggle-list">
-                {(serviceOrder.length > 0
-                  ? [...serviceOrder, ...SERVICE_LIST.map(s => s.id).filter(id => !serviceOrder.includes(id))]
-                  : SERVICE_LIST.map(s => s.id)
-                ).map((serviceId, index) => {
+                {serviceOrder.map((serviceId, index) => {
                   const svc = SERVICE_LIST.find(s => s.id === serviceId);
                   if (!svc) return null;
                   return (
