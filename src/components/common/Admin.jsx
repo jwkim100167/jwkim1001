@@ -108,7 +108,10 @@ export default function Admin() {
           setServiceConfig(cfg.enabledMap);
           const allIds = SERVICE_LIST.map(s => s.id);
           const fullOrder = cfg.sortedIds.length > 0
-            ? [...cfg.sortedIds, ...allIds.filter(id => !cfg.sortedIds.includes(id))]
+            ? [
+                ...cfg.sortedIds.filter(id => allIds.includes(id)),
+                ...allIds.filter(id => !cfg.sortedIds.includes(id)),
+              ]
             : allIds;
           setServiceOrder(fullOrder);
         }

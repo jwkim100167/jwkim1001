@@ -16,7 +16,6 @@ const SERVICE_LIST = [
 ];
 
 const Home = () => {
-  console.log('Home 컴포넌트 렌더링됨');
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
   const [serviceConfig, setServiceConfig] = useState({ enabledMap: null, sortedIds: [] });
@@ -28,7 +27,7 @@ const Home = () => {
   }, []);
 
   const getStatus = (id) => {
-    if (!serviceConfig.enabledMap) return ['kbo-predict', 'kbo-result', 'world-cup-predict', 'cobra', 'mandalart'].includes(id) ? 'on' : 'offline';
+    if (!serviceConfig.enabledMap) return 'on';
     const val = serviceConfig.enabledMap[id];
     if (val === undefined) return 'on'; // DB에 없는 서비스는 기본 ON
     if (val === true  || val === 'on')      return 'on';
