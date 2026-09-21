@@ -31,12 +31,24 @@ export async function getServiceConfig() {
  */
 export async function updateServiceOrder(orderedIds) {
   const results = await Promise.all(
-    orderedIds.map((serviceId, index) =>
-      supabase
+    orderedIds.map(async (serviceId, index) => {
+      const { data: updated, error: updateError } = await supabase
         .from('serviceConfigTable')
         .update({ sort_order: index + 1 })
         .eq('service_id', serviceId)
-    )
+        .select();
+
+      if (updateError) return { error: updateError };
+
+      // 레코드가 없으면 새로 삽입 (신규 서비스 대응)
+      if (!updated || updated.length === 0) {
+        return supabase
+          .from('serviceConfigTable')
+          .insert({ service_id: serviceId, sort_order: index + 1, enabled: 'on' });
+      }
+
+      return { error: null };
+    })
   );
   const hasError = results.some(({ error }) => error);
   if (hasError) {
