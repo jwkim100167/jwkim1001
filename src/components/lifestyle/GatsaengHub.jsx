@@ -11,6 +11,13 @@ const HUB_SERVICES = [
     desc: '9×9 목표 관리 플래너',
     links: [{ label: '시작하기 →', path: '/mandalart' }],
   },
+  {
+    id: 'monthly-review',
+    icon: '📅',
+    title: '먼슬리뷰',
+    desc: '나의 한 달을 돌아보는 회고',
+    links: [{ label: '시작하기 →', path: '/monthly-review' }],
+  },
 ];
 
 export default function GatsaengHub() {

@@ -36,6 +36,7 @@ import MovieRecommend from './components/lifestyle/movieRecommend/MovieRecommend
 import TasteHub from './components/lifestyle/TasteHub';
 import BonusHub from './components/lifestyle/BonusHub';
 import GatsaengHub from './components/lifestyle/GatsaengHub';
+import MonthlyReview from './components/lifestyle/monthlyReview/MonthlyReview';
 
 function App() {
   // GitHub Pages의 경우 basename 설정
@@ -79,6 +80,7 @@ function App() {
           <Route path="/taste-lab" element={<TasteHub />} />
           <Route path="/bonus" element={<BonusHub />} />
           <Route path="/gatsaeng" element={<GatsaengHub />} />
+          <Route path="/monthly-review" element={<MonthlyReview />} />
         </Routes>
       </Router>
     </AuthProvider>

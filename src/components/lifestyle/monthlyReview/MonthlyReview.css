@@ -1,0 +1,191 @@
+.mr-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 20px 80px;
+}
+
+.mr-container {
+  width: 100%;
+  max-width: 560px;
+  padding-top: 60px;
+}
+
+.mr-back-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-bottom: 32px;
+  transition: background 0.2s;
+}
+.mr-back-btn:hover { background: rgba(255, 255, 255, 0.2); }
+
+.mr-header {
+  text-align: center;
+  color: white;
+  margin-bottom: 28px;
+}
+.mr-header-icon { font-size: 2.8rem; margin-bottom: 10px; }
+.mr-title {
+  font-size: 1.9rem;
+  font-weight: bold;
+  margin: 0 0 8px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+.mr-subtitle { font-size: 0.95rem; opacity: 0.75; margin: 0; }
+
+/* 달 선택 */
+.mr-month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+.mr-month-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.mr-month-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.22); }
+.mr-month-btn:disabled { opacity: 0.3; cursor: default; }
+.mr-month-label {
+  color: white;
+  font-size: 1.15rem;
+  font-weight: 600;
+  min-width: 120px;
+  text-align: center;
+}
+
+/* 로그인 안내 */
+.mr-login-notice {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.88rem;
+  text-align: center;
+  margin-bottom: 24px;
+}
+.mr-login-link {
+  color: #93c5fd;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.mr-loading {
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  padding: 40px 0;
+  font-size: 0.95rem;
+}
+
+/* 폼 */
+.mr-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.mr-question {
+  margin-bottom: 24px;
+}
+
+.mr-label {
+  display: block;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  margin-bottom: 6px;
+}
+
+.mr-textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 0.97rem;
+  line-height: 1.6;
+  padding: 4px 2px 8px;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+.mr-textarea:focus { border-bottom-color: rgba(100, 149, 237, 0.7); }
+.mr-textarea:disabled {
+  color: rgba(255, 255, 255, 0.25);
+  cursor: not-allowed;
+}
+.mr-textarea::placeholder { color: rgba(255, 255, 255, 0.2); }
+
+/* 섹션 구분 */
+.mr-section { margin-bottom: 8px; }
+
+.mr-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 32px 0 24px;
+}
+.mr-section-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+}
+.mr-section-title {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+/* 저장 */
+.mr-save-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 16px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.mr-save-msg {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.88rem;
+}
+.mr-save-btn {
+  background: rgba(100, 149, 237, 0.3);
+  border: 1px solid rgba(100, 149, 237, 0.5);
+  color: white;
+  padding: 10px 28px;
+  border-radius: 24px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.mr-save-btn:hover { background: rgba(100, 149, 237, 0.5); }
+
+@media (max-width: 400px) {
+  .mr-container { padding-top: 40px; }
+  .mr-title { font-size: 1.6rem; }
+}

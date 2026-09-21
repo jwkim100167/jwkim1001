@@ -17,7 +17,8 @@ const MASTER_SERVICE_MAP = {
   'movie':       { title: '영화 취향 찾기',           icon: '🎬',  parent: 'taste-lab' },
   'kbo':         { title: 'KBO 순위 예측',            icon: '⚾',  parent: 'taste-lab' },
   'food-vip':    { title: '오늘 뭐 먹지? [멤버십]',  icon: '🍽️', parent: 'taste-lab' },
-  'mandalart':   { title: '만다라트',                icon: '🎯',  parent: 'gatsaeng' },
+  'mandalart':      { title: '만다라트',   icon: '🎯',  parent: 'gatsaeng' },
+  'monthly-review': { title: '먼슬리뷰',  icon: '📅',  parent: 'gatsaeng' },
 };
 
 const TOP_IDS = Object.keys(MASTER_SERVICE_MAP).filter(id => !MASTER_SERVICE_MAP[id].parent);
