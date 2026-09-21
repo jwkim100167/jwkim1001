@@ -12,9 +12,7 @@ const SERVICE_LIST = [
   { id: 'lotto-vip',     title: '로또 서비스 [멤버십]',     icon: '🎰' },
   { id: 'whattoeat',     title: '오늘 뭐 먹지?',            icon: '🍽️' },
   { id: 'taste',         title: '취향 알기',                icon: '💫' },
-  { id: 'cobra',         title: '코브라 게임',              icon: '🐍' },
   { id: 'mandalart',     title: '만다라트',                 icon: '🎯' },
-  { id: 'turneyia',      title: '터이네키아',               icon: '🏆' },
   { id: 'mini-arcade',   title: '미니게임천국',             icon: '🧠' },
   { id: 'taste-lab',     title: '취향연구소',               icon: '🔬' },
 ];
