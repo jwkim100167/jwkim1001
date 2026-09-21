@@ -7,16 +7,13 @@ import AdBanner from './AdBanner';
 
 const SERVICE_LIST = [
   { id: 'world-cup-predict', title: '월드컵 순위 예측',      icon: '⚽', path: '/world-cup-predict', cardClass: 'kbo-card', desc: '2026 FIFA 월드컵 1·2·3위 예측' },
-  { id: 'kbo-predict',   title: 'KBO 순위 예측',           icon: '⚾', path: '/kbo-predict/form',   cardClass: 'kbo-card',       desc: '2026 시즌 순위 예측하기' },
-  { id: 'kbo-result',    title: 'KBO 예측 점수 확인',        icon: '🏆', path: '/kbo-predict/result', cardClass: 'kbo-card',       desc: '내 예측 점수 확인하기' },
   { id: 'lotto',         title: '로또 서비스',              icon: '🎰', path: '/lotto-basic',        cardClass: 'lotto-card',      desc: '' },
   { id: 'lotto-vip',     title: '로또 서비스\n[멤버십]',    icon: '🎰', path: '/lotto',              cardClass: 'lotto-card',      desc: '' },
   { id: 'whattoeat',     title: '오늘 뭐 먹지?',            icon: '🍽️', path: '/whattoeat',          cardClass: 'momok-card',      desc: '' },
-  { id: 'whattoeat-vip', title: '오늘 뭐 먹지?\n[멤버십]',  icon: '🍽️', path: '/momok-best',         cardClass: 'momokbest-card',  desc: '' },
   { id: 'taste',         title: '취향 알기',                icon: '💫', path: '/taste-match',        cardClass: 'taste-card',      desc: '' },
   { id: 'mandalart',     title: '만다라트\n[멤버십]',        icon: '🎯', path: '/mandalart',          cardClass: 'mandalart-card',  desc: '9×9 목표 관리 플래너' },
   { id: 'mini-arcade',   title: '미니게임천국',              icon: '🧠', path: '/mini-arcade',         cardClass: 'arcade-card',     desc: '실시간 멀티플레이 미니게임 6종' },
-  { id: 'movie-recommend', title: '영화 추천받기',           icon: '🎬', path: '/movie-recommend',     cardClass: 'movie-card',      desc: '나의 영화 취향 유형 찾기' },
+  { id: 'taste-lab',     title: '취향연구소',                icon: '🔬', path: '/taste-lab',           cardClass: 'taste-lab-card',  desc: '영화 · 스포츠 · 음식 취향 한 곳에' },
 ];
 
 const Home = () => {

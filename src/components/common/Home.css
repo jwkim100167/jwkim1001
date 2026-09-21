@@ -202,6 +202,11 @@
   box-shadow: 0 20px 40px rgba(255, 200, 80, 0.15);
 }
 
+.taste-lab-card:hover {
+  border-color: rgba(134, 239, 172, 0.5);
+  box-shadow: 0 20px 40px rgba(134, 239, 172, 0.15);
+}
+
 .kbo-card .card-content h2 {
   font-size: 1.4rem;
 }

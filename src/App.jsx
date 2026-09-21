@@ -33,6 +33,7 @@ import TypingGame from './components/games/brain/BrainHub';
 import AkinatorGame from './components/games/akinator/AkinatorGame';
 import BlokusGame from './components/games/blokus/BlokusGame';
 import MovieRecommend from './components/lifestyle/movieRecommend/MovieRecommend';
+import TasteHub from './components/lifestyle/TasteHub';
 
 function App() {
   // GitHub Pages의 경우 basename 설정
@@ -73,6 +74,7 @@ function App() {
           <Route path="/mini-arcade/akinator" element={<AkinatorGame />} />
           <Route path="/blokus" element={<BlokusGame />} />
           <Route path="/movie-recommend" element={<MovieRecommend />} />
+          <Route path="/taste-lab" element={<TasteHub />} />
         </Routes>
       </Router>
     </AuthProvider>

@@ -8,18 +8,15 @@ import './Admin.css';
 const SERVICE_LIST = [
   { id: 'world-cup-predict', title: '월드컵 순위 예측',    icon: '⚽' },
   { id: 'world-cup-result',  title: '월드컵 점수 확인',    icon: '🏆' },
-  { id: 'kbo-predict',   title: 'KBO 순위 예측',          icon: '⚾' },
-  { id: 'kbo-result',    title: 'KBO 점수 확인',           icon: '🏆' },
   { id: 'lotto',         title: '로또 서비스',              icon: '🎰' },
   { id: 'lotto-vip',     title: '로또 서비스 [멤버십]',     icon: '🎰' },
   { id: 'whattoeat',     title: '오늘 뭐 먹지?',            icon: '🍽️' },
-  { id: 'whattoeat-vip', title: '오늘 뭐 먹지? [멤버십]',   icon: '🍽️' },
   { id: 'taste',         title: '취향 알기',                icon: '💫' },
   { id: 'cobra',         title: '코브라 게임',              icon: '🐍' },
   { id: 'mandalart',     title: '만다라트',                 icon: '🎯' },
   { id: 'turneyia',      title: '터이네키아',               icon: '🏆' },
-  { id: 'mini-arcade',      title: '미니게임천국',    icon: '🧠' },
-  { id: 'movie-recommend',  title: '영화 추천받기',   icon: '🎬' },
+  { id: 'mini-arcade',   title: '미니게임천국',             icon: '🧠' },
+  { id: 'taste-lab',     title: '취향연구소',               icon: '🔬' },
 ];
 
 export default function Admin() {
