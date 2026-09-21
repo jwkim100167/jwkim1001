@@ -207,6 +207,16 @@
   box-shadow: 0 20px 40px rgba(134, 239, 172, 0.15);
 }
 
+.bonus-card:hover {
+  border-color: rgba(246, 168, 33, 0.5);
+  box-shadow: 0 20px 40px rgba(246, 168, 33, 0.2);
+}
+
+.gatsaeng-card:hover {
+  border-color: rgba(100, 149, 237, 0.5);
+  box-shadow: 0 20px 40px rgba(100, 149, 237, 0.2);
+}
+
 .kbo-card .card-content h2 {
   font-size: 1.4rem;
 }

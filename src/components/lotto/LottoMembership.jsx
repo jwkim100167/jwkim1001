@@ -475,18 +475,6 @@ const LottoMembership = () => {
           </p>
         </div>
 
-        {/* 비로그인 안내 */}
-        {!isAuthenticated && (
-          <div className="mb-nolife-toast">
-            🔒 로그인이 필요합니다.{' '}
-            <span
-              onClick={() => navigate('/login')}
-              style={{ textDecoration: 'underline', cursor: 'pointer' }}
-            >
-              로그인하기
-            </span>
-          </div>
-        )}
 
         {/* 슬롯 현황 + 불러오기/저장 */}
         <div className="gen-status-row">

@@ -1,0 +1,68 @@
+import { useNavigate } from 'react-router-dom';
+import './BonusHub.css';
+
+const HUB_SERVICES = [
+  {
+    id: 'lotto',
+    icon: '🎰',
+    title: '로또 번호 생성',
+    desc: '행운의 번호를 뽑아보세요',
+    links: [
+      { label: '일반 →', path: '/lotto-basic' },
+      { label: '멤버십 →', path: '/lotto' },
+    ],
+  },
+  {
+    id: 'food',
+    icon: '🍽️',
+    title: '오늘 뭐 먹지?',
+    desc: '오늘 점심·저녁 메뉴 추천',
+    links: [
+      { label: '추천받기 →', path: '/whattoeat' },
+      { label: '멤버십 →', path: '/momok-best' },
+    ],
+  },
+];
+
+export default function BonusHub() {
+  const navigate = useNavigate();
+
+  return (
+    <div className="bh-page">
+      <div className="bh-container">
+        <button className="bh-back-btn" onClick={() => navigate('/')}>
+          ← 홈으로
+        </button>
+
+        <div className="bh-header">
+          <div className="bh-header-icon">🎁</div>
+          <h1 className="bh-title">보너스</h1>
+          <p className="bh-subtitle">로또 번호 · 오늘 메뉴 한 번에</p>
+        </div>
+
+        <div className="bh-cards">
+          {HUB_SERVICES.map((svc) => (
+            <div key={svc.id} className="bh-card">
+              <div className="bh-card-icon">{svc.icon}</div>
+              <div className="bh-card-body">
+                <div className="bh-card-title">{svc.title}</div>
+                <div className="bh-card-desc">{svc.desc}</div>
+              </div>
+              <div className="bh-card-links">
+                {svc.links.map((link) => (
+                  <button
+                    key={link.path}
+                    className="bh-link-btn"
+                    onClick={() => navigate(link.path)}
+                  >
+                    {link.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
