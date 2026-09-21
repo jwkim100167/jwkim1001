@@ -324,7 +324,7 @@ export default function HalliGalliPlay({
                       <>
                         <span>{FRUIT_EMOJI[topCard.fruit]}</span>
                         <span className="hg-top-card-count">
-                          {'●'.repeat(topCard.count)}
+                          {FRUIT_EMOJI[topCard.fruit].repeat(topCard.count)}
                         </span>
                       </>
                     )

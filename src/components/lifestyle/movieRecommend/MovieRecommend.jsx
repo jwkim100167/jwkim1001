@@ -143,7 +143,6 @@ export default function MovieRecommend() {
       .limit(1)
       .maybeSingle()
       .then(({ data, error }) => {
-        console.log('[savedResult] data:', data, 'error:', error, 'user.id:', user?.id);
         setSavedResult(data || null);
       });
   }, [user?.id]);
@@ -675,7 +674,7 @@ export default function MovieRecommend() {
                       <div key={i} className="mr-movie-card">
                         <div className="mr-movie-rank">{i + 1}</div>
                         <div className="mr-movie-info">
-                          <div className="mr-movie-title">{movie.title?.trim()}</div>
+                          <div className="mr-movie-title">{movie.title?.replace(/^[\s\u00A0\u200B\uFEFF\u3000]+|[\s\u00A0\u200B\uFEFF\u3000]+$/g, '')}</div>
                           <div className="mr-movie-meta">
                             {formatReleaseDate(movie.year, movie.release_month)} · {movie.director}
                           </div>
