@@ -188,7 +188,7 @@ export default function BlokusGame() {
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
               maxLength={8}
-              onKeyDown={(e) => e.key === 'Enter' && handleCreateRoom()}
+              onKeyDown={(e) => e.key === 'Enter' && !e.nativeEvent.isComposing && handleCreateRoom()}
             />
             {showJoinInput && (
               <input
@@ -197,7 +197,7 @@ export default function BlokusGame() {
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                 maxLength={6}
-                onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
+                onKeyDown={(e) => e.key === 'Enter' && !e.nativeEvent.isComposing && handleJoinRoom()}
                 autoFocus
               />
             )}

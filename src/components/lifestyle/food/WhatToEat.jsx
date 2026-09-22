@@ -713,7 +713,7 @@ export default function WhatToEat() {
               placeholder="메뉴 이름 입력"
               value={customInputVal}
               onChange={e => setCustomInputVal(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') addCustomItem(); if (e.key === 'Escape') setShowCustomInput(false); }}
+              onKeyDown={e => { if (e.key === 'Enter' && !e.nativeEvent.isComposing) addCustomItem(); if (e.key === 'Escape') setShowCustomInput(false); }}
               autoFocus
             />
             <button className="custom-input-add" onClick={addCustomItem}>추가</button>

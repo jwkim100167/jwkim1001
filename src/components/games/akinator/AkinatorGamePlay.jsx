@@ -168,7 +168,7 @@ export default function AkinatorGamePlay({
                     placeholder="예) 이 사람은 한국인인가요?"
                     value={questionInput}
                     onChange={e => setQuestionInput(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleSubmitQuestion()}
+                    onKeyDown={e => e.key === 'Enter' && !e.nativeEvent.isComposing && handleSubmitQuestion()}
                     maxLength={60}
                     autoComplete="off"
                   />
@@ -269,7 +269,7 @@ export default function AkinatorGamePlay({
                     placeholder="인물 이름 입력 후 Enter"
                     value={guessInput}
                     onChange={e => { setGuessInput(e.target.value); setGuessResult(null); }}
-                    onKeyDown={e => e.key === 'Enter' && handleSubmitGuess()}
+                    onKeyDown={e => e.key === 'Enter' && !e.nativeEvent.isComposing && handleSubmitGuess()}
                     maxLength={30}
                     autoComplete="off"
                   />

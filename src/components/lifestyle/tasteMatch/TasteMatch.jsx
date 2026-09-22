@@ -292,7 +292,7 @@ export default function TasteMatch() {
                 placeholder="닉네임을 입력해줘"
                 value={nickname}
                 onChange={e => setNickname(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleStart()}
+                onKeyDown={e => e.key === 'Enter' && !e.nativeEvent.isComposing && handleStart()}
                 maxLength={20}
               />
             )}

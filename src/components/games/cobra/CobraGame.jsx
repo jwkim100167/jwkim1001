@@ -311,7 +311,7 @@ export default function CobraGame() {
               placeholder="이름 입력 (최대 8자)"
               value={playerName}
               onChange={(e) => { setPlayerName(e.target.value); setError(''); }}
-              onKeyDown={(e) => e.key === 'Enter' && handleCreateRoom()}
+              onKeyDown={(e) => e.key === 'Enter' && !e.nativeEvent.isComposing && handleCreateRoom()}
               maxLength={8}
               autoFocus
             />
@@ -357,7 +357,7 @@ export default function CobraGame() {
               placeholder="이름 입력 (최대 8자)"
               value={playerName}
               onChange={(e) => { setPlayerName(e.target.value); setError(''); }}
-              onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
+              onKeyDown={(e) => e.key === 'Enter' && !e.nativeEvent.isComposing && handleJoinRoom()}
               maxLength={8}
             />
             {error && <div className="cobra-error">{error}</div>}
