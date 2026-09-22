@@ -117,8 +117,8 @@ export default function HalliGalliPlay({
 
     const secondPlaceOn = options?.secondPlace;
     if (!secondPlaceOn || !bell_window_closes_at) {
-      // 2등 옵션 없음 → bell_winner가 즉시 처리
-      if (isBellWinner) tryResolve();
+      // 2등 옵션 없음 → handleBell이 resolveCalledRef 선점했으면 여기는 건너뜀 (fallback 역할)
+      if (isBellWinner) setTimeout(tryResolve, 350);
       return;
     }
 
@@ -173,13 +173,11 @@ export default function HalliGalliPlay({
         setBellFeedback('second');
         setTimeout(() => setBellFeedback(null), 1200);
       } else if (result === 'first') {
-        // Realtime에 의존하지 않고 직접 resolve 스케줄 (Realtime 유실 방어)
+        // resolveCalledRef 선점 → useEffect 중복 호출 방지
+        resolveCalledRef.current = true;
         const secondPlaceOn = options?.secondPlace;
-        if (secondPlaceOn) {
-          setTimeout(() => doResolveBell(roomId), 1650);
-        } else {
-          doResolveBell(roomId);
-        }
+        const delay = secondPlaceOn ? 1650 : 350;
+        setTimeout(() => doResolveBell(roomId), delay);
       }
     } finally {
       setBusy(false);
