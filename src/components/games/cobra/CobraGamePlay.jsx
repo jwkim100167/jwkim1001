@@ -19,6 +19,8 @@ import {
   resolveSpecialSwap,
   skipSpecialAbility,
   seonjeomInterrupt,
+  autoSkipTurn,
+  kickPlayerFromGame,
 } from '../../../services/games/supabaseCobra';
 import './CobraGamePlay.css';
 
@@ -264,7 +266,7 @@ export function RulesModal({ onClose, options }) {
 }
 
 // ─── 메인 컴포넌트 ────────────────────────────────────
-export default function CobraGamePlay({ gameState, currentPlayer, players, roomId, playerStats = {}, actions = {} }) {
+export default function CobraGamePlay({ gameState, currentPlayer, players, roomId, playerStats = {}, onlinePlayerIds = null, onLeaveToRoom, onLeaveToHome, actions = {} }) {
   const cobra = {
     peekCard, drawFromDeck, discardDrawn, swapWithHand, matchAndDiscard,
     takeFromDiscard, callCobra, resetGame, resolveSpecialPeek, resolveSpecialSwap,
@@ -288,6 +290,7 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
 
   const timerRef = useRef(null);
   const gameStateRef = useRef(gameState);
+  const offlineSkipRef = useRef({});
 
   const myId = currentPlayer.id;
   const myHand = gameState.hands?.[myId] || [];
@@ -358,6 +361,36 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
     const t = setTimeout(() => setErrMsg(''), 3000);
     return () => clearTimeout(t);
   }, [errMsg]);
+
+  // ── 재접속 시 오프라인 스킵 카운트 초기화 ──
+  useEffect(() => {
+    if (!onlinePlayerIds) return;
+    Object.keys(offlineSkipRef.current).forEach(id => {
+      if (onlinePlayerIds.includes(id)) delete offlineSkipRef.current[id];
+    });
+  }, [onlinePlayerIds]);
+
+  // ── 오프라인 턴 자동 스킵 + 3회 강퇴 (호스트 전용) ──
+  useEffect(() => {
+    const isHost = currentPlayer?.is_host;
+    const activePhase = gameState.phase === 'playing' || gameState.phase === 'cobra';
+    if (!isHost || !activePhase || !onlinePlayerIds) return;
+    const turnId = gameState.current_player_id;
+    if (!turnId || onlinePlayerIds.includes(turnId)) return;
+    if (gameState.turn_phase === 'special') return;
+
+    const timer = setTimeout(async () => {
+      const ref = offlineSkipRef.current;
+      ref[turnId] = (ref[turnId] || 0) + 1;
+      if (ref[turnId] >= 3) {
+        delete ref[turnId];
+        await kickPlayerFromGame(roomId, turnId);
+      } else {
+        await autoSkipTurn(roomId, turnId);
+      }
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [gameState.current_player_id, gameState.phase, gameState.turn_phase, onlinePlayerIds]); // eslint-disable-line
 
   // ── 턴 타이머 ──
   useEffect(() => {
@@ -594,6 +627,12 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
               ? <button className="cgp-btn cgp-btn-primary" onClick={() => act(() => cobra.resetGame(roomId, winnerId))} disabled={busy}>다시 하기</button>
               : <p className="cgp-hint">방장이 다시 시작하기를 기다리세요</p>
           )}
+          {showWinner && (
+            <div className="cgp-leave-btns">
+              {onLeaveToRoom && <button className="cgp-btn cgp-btn-secondary" onClick={onLeaveToRoom}>방으로 나가기</button>}
+              {onLeaveToHome && <button className="cgp-btn cgp-btn-secondary" onClick={onLeaveToHome}>홈으로 나가기</button>}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -632,6 +671,9 @@ export default function CobraGamePlay({ gameState, currentPlayer, players, roomI
           <div className="cgp-turn-info">
             <span className="cgp-turn-dot" style={{ background: playerMap[gameState.current_player_id]?.color }} />
             <span>{isMyTurn ? '내 차례' : `${currentTurnPlayer?.player_name}의 차례`}</span>
+            {onlinePlayerIds && gameState.current_player_id && !onlinePlayerIds.includes(gameState.current_player_id) && (
+              <span className="cgp-offline-badge">연결 끊김</span>
+            )}
           </div>
           {isMyTurn && (
             <div className="cgp-timer-wrap">

@@ -23,7 +23,8 @@ export default function TurneyKiaPlay({
   players,
   roomId,
   onResetGame,
-  onLeave,
+  onLeaveToRoom,
+  onLeaveToHome,
   onlinePlayerIds = null,
   actions = {},
 }) {
@@ -198,7 +199,8 @@ export default function TurneyKiaPlay({
                 다시 하기
               </button>
             )}
-            <button className="tkp-btn tkp-btn-secondary" onClick={onLeave}>나가기</button>
+            <button className="tkp-btn tkp-btn-secondary" onClick={onLeaveToRoom}>방으로 나가기</button>
+            <button className="tkp-btn tkp-btn-secondary" onClick={onLeaveToHome}>홈으로 나가기</button>
           </div>
         </div>
       </div>
@@ -340,7 +342,7 @@ export default function TurneyKiaPlay({
                 placeholder="정답을 입력하세요"
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+                onKeyDown={(e) => e.key === 'Enter' && !e.nativeEvent.isComposing && handleSubmit()}
                 disabled={busy}
               />
               <button className="tkp-submit-btn" onClick={handleSubmit} disabled={!answer.trim() || busy}>

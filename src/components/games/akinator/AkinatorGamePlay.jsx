@@ -18,7 +18,9 @@ export default function AkinatorGamePlay({
   players,
   roomId,
   isHost,
-  onLeave,
+  onlinePlayerIds = null,
+  onLeaveToRoom,
+  onLeaveToHome,
   onRestart,
 }) {
   const [questionInput, setQuestionInput] = useState('');
@@ -228,7 +230,7 @@ export default function AkinatorGamePlay({
           </div>
         </div>
 
-        <button className="akp-leave-btn" onClick={onLeave}>나가기</button>
+        <button className="akp-leave-btn" onClick={onLeaveToRoom}>방으로 나가기</button>
       </div>
     );
   }
@@ -304,6 +306,9 @@ export default function AkinatorGamePlay({
                 <div key={p.id} className="akp-status-row">
                   <span className="akp-status-dot" style={{ background: colorMap[p.id] || '#aaa' }} />
                   <span className="akp-status-name">{p.player_name}</span>
+                  {onlinePlayerIds && !onlinePlayerIds.includes(p.id) && (
+                    <span className="akp-offline-badge">연결 끊김</span>
+                  )}
                   <span className="akp-status-state">
                     {guesses[p.id] ? (guesses[p.id].correct ? '✅ 정답!' : '❌ 제출') : '⏳ 대기 중'}
                   </span>
@@ -318,7 +323,7 @@ export default function AkinatorGamePlay({
           </div>
         </div>
 
-        <button className="akp-leave-btn" onClick={onLeave}>나가기</button>
+        <button className="akp-leave-btn" onClick={onLeaveToRoom}>방으로 나가기</button>
       </div>
     );
   }
@@ -369,7 +374,8 @@ export default function AkinatorGamePlay({
                 ? <button className="akp-btn akp-btn-primary" onClick={onRestart}>다시 하기</button>
                 : <p className="akp-waiting-host">방장이 다시 시작하기를 누를 때까지 기다려주세요</p>
               }
-              <button className="akp-btn akp-btn-leave" onClick={onLeave}>나가기</button>
+              <button className="akp-btn akp-btn-leave" onClick={onLeaveToRoom}>방으로 나가기</button>
+              <button className="akp-btn akp-btn-leave" onClick={onLeaveToHome}>홈으로 나가기</button>
             </div>
           </div>
         </div>

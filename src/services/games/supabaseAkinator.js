@@ -123,6 +123,11 @@ export async function deleteRoom(roomId) {
   await supabase.from('akinator_rooms').delete().eq('id', roomId);
 }
 
+export async function promoteToHost(playerId) {
+  const { error } = await supabase.from('akinator_players').update({ is_host: true }).eq('id', playerId);
+  if (error) console.error('promoteToHost error:', error);
+}
+
 // ── 게임 시작 ──────────────────────────────────────────────
 export async function startGame(roomId, character, options = { maxQuestions: 20 }) {
   const newState = {

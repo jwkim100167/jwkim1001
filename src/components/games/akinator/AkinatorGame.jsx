@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
+import { supabase } from '../../../supabaseClient';
 import {
   createRoom,
   joinRoom,
@@ -8,6 +9,7 @@ import {
   getRoomData,
   leaveRoom,
   deleteRoom,
+  promoteToHost,
   startGame,
   resetToWaiting,
   subscribeToRoom,
@@ -43,7 +45,11 @@ export default function AkinatorGame() {
   const [showSoloConfirm, setShowSoloConfirm] = useState(false);
   const [options, setOptions] = useState({ maxQuestions: 20 });
 
+  const [onlinePlayerIds, setOnlinePlayerIds] = useState(null);
   const channelRef = useRef(null);
+  const presenceChannelRef = useRef(null);
+  const currentPlayerRef = useRef(null);
+  useEffect(() => { currentPlayerRef.current = currentPlayer; }, [currentPlayer]);
 
   useEffect(() => {
     if (!currentRoom) return;
@@ -55,6 +61,20 @@ export default function AkinatorGame() {
         ]);
         setPlayers(playersData);
         setRoomData(roomFull);
+
+        // 호스트 이탈 시 첫 번째 플레이어가 자동 승계
+        const self = currentPlayerRef.current;
+        if (self) {
+          const freshSelf = playersData.find((p) => p.id === self.id);
+          if (freshSelf && freshSelf.is_host !== self.is_host) {
+            setCurrentPlayer(freshSelf);
+            currentPlayerRef.current = freshSelf;
+          }
+          const hasHost = playersData.some((p) => p.is_host);
+          if (!hasHost && playersData.length > 0 && freshSelf && playersData[0].id === freshSelf.id) {
+            await promoteToHost(freshSelf.id);
+          }
+        }
       } catch { /* ignore */ }
     };
     loadAll();
@@ -74,6 +94,25 @@ export default function AkinatorGame() {
       }
     };
   }, [currentRoom]);
+
+  // Presence 추적
+  useEffect(() => {
+    if (!currentRoom || !currentPlayer) { setOnlinePlayerIds(null); return; }
+    if (presenceChannelRef.current) supabase.removeChannel(presenceChannelRef.current);
+    const channel = supabase.channel(`presence:akinator:${currentRoom.id}`, {
+      config: { presence: { key: currentPlayer.id } },
+    });
+    channel
+      .on('presence', { event: 'sync' }, () => {
+        const ids = Object.keys(channel.presenceState());
+        setOnlinePlayerIds(ids.length > 0 ? ids : null);
+      })
+      .subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') await channel.track({ online: true });
+      });
+    presenceChannelRef.current = channel;
+    return () => { supabase.removeChannel(channel); presenceChannelRef.current = null; };
+  }, [currentRoom?.id, currentPlayer?.id]);
 
   useEffect(() => {
     if (!currentPlayer) return;
@@ -142,6 +181,16 @@ export default function AkinatorGame() {
     setView('lobby');
   };
 
+  const handleLeaveToHome = async () => {
+    if (currentPlayer) {
+      try {
+        await leaveRoom(currentPlayer.id);
+        if (currentPlayer.is_host && currentRoom) await deleteRoom(currentRoom.id);
+      } catch { /* ignore */ }
+    }
+    navigate('/');
+  };
+
   const handleStartClick = () => {
     if (players.length < 2) {
       setShowSoloConfirm(true);
@@ -183,7 +232,9 @@ export default function AkinatorGame() {
         players={players}
         roomId={currentRoom.id}
         isHost={currentPlayer?.is_host}
-        onLeave={handleLeave}
+        onlinePlayerIds={onlinePlayerIds}
+        onLeaveToRoom={handleLeave}
+        onLeaveToHome={handleLeaveToHome}
         onRestart={async () => {
           try { await resetToWaiting(currentRoom.id); } catch { /* ignore */ }
         }}

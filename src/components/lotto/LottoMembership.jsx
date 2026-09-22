@@ -672,7 +672,7 @@ const LottoMembership = () => {
               type="text"
               value={excludeInput}
               onChange={e => setExcludeInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleAddExclude()}
+              onKeyDown={e => e.key === 'Enter' && !e.nativeEvent.isComposing && handleAddExclude()}
               placeholder="예: 3, 15, 27"
               className="exclude-input-field"
             />
@@ -708,7 +708,7 @@ const LottoMembership = () => {
               type="text"
               value={includeInput}
               onChange={e => setIncludeInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleAddInclude()}
+              onKeyDown={e => e.key === 'Enter' && !e.nativeEvent.isComposing && handleAddInclude()}
               placeholder="예: 7, 23, 38"
               className="exclude-input-field"
             />

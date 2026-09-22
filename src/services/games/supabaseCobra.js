@@ -145,6 +145,11 @@ export async function deleteRoom(roomId) {
   await supabase.from('cobra_rooms').delete().eq('id', roomId);
 }
 
+export async function promoteToHost(playerId) {
+  const { error } = await supabase.from('cobra_players').update({ is_host: true }).eq('id', playerId);
+  if (error) console.error('promoteToHost error:', error);
+}
+
 export function subscribeToRoom(roomId, onUpdate, onRoomDeleted) {
   return supabase
     .channel(`cobra-room-${roomId}`)
@@ -494,9 +499,10 @@ export async function takeFromDiscard(roomId, playerId, handIndex, gameState, ta
  * seonjeom_window가 열려있을 때 내 아는 카드와 버린 패 top이 같으면 즉시 선점.
  * 선점 = 내 차례를 사용 → 다음은 내 다음 플레이어.
  */
-export async function seonjeomInterrupt(roomId, playerId, handIndex, gameState, table = 'cobra_rooms') {
-  const discardPile = gameState.discard_pile || [];
-  if (!gameState.seonjeom_window || discardPile.length === 0) throw new Error('선점 기회가 없습니다.');
+export async function seonjeomInterrupt(roomId, playerId, handIndex, _staleState, table = 'cobra_rooms') {
+  const gameState = await fetchLatestState(roomId, table);
+  const discardPile = gameState?.discard_pile || [];
+  if (!gameState?.seonjeom_window || discardPile.length === 0) throw new Error('선점 기회가 없습니다.');
 
   const discardTop = discardPile[discardPile.length - 1];
   const handCard = gameState.hands[playerId][handIndex];
@@ -536,6 +542,64 @@ export async function skipSpecialAbility(roomId, playerId, gameState, table = 'c
 /** 코브라 선언 */
 export async function callCobra(roomId, playerId, gameState, table = 'cobra_rooms') {
   await triggerCobra(roomId, playerId, { ...gameState, drawn_card: null, turn_phase: 'draw' }, table);
+}
+
+/** 오프라인 플레이어 턴 자동 스킵 (draw→action→advanceTurn atomic) */
+export async function autoSkipTurn(roomId, playerId, table = 'cobra_rooms') {
+  const state = await fetchLatestState(roomId, table);
+  if (!state) return;
+  if (state.current_player_id !== playerId) return;
+  if (state.phase !== 'playing' && state.phase !== 'cobra') return;
+  if (state.turn_phase === 'special') return; // 특수 능력 중 스킵 안 함
+
+  if (state.turn_phase === 'draw') {
+    // 덱에서 카드 뽑기
+    let deck = [...state.deck];
+    let discardPile = [...state.discard_pile];
+    if (deck.length === 0) {
+      const top = discardPile.pop();
+      deck = discardPile.sort(() => Math.random() - 0.5);
+      discardPile = top ? [top] : [];
+    }
+    if (deck.length === 0) return;
+    const drawnCard = deck.pop();
+    const stateAfterDraw = { ...state, deck, discard_pile: discardPile, drawn_card: drawnCard, turn_phase: 'action', seonjeom_window: false, last_discarder_id: null };
+    // 즉시 버리기
+    const newDiscard = [...stateAfterDraw.discard_pile, drawnCard];
+    const stateAfterDiscard = { ...stateAfterDraw, discard_pile: newDiscard, drawn_card: null, turn_phase: 'draw' };
+    await advanceTurn(roomId, playerId, stateAfterDiscard, table);
+  } else if (state.turn_phase === 'action' && state.drawn_card) {
+    const newDiscard = [...state.discard_pile, state.drawn_card];
+    const stateAfterDiscard = { ...state, discard_pile: newDiscard, drawn_card: null, turn_phase: 'draw' };
+    await advanceTurn(roomId, playerId, stateAfterDiscard, table);
+  }
+}
+
+/** 오프라인 플레이어 강퇴 (3회 스킵 후 호스트가 호출) */
+export async function kickPlayerFromGame(roomId, playerId, table = 'cobra_rooms') {
+  const state = await fetchLatestState(roomId, table);
+  if (!state) return;
+  if (state.phase !== 'playing' && state.phase !== 'cobra') return;
+
+  const newOrder = state.player_order.filter(id => id !== playerId);
+  if (newOrder.length === 0) return;
+
+  const newHands = { ...state.hands };
+  delete newHands[playerId];
+
+  let newState = { ...state, player_order: newOrder, hands: newHands };
+
+  if (newOrder.length === 1) {
+    await endGame(roomId, newState, table);
+    return;
+  }
+
+  if (state.current_player_id === playerId) {
+    const nextId = getNextPlayerId(newOrder, playerId);
+    newState = { ...newState, current_player_id: nextId, turn_phase: 'draw', drawn_card: null };
+  }
+
+  await updateGameState(roomId, newState, table);
 }
 
 // ─────────────────────────────────────────

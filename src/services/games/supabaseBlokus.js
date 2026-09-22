@@ -144,6 +144,11 @@ export async function deleteRoom(roomId) {
   await supabase.from('blokus_rooms').delete().eq('id', roomId);
 }
 
+export async function promoteToHost(playerId) {
+  const { error } = await supabase.from('blokus_players').update({ is_host: true }).eq('id', playerId);
+  if (error) console.error('promoteToHost error:', error);
+}
+
 // ── 게임 시작 ──────────────────────────────────────────────
 export async function startGame(roomId, players, timerSeconds = 30) {
   const n = players.length;
@@ -287,6 +292,34 @@ export async function passTurn(roomId, color) {
     .update({ game_state: state })
     .eq('id', roomId);
   if (updateErr) throw updateErr;
+}
+
+// ── 오프라인 강퇴 (3회 스킵 후 호스트가 호출) ─────────────
+export async function kickColor(roomId, color) {
+  const { data, error } = await supabase
+    .from('blokus_rooms')
+    .select('game_state')
+    .eq('id', roomId)
+    .single();
+  if (error) return;
+
+  const state = JSON.parse(JSON.stringify(data.game_state));
+  if (state.phase !== 'playing') return;
+
+  if (!state.passed.includes(color)) state.passed.push(color);
+
+  if (state.turn_order[state.turn_index] === color) {
+    const { nextIndex } = advanceTurn(state);
+    state.turn_index = nextIndex;
+    state.turn_started_at = new Date().toISOString();
+  }
+
+  if (state.passed.length >= state.turn_order.length) {
+    state.phase = 'ended';
+    state.scores = calcScores(state);
+  }
+
+  await supabase.from('blokus_rooms').update({ game_state: state }).eq('id', roomId);
 }
 
 // ── 자동 기권 (타이머 만료 - 호스트 클라이언트가 호출) ───────

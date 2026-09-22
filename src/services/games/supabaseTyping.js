@@ -676,3 +676,40 @@ export async function halligalliDiscardTopCards(roomId) {
   newState.turn_started_at = Date.now();
   await updateGameState(roomId, newState);
 }
+
+export async function halligalliKickPlayer(roomId, playerId) {
+  const state = JSON.parse(JSON.stringify(await fetchLatestState(roomId)));
+  if (!state || state.phase !== 'playing') return;
+  if (state.eliminated.includes(playerId)) return;
+
+  state.eliminated.push(playerId);
+  const active = state.turn_order.filter(id => !state.eliminated.includes(id));
+
+  if (active.length <= 1) {
+    state.phase = 'ended';
+    state.winner_id = active[0] ?? null;
+  } else if (state.turn_order[state.turn_index] === playerId) {
+    state.turn_index = halliAdvanceTurn(state, state.turn_index);
+    state.turn_started_at = Date.now();
+  }
+  await updateGameState(roomId, state);
+}
+
+export async function blokusKickColor(roomId, color) {
+  const state = JSON.parse(JSON.stringify(await fetchLatestState(roomId)));
+  if (!state || state.phase !== 'playing') return;
+
+  if (!state.passed.includes(color)) state.passed.push(color);
+
+  if (state.turn_order[state.turn_index] === color) {
+    const { nextIndex } = _blokusAdvanceTurn(state);
+    state.turn_index = nextIndex;
+    state.turn_started_at = new Date().toISOString();
+  }
+
+  if (state.passed.length >= state.turn_order.length) {
+    state.phase = 'ended';
+    state.scores = _blokusCalcScores(state);
+  }
+  await updateGameState(roomId, state);
+}

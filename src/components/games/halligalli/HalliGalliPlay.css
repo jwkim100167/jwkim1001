@@ -96,6 +96,15 @@
   max-width: 100%;
 }
 .hg-player-name.is-me { color: #93c5fd; }
+.hg-offline-badge {
+  margin-left: 4px;
+  font-size: 0.6rem;
+  background: #374151;
+  color: #9ca3af;
+  border-radius: 4px;
+  padding: 1px 4px;
+  vertical-align: middle;
+}
 
 .hg-card-count {
   font-size: 0.7rem;

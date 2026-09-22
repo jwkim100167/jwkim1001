@@ -16,12 +16,12 @@ import {
   subscribeToRoom,
   unsubscribeFromRoom,
   MAX_PLAYERS,
-  blokusPlacePiece, blokusPassTurn, blokusAutoPass,
+  blokusPlacePiece, blokusPassTurn, blokusAutoPass, blokusKickColor,
   turneyiaRevealNextHint, turneyiaSubmitAnswer, turneyiaRevealAnswer, turneyiaNextRound, turneyiaEndGame,
   cobraPeekCard, cobraDrawFromDeck, cobraDiscardDrawn, cobraSwapWithHand, cobraMatchAndDiscard,
   cobraTakeFromDiscard, cobraSeonjeomInterrupt, cobraResolveSpecialPeek, cobraResolveSpecialSwap,
   cobraSkipSpecialAbility, cobraCallCobra,
-  halligalliFlipCard, halligalliRingBell, halligalliResolveBell, halligalliDiscardTopCards,
+  halligalliFlipCard, halligalliRingBell, halligalliResolveBell, halligalliDiscardTopCards, halligalliKickPlayer,
 } from '../../../services/games/supabaseTyping';
 import TypingGamePlay from './TypingGamePlay';
 import BlokusPlay from '../blokus/BlokusPlay';
@@ -260,6 +260,16 @@ export default function TypingGame() {
     setView('lobby');
   };
 
+  const handleLeaveToHome = async () => {
+    if (currentPlayer) {
+      try {
+        await leaveRoom(currentPlayer.id);
+        if (currentPlayer.is_host && currentRoom) await deleteRoom(currentRoom.id);
+      } catch { /* ignore */ }
+    }
+    navigate('/');
+  };
+
   const handleStartClick = () => {
     if (!selectedGame) return setError('게임을 먼저 선택해주세요.');
     if (players.length < 2) {
@@ -317,8 +327,10 @@ export default function TypingGame() {
             players={enrichedPlayers}
             roomId={currentRoom.id}
             onResetGame={currentPlayer?.is_host ? handleResetToWaiting : null}
-            onLeave={handleLeave}
-            actions={{ placePiece: blokusPlacePiece, passTurn: blokusPassTurn, autoPass: blokusAutoPass }}
+            onLeaveToRoom={handleLeave}
+            onLeaveToHome={handleLeaveToHome}
+            onlinePlayerIds={onlinePlayerIds}
+            actions={{ placePiece: blokusPlacePiece, passTurn: blokusPassTurn, autoPass: blokusAutoPass, kickColor: blokusKickColor }}
           />
         );
       }
@@ -331,7 +343,8 @@ export default function TypingGame() {
             players={players}
             roomId={currentRoom.id}
             onResetGame={currentPlayer?.is_host ? handleResetToWaiting : null}
-            onLeave={handleLeave}
+            onLeaveToRoom={handleLeave}
+            onLeaveToHome={handleLeaveToHome}
             onlinePlayerIds={onlinePlayerIds}
             actions={{
               revealNextHint: turneyiaRevealNextHint,
@@ -351,6 +364,9 @@ export default function TypingGame() {
             currentPlayer={currentPlayer}
             players={players}
             roomId={currentRoom.id}
+            onLeaveToRoom={handleLeave}
+            onLeaveToHome={handleLeaveToHome}
+            onlinePlayerIds={onlinePlayerIds}
             actions={{
               peekCard: cobraPeekCard,
               drawFromDeck: cobraDrawFromDeck,
@@ -377,12 +393,15 @@ export default function TypingGame() {
             players={players}
             roomId={currentRoom.id}
             onResetGame={currentPlayer?.is_host ? handleResetToWaiting : null}
-            onLeave={handleLeave}
+            onLeaveToRoom={handleLeave}
+            onLeaveToHome={handleLeaveToHome}
+            onlinePlayerIds={onlinePlayerIds}
             actions={{
               flipCard: halligalliFlipCard,
               ringBell: halligalliRingBell,
               resolveBell: halligalliResolveBell,
               discardTopCards: halligalliDiscardTopCards,
+              kickPlayer: halligalliKickPlayer,
             }}
           />
         );
@@ -511,7 +530,7 @@ export default function TypingGame() {
               placeholder="이름 입력 (최대 8자)"
               value={playerName}
               onChange={(e) => { setPlayerName(e.target.value); setError(''); }}
-              onKeyDown={(e) => e.key === 'Enter' && handleCreateRoom()}
+              onKeyDown={(e) => e.key === 'Enter' && !e.nativeEvent.isComposing && handleCreateRoom()}
               maxLength={8}
               autoFocus
             />
@@ -554,7 +573,7 @@ export default function TypingGame() {
               placeholder="이름 입력 (최대 8자)"
               value={playerName}
               onChange={(e) => { setPlayerName(e.target.value); setError(''); }}
-              onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
+              onKeyDown={(e) => e.key === 'Enter' && !e.nativeEvent.isComposing && handleJoinRoom()}
               maxLength={8}
             />
             {error && <div className="tg-error">{error}</div>}

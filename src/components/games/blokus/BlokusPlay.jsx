@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { PIECES, COLOR_HEX, getTransforms } from '../../../data/games/blokusPieces';
-import { placePiece, passTurn, autoPass } from '../../../services/games/supabaseBlokus';
+import { placePiece, passTurn, autoPass, kickColor } from '../../../services/games/supabaseBlokus';
 import './BlokusPlay.css';
 
 const BOARD_SIZE = 20;
@@ -91,10 +91,11 @@ function colorName(color) {
 }
 
 // ── Component ─────────────────────────────────────────────
-export default function BlokusPlay({ gameState, currentPlayer, players, roomId, onResetGame, onLeave, actions = {} }) {
+export default function BlokusPlay({ gameState, currentPlayer, players, roomId, onResetGame, onlinePlayerIds = null, onLeaveToRoom, onLeaveToHome, actions = {} }) {
   const doPlacePiece = actions.placePiece ?? placePiece;
   const doPassTurn = actions.passTurn ?? passTurn;
   const doAutoPass = actions.autoPass ?? autoPass;
+  const doKickColor = actions.kickColor ?? kickColor;
   const [selectedPieceId, setSelectedPieceId] = useState(null);
   const [rotation, setRotation] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -108,12 +109,41 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
   const endPlayedRef = useRef(false);
   const boardRef = useRef(null);
   const selectedPieceIdRef = useRef(null);
+  const offlineSkipRef = useRef({});
 
   const myColor = players.find((p) => p.id === currentPlayer?.id)?.color;
   const currentColor = gameState.turn_order[gameState.turn_index];
   const isMyTurn = myColor === currentColor;
   const isHost = currentPlayer?.is_host;
   const isEnded = gameState.phase === 'ended';
+
+  // ── 재접속 시 오프라인 스킵 카운트 초기화 ──
+  useEffect(() => {
+    if (!onlinePlayerIds) return;
+    Object.keys(offlineSkipRef.current).forEach(id => {
+      if (onlinePlayerIds.includes(id)) delete offlineSkipRef.current[id];
+    });
+  }, [onlinePlayerIds]);
+
+  // ── 연결 끊긴 플레이어 턴 자동 스킵 + 3회 강퇴 (호스트 전용) ──
+  useEffect(() => {
+    if (!isHost || isEnded || !onlinePlayerIds) return;
+    const currentTurnPlayer = players.find((p) => p.color === currentColor);
+    if (!currentTurnPlayer || onlinePlayerIds.includes(currentTurnPlayer.id)) return;
+    const timer = setTimeout(async () => {
+      const ref = offlineSkipRef.current;
+      const pid = currentTurnPlayer.id;
+      ref[pid] = (ref[pid] || 0) + 1;
+      if (ref[pid] >= 3) {
+        delete ref[pid];
+        await doKickColor(roomId, currentColor);
+      } else {
+        autoPassFiredRef.current = gameState.turn_started_at;
+        await doAutoPass(roomId, currentColor, gameState.turn_started_at);
+      }
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [isHost, isEnded, currentColor, onlinePlayerIds, players, roomId, gameState.turn_started_at, doAutoPass, doKickColor]);
 
   // ── Timer ─────────────────────────────────────────────
   useEffect(() => {
@@ -354,8 +384,11 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
                 다시 하기
               </button>
             )}
-            <button className="blk-btn blk-btn-secondary" onClick={onLeave}>
-              나가기
+            <button className="blk-btn blk-btn-secondary" onClick={onLeaveToRoom}>
+              방으로 나가기
+            </button>
+            <button className="blk-btn blk-btn-secondary" onClick={onLeaveToHome}>
+              홈으로 나가기
             </button>
           </div>
         </div>
@@ -435,6 +468,9 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
                 >
                   <span className="blk-panel-player-dot" style={{ background: COLOR_HEX[color] }} />
                   <span className="blk-panel-player-name">{p?.player_name || colorName(color)}</span>
+                  {onlinePlayerIds && p && !onlinePlayerIds.includes(p.id) && (
+                    <span className="blk-offline-badge">연결 끊김</span>
+                  )}
                   {hasPassed
                     ? <span className="blk-panel-player-passed-badge">기권</span>
                     : <span className="blk-panel-player-remaining">{remainingCount}개</span>
@@ -490,7 +526,10 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
                       }}
                       title={piece.name}
                     >
-                      <PieceMini cells={piece.cells} color={used ? '#555' : COLOR_HEX[myColor]} />
+                      <PieceMini
+                        cells={selected ? applyCells(piece.cells, rotation, flipped) : piece.cells}
+                        color={used ? '#555' : COLOR_HEX[myColor]}
+                      />
                     </button>
                   );
                 })}
@@ -518,29 +557,25 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
 
 // ── Piece Mini Renderer ────────────────────────────────────
 function PieceMini({ cells, color }) {
-  const maxR = Math.max(...cells.map(([r]) => r));
-  const maxC = Math.max(...cells.map(([, c]) => c));
-  const rows = maxR + 1;
-  const cols = maxC + 1;
+  const SIZE = 5;
   const cellSet = new Set(cells.map(([r, c]) => `${r},${c}`));
 
   return (
     <div
       className="blk-piece-mini"
       style={{
-        gridTemplateColumns: `repeat(${cols}, 1fr)`,
-        gridTemplateRows: `repeat(${rows}, 1fr)`,
+        gridTemplateColumns: `repeat(${SIZE}, 1fr)`,
+        gridTemplateRows: `repeat(${SIZE}, 1fr)`,
       }}
     >
-      {Array.from({ length: rows * cols }).map((_, i) => {
-        const r = Math.floor(i / cols);
-        const c = i % cols;
-        const filled = cellSet.has(`${r},${c}`);
+      {Array.from({ length: SIZE * SIZE }).map((_, i) => {
+        const r = Math.floor(i / SIZE);
+        const c = i % SIZE;
         return (
           <div
             key={i}
             className="blk-piece-mini-cell"
-            style={{ background: filled ? color : 'transparent' }}
+            style={{ background: cellSet.has(`${r},${c}`) ? color : 'transparent' }}
           />
         );
       })}

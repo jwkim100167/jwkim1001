@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FRUIT_EMOJI, FRUIT_LABEL, FRUITS, getFruitCounts, checkBellCondition } from '../../../utils/games/halliGalliGameLogic';
-import { halligalliFlipCard, halligalliRingBell, halligalliResolveBell, halligalliDiscardTopCards } from '../../../services/games/supabaseTyping';
+import { halligalliFlipCard, halligalliRingBell, halligalliResolveBell, halligalliDiscardTopCards, halligalliKickPlayer } from '../../../services/games/supabaseTyping';
 import './HalliGalliPlay.css';
 
 const DISCARD_TIMEOUT = 10000;
@@ -11,13 +11,16 @@ export default function HalliGalliPlay({
   players,
   roomId,
   onResetGame,
-  onLeave,
+  onLeaveToRoom,
+  onLeaveToHome,
+  onlinePlayerIds = null,
   actions = {},
 }) {
   const doFlipCard = actions.flipCard ?? halligalliFlipCard;
   const doRingBell = actions.ringBell ?? halligalliRingBell;
   const doResolveBell = actions.resolveBell ?? halligalliResolveBell;
   const doDiscardTopCards = actions.discardTopCards ?? halligalliDiscardTopCards;
+  const doKickPlayer = actions.kickPlayer ?? halligalliKickPlayer;
 
   const [bellFeedback, setBellFeedback] = useState(null); // 'late' | 'second'
   const [overlay, setOverlay] = useState(null); // { correct, firstName, secondName, cardCount }
@@ -32,6 +35,7 @@ export default function HalliGalliPlay({
   const windowTimerRef = useRef(null);
   const autoFlipCalledRef = useRef(false);
   const autoFlipFiredRef = useRef(false);
+  const offlineSkipRef = useRef({});
 
   const myId = currentPlayer?.id;
   const isHost = currentPlayer?.is_host;
@@ -50,6 +54,31 @@ export default function HalliGalliPlay({
   const isBellResolving = phase === 'bell_resolving';
   const fruitCounts = getFruitCounts(top_cards || {});
   const bellValid = checkBellCondition(top_cards || {});
+
+  // 재접속 시 오프라인 스킵 카운트 초기화
+  useEffect(() => {
+    if (!onlinePlayerIds) return;
+    Object.keys(offlineSkipRef.current).forEach(id => {
+      if (onlinePlayerIds.includes(id)) delete offlineSkipRef.current[id];
+    });
+  }, [onlinePlayerIds]);
+
+  // 오프라인 턴 자동 스킵 + 3회 강퇴 (호스트 전용)
+  useEffect(() => {
+    if (!isHost || !onlinePlayerIds || phase !== 'playing') return;
+    if (!currentTurnId || onlinePlayerIds.includes(currentTurnId)) return;
+    const timer = setTimeout(async () => {
+      const ref = offlineSkipRef.current;
+      ref[currentTurnId] = (ref[currentTurnId] || 0) + 1;
+      if (ref[currentTurnId] >= 3) {
+        delete ref[currentTurnId];
+        await doKickPlayer(roomId, currentTurnId);
+      } else {
+        await doFlipCard(roomId, currentTurnId);
+      }
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [isHost, phase, currentTurnId, onlinePlayerIds]); // eslint-disable-line
 
   // Bug 1 fix: 내 차례인데 덱이 비어 flip 버튼이 비활성 → 자동 턴 패스
   useEffect(() => {
@@ -226,7 +255,8 @@ export default function HalliGalliPlay({
             {onResetGame && (
               <button className="hg-btn hg-btn-primary" onClick={onResetGame}>다시 하기</button>
             )}
-            <button className="hg-btn hg-btn-secondary" onClick={onLeave}>나가기</button>
+            <button className="hg-btn hg-btn-secondary" onClick={onLeaveToRoom}>방으로 나가기</button>
+            <button className="hg-btn hg-btn-secondary" onClick={onLeaveToHome}>홈으로 나가기</button>
           </div>
         </div>
       </div>
@@ -306,6 +336,9 @@ export default function HalliGalliPlay({
                 <div className={`hg-player-name${isMe ? ' is-me' : ''}`}>
                   {isTurn && !isElim && <span>▶ </span>}
                   {p?.player_name ?? id}
+                  {onlinePlayerIds && !onlinePlayerIds.includes(id) && (
+                    <span className="hg-offline-badge">연결 끊김</span>
+                  )}
                 </div>
 
                 <div

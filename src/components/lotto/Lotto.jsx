@@ -2876,7 +2876,7 @@ const Lotto = () => {
                     type="text"
                     placeholder="번호 입력 (범위 지원: 1-10, 20-25)"
                     onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
+                      if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
                         const input = e.target.value.trim();
                         if (input) {
                           if (input.includes('-') || input.includes(',')) {
@@ -3205,7 +3205,7 @@ const Lotto = () => {
                     type="text"
                     placeholder="번호 입력 (범위 지원: 12-15, 33)"
                     onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
+                      if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
                         const input = e.target.value.trim();
                         if (input) {
                           if (input.includes('-') || input.includes(',')) {
@@ -3376,7 +3376,7 @@ const Lotto = () => {
                         onChange={(e) => setCheckRound(e.target.value)}
                         min="1"
                         onKeyPress={(e) => {
-                          if (e.key === 'Enter') {
+                          if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
                             checkWinningNumbers();
                           }
                         }}

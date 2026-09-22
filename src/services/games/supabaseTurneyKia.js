@@ -24,22 +24,69 @@
  * ALTER PUBLICATION supabase_realtime ADD TABLE turneyia_players;
  * ALTER PUBLICATION supabase_realtime ADD TABLE turneyia_rooms;
  *
- * -- 동시 제출 충돌 방지 RPC
+ * -- 동시 제출 충돌 방지 RPC (FOR UPDATE 락으로 atomic 처리)
+ * -- !! Supabase SQL Editor에서 실행 필요 !!
  * CREATE OR REPLACE FUNCTION submit_turneyia_answer(
  *   p_room_id uuid, p_player_id text, p_answer text
- * ) RETURNS void AS $$
+ * ) RETURNS text AS $$
  * DECLARE
- *   v_gs jsonb; v_name text; v_correct boolean;
+ *   v_gs jsonb; v_name text; v_correct boolean; v_is_pass boolean;
+ *   v_submissions jsonb; v_hints_revealed int; v_max_hints int;
+ *   v_score_gain int; v_all_ids text[]; v_all_submitted boolean := true; v_k text;
  * BEGIN
  *   SELECT game_state INTO v_gs FROM turneyia_rooms WHERE id = p_room_id FOR UPDATE;
- *   IF v_gs->'answers' ? p_player_id THEN RETURN; END IF;
+ *   IF v_gs IS NULL OR v_gs->>'phase' != 'hinting' THEN RETURN 'wrong'; END IF;
+ *
+ *   v_submissions := COALESCE(v_gs->'current_hint_submissions', '{}'::jsonb);
+ *   IF v_submissions ? p_player_id THEN RETURN 'already'; END IF;
+ *
+ *   v_is_pass := p_answer = '__PASS__';
  *   v_name := lower(replace(v_gs->'current_person'->>'name', ' ', ''));
- *   v_correct := lower(replace(p_answer, ' ', '')) LIKE '%' || v_name || '%';
- *   v_gs := jsonb_set(v_gs, '{answers}', v_gs->'answers' || jsonb_build_object(p_player_id, p_answer));
- *   IF v_correct AND v_gs->>'correct_player_id' IS NULL THEN
+ *   v_correct := (NOT v_is_pass) AND lower(replace(p_answer, ' ', '')) LIKE '%' || v_name || '%';
+ *
+ *   v_submissions := v_submissions || jsonb_build_object(
+ *     p_player_id, CASE WHEN v_correct THEN 'correct' WHEN v_is_pass THEN 'pass' ELSE 'wrong' END
+ *   );
+ *   v_gs := jsonb_set(v_gs, '{current_hint_submissions}', v_submissions);
+ *
+ *   -- 정답: 첫 번째 정답자에게 점수 + reveal 전환
+ *   IF v_correct AND (v_gs->>'correct_player_id' IS NULL) THEN
+ *     v_hints_revealed := (v_gs->>'hints_revealed')::int;
+ *     v_max_hints := jsonb_array_length(v_gs->'current_person'->'hints');
+ *     v_score_gain := GREATEST(1, v_max_hints - v_hints_revealed + 1);
+ *     v_gs := jsonb_set(v_gs, '{phase}', '"reveal"');
  *     v_gs := jsonb_set(v_gs, '{correct_player_id}', to_jsonb(p_player_id));
+ *     v_gs := jsonb_set(v_gs, '{correct_at_hint}', to_jsonb(v_hints_revealed));
+ *     v_gs := jsonb_set(v_gs, '{scores}',
+ *       jsonb_set(COALESCE(v_gs->'scores', '{}'::jsonb), ARRAY[p_player_id],
+ *         to_jsonb(COALESCE((v_gs->'scores'->>p_player_id)::int, 0) + v_score_gain)));
  *   END IF;
+ *
+ *   -- 오답 + 정답자 없음: 전원 제출 완료 여부 확인 → 자동 다음 힌트 or reveal
+ *   IF NOT v_correct AND v_gs->>'correct_player_id' IS NULL THEN
+ *     SELECT array_agg(k) INTO v_all_ids
+ *       FROM jsonb_object_keys(COALESCE(v_gs->'scores', '{}'::jsonb)) k;
+ *     IF v_all_ids IS NOT NULL THEN
+ *       FOREACH v_k IN ARRAY v_all_ids LOOP
+ *         IF NOT (v_submissions ? v_k) THEN v_all_submitted := false; EXIT; END IF;
+ *       END LOOP;
+ *       IF v_all_submitted THEN
+ *         v_hints_revealed := (v_gs->>'hints_revealed')::int;
+ *         v_max_hints := jsonb_array_length(v_gs->'current_person'->'hints');
+ *         IF v_hints_revealed < v_max_hints THEN
+ *           v_gs := jsonb_set(v_gs, '{hints_revealed}', to_jsonb(v_hints_revealed + 1));
+ *           v_gs := jsonb_set(v_gs, '{hint_started_at}',
+ *             to_jsonb((EXTRACT(EPOCH FROM NOW()) * 1000)::bigint));
+ *           v_gs := jsonb_set(v_gs, '{current_hint_submissions}', '{}'::jsonb);
+ *         ELSE
+ *           v_gs := jsonb_set(v_gs, '{phase}', '"reveal"');
+ *         END IF;
+ *       END IF;
+ *     END IF;
+ *   END IF;
+ *
  *   UPDATE turneyia_rooms SET game_state = v_gs WHERE id = p_room_id;
+ *   IF v_correct THEN RETURN 'correct'; ELSE RETURN 'wrong'; END IF;
  * END;
  * $$ LANGUAGE plpgsql;
  */
@@ -154,6 +201,11 @@ export async function deleteRoom(roomId) {
   await supabase.from('turneyia_rooms').delete().eq('id', roomId);
 }
 
+export async function promoteToHost(playerId) {
+  const { error } = await supabase.from('turneyia_players').update({ is_host: true }).eq('id', playerId);
+  if (error) console.error('promoteToHost error:', error);
+}
+
 export function subscribeToRoom(roomId, onUpdate) {
   return supabase
     .channel(`turneyia-room-${roomId}`)
@@ -257,49 +309,23 @@ async function fetchLatestState(roomId) {
 }
 
 /**
- * 답변 제출 (클라이언트 로직)
+ * 답변 제출 — DB RPC로 atomic 처리 (동시 제출 race condition 방지)
  * 반환값: 'correct' | 'wrong' | 'already'
+ *
+ * !! Supabase SQL Editor에서 아래 RPC를 먼저 실행해야 합니다 !!
+ * (파일 상단 주석의 submit_turneyia_answer 함수 교체)
  */
 export async function submitAnswer(roomId, playerId, answer) {
-  const gameState = await fetchLatestState(roomId);
-  if (!gameState || gameState.phase !== 'hinting') return 'wrong';
-
-  const isPass = answer === '__PASS__';
-  if (gameState.current_hint_submissions?.[playerId]) return 'already';
-
-  const personName = gameState.current_person?.name ?? '';
-  const correct = !isPass &&
-    answer.toLowerCase().replace(/\s/g, '').includes(personName.toLowerCase().replace(/\s/g, ''));
-
-  const newSubmissions = {
-    ...(gameState.current_hint_submissions || {}),
-    [playerId]: correct ? 'correct' : (isPass ? 'pass' : 'wrong'),
-  };
-
-  let newPhase = gameState.phase;
-  let newScores = { ...(gameState.scores || {}) };
-  let newCorrectId = gameState.correct_player_id;
-
-  let correctAtHint = gameState.correct_at_hint ?? null;
-  if (correct && !newCorrectId) {
-    newCorrectId = playerId;
-    correctAtHint = gameState.hints_revealed;
-    const maxHints = gameState.current_person?.hints?.length ?? 6;
-    const scoreGain = Math.max(1, maxHints - gameState.hints_revealed + 1);
-    newScores[playerId] = (newScores[playerId] ?? 0) + scoreGain;
-    newPhase = 'reveal';
-  }
-
-  await updateGameState(roomId, {
-    ...gameState,
-    phase: newPhase,
-    current_hint_submissions: newSubmissions,
-    correct_player_id: newCorrectId,
-    scores: newScores,
-    correct_at_hint: correctAtHint,
+  const { data, error } = await supabase.rpc('submit_turneyia_answer', {
+    p_room_id: roomId,
+    p_player_id: playerId,
+    p_answer: answer,
   });
-
-  return correct ? 'correct' : (isPass ? 'wrong' : 'wrong');
+  if (error) {
+    console.error('submit_turneyia_answer RPC 실패:', error);
+    return 'wrong';
+  }
+  return data; // 'correct' | 'wrong' | 'already'
 }
 
 /**

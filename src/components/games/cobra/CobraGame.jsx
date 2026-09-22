@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
+import { supabase } from '../../../supabaseClient';
 import {
   createRoom,
   joinRoom,
@@ -8,6 +9,7 @@ import {
   getRoomData,
   leaveRoom,
   deleteRoom,
+  promoteToHost,
   subscribeToRoom,
   unsubscribeFromRoom,
   startGame,
@@ -39,7 +41,11 @@ export default function CobraGame() {
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
   const [showRules, setShowRules] = useState(false);
+  const [onlinePlayerIds, setOnlinePlayerIds] = useState(null);
   const channelRef = useRef(null);
+  const presenceChannelRef = useRef(null);
+  const currentPlayerRef = useRef(null);
+  useEffect(() => { currentPlayerRef.current = currentPlayer; }, [currentPlayer]);
   const [gameCount, setGameCount] = useState(0); // 완료된 게임 수
   const [adCountdown, setAdCountdown] = useState(0); // 광고 카운트다운 (방장용)
   const prevGameStateRef = useRef(null);
@@ -64,6 +70,20 @@ export default function CobraGame() {
           const stats = await getCobraStats(userIds);
           setPlayerStats(stats);
         }
+
+        // 호스트 이탈 시 첫 번째 플레이어가 자동 승계
+        const self = currentPlayerRef.current;
+        if (self) {
+          const freshSelf = playersData.find((p) => p.id === self.id);
+          if (freshSelf && freshSelf.is_host !== self.is_host) {
+            setCurrentPlayer(freshSelf);
+            currentPlayerRef.current = freshSelf;
+          }
+          const hasHost = playersData.some((p) => p.is_host);
+          if (!hasHost && playersData.length > 0 && freshSelf && playersData[0].id === freshSelf.id) {
+            await promoteToHost(freshSelf.id);
+          }
+        }
       } catch {
         // ignore
       }
@@ -87,6 +107,25 @@ export default function CobraGame() {
       }
     };
   }, [currentRoom]);
+
+  // Presence 추적
+  useEffect(() => {
+    if (!currentRoom || !currentPlayer) { setOnlinePlayerIds(null); return; }
+    if (presenceChannelRef.current) supabase.removeChannel(presenceChannelRef.current);
+    const channel = supabase.channel(`presence:cobra:${currentRoom.id}`, {
+      config: { presence: { key: currentPlayer.id } },
+    });
+    channel
+      .on('presence', { event: 'sync' }, () => {
+        const ids = Object.keys(channel.presenceState());
+        setOnlinePlayerIds(ids.length > 0 ? ids : null);
+      })
+      .subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') await channel.track({ online: true });
+      });
+    presenceChannelRef.current = channel;
+    return () => { supabase.removeChannel(channel); presenceChannelRef.current = null; };
+  }, [currentRoom?.id, currentPlayer?.id]);
 
   // 페이지 나갈 때 플레이어 정리
   useEffect(() => {
@@ -178,6 +217,16 @@ export default function CobraGame() {
     setView('lobby');
   };
 
+  const handleLeaveToHome = async () => {
+    if (currentPlayer) {
+      try {
+        await leaveRoom(currentPlayer.id);
+        if (currentPlayer.is_host && currentRoom) await deleteRoom(currentRoom.id);
+      } catch { /* ignore */ }
+    }
+    navigate('/');
+  };
+
   const handleStartGame = async () => {
     if (players.length < 2) return;
     setLoading(true); setError('');
@@ -210,6 +259,9 @@ export default function CobraGame() {
         players={players}
         roomId={currentRoom.id}
         playerStats={playerStats}
+        onlinePlayerIds={onlinePlayerIds}
+        onLeaveToRoom={handleLeave}
+        onLeaveToHome={handleLeaveToHome}
       />
     );
   }

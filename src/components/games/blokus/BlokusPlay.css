@@ -201,6 +201,13 @@
   padding: 1px 6px;
   border-radius: 20px;
 }
+.blk-offline-badge {
+  font-size: 0.65rem;
+  background: rgba(156, 163, 175, 0.2);
+  color: #9ca3af;
+  padding: 1px 5px;
+  border-radius: 20px;
+}
 
 /* Controls */
 .blk-controls {
