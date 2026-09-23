@@ -193,6 +193,7 @@ export default function HalliGalliPlay({
   const handleBell = async () => {
     if (busy || isBellResolving) return;
     setBusy(true);
+    let won = false;
     try {
       const result = await doRingBell(roomId, myId);
       if (result === 'late') {
@@ -202,6 +203,7 @@ export default function HalliGalliPlay({
         setBellFeedback('second');
         setTimeout(() => setBellFeedback(null), 1200);
       } else if (result === 'first') {
+        won = true; // busy를 유지해 실시간 업데이트 전 이중 RPC 방지
         // resolveCalledRef 선점 → useEffect 중복 호출 방지
         resolveCalledRef.current = true;
         const secondPlaceOn = options?.secondPlace;
@@ -209,9 +211,15 @@ export default function HalliGalliPlay({
         setTimeout(() => doResolveBell(roomId), delay);
       }
     } finally {
-      setBusy(false);
+      if (!won) setBusy(false);
+      // won=true 이면 phase가 playing으로 돌아올 때 아래 useEffect에서 해제
     }
   };
+
+  // bell_winner가 됐을 때 busy를 유지했다가 라운드 종료 후 해제
+  useEffect(() => {
+    if (phase === 'playing') setBusy(false);
+  }, [phase]);
 
   const handleFlip = async () => {
     if (!isMyTurn || busy || isBellResolving) return;
