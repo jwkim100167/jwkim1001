@@ -19,6 +19,13 @@ const HUB_SERVICES = [
     links: [{ label: '시작하기 →', path: '/movie-recommend' }],
   },
   {
+    id: 'music',
+    icon: '🎵',
+    title: '음악 취향 찾기',
+    desc: '나의 한국 음악 취향 유형 찾기',
+    links: [{ label: '시작하기 →', path: '/music-recommend' }],
+  },
+  {
     id: 'kbo',
     icon: '⚾',
     title: 'KBO 순위 예측',

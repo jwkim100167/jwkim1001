@@ -1,0 +1,652 @@
+/* ══════════════════════════════════════════
+   MusicRecommend — 음악 취향 찾기
+   Dark music theme with purple/violet accents
+══════════════════════════════════════════ */
+
+.mu-wrap {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a12 0%, #120a1e 50%, #0d0a1a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+}
+
+.mu-container {
+  width: 100%;
+  max-width: 560px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(160, 100, 255, 0.2);
+  border-radius: 20px;
+  padding: 32px 28px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(160, 100, 255, 0.08);
+  backdrop-filter: blur(12px);
+  position: relative;
+}
+
+/* ── 뒤로가기 ── */
+.mu-back-btn {
+  background: none;
+  border: none;
+  color: rgba(160, 100, 255, 0.7);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 4px 0;
+  margin-bottom: 24px;
+  display: block;
+  transition: color 0.2s;
+}
+.mu-back-btn:hover { color: #a064ff; }
+
+/* ══════════════════════════════════════════
+   시작 화면
+══════════════════════════════════════════ */
+.mu-start { text-align: center; }
+
+.mu-logo {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 0 12px rgba(160, 100, 255, 0.5));
+}
+
+.mu-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 8px;
+}
+
+.mu-subtitle {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 20px;
+}
+
+.mu-desc {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.mu-desc-accent {
+  color: #c080ff;
+  font-weight: 600;
+}
+
+.mu-time-badge {
+  display: inline-block;
+  background: rgba(160, 100, 255, 0.1);
+  border: 1px solid rgba(160, 100, 255, 0.25);
+  color: rgba(200, 160, 255, 0.9);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 0.8rem;
+  margin-bottom: 20px;
+}
+
+.mu-groups-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.mu-group-chip {
+  background: rgba(160, 100, 255, 0.1);
+  border: 1px solid rgba(160, 100, 255, 0.25);
+  color: rgba(200, 160, 255, 0.9);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 0.8rem;
+}
+
+.mu-user-greeting {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 24px;
+}
+.mu-user-greeting.guest { color: rgba(255, 255, 255, 0.45); }
+
+.mu-start-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.mu-start-btn {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 32px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+}
+.mu-start-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(124, 58, 237, 0.5);
+}
+
+.mu-start-btn-secondary {
+  background: rgba(160, 100, 255, 0.15);
+  border: 1px solid rgba(160, 100, 255, 0.3);
+  box-shadow: none;
+}
+.mu-start-btn-secondary:hover {
+  background: rgba(160, 100, 255, 0.25);
+  transform: translateY(-1px);
+  box-shadow: none;
+}
+
+.mu-view-result-btn {
+  background: rgba(160, 100, 255, 0.15);
+  border: 1px solid rgba(160, 100, 255, 0.35);
+  color: #c080ff;
+  border-radius: 12px;
+  padding: 14px 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mu-view-result-btn:hover {
+  background: rgba(160, 100, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+/* ══════════════════════════════════════════
+   그룹 전환 인트로
+══════════════════════════════════════════ */
+.mu-container.group-intro {
+  text-align: center;
+  padding: 60px 28px;
+}
+.mu-group-intro-icon { font-size: 2.5rem; margin-bottom: 16px; }
+.mu-group-intro-label {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #c080ff;
+  margin-bottom: 8px;
+}
+.mu-group-intro-desc {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ══════════════════════════════════════════
+   퀴즈 화면
+══════════════════════════════════════════ */
+.mu-progress-wrap {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.mu-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.mu-progress-label {
+  text-align: right;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.35);
+  margin-bottom: 20px;
+}
+.mu-progress-label span {
+  color: #c080ff;
+  font-weight: 600;
+}
+
+.mu-group-label {
+  font-size: 0.82rem;
+  color: rgba(200, 160, 255, 0.8);
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+.mu-group-pos { color: rgba(255, 255, 255, 0.3); }
+
+.mu-question {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  min-height: 56px;
+}
+.mu-q-part { display: block; }
+.mu-q-inline-vs {
+  display: inline-block;
+  color: #a855f7;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 4px 6px;
+}
+.mu-q-tail {
+  display: block;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 4px;
+}
+
+.mu-attempt-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 0.78rem;
+}
+.mu-attempt-badge {
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.mu-attempt-badge.active {
+  background: rgba(160, 100, 255, 0.15);
+  color: #c080ff;
+  border-color: rgba(160, 100, 255, 0.35);
+}
+.mu-attempt-badge.dim { opacity: 0.4; }
+.mu-attempt-arrow { color: rgba(255, 255, 255, 0.2); }
+
+.mu-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mu-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  color: #fff;
+}
+.mu-card:hover:not(:disabled) {
+  background: rgba(160, 100, 255, 0.12);
+  border-color: rgba(160, 100, 255, 0.4);
+  transform: translateY(-1px);
+}
+.mu-card.selected {
+  background: rgba(160, 100, 255, 0.2);
+  border-color: #a855f7;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.3);
+}
+.mu-card.dimmed {
+  opacity: 0.35;
+  transform: scale(0.98);
+}
+.mu-card-text {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.5;
+}
+
+.mu-vs {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(160, 100, 255, 0.6);
+  letter-spacing: 0.05em;
+}
+.mu-vs-or { color: rgba(255, 255, 255, 0.2); }
+
+.mu-neutral-btn {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px dashed rgba(255, 255, 255, 0.15) !important;
+  border-radius: 10px !important;
+  padding: 12px !important;
+  text-align: center !important;
+}
+.mu-neutral-btn .mu-card-text {
+  font-size: 0.85rem !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 노래 예시 카드 */
+.mu-cards-song {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mu-song-duel-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px 20px !important;
+}
+.mu-duel-icon { font-size: 1.2rem; }
+.mu-duel-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+.mu-duel-artist {
+  font-size: 0.78rem;
+  color: rgba(200, 160, 255, 0.8);
+}
+.mu-duel-reason {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 2px;
+}
+
+/* ══════════════════════════════════════════
+   결과 화면
+══════════════════════════════════════════ */
+.mu-result-badge {
+  text-align: center;
+  margin-bottom: 12px;
+}
+.mu-code {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #c080ff;
+  letter-spacing: 0.05em;
+  background: rgba(160, 100, 255, 0.1);
+  border: 1px solid rgba(160, 100, 255, 0.25);
+  border-radius: 8px;
+  padding: 4px 14px;
+}
+
+.mu-tied-notice {
+  text-align: center;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin-bottom: 12px;
+}
+
+.mu-type-name {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.mu-tagline {
+  text-align: center;
+  font-size: 0.88rem;
+  color: rgba(200, 160, 255, 0.75);
+  font-style: italic;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.mu-compat {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.mu-compat-card {
+  flex: 1;
+  border-radius: 12px;
+  padding: 12px 14px;
+  text-align: center;
+}
+.mu-compat-card.best {
+  background: rgba(255, 200, 80, 0.06);
+  border: 1px solid rgba(255, 200, 80, 0.2);
+}
+.mu-compat-card.opposite {
+  background: rgba(160, 100, 255, 0.06);
+  border: 1px solid rgba(160, 100, 255, 0.2);
+}
+.mu-compat-label {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 4px;
+}
+.mu-compat-code {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #c080ff;
+}
+.mu-compat-name {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin-top: 2px;
+}
+
+.mu-description {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.75;
+  margin-bottom: 20px;
+}
+
+.mu-loves-avoid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.mu-loves, .mu-avoid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.mu-loves-label {
+  font-size: 0.75rem;
+  color: rgba(160, 255, 160, 0.7);
+  font-weight: 600;
+  margin-right: 4px;
+}
+.mu-avoid-label {
+  font-size: 0.75rem;
+  color: rgba(255, 160, 160, 0.7);
+  font-weight: 600;
+  margin-right: 4px;
+}
+.mu-loves-tag {
+  background: rgba(100, 220, 100, 0.08);
+  border: 1px solid rgba(100, 220, 100, 0.2);
+  color: rgba(160, 255, 160, 0.85);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+}
+.mu-avoid-tag {
+  background: rgba(220, 100, 100, 0.08);
+  border: 1px solid rgba(220, 100, 100, 0.2);
+  color: rgba(255, 160, 160, 0.85);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+}
+
+/* ── 추천 노래 섹션 ── */
+.mu-songs-section { margin-bottom: 24px; }
+
+.mu-songs-toggle {
+  width: 100%;
+  background: rgba(160, 100, 255, 0.07);
+  border: 1px solid rgba(160, 100, 255, 0.2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: rgba(200, 160, 255, 0.9);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s;
+}
+.mu-songs-toggle:hover { background: rgba(160, 100, 255, 0.12); }
+.mu-songs-toggle-arrow { margin-left: auto; font-size: 0.75rem; }
+.mu-songs-count {
+  background: rgba(160, 100, 255, 0.15);
+  border-radius: 10px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  color: #c080ff;
+}
+
+.mu-era-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0;
+  align-items: center;
+}
+.mu-era-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.mu-era-btn:hover { border-color: rgba(160, 100, 255, 0.4); color: #c080ff; }
+.mu-era-btn.active {
+  background: rgba(160, 100, 255, 0.15);
+  border-color: rgba(160, 100, 255, 0.45);
+  color: #c080ff;
+}
+.mu-era-count {
+  background: rgba(160, 100, 255, 0.1);
+  border-radius: 8px;
+  padding: 0 5px;
+  font-size: 0.7rem;
+  color: rgba(200, 160, 255, 0.7);
+}
+.mu-shuffle-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.15s;
+  margin-left: auto;
+}
+.mu-shuffle-btn:hover {
+  background: rgba(160, 100, 255, 0.12);
+  border-color: rgba(160, 100, 255, 0.3);
+}
+
+.mu-songs-empty {
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.3);
+  padding: 20px 0;
+}
+
+.mu-songs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mu-song-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 10px 14px;
+  transition: background 0.15s;
+}
+.mu-song-item:hover { background: rgba(160, 100, 255, 0.06); }
+.mu-song-num {
+  font-size: 0.78rem;
+  color: rgba(160, 100, 255, 0.7);
+  font-weight: 700;
+  min-width: 18px;
+}
+.mu-song-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.mu-song-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+.mu-song-artist {
+  font-size: 0.78rem;
+  color: rgba(200, 160, 255, 0.7);
+}
+
+/* ── 결과 액션 버튼 ── */
+.mu-result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.mu-saving, .mu-saved {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+.mu-saved { color: rgba(100, 220, 100, 0.8); }
+.mu-save-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mu-save-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4);
+}
+.mu-restart-btn {
+  width: 100%;
+  background: rgba(160, 100, 255, 0.1);
+  border: 1px solid rgba(160, 100, 255, 0.25);
+  color: rgba(200, 160, 255, 0.9);
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mu-restart-btn:hover { background: rgba(160, 100, 255, 0.18); }
+.mu-home-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 8px;
+  transition: color 0.2s;
+}
+.mu-home-btn:hover { color: rgba(255, 255, 255, 0.6); }
+
+/* ── 반응형 ── */
+@media (max-width: 480px) {
+  .mu-container { padding: 24px 18px; }
+  .mu-compat { flex-direction: column; }
+  .mu-type-name { font-size: 1.5rem; }
+}

@@ -33,6 +33,7 @@ import TypingGame from './components/games/brain/BrainHub';
 import AkinatorGame from './components/games/akinator/AkinatorGame';
 import BlokusGame from './components/games/blokus/BlokusGame';
 import MovieRecommend from './components/lifestyle/movieRecommend/MovieRecommend';
+import MusicRecommend from './components/lifestyle/musicRecommend/MusicRecommend';
 import TasteHub from './components/lifestyle/TasteHub';
 import BonusHub from './components/lifestyle/BonusHub';
 import GatsaengHub from './components/lifestyle/GatsaengHub';
@@ -77,6 +78,7 @@ function App() {
           <Route path="/mini-arcade/akinator" element={<AkinatorGame />} />
           <Route path="/blokus" element={<BlokusGame />} />
           <Route path="/movie-recommend" element={<MovieRecommend />} />
+          <Route path="/music-recommend" element={<MusicRecommend />} />
           <Route path="/taste-lab" element={<TasteHub />} />
           <Route path="/bonus" element={<BonusHub />} />
           <Route path="/gatsaeng" element={<GatsaengHub />} />
