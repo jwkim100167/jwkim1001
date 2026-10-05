@@ -56,7 +56,8 @@ export default function TypingGamePlay({
       ? (activeWord ? [activeWord] : [])
       : words.filter(w => w.capturedBy === null);
 
-    const matched = targetWords.find(w => w.text === trimmed);
+    const normalize = s => s.replace(/\s+/g, ' ').trim().toLowerCase();
+    const matched = targetWords.find(w => normalize(w.text) === normalize(trimmed));
 
     if (!matched) {
       // 틀렸을 때: 입력 클리어 + 흔들기
