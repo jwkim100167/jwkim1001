@@ -29,6 +29,7 @@ import TurneyKiaPlay from '../turneyKia/TurneyKiaPlay';
 import CobraGamePlay from '../cobra/CobraGamePlay';
 import HalliGalliPlay from '../halligalli/HalliGalliPlay';
 import menuData from '../../../data/games/menuDatabase.json';
+import songData from '../../../data/games/songDatabase.json';
 import './BrainHub.css';
 
 const PLAYER_COLORS = ['#00d2ff', '#f7971e', '#a18cd1', '#43e97b', '#f44369', '#f093fb'];
@@ -49,8 +50,20 @@ const GAMES = [
   { id: 'leftright', icon: '↔️', title: '좌로우로',        desc: '빠른 방향 반응',       active: false, color: '#43e97b' },
 ];
 
+const SONG_CATEGORIES = ['노래 전체', '발라드', '아이돌', '인디', '힙합', 'R&B', '밴드', '트로트'];
+
 /** 존 기반 랜덤 단어 배치 생성 (count에 따라 그리드 자동 조정) */
-function generateWords(count = 10) {
+function generateWords(count = 10, wordCategory = '음식') {
+  // 풀 선택
+  let pool;
+  if (wordCategory === '음식') {
+    pool = menuData.menus;
+  } else if (wordCategory === '노래 전체') {
+    pool = songData.songs;
+  } else {
+    pool = songData.songs.filter(s => s.category === wordCategory);
+  }
+
   // count에 맞게 행/열 결정 (최소 count개 존 확보)
   const cols = count <= 5 ? 3 : count <= 10 ? 4 : 5;
   const rows = Math.ceil(count / cols) + 1;
@@ -65,21 +78,17 @@ function generateWords(count = 10) {
       });
     }
   }
-  // 존 섞어서 앞 count개 사용
   const shuffled = [...zones].sort(() => Math.random() - 0.5).slice(0, count);
-
-  // 메뉴 풀에서 랜덤 count개 선택
-  const pool = [...menuData.menus].sort(() => Math.random() - 0.5).slice(0, count);
-
+  const selected = [...pool].sort(() => Math.random() - 0.5).slice(0, count);
   const weights = [300, 400, 500, 600, 700, 800, 900];
 
-  return pool.map((item, i) => ({
+  return selected.map((item, i) => ({
     id: i,
     text: item.name,
     x: shuffled[i].xBase + Math.random() * 18,
     y: shuffled[i].yBase + Math.random() * 18,
-    fontSize: 16 + Math.random() * 30,                   // 16~46px
-    rotation: -180 + Math.random() * 360,                 // -180~+180도
+    fontSize: 16 + Math.random() * 30,
+    rotation: -180 + Math.random() * 360,
     fontWeight: weights[Math.floor(Math.random() * weights.length)],
     points: item.name.length,
     capturedBy: null,
@@ -104,7 +113,7 @@ export default function TypingGame() {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [selectedGame, setSelectedGame] = useState(null);
   const [showSoloConfirm, setShowSoloConfirm] = useState(false);
-  const [options, setOptions] = useState({ mode: 'oneByOne', count: 10 }); // typing options
+  const [options, setOptions] = useState({ mode: 'oneByOne', count: 10, wordCategory: '음식' }); // typing options
   const [gameOptions, setGameOptions] = useState({}); // per-game options (blokus/turneyia/cobra)
   const [onlinePlayerIds, setOnlinePlayerIds] = useState(null);
 
@@ -284,7 +293,7 @@ export default function TypingGame() {
     setLoading(true); setError('');
     try {
       if (!selectedGame || selectedGame.id === 'typing') {
-        const words = generateWords(options.count);
+        const words = generateWords(options.count, options.wordCategory);
         await startGame(currentRoom.id, words, options);
       } else {
         await startUnifiedGame(currentRoom.id, selectedGame.id, players, gameOptions);
@@ -684,6 +693,20 @@ export default function TypingGame() {
                           className={`tg-count-btn ${options.count === n ? 'tg-count-btn-on' : ''}`}
                           onClick={() => setOptions(o => ({ ...o, count: n }))}
                         >{n}</button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="tg-option-row" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 8 }}>
+                    <div className="tg-option-info">
+                      <div className="tg-option-name">🎵 카테고리</div>
+                      <div className="tg-option-desc">{options.wordCategory}</div>
+                    </div>
+                    <div className="tg-count-btns" style={{ flexWrap: 'wrap', gap: 6 }}>
+                      {['음식', ...SONG_CATEGORIES].map(cat => (
+                        <button key={cat}
+                          className={`tg-count-btn ${options.wordCategory === cat ? 'tg-count-btn-on' : ''}`}
+                          onClick={() => setOptions(o => ({ ...o, wordCategory: cat }))}
+                        >{cat}</button>
                       ))}
                     </div>
                   </div>

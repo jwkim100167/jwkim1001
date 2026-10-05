@@ -200,7 +200,7 @@ export default function TypingGamePlay({
             ref={inputRef}
             className={`tgp-input ${wrongMsg ? 'tgp-input-wrong' : ''}`}
             type="text"
-            placeholder="음식 이름 입력 후 Enter"
+            placeholder={`${mode === 'all' || mode === 'oneByOne' ? (gameState?.options?.wordCategory === '음식' ? '음식 이름' : '노래 제목') : '단어'} 입력 후 Enter`}
             value={input}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
