@@ -16,7 +16,10 @@ const HUB_SERVICES = [
     icon: '🎬',
     title: '영화 취향 찾기',
     desc: '나의 영화 취향 유형 찾기',
-    links: [{ label: '시작하기 →', path: '/movie-recommend' }],
+    links: [
+      { label: '취향 찾기 →', path: '/movie-recommend' },
+      { label: '🏆 영화 월드컵 →', path: '/movie-recommend?mode=worldcup' },
+    ],
   },
   {
     id: 'music',

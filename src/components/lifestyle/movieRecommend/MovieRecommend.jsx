@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { supabase } from '../../../supabaseClient';
 import { QUESTIONS, MOVIE_TYPES, SUFFIX_LABELS, RESOLVE_LABELS, GROUP_ICONS, findType } from '../../../data/lifestyle/movieTypes';
@@ -145,6 +145,7 @@ function calculateType(answers) {
 export default function MovieRecommend() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [phase, setPhase] = useState('start');
   const [currentQ, setCurrentQ] = useState(0);
@@ -186,6 +187,13 @@ export default function MovieRecommend() {
         setSavedResult(data || null);
       });
   }, [user?.id]);
+
+  // ?mode=worldcup 파라미터로 직접 진입 시 자동 시작
+  useEffect(() => {
+    if (searchParams.get('mode') === 'worldcup') {
+      startWorldCup();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 연도 필터 변경 시 추천 영화 재셔플
   useEffect(() => {
