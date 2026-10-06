@@ -8,6 +8,38 @@ import './MovieRecommend.css';
 // 그룹 순서
 const GROUP_ORDER = ['world', 'sense', 'tone', 'rhythm', 'suffix', 'resolve', 'subtag', 'movie_vs'];
 
+// ── 천만 영화 월드컵 데이터 ──
+const WC_MOVIES = [
+  { id: 1,  title: '명량',              year: 2014, audience: 1761, genre: '사극/액션' },
+  { id: 2,  title: '극한직업',           year: 2019, audience: 1626, genre: '코미디' },
+  { id: 3,  title: '신과함께-죄와벌',     year: 2017, audience: 1441, genre: '판타지' },
+  { id: 4,  title: '국제시장',           year: 2014, audience: 1426, genre: '드라마' },
+  { id: 5,  title: '어벤져스:엔드게임',   year: 2019, audience: 1393, genre: '액션' },
+  { id: 6,  title: '겨울왕국2',          year: 2019, audience: 1374, genre: '애니' },
+  { id: 7,  title: '베테랑',             year: 2015, audience: 1341, genre: '액션/범죄' },
+  { id: 8,  title: '아바타',             year: 2009, audience: 1333, genre: 'SF' },
+  { id: 9,  title: '도둑들',             year: 2012, audience: 1298, genre: '범죄/액션' },
+  { id: 10, title: '7번방의 선물',        year: 2013, audience: 1281, genre: '드라마' },
+  { id: 11, title: '암살',              year: 2015, audience: 1270, genre: '액션/시대극' },
+  { id: 12, title: '범죄도시2',          year: 2022, audience: 1269, genre: '액션/범죄' },
+  { id: 13, title: '알라딘',             year: 2019, audience: 1255, genre: '애니/뮤지컬' },
+  { id: 14, title: '광해, 왕이 된 남자', year: 2012, audience: 1232, genre: '사극' },
+  { id: 15, title: '왕의 남자',          year: 2006, audience: 1230, genre: '사극/드라마' },
+  { id: 16, title: '택시운전사',          year: 2017, audience: 1219, genre: '드라마' },
+  { id: 17, title: '부산행',             year: 2016, audience: 1156, genre: '좀비/액션' },
+  { id: 18, title: '태극기 휘날리며',     year: 2004, audience: 1174, genre: '전쟁/드라마' },
+  { id: 19, title: '어벤져스:인피니티워', year: 2018, audience: 1122, genre: '액션' },
+  { id: 20, title: '변호인',             year: 2013, audience: 1137, genre: '법정/드라마' },
+  { id: 21, title: '해운대',             year: 2009, audience: 1132, genre: '재난/드라마' },
+  { id: 22, title: '아바타:물의 길',     year: 2022, audience: 1090, genre: 'SF' },
+  { id: 23, title: '범죄도시3',          year: 2023, audience: 1068, genre: '액션/범죄' },
+  { id: 24, title: '실미도',             year: 2004, audience: 1108, genre: '전쟁/드라마' },
+  { id: 25, title: '겨울왕국',           year: 2014, audience: 1030, genre: '애니' },
+  { id: 26, title: '인터스텔라',          year: 2014, audience: 1030, genre: 'SF' },
+  { id: 27, title: '탑건:매버릭',         year: 2022, audience: 1020, genre: '액션' },
+];
+const WC_ROUND_LABELS = ['', '32강', '16강', '8강', '4강', '결승'];
+
 const SESSION_KEY = 'movie_quiz_pending';
 
 // 연도 필터 옵션
@@ -132,6 +164,14 @@ export default function MovieRecommend() {
   const [showMoviesSection, setShowMoviesSection] = useState(true);
   const [savedResult, setSavedResult] = useState(null);
 
+  // 월드컵 상태
+  const [wcRound, setWcRound] = useState(1);
+  const [wcMatchIdx, setWcMatchIdx] = useState(0);
+  const [wcCurrentPairs, setWcCurrentPairs] = useState([]);
+  const [wcNextRound, setWcNextRound] = useState([]);
+  const [wcChampion, setWcChampion] = useState(null);
+  const [wcByeMsg, setWcByeMsg] = useState(null); // 부전승 안내 메시지
+
   // 로그인한 경우 기존 저장 결과 조회
   useEffect(() => {
     if (!user?.id) return;
@@ -220,6 +260,72 @@ export default function MovieRecommend() {
       setRetryMode(false);
       advance({ ...answers, [currentQ]: choice });
     }, 350);
+  };
+
+  // ── 월드컵 로직 ──
+  const startWorldCup = () => {
+    const pool = [...WC_MOVIES, null, null, null, null, null].sort(() => Math.random() - 0.5);
+    const pairs = [];
+    for (let i = 0; i < 32; i += 2) pairs.push([pool[i], pool[i + 1]]);
+    setWcRound(1);
+    setWcMatchIdx(0);
+    setWcCurrentPairs(pairs);
+    setWcNextRound([]);
+    setWcChampion(null);
+    setWcByeMsg(null);
+    setPhase('wc');
+  };
+
+  const advanceWcRound = (pairs, next, idx) => {
+    if (idx >= pairs.length) return { pairs, next, idx };
+    const [a, b] = pairs[idx];
+    if (a && !b) return advanceWcRound(pairs, [...next, a], idx + 1);
+    if (!a && b) return advanceWcRound(pairs, [...next, b], idx + 1);
+    return { pairs, next, idx };
+  };
+
+  const pickWcMovie = (movie) => {
+    const newNext = [...wcNextRound, movie];
+    const nextIdx = wcMatchIdx + 1;
+
+    const finishRoundOrPick = (pairs, next, idx) => {
+      // 스킵 가능한 bye 처리
+      const resolved = advanceWcRound(pairs, next, idx);
+      if (resolved.idx >= pairs.length) {
+        // 라운드 종료
+        if (resolved.next.length === 1) {
+          setWcChampion(resolved.next[0]);
+          setPhase('wcresult');
+        } else {
+          const np = [];
+          for (let i = 0; i < resolved.next.length; i += 2)
+            np.push([resolved.next[i], resolved.next[i + 1] ?? null]);
+          setWcRound(r => r + 1);
+          setWcMatchIdx(0);
+          setWcCurrentPairs(np);
+          setWcNextRound([]);
+        }
+      } else {
+        setWcMatchIdx(resolved.idx);
+        setWcNextRound(resolved.next);
+      }
+    };
+
+    // 다음 매치에 bye가 있으면 안내 후 자동 진행
+    if (nextIdx < wcCurrentPairs.length) {
+      const [na, nb] = wcCurrentPairs[nextIdx];
+      if ((na && !nb) || (!na && nb)) {
+        const byeMovie = na || nb;
+        setWcByeMsg(`🎉 ${byeMovie.title} 부전승으로 다음 라운드 진출!`);
+        setTimeout(() => {
+          setWcByeMsg(null);
+          finishRoundOrPick(wcCurrentPairs, newNext, nextIdx);
+        }, 900);
+        return;
+      }
+    }
+    setWcByeMsg(null);
+    finishRoundOrPick(wcCurrentPairs, newNext, nextIdx);
   };
 
   const shuffleMovies = () => {
@@ -386,6 +492,95 @@ export default function MovieRecommend() {
                 🎬 시작하기
               </button>
             )}
+            <div className="mr-wc-divider">
+              <span>보너스 트랙</span>
+            </div>
+            <button className="mr-wc-bonus-btn" onClick={startWorldCup}>
+              🏆 천만 영화 월드컵
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // RENDER — 월드컵 대결
+  // ═══════════════════════════════════════════════════════════
+  if (phase === 'wc') {
+    const pair = wcCurrentPairs[wcMatchIdx] || [];
+    const [movieA, movieB] = pair;
+    const realMatches = wcCurrentPairs.filter(([a, b]) => a && b).length;
+    const playedInRound = wcCurrentPairs.slice(0, wcMatchIdx).filter(([a, b]) => a && b).length;
+    const totalPlayed = [1,2,3,4,5].slice(0, wcRound - 1).reduce((acc, r) => {
+      const size = 32 / Math.pow(2, r - 1);
+      return acc + Math.floor(size / 2);
+    }, 0);
+    const totalRealMatches = [32, 16, 8, 4, 2].reduce((acc, sz, i) => {
+      if (i >= 5) return acc;
+      // 27편 + 5bye → 각 라운드 실제 경기 수는 첫 라운드만 22, 이후는 가변
+      return acc;
+    }, 0);
+
+    return (
+      <div className="mr-wrap">
+        <div className="mr-container">
+          <button className="mr-back-btn" onClick={() => setPhase('start')}>← 뒤로</button>
+
+          <div className="mr-wc-header">
+            <span className="mr-wc-round-badge">{WC_ROUND_LABELS[wcRound]}</span>
+            <span className="mr-wc-match-pos">{playedInRound + 1} / {realMatches}경기</span>
+          </div>
+
+          <div className="mr-wc-progress-wrap">
+            <div
+              className="mr-wc-progress-bar"
+              style={{ width: `${realMatches > 0 ? (playedInRound / realMatches) * 100 : 0}%` }}
+            />
+          </div>
+
+          {wcByeMsg ? (
+            <div className="mr-wc-bye-msg">{wcByeMsg}</div>
+          ) : (
+            <>
+              <p className="mr-wc-prompt">이 중 더 좋아하는 영화는?</p>
+              <div className="mr-wc-versus">
+                {[movieA, movieB].map((movie, idx) => movie ? (
+                  <button key={movie.id} className="mr-wc-card" onClick={() => pickWcMovie(movie)}>
+                    <div className="mr-wc-card-title">{movie.title}</div>
+                    <div className="mr-wc-card-meta">{movie.year} · {movie.genre}</div>
+                    <div className="mr-wc-card-audience">{movie.audience.toLocaleString()}만 관객</div>
+                  </button>
+                ) : null)}
+                <div className="mr-wc-vs-divider">VS</div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // RENDER — 월드컵 결과
+  // ═══════════════════════════════════════════════════════════
+  if (phase === 'wcresult' && wcChampion) {
+    return (
+      <div className="mr-wrap">
+        <div className="mr-container">
+          <button className="mr-back-btn" onClick={() => setPhase('start')}>← 처음으로</button>
+          <div className="mr-wc-result">
+            <div className="mr-wc-trophy">🏆</div>
+            <p className="mr-wc-result-label">당신의 최애 천만 영화</p>
+            <div className="mr-wc-champion">
+              <div className="mr-wc-champion-title">{wcChampion.title}</div>
+              <div className="mr-wc-champion-meta">{wcChampion.year} · {wcChampion.genre}</div>
+              <div className="mr-wc-champion-audience">{wcChampion.audience.toLocaleString()}만 관객</div>
+            </div>
+            <div className="mr-result-actions" style={{ marginTop: 28 }}>
+              <button className="mr-restart-btn" onClick={startWorldCup}>🔄 다시 하기</button>
+              <button className="mr-home-btn" onClick={() => setPhase('quiz')}>🎬 영화 취향 찾기 →</button>
+            </div>
           </div>
         </div>
       </div>
