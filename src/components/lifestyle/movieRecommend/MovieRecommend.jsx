@@ -289,6 +289,7 @@ export default function MovieRecommend() {
     const [a, b] = pairs[idx];
     if (a && !b) return advanceWcRound(pairs, [...next, a], idx + 1);
     if (!a && b) return advanceWcRound(pairs, [...next, b], idx + 1);
+    if (!a && !b) return advanceWcRound(pairs, next, idx + 1);
     return { pairs, next, idx };
   };
 
@@ -324,12 +325,16 @@ export default function MovieRecommend() {
       const [na, nb] = wcCurrentPairs[nextIdx];
       if ((na && !nb) || (!na && nb)) {
         const byeMovie = na || nb;
+        const pairsSnapshot = wcCurrentPairs;
         setWcByeMsg(`🎉 ${byeMovie.title} 부전승으로 다음 라운드 진출!`);
         setTimeout(() => {
           setWcByeMsg(null);
-          finishRoundOrPick(wcCurrentPairs, newNext, nextIdx);
+          finishRoundOrPick(pairsSnapshot, newNext, nextIdx);
         }, 900);
         return;
+      }
+      if (!na && !nb) {
+        // null-null 쌍은 건너뜀 (advanceWcRound가 처리)
       }
     }
     setWcByeMsg(null);
