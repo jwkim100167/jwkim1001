@@ -1,114 +1,12186 @@
 [
-  { "title": "불타오르네", "artist": "BTS", "year": 2016, "type_codes": ["HEIL"] },
-  { "title": "거짓말", "artist": "BIGBANG", "year": 2007, "type_codes": ["HEIL"] },
-  { "title": "쩔어", "artist": "BTS", "year": 2015, "type_codes": ["HEIL"] },
-  { "title": "피 땀 눈물", "artist": "BTS", "year": 2016, "type_codes": ["HEIL"] },
-  { "title": "나쁜놈", "artist": "BIGBANG", "year": 2009, "type_codes": ["HEIL"] },
-  { "title": "어마어마해", "artist": "슈퍼주니어", "year": 2017, "type_codes": ["HEIL", "HEGL"] },
-
-  { "title": "Savage", "artist": "aespa", "year": 2021, "type_codes": ["HEIS"] },
-  { "title": "Kill This Love", "artist": "블랙핑크", "year": 2019, "type_codes": ["HEIS"] },
-  { "title": "DDU-DU DDU-DU", "artist": "블랙핑크", "year": 2018, "type_codes": ["HEIS"] },
-  { "title": "God's Menu", "artist": "Stray Kids", "year": 2020, "type_codes": ["HEIS"] },
-  { "title": "Psycho", "artist": "레드벨벳", "year": 2019, "type_codes": ["HEIS"] },
-  { "title": "Black Swan", "artist": "BTS", "year": 2020, "type_codes": ["HEIS"] },
-
-  { "title": "나의 사춘기에게", "artist": "MAMAMOO", "year": 2015, "type_codes": ["HEGL"] },
-  { "title": "활활", "artist": "MAMAMOO", "year": 2016, "type_codes": ["HEGL"] },
-  { "title": "뛰뛰빵빵", "artist": "AKMU", "year": 2014, "type_codes": ["HEGL"] },
-  { "title": "365FRESH", "artist": "지코", "year": 2019, "type_codes": ["HEGL"] },
-  { "title": "에너지", "artist": "에픽하이 (feat. 이하이)", "year": 2016, "type_codes": ["HEGL", "HXGL"] },
-  { "title": "Dumb Dumb", "artist": "레드벨벳", "year": 2015, "type_codes": ["HEGL"] },
-
-  { "title": "리듬 타", "artist": "EXO", "year": 2018, "type_codes": ["HEGS"] },
-  { "title": "Fire", "artist": "BTS", "year": 2016, "type_codes": ["HEGS"] },
-  { "title": "뱅뱅뱅", "artist": "BIGBANG", "year": 2015, "type_codes": ["HEGS"] },
-  { "title": "Really Really", "artist": "WINNER", "year": 2017, "type_codes": ["HEGS"] },
-  { "title": "Playing With Fire", "artist": "블랙핑크", "year": 2016, "type_codes": ["HEGS"] },
-  { "title": "Power", "artist": "EXO", "year": 2017, "type_codes": ["HEGS", "HXIS"] },
-
-  { "title": "좋은날", "artist": "IU", "year": 2010, "type_codes": ["HXIL"] },
-  { "title": "Blueming", "artist": "IU", "year": 2019, "type_codes": ["HXIL"] },
-  { "title": "봄봄봄", "artist": "로이킴", "year": 2013, "type_codes": ["HXIL"] },
-  { "title": "청춘", "artist": "버스커버스커", "year": 2012, "type_codes": ["HXIL"] },
-  { "title": "오늘", "artist": "헤이즈", "year": 2016, "type_codes": ["HXIL"] },
-  { "title": "I Am the Best", "artist": "2NE1", "year": 2011, "type_codes": ["HXIL"] },
-
-  { "title": "Dynamite", "artist": "BTS", "year": 2020, "type_codes": ["HXIS"] },
-  { "title": "Hype Boy", "artist": "뉴진스", "year": 2022, "type_codes": ["HXIS"] },
-  { "title": "Roller Coaster", "artist": "청하", "year": 2017, "type_codes": ["HXIS"] },
-  { "title": "Likey", "artist": "TWICE", "year": 2017, "type_codes": ["HXIS"] },
-  { "title": "Feel Special", "artist": "TWICE", "year": 2019, "type_codes": ["HXIS"] },
-  { "title": "OMG", "artist": "뉴진스", "year": 2023, "type_codes": ["HXIS"] },
-
-  { "title": "사랑을 했다", "artist": "iKON", "year": 2018, "type_codes": ["HXGL"] },
-  { "title": "뚜두뚜두", "artist": "블랙핑크", "year": 2018, "type_codes": ["HXGL"] },
-  { "title": "라이터", "artist": "지코 (feat. G.O.D)", "year": 2017, "type_codes": ["HXGL"] },
-  { "title": "LATATA", "artist": "(G)I-DLE", "year": 2018, "type_codes": ["HXGL"] },
-  { "title": "흥탄소년단", "artist": "BTS", "year": 2018, "type_codes": ["HXGL"] },
-  { "title": "눈코입", "artist": "태양", "year": 2014, "type_codes": ["HXGL", "HXIL"] },
-
-  { "title": "Feel My Rhythm", "artist": "레드벨벳", "year": 2022, "type_codes": ["HXGS"] },
-  { "title": "Fancy", "artist": "TWICE", "year": 2019, "type_codes": ["HXGS"] },
-  { "title": "Next Level", "artist": "aespa", "year": 2021, "type_codes": ["HXGS"] },
-  { "title": "Ditto", "artist": "뉴진스", "year": 2022, "type_codes": ["HXGS"] },
-  { "title": "Butter", "artist": "BTS", "year": 2021, "type_codes": ["HXGS"] },
-  { "title": "Step Back", "artist": "GOT the beat", "year": 2022, "type_codes": ["HXGS"] },
-
-  { "title": "야생화", "artist": "박효신", "year": 2014, "type_codes": ["CEIL"] },
-  { "title": "소격동", "artist": "IU", "year": 2014, "type_codes": ["CEIL"] },
-  { "title": "봄날", "artist": "BTS", "year": 2017, "type_codes": ["CEIL"] },
-  { "title": "벚꽃엔딩", "artist": "버스커버스커", "year": 2012, "type_codes": ["CEIL", "CEGL"] },
-  { "title": "사랑이 잘", "artist": "에릭남 (feat. 헤이즈)", "year": 2017, "type_codes": ["CEIL"] },
-  { "title": "목소리", "artist": "폴킴", "year": 2017, "type_codes": ["CEIL"] },
-  { "title": "편지", "artist": "이하이", "year": 2016, "type_codes": ["CEIL"] },
-
-  { "title": "위잉위잉", "artist": "혁오", "year": 2015, "type_codes": ["CEIS"] },
-  { "title": "가을 아침", "artist": "IU", "year": 2017, "type_codes": ["CEIS"] },
-  { "title": "나무", "artist": "검정치마", "year": 2011, "type_codes": ["CEIS"] },
-  { "title": "낯선 사람", "artist": "혁오", "year": 2014, "type_codes": ["CEIS"] },
-  { "title": "December", "artist": "에픽하이", "year": 2014, "type_codes": ["CEIS"] },
-  { "title": "새벽 두시", "artist": "헤이즈", "year": 2016, "type_codes": ["CEIS"] },
-
-  { "title": "모든 날 모든 순간", "artist": "폴킴", "year": 2017, "type_codes": ["CEGL"] },
-  { "title": "팔레트", "artist": "IU (feat. G-DRAGON)", "year": 2017, "type_codes": ["CEGL"] },
-  { "title": "그리워서", "artist": "권진아", "year": 2016, "type_codes": ["CEGL"] },
-  { "title": "거짓말이야", "artist": "버스커버스커", "year": 2012, "type_codes": ["CEGL"] },
-  { "title": "어떻게 이별까지 사랑하겠어, 널 사랑하는 거지", "artist": "폴킴", "year": 2019, "type_codes": ["CEGL"] },
-  { "title": "한 페이지가 될 수 있게", "artist": "버스커버스커", "year": 2012, "type_codes": ["CEGL"] },
-
-  { "title": "동에 번쩍", "artist": "멜로망스", "year": 2018, "type_codes": ["CEGS"] },
-  { "title": "저 별", "artist": "헤이즈", "year": 2016, "type_codes": ["CEGS"] },
-  { "title": "안아줘요", "artist": "멜로망스", "year": 2019, "type_codes": ["CEGS"] },
-  { "title": "Eyes, Nose, Lips", "artist": "태양", "year": 2014, "type_codes": ["CEGS"] },
-  { "title": "Starry Night", "artist": "MAMAMOO", "year": 2017, "type_codes": ["CEGS"] },
-  { "title": "우아하게", "artist": "MAMAMOO", "year": 2015, "type_codes": ["CEGS"] },
-
-  { "title": "어부바", "artist": "AKMU", "year": 2014, "type_codes": ["CXIL"] },
-  { "title": "좋아", "artist": "권정열", "year": 2012, "type_codes": ["CXIL"] },
-  { "title": "위로", "artist": "에픽하이", "year": 2018, "type_codes": ["CXIL", "CXGL"] },
-  { "title": "걱정말아요 그대", "artist": "이적", "year": 2007, "type_codes": ["CXIL", "CXGL"] },
-  { "title": "어른이 된다는 건", "artist": "김필", "year": 2016, "type_codes": ["CXIL"] },
-  { "title": "나는 나비", "artist": "넬", "year": 2003, "type_codes": ["CXIL"] },
-
-  { "title": "고백", "artist": "10cm", "year": 2010, "type_codes": ["CXIS"] },
-  { "title": "비밀의 화원", "artist": "IU", "year": 2014, "type_codes": ["CXIS"] },
-  { "title": "아이야", "artist": "산울림", "year": 1977, "type_codes": ["CXIS"] },
-  { "title": "커피 한잔 할까요", "artist": "브라운아이드소울", "year": 2011, "type_codes": ["CXIS"] },
-  { "title": "노래가 늘었어", "artist": "새소년", "year": 2019, "type_codes": ["CXIS"] },
-  { "title": "Rainy Season", "artist": "혁오", "year": 2015, "type_codes": ["CXIS"] },
-
-  { "title": "어른", "artist": "폴킴", "year": 2020, "type_codes": ["CXGL"] },
-  { "title": "작은 것들을 위한 시", "artist": "BTS", "year": 2019, "type_codes": ["CXGL"] },
-  { "title": "상처", "artist": "헤이즈", "year": 2017, "type_codes": ["CXGL"] },
-  { "title": "내 손을 잡아", "artist": "2AM", "year": 2010, "type_codes": ["CXGL"] },
-  { "title": "우리의 밤", "artist": "달달한제안", "year": 2018, "type_codes": ["CXGL"] },
-  { "title": "보고 싶다", "artist": "김범수", "year": 2002, "type_codes": ["CXGL"] },
-
-  { "title": "눈물이 뚝뚝", "artist": "DAY6", "year": 2016, "type_codes": ["CXGS"] },
-  { "title": "카페나 갈래", "artist": "에픽하이 (feat. 소야)", "year": 2014, "type_codes": ["CXGS"] },
-  { "title": "그 여름 (0805)", "artist": "BTS", "year": 2018, "type_codes": ["CXGS"] },
-  { "title": "노 노 노", "artist": "AKMU", "year": 2019, "type_codes": ["CXGS"] },
-  { "title": "Home", "artist": "BTS", "year": 2019, "type_codes": ["CXGS"] },
-  { "title": "살짝 설렜어", "artist": "OH MY GIRL", "year": 2019, "type_codes": ["CXGS"] }
+  {
+    "title": "불타오르네",
+    "artist": "BTS",
+    "year": 2016,
+    "type_codes": [
+      "HEIL"
+    ]
+  },
+  {
+    "title": "거짓말",
+    "artist": "BIGBANG",
+    "year": 2007,
+    "type_codes": [
+      "HEIL"
+    ]
+  },
+  {
+    "title": "쩔어",
+    "artist": "BTS",
+    "year": 2015,
+    "type_codes": [
+      "HEIL"
+    ]
+  },
+  {
+    "title": "피 땀 눈물",
+    "artist": "BTS",
+    "year": 2016,
+    "type_codes": [
+      "HEIL"
+    ]
+  },
+  {
+    "title": "나쁜놈",
+    "artist": "BIGBANG",
+    "year": 2009,
+    "type_codes": [
+      "HEIL"
+    ]
+  },
+  {
+    "title": "어마어마해",
+    "artist": "슈퍼주니어",
+    "year": 2017,
+    "type_codes": [
+      "HEIL",
+      "HEGL"
+    ]
+  },
+  {
+    "title": "Savage",
+    "artist": "aespa",
+    "year": 2021,
+    "type_codes": [
+      "HEIS"
+    ]
+  },
+  {
+    "title": "Kill This Love",
+    "artist": "블랙핑크",
+    "year": 2019,
+    "type_codes": [
+      "HEIS"
+    ]
+  },
+  {
+    "title": "DDU-DU DDU-DU",
+    "artist": "블랙핑크",
+    "year": 2018,
+    "type_codes": [
+      "HEIS"
+    ]
+  },
+  {
+    "title": "God's Menu",
+    "artist": "Stray Kids",
+    "year": 2020,
+    "type_codes": [
+      "HEIS"
+    ]
+  },
+  {
+    "title": "Psycho",
+    "artist": "레드벨벳",
+    "year": 2019,
+    "type_codes": [
+      "HEIS"
+    ]
+  },
+  {
+    "title": "Black Swan",
+    "artist": "BTS",
+    "year": 2020,
+    "type_codes": [
+      "HEIS"
+    ]
+  },
+  {
+    "title": "나의 사춘기에게",
+    "artist": "MAMAMOO",
+    "year": 2015,
+    "type_codes": [
+      "HEGL"
+    ]
+  },
+  {
+    "title": "활활",
+    "artist": "MAMAMOO",
+    "year": 2016,
+    "type_codes": [
+      "HEGL"
+    ]
+  },
+  {
+    "title": "뛰뛰빵빵",
+    "artist": "AKMU",
+    "year": 2014,
+    "type_codes": [
+      "HEGL"
+    ]
+  },
+  {
+    "title": "365FRESH",
+    "artist": "지코",
+    "year": 2019,
+    "type_codes": [
+      "HEGL"
+    ]
+  },
+  {
+    "title": "에너지",
+    "artist": "에픽하이 (feat. 이하이)",
+    "year": 2016,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Dumb Dumb",
+    "artist": "레드벨벳",
+    "year": 2015,
+    "type_codes": [
+      "HEGL"
+    ]
+  },
+  {
+    "title": "리듬 타",
+    "artist": "EXO",
+    "year": 2018,
+    "type_codes": [
+      "HEGS"
+    ]
+  },
+  {
+    "title": "Fire",
+    "artist": "BTS",
+    "year": 2016,
+    "type_codes": [
+      "HEGS"
+    ]
+  },
+  {
+    "title": "뱅뱅뱅",
+    "artist": "BIGBANG",
+    "year": 2015,
+    "type_codes": [
+      "HEGS"
+    ]
+  },
+  {
+    "title": "Really Really",
+    "artist": "WINNER",
+    "year": 2017,
+    "type_codes": [
+      "HEGS"
+    ]
+  },
+  {
+    "title": "Playing With Fire",
+    "artist": "블랙핑크",
+    "year": 2016,
+    "type_codes": [
+      "HEGS"
+    ]
+  },
+  {
+    "title": "Power",
+    "artist": "EXO",
+    "year": 2017,
+    "type_codes": [
+      "HEGS",
+      "HXIS"
+    ]
+  },
+  {
+    "title": "좋은날",
+    "artist": "IU",
+    "year": 2010,
+    "type_codes": [
+      "HXIL"
+    ]
+  },
+  {
+    "title": "Blueming",
+    "artist": "IU",
+    "year": 2019,
+    "type_codes": [
+      "HXIL"
+    ]
+  },
+  {
+    "title": "봄봄봄",
+    "artist": "로이킴",
+    "year": 2013,
+    "type_codes": [
+      "HXIL"
+    ]
+  },
+  {
+    "title": "청춘",
+    "artist": "버스커버스커",
+    "year": 2012,
+    "type_codes": [
+      "HXIL"
+    ]
+  },
+  {
+    "title": "오늘",
+    "artist": "헤이즈",
+    "year": 2016,
+    "type_codes": [
+      "HXIL"
+    ]
+  },
+  {
+    "title": "I Am the Best",
+    "artist": "2NE1",
+    "year": 2011,
+    "type_codes": [
+      "HXIL"
+    ]
+  },
+  {
+    "title": "Dynamite",
+    "artist": "BTS",
+    "year": 2020,
+    "type_codes": [
+      "HXIS"
+    ]
+  },
+  {
+    "title": "Hype Boy",
+    "artist": "뉴진스",
+    "year": 2022,
+    "type_codes": [
+      "HXIS"
+    ]
+  },
+  {
+    "title": "Roller Coaster",
+    "artist": "청하",
+    "year": 2017,
+    "type_codes": [
+      "HXIS"
+    ]
+  },
+  {
+    "title": "Likey",
+    "artist": "TWICE",
+    "year": 2017,
+    "type_codes": [
+      "HXIS"
+    ]
+  },
+  {
+    "title": "Feel Special",
+    "artist": "TWICE",
+    "year": 2019,
+    "type_codes": [
+      "HXIS"
+    ]
+  },
+  {
+    "title": "OMG",
+    "artist": "뉴진스",
+    "year": 2023,
+    "type_codes": [
+      "HXIS"
+    ]
+  },
+  {
+    "title": "사랑을 했다",
+    "artist": "iKON",
+    "year": 2018,
+    "type_codes": [
+      "HXGL"
+    ]
+  },
+  {
+    "title": "뚜두뚜두",
+    "artist": "블랙핑크",
+    "year": 2018,
+    "type_codes": [
+      "HXGL"
+    ]
+  },
+  {
+    "title": "라이터",
+    "artist": "지코 (feat. G.O.D)",
+    "year": 2017,
+    "type_codes": [
+      "HXGL"
+    ]
+  },
+  {
+    "title": "LATATA",
+    "artist": "(G)I-DLE",
+    "year": 2018,
+    "type_codes": [
+      "HXGL"
+    ]
+  },
+  {
+    "title": "흥탄소년단",
+    "artist": "BTS",
+    "year": 2018,
+    "type_codes": [
+      "HXGL"
+    ]
+  },
+  {
+    "title": "눈코입",
+    "artist": "태양",
+    "year": 2014,
+    "type_codes": [
+      "HXGL",
+      "HXIL"
+    ]
+  },
+  {
+    "title": "Feel My Rhythm",
+    "artist": "레드벨벳",
+    "year": 2022,
+    "type_codes": [
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Fancy",
+    "artist": "TWICE",
+    "year": 2019,
+    "type_codes": [
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Next Level",
+    "artist": "aespa",
+    "year": 2021,
+    "type_codes": [
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Ditto",
+    "artist": "뉴진스",
+    "year": 2022,
+    "type_codes": [
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Butter",
+    "artist": "BTS",
+    "year": 2021,
+    "type_codes": [
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Step Back",
+    "artist": "GOT the beat",
+    "year": 2022,
+    "type_codes": [
+      "HXGS"
+    ]
+  },
+  {
+    "title": "야생화",
+    "artist": "박효신",
+    "year": 2014,
+    "type_codes": [
+      "CEIL"
+    ]
+  },
+  {
+    "title": "소격동",
+    "artist": "IU",
+    "year": 2014,
+    "type_codes": [
+      "CEIL"
+    ]
+  },
+  {
+    "title": "봄날",
+    "artist": "BTS",
+    "year": 2017,
+    "type_codes": [
+      "CEIL"
+    ]
+  },
+  {
+    "title": "벚꽃엔딩",
+    "artist": "버스커버스커",
+    "year": 2012,
+    "type_codes": [
+      "CEIL",
+      "CEGL"
+    ]
+  },
+  {
+    "title": "사랑이 잘",
+    "artist": "에릭남 (feat. 헤이즈)",
+    "year": 2017,
+    "type_codes": [
+      "CEIL"
+    ]
+  },
+  {
+    "title": "목소리",
+    "artist": "폴킴",
+    "year": 2017,
+    "type_codes": [
+      "CEIL"
+    ]
+  },
+  {
+    "title": "편지",
+    "artist": "이하이",
+    "year": 2016,
+    "type_codes": [
+      "CEIL"
+    ]
+  },
+  {
+    "title": "위잉위잉",
+    "artist": "혁오",
+    "year": 2015,
+    "type_codes": [
+      "CEIS"
+    ]
+  },
+  {
+    "title": "가을 아침",
+    "artist": "IU",
+    "year": 2017,
+    "type_codes": [
+      "CEIS"
+    ]
+  },
+  {
+    "title": "나무",
+    "artist": "검정치마",
+    "year": 2011,
+    "type_codes": [
+      "CEIS"
+    ]
+  },
+  {
+    "title": "낯선 사람",
+    "artist": "혁오",
+    "year": 2014,
+    "type_codes": [
+      "CEIS"
+    ]
+  },
+  {
+    "title": "December",
+    "artist": "에픽하이",
+    "year": 2014,
+    "type_codes": [
+      "CEIS"
+    ]
+  },
+  {
+    "title": "새벽 두시",
+    "artist": "헤이즈",
+    "year": 2016,
+    "type_codes": [
+      "CEIS"
+    ]
+  },
+  {
+    "title": "모든 날 모든 순간",
+    "artist": "폴킴",
+    "year": 2017,
+    "type_codes": [
+      "CEGL"
+    ]
+  },
+  {
+    "title": "팔레트",
+    "artist": "IU (feat. G-DRAGON)",
+    "year": 2017,
+    "type_codes": [
+      "CEGL"
+    ]
+  },
+  {
+    "title": "그리워서",
+    "artist": "권진아",
+    "year": 2016,
+    "type_codes": [
+      "CEGL"
+    ]
+  },
+  {
+    "title": "거짓말이야",
+    "artist": "버스커버스커",
+    "year": 2012,
+    "type_codes": [
+      "CEGL"
+    ]
+  },
+  {
+    "title": "어떻게 이별까지 사랑하겠어, 널 사랑하는 거지",
+    "artist": "폴킴",
+    "year": 2019,
+    "type_codes": [
+      "CEGL"
+    ]
+  },
+  {
+    "title": "한 페이지가 될 수 있게",
+    "artist": "버스커버스커",
+    "year": 2012,
+    "type_codes": [
+      "CEGL"
+    ]
+  },
+  {
+    "title": "동에 번쩍",
+    "artist": "멜로망스",
+    "year": 2018,
+    "type_codes": [
+      "CEGS"
+    ]
+  },
+  {
+    "title": "저 별",
+    "artist": "헤이즈",
+    "year": 2016,
+    "type_codes": [
+      "CEGS"
+    ]
+  },
+  {
+    "title": "안아줘요",
+    "artist": "멜로망스",
+    "year": 2019,
+    "type_codes": [
+      "CEGS"
+    ]
+  },
+  {
+    "title": "Eyes, Nose, Lips",
+    "artist": "태양",
+    "year": 2014,
+    "type_codes": [
+      "CEGS"
+    ]
+  },
+  {
+    "title": "Starry Night",
+    "artist": "MAMAMOO",
+    "year": 2017,
+    "type_codes": [
+      "CEGS"
+    ]
+  },
+  {
+    "title": "우아하게",
+    "artist": "MAMAMOO",
+    "year": 2015,
+    "type_codes": [
+      "CEGS"
+    ]
+  },
+  {
+    "title": "어부바",
+    "artist": "AKMU",
+    "year": 2014,
+    "type_codes": [
+      "CXIL"
+    ]
+  },
+  {
+    "title": "좋아",
+    "artist": "권정열",
+    "year": 2012,
+    "type_codes": [
+      "CXIL"
+    ]
+  },
+  {
+    "title": "위로",
+    "artist": "에픽하이",
+    "year": 2018,
+    "type_codes": [
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "걱정말아요 그대",
+    "artist": "이적",
+    "year": 2007,
+    "type_codes": [
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "어른이 된다는 건",
+    "artist": "김필",
+    "year": 2016,
+    "type_codes": [
+      "CXIL"
+    ]
+  },
+  {
+    "title": "나는 나비",
+    "artist": "넬",
+    "year": 2003,
+    "type_codes": [
+      "CXIL"
+    ]
+  },
+  {
+    "title": "고백",
+    "artist": "10cm",
+    "year": 2010,
+    "type_codes": [
+      "CXIS"
+    ]
+  },
+  {
+    "title": "비밀의 화원",
+    "artist": "IU",
+    "year": 2014,
+    "type_codes": [
+      "CXIS"
+    ]
+  },
+  {
+    "title": "아이야",
+    "artist": "산울림",
+    "year": 1977,
+    "type_codes": [
+      "CXIS"
+    ]
+  },
+  {
+    "title": "커피 한잔 할까요",
+    "artist": "브라운아이드소울",
+    "year": 2011,
+    "type_codes": [
+      "CXIS"
+    ]
+  },
+  {
+    "title": "노래가 늘었어",
+    "artist": "새소년",
+    "year": 2019,
+    "type_codes": [
+      "CXIS"
+    ]
+  },
+  {
+    "title": "Rainy Season",
+    "artist": "혁오",
+    "year": 2015,
+    "type_codes": [
+      "CXIS"
+    ]
+  },
+  {
+    "title": "어른",
+    "artist": "폴킴",
+    "year": 2020,
+    "type_codes": [
+      "CXGL"
+    ]
+  },
+  {
+    "title": "작은 것들을 위한 시",
+    "artist": "BTS",
+    "year": 2019,
+    "type_codes": [
+      "CXGL"
+    ]
+  },
+  {
+    "title": "상처",
+    "artist": "헤이즈",
+    "year": 2017,
+    "type_codes": [
+      "CXGL"
+    ]
+  },
+  {
+    "title": "내 손을 잡아",
+    "artist": "2AM",
+    "year": 2010,
+    "type_codes": [
+      "CXGL"
+    ]
+  },
+  {
+    "title": "우리의 밤",
+    "artist": "달달한제안",
+    "year": 2018,
+    "type_codes": [
+      "CXGL"
+    ]
+  },
+  {
+    "title": "보고 싶다",
+    "artist": "김범수",
+    "year": 2002,
+    "type_codes": [
+      "CXGL"
+    ]
+  },
+  {
+    "title": "눈물이 뚝뚝",
+    "artist": "DAY6",
+    "year": 2016,
+    "type_codes": [
+      "CXGS"
+    ]
+  },
+  {
+    "title": "카페나 갈래",
+    "artist": "에픽하이 (feat. 소야)",
+    "year": 2014,
+    "type_codes": [
+      "CXGS"
+    ]
+  },
+  {
+    "title": "그 여름 (0805)",
+    "artist": "BTS",
+    "year": 2018,
+    "type_codes": [
+      "CXGS"
+    ]
+  },
+  {
+    "title": "노 노 노",
+    "artist": "AKMU",
+    "year": 2019,
+    "type_codes": [
+      "CXGS"
+    ]
+  },
+  {
+    "title": "Home",
+    "artist": "BTS",
+    "year": 2019,
+    "type_codes": [
+      "CXGS"
+    ]
+  },
+  {
+    "title": "살짝 설렜어",
+    "artist": "OH MY GIRL",
+    "year": 2019,
+    "type_codes": [
+      "CXGS"
+    ]
+  },
+  {
+    "title": "밤편지",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "긴 꿈",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "스물셋",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "분홍신",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "좋은 날",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "잔소리",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "숲",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "향수",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "너를 만나",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "모름지기",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "청혼",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "첫눈이 온다구요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "우리 집",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "말이라도",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "선물",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "우리 어떻게 할까요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "잊어야 한다는 거 알면서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "혼자",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "다시 봄이 올텐데",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "비도 오고 그래서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "인연",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "두 사람",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑인가요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "숨",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "기다리다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "천국",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "눈의 꽃",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "기억의 습작",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "바람기억",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "귀로",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "고독의 밤",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "벚꽃 엔딩",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "여수 밤바다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "첫사랑",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "꽃송이가",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사진 속으로",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "소주 한 잔",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "이별이 맞다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "그래도 돼",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "내가 저지른 사랑",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑이 술을 가르쳐",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "거리에서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "넌 내게 반했어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "내게 오는 길",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "그리움",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "자장가",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "이러지마 제발",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "남자니까",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "보이지 않는 사랑",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "가잖아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "미소속에 비친 그대",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "그 후로도",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "총 맞은 것처럼",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "잊지 말아요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "다행이다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "결혼해줘",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "친구잖아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "붉은 노을",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "가로수 그늘 아래 서면",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "소녀",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "휘파람",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "To Heaven",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "아시나요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "가시나무",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑했지만",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "서른 즈음에",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "이등병의 편지",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "그리움이 그리움에게",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "부치지 않은 편지",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "기억해줘요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "하늘바라기",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "보고싶다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "혜성",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "오르트구름",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사건의 지평선",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "비밀번호 486",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "신호등",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "Infinity",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑은 늘 도망가",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "우리 둘이",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "별빛 같은 나의 사랑아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "어느 60대 노부부 이야기",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "한숨",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "오늘도 이별 중",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "취기를 빌어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "내 손 잡아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑 그 놈",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "고래의 꿈",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "이 소설의 끝을 다시 써보려 해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "그대라는 시",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "여드레 달",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "호랑가시나무",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "하루하루",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "마지막 인사",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑해서 미안해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "한번도 없다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "연인",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑한다는 말",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "레테의 연가",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "세상에서 가장 아름다운 것들",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "그 겨울의 찻집",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "단발머리",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "허공",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "돌아와요 부산항에",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "너무 늦었잖아요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "홀로 된다는 것",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "희망사항",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑에 빠지고 싶다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "출발",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "감사",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "이것만은 알고 가",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "가시",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "다시 만난 세계",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "소원을 말해봐",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "Into the new world",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "나에게로의 초대",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "다른 하루",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "친구에게",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "노을",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "홀로",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "빨래",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "낙하",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "에어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "200%",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "Give Love",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "외로워하지말아요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "노래방에서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "93년생인 척",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "12월 이야기",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "오르막길",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "좋니",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "기억해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "함께야",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "가슴이 시려",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "폭풍이 지나면",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "그 해 여름",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "예뻐서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "기억을 걷는 시간",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "시작",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "어땠을까",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "고마워요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "있어요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑을 한다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑 앓이",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "지독하게",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "바래",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "나는 꽃",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "Fine",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "11:11",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "Four Seasons",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "Wedding Dress",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "시간이 지나도",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "첫눈처럼 너에게 가겠다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "보여주기",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "어머나",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "남자는 말합니다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "오빠야",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "안녕이라고 말하지 마",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "그 사람",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "아름다운 구속",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑 앞에 난 (I Believe)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "아주 오래된 연인들",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "뻔한 얘기",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "어떤가요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "우리가 헤어진 진짜 이유",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "같이 걸을까",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "우리가 함께하는 밤",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "널 좋아하나봐",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "소나기",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "안아줘",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "매일 듣는 노래",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "잘 지내나요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "달아달아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "보고싶어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "J에게",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "가을밤",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "별빛보다 눈부셔",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "고해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "남자답게",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "FOREVER",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "My Story",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "정말... 너무하지만",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "그대에게",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "공허해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "봄비",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "겨울잠",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "처음에는",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "나를 기억해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑스러워",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "하늘과 땅 사이",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "남해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "꽃길",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "나만 바라봐",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "Attention",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "ETA",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Cool With You",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Super Shy",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "ASAP",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Bubble Gum",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "New Jeans",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Black Mamba",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Girls",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Drama",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Spicy",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Supernova",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Armageddon",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "How You Like That",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Lovesick Girls",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Pink Venom",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Shut Down",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "CHEER UP",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "TT",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "SIGNAL",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "What is Love",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Dance The Night Away",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "MORE & MORE",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Talk That Talk",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "LOVE DIVE",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "After LIKE",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "I AM",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Kitsch",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Baddie",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Accendio",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "FEARLESS",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "ANTIFRAGILE",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "UNFORGIVEN",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Perfect Night",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Smart",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "GROWL",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "으르렁",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Monster",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Ko Ko Bop",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Don't Fight The Feeling",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Ring Ding Dong",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "누난 너무 예뻐",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Lucifer",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Replay",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "View",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "1 of 1",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "영웅",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Kick It",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Cherry Bomb",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Limitless",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "MIROH",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "神메뉴",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "BACK DOOR",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "MANIAC",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Thunderous",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "In Bloom",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "SWEAT",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "MELTING POINT",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "TOMBOY",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "QUEENCARD",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Nxde",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Hann",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Oh my god",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "눈누난나",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "I AM THE BEST",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "FIRE",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "LONELY",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Come Back Home",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "BANG BANG BANG",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "FANTASTIC BABY",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "BAD BOY",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "에라 모르겠다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "가시나",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "LALALAY",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "누누",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Full Moon",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Any Song",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "아무노래",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Umbrella",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "ROLLIN",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Stay Tonight",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "SNAPPING",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Gotta Go",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "벌써 12시",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "ALONE",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "TOUCH MY BODY",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "I Swear",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "So Cool",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "미스터",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "루팡",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "점핑",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "맘마미아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Electric Shock",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "피노키오",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "4 Walls",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Red Flavor",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Power Up",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "STARRY NIGHT",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "HIP",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "너나 해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "AYA",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "DALLA DALLA",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "ICY",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "WANNABE",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Mafia in the Morning",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "아주 NICE",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "붐붐",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "박수",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "어쩌나",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "HIT",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Rock with you",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "If You Do",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Hard Carry",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Never Ever",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Lullaby",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Boy With Luv",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "DNA",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "상남자",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "화",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "IDOL",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "쏘리쏘리",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Mr. Simple",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "BONAMANA",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "위아래",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "덜덜덜",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "HOT PINK",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "MAMA",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Overdose",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Gee",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Oh!",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "훗",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Lion Heart",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Party",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "시간을 달려서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "FINGERTIP",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "밤",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "유리구슬",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Rough",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Love Me Like This",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Dice",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "O.O",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "DM",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Feel Good",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Stay This Way",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Shhh",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Sugarcoat",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "FLOWER",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Solo",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "You & Me",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "이런",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "미인아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "나쁜 기억 지우개",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "그냥 해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "내가 제일 잘 나가",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Ugly",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Go Away",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "The Boys",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Mr.Mr.",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Sherlock",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "History",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Wind Flower",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Checkmate",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Heya",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Cool",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "We Go",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Kitty Cat",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "날개",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "비가 와",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "LOVE SCENARIO",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "KILLING ME",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "WHY WHY WHY",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "마.피.아. In the morning",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Give Me Love",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "나만 알아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "반박불가",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "인기",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "페이크 러브",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "고민보다 GO",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "좋아요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "하입보이",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "강아지",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "공드리",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "와리가리",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "발해를 꿈꾸며",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "OHIO",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "주저하는 연인들을 위해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "나의 사랑 나의 신부",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "가을밤에 든 생각",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "뜨거운 여름밤은 가고 남은 건 볼품없지만",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "꿈과 책과 힘과 벽",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "사랑은 은하수 다방에서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "스물다섯 스물하나",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "어디에도",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "아메리카노",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "봄이 좋냐",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "무릎",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "이미 이미 이미 알잖아요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "나는 나쁜 사람이 아닌데",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "취중진담",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "내가 모르는 나",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "바람이 분다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "Track 8",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "난 행복해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "제발",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "두 눈 감고",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "별 보러 가자",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "잠이 드는 법",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "기억상실",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "EVERYTHING",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "연애 리셋",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "난춘",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "Yellow",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "빨간 아이",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "어떤 날",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "비 온 뒤에",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "니가 사는 그 집",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "For Children",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "Boogie Man",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "무무",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "야망의 세월",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "소나기 (잠비나이)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "환향",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "여행",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "나만, 봄",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "좋다고 말해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "사계",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "오르막길 (볼빨간)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "우리 사이",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "달이 차오른다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "조각",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "빛",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "모자이크",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "지구를 지켜라",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "오늘도 맑음",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "기억해줘 (N.Flying)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "유난히",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "흔들리지 않게",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "마지막 인사 (잔나비)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "새벽 세시",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "그 밤",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "마음",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "연",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "흰수염고래",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "당신과는 천천히",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "내일은 없어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "서울살이",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "좋은 사람",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "생각나",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "같이 있고 싶다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "이름 없는 감정",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "파랑",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "겨울잠 (혁오)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "오늘 뭐해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "약속해요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "사랑하기 때문에",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "노래",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "투명",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "이별택시",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "기타",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "비와 당신",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "하나 둘 셋",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "당신",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "오래된 노래",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "잠시만 기다려",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "외로움",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "풀꽃",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "좋아해 (인디)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "어쩌면 우리",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "그냥 있어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "하고 싶은 말",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "Tomboy (혁오)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "Gondry",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "사랑이 이렇게 아픈 건지 몰랐어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "목요일 밤",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "봄의 기억",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "기다릴게요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "고요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "적막",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "밤을 걷다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "새벽이슬",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "우리가 사랑한 시간들",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "멈춰",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "낙엽이 지다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "두 사람 (인디)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "지금 이 순간",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "Fan",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Bleed",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "헤픈 엔딩",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "술이 달다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "우리라는 것",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Go",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Dali, Van, Picasso",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "형보다 나은 형",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "미인",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "연락해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "독박",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "먹자",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "오랜만에",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Maria",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Like Me",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "D (Half Moon)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Pour Up",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Bonnie & Clyde",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Instagram",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Stay With Me",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "거짓말 (힙합)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "가을 (힙합)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "말이 안통해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Free Kick",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "The Mexican Dream",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Merry Jane",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "낭만고양이",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Life Goes On",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "친해지길 바라",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "담담",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "시간이 없어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "어때",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Tough Cookie",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Boys and Girls",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "ANTI",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Bermuda Triangle",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Flex",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "걔네들은 몰라",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "청담소나타",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "안경",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Thought of You",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "전화기를 보네",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "나쁜 기억 지우개 (힙합)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "좋아 (힙합)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "오랫동안",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "갈 곳이 없어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "부동항",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "기리보이 베이비",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "ARTIST",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Born Hater",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Rhythm Ta",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "What",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Show",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "이 구역의 미친X",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "오늘 밤 주인공",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "땡",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "나쁜X",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Nod Along",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Prod. by",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "MOMMAE",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "내 여자라니까 (힙합)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "인기척",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "영",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "기다릴게",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "CAMO",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "다 괜찮아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "크리스마스",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "날 좋아하면",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "이 돈을 다 써",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "KOREA",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "사랑과 전쟁",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Taiji Boys",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "난 알아요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "교실 이데아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Come to me (오렌지)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "무조건",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "로꼬 어떻게해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "주저앉아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "팔팔하게 살아있는",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "힙합하다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "로파이",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "빈지노다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "0 (zero)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "싸워줘",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "사이다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "끈적끈적",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "창모 매력있어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Maestro",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "아무말",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "진심으로",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "닿을 듯 말 듯",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "아름다워 (힙합)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Swagger Jagger",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "놀이 (Simon D)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "독기",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "시발비용",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "자격지심",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "어디있어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "솔직히",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Beautiful",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "잊어버려",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "자나요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "Hug Me",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "Make Up Your Mind",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "너 있잖아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "신촌물어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "GET IT",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "필요없어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "This Song",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "MOMMAE",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "야",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "Just Right",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "Love in Space",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "러쉬아워",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "Beautiful (크러쉬)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "OHIO (크러쉬)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "바보같지",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "이별 앞에서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "Good Life",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "보름달",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "풀꽃도 꽃이다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "Smoke",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "Make Me Love You",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "Happy",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "사랑해 (R&B)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "네가 없으면",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "멀어질까 봐",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "손을 잡아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "우리가 이별한 날",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "너뿐이야",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "눈이 오면",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "나를 바라봐",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "이별 후에",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "처음엔 (R&B)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "그래도 난",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "달빛소나타",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "오늘의 기분",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "그 밤에 (R&B)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "미칠 것 같아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "아직도 너야",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "너와 함께라면",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "새벽에 (R&B)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "꿈에서라도",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "선인장",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "그리운 날엔",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "혼자 있는 시간에",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "나 혼자",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "감각",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "두근거려",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "사랑이 올까요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "봄날의 곰",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "내 이름을 불러줘",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "기억에 남아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "마음이 기억하는",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "Never Let You Go",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "어느 날 문득",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "손이 닿지 않아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "눈물 속에 피다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "넌 안 보여",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "예뻤어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "놓아 놓아 놓아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "Zombie",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "주고 싶은 거 다 줄게",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "파란 마음 하얀 마음",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "직감",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "외톨이야",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "I'm Sorry",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "Hey You",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "Love Light",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "사랑 앓이 (FT아일랜드)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "내 눈물이 말해줘",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "오늘도 맑음 (N.Flying)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "희야",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "이제 그만",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "비와 당신의 이야기",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "자동차극장에서의 하룻밤",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "어느 새",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "Separation Anxiety",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "그래도 넌",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "꽃잎 (밴드)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "사랑비",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "첫 번째 고백",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "지금 이대로",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "달빛 아래서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "Rock and Roll",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "나 약해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "별 헤는 밤",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "혼자서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "In the Rain",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "돌아보지 말아요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "나를 잊지마",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "봄편지",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "우리의 시간",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "새벽 감성",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "사랑했잖아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "함께 걸어요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "여름 끝에",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "겨울 이야기",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "눈 오는 날",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "빗속에서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "꿈속에서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "떠나가지 마",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "마음의 소리",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "그날이 오면",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "봄바람",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "손을 내밀어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "어느 가을날",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "새벽별",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "한여름 밤의 꿈",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "사랑이란",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "내일 또 만나",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "두 손 꼭 잡고",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "너와 나",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "같이 가자",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "작은 바람",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "이제 나만 남았잖아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "사랑은 늘 도망가 (트로트)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "별빛 같은 나의 사랑아 (트로트)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "어느 60대 노부부 이야기 (트로트)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "니가 왜 거기서 나와",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "막걸리 한 잔",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "찐이야",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "진또배기",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "편의점",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "흰 눈",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "테스형",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "물레방아 인생",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "고향역",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "동반자",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "미워도 다시 한번",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "사랑은 아무나 하나",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "남자는 말합니다 (트로트)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "오빠야 (트로트)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "빙빙빙",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "샤방샤방",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "곤드레 만드레",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "내 나이가 어때서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "총각네 야채가게",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "이 맛에 산다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "다함께 차차차",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "나팔꽃 인생",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "둥지",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "가슴 아프게",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "비내리는 영동교",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "갈대의 순정",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "연분홍 치마",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "뽕짝뽕짝",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "어머님께",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "부르마",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "봉숙이",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "이별의 부산 정거장",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "노란 샤쓰의 사나이",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "울어라 열풍아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "최진사댁 셋째딸",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "어머나 (트로트)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "ROSE",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "오늘 이 밤",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "그 사람이 그대인가",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "잊혀진 계절",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "노래해줘",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "처음처럼",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "찬란한 하루",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "두 사람이니까",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "넌 어디 있니",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "그때 그 순간",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "눈물나게",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "비가 내리면",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "보고파",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "어젯밤",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "살다가",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "봄이 오면",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "우리가 함께라면",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "이제야 보여",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "우리의 밤은",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "봄 처녀",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "나의 어깨에 기대어요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "영원한 사랑",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "아름다운 강산",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "인연 (이선희)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "안아줘 (정준일)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "결혼까지 생각했어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "헤어져줘서 고마워",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "걱정 마세요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "Father",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "Hip (마마무)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "별자리",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "CRAZY",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "눈에 띄게",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Shine",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Energetic",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Beautiful (워너원)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "약속해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "바람직해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "너의 이름을",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "다시 돌아와",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Like Water",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "헥사드로이드",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "러브샷",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "약속해줘",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Tempo",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "The Eve",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "전야",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Universe",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Obsession",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Lose Control",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "STICKER",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "2 BADDIES",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Favorite",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "VVS",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Red Light",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "나비소녀",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "도망가자",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Monster (레드벨벳)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "짧은 치마",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Happiness",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Ice Cream Cake",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "러시안 룰렛",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Bad Boy (레드벨벳)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "피카부",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "짐살라빔",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "권인트로",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Queendom",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "스물여섯 (아이돌)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Remember Me",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Break My Heart Myself",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Growl (엑소)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "Addiction",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "예쁜게 죄",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "불꽃처럼",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "기다려줘 (아이돌)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "소년이여",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "바라보다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "들어봐",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "오늘 하루도",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "그래서 좋아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "기분이 좋아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "같이 있어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "너라서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "별빛 아래",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "달콤해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "천천히",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "우리 사랑하게 됐어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "그댈 보내며",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "이 길의 끝에서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "알아줘",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "Stay With Me (R&B)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "오직 너",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "취해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "몽환",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "그 사람 생각나",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "설레임",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "봄날 같던 우리",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "여름이 지나면",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "잔잔한 바람",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "달빛 걸음",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "마음 한켠",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "빛 한 줄기",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "그냥 오늘",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "평행선",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "연결고리",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "혼자이기 때문에",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "기억이 바람에 날려",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "거리를 걸으며",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "카페에서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "귀갓길",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "3월의 봄",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "9월의 노래",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "12월에",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "눈이 내리면",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "해가 지는 곳",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIS",
+      "CEGS",
+      "CXIS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "낯선 너",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "꽉 잡아 (힙합)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "뒤를 봐",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "답 없는 물음",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "빛과 소금",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "진짜 이야기",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "쇼미더머니",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "언더그라운드",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "피처링",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "내 방식대로",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "원더랜드",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "나를 비춰줘",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "더 깊이",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "불꽃 (아이돌)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "눈빛",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "꿈같은 시간",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "처음으로",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "내 옆에",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "잡아줘",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "달리자",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HEGL",
+      "HXIL",
+      "HXGL",
+      "HEIS",
+      "HEGS",
+      "HXIS",
+      "HXGS"
+    ]
+  },
+  {
+    "title": "밤에 피는 꽃",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "새벽 세 시 반",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "아무 말도 하지 마",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑이 지나간 자리",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "다시 처음으로",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "그대 생각",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "눈물을 참아도",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑이야 (발라드)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "너만 있다면",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "우리 함께",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "연락두절",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "이 밤이 지나면",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "그대는 멀리",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "기다림의 끝에서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "잊지 않을게",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "오래오래",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "영원히",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "언제나 너와",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "다시는",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "행복했어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "그 시절 우리는",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "여전히 너야",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "눈이 부시게",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "이 노래를 기억해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "너였으면 좋겠어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "우리가 처음 만난 날",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "내 맘을 받아줘",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "너를 위해서라면",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "두 사람 (발라드)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "함께 걷고 싶다",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "내 마음속에 너",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "잊을 수가 없어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑했었는데",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "이제는 안녕",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "너 없이는",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "그리운 날에",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑아 사랑아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "언제나 내 곁에",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "널 위한 노래",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "기억 속의 너",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "Bleu",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "Interlude",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "사랑에 빠졌어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "그냥 좋아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "특별한 하루",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "Like This",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "여기 있어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "기분 좋은 날",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "사랑받고 싶어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "몸이 먼저야",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIS",
+      "HXIS",
+      "CEIS",
+      "CXIS"
+    ]
+  },
+  {
+    "title": "달라달라 (트로트)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "뽕따자",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "인생이란",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "남자라서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "울지마 엄마",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "꽃길만 걸어요",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "사랑이란 이름으로",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "두 사람 (트로트)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "우리 엄마",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "자식아",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "제자리걸음",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "도망가",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "강남스타일",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "GENTLEMAN",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "I LUV IT",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "New Face",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "뚜두뚜두 (힙합)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Whiplash",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "HOW YOU LIKE THAT (힙합)",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "Forever Young",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEIL",
+      "HXIL",
+      "HEGL",
+      "HXGL"
+    ]
+  },
+  {
+    "title": "얼어붙은 땅에서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "조용한 봄",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "그래도 살아야지",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "여름날의 꿈",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "하얀 밤",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "차가운 바람",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "낙엽이 쌓이면",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "우리가 만든 음악",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "무대 위에서",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "기타를 치며",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "HEGS",
+      "HXGS",
+      "CEGS",
+      "CXGS"
+    ]
+  },
+  {
+    "title": "그날 밤 우리",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "약속의 노래",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "첫 만남",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "마지막 페이지",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "아직 사랑해",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "너에게 쓰는 편지",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "그리움 너머",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "떠나는 너에게",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "오늘도 보고싶어",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  },
+  {
+    "title": "사랑의 노래",
+    "artist": "",
+    "year": null,
+    "type_codes": [
+      "CEIL",
+      "CEGL",
+      "CXIL",
+      "CXGL"
+    ]
+  }
 ]
