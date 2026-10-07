@@ -5,7 +5,7 @@ import { supabase } from '../../../supabaseClient';
 import { QUESTIONS, MUSIC_TYPES, GROUP_ICONS, findType } from '../../../data/lifestyle/musicTypes';
 import './MusicRecommend.css';
 
-const GROUP_ORDER = ['tempo', 'mood', 'genre', 'focus', 'song_vs'];
+const GROUP_ORDER = ['tempo', 'emotion', 'social', 'focus', 'song_vs'];
 
 const SESSION_KEY = 'music_quiz_pending';
 
@@ -54,8 +54,8 @@ function renderQuestionText(text) {
 
 function calculateType(answers) {
   let tempoH = 0, tempoC = 0;
-  let moodB = 0, moodD = 0;
-  let genreM = 0, genreA = 0;
+  let emotionE = 0, emotionX = 0;
+  let socialI = 0, socialG = 0;
   let focusL = 0, focusS = 0;
 
   QUESTIONS.forEach((q, i) => {
@@ -63,27 +63,27 @@ function calculateType(answers) {
     if (!choice || choice === 'C' || !q.dim) return;
     const dir = choice === 'A' ? q.aDir : q.bDir;
     switch (q.dim) {
-      case 'tempo':  dir === 'H' ? tempoH++ : tempoC++; break;
-      case 'mood':   dir === 'B' ? moodB++  : moodD++;  break;
-      case 'genre':  dir === 'M' ? genreM++ : genreA++; break;
-      case 'focus':  dir === 'L' ? focusL++ : focusS++; break;
+      case 'tempo':   dir === 'H' ? tempoH++   : tempoC++;   break;
+      case 'emotion': dir === 'E' ? emotionE++ : emotionX++; break;
+      case 'social':  dir === 'I' ? socialI++  : socialG++;  break;
+      case 'focus':   dir === 'L' ? focusL++   : focusS++;   break;
       default: break;
     }
   });
 
-  const tempo = tempoH >= tempoC ? 'H' : 'C';
-  const mood  = moodB  >= moodD  ? 'B' : 'D';
-  const genre = genreM >= genreA ? 'M' : 'A';
-  const focus = focusL >= focusS ? 'L' : 'S';
+  const tempo   = tempoH   >= tempoC   ? 'H' : 'C';
+  const emotion = emotionE >= emotionX ? 'E' : 'X';
+  const social  = socialI  >= socialG  ? 'I' : 'G';
+  const focus   = focusL   >= focusS   ? 'L' : 'S';
 
   const tiedDims = [
-    ...(tempoH === tempoC ? ['템포']  : []),
-    ...(moodB  === moodD  ? ['감성']  : []),
-    ...(genreM === genreA ? ['장르']  : []),
-    ...(focusL === focusS ? ['감상법'] : []),
+    ...(tempoH   === tempoC   ? ['템포']     : []),
+    ...(emotionE === emotionX ? ['감정']     : []),
+    ...(socialI  === socialG  ? ['경험 방식'] : []),
+    ...(focusL   === focusS   ? ['감상법']   : []),
   ];
 
-  return { code: `${tempo}${mood}${genre}${focus}`, tiedDims };
+  return { code: `${tempo}${emotion}${social}${focus}`, tiedDims };
 }
 
 export default function MusicRecommend() {
