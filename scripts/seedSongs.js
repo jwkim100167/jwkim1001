@@ -20,7 +20,20 @@ const songs = JSON.parse(
   readFileSync(join(__dirname, '../src/data/lifestyle/musicSeed.json'), 'utf-8')
 );
 
-const { data, error } = await supabase
+// 기존 데이터 전체 삭제
+const { error: deleteError } = await supabase
+  .from('songs')
+  .delete()
+  .neq('id', 0);
+
+if (deleteError) {
+  console.error('삭제 실패:', deleteError.message);
+  process.exit(1);
+}
+
+console.log('🗑️  기존 데이터 삭제 완료');
+
+const { error } = await supabase
   .from('songs')
   .insert(songs);
 
