@@ -9,6 +9,7 @@ import LottoMembership from './components/lotto/LottoMembership';
 import JobBoard from './components/JobBoard';
 import Momok from './components/lifestyle/food/Momok';
 import WhatToEat from './components/lifestyle/food/WhatToEat';
+import SajuFortune from './components/lifestyle/fortune/SajuFortune';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Verify from './components/auth/Verify';
@@ -60,6 +61,7 @@ function App() {
           <Route path="/lotto-membership" element={<Lotto />} />
           <Route path="/lotto-basic" element={<LottoBasic />} />
           <Route path="/whattoeat" element={<WhatToEat />} />
+          <Route path="/fortune" element={<SajuFortune />} />
           <Route path="/momok" element={<Momok />} />
           <Route path="/momok-best" element={<MomokBest />} />
           <Route path="/jobs" element={<JobBoard />} />

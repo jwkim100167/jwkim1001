@@ -5,6 +5,13 @@ import './BonusHub.css';
 
 const HUB_SERVICES = [
   {
+    id: 'fortune',
+    icon: '🔮',
+    title: '오늘의 운세',
+    desc: '사주로 오늘의 흐름을 읽어보세요',
+    links: [{ label: '운세 보기 →', path: '/fortune' }],
+  },
+  {
     id: 'lotto',
     icon: '🎰',
     title: '로또 번호 생성',
@@ -57,7 +64,7 @@ export default function BonusHub() {
         <div className="bh-header">
           <div className="bh-header-icon">🎁</div>
           <h1 className="bh-title">보너스</h1>
-          <p className="bh-subtitle">로또 번호 · 오늘 메뉴 한 번에</p>
+          <p className="bh-subtitle">운세 · 로또 번호 · 오늘 메뉴 한 번에</p>
         </div>
 
         <div className="bh-cards">
