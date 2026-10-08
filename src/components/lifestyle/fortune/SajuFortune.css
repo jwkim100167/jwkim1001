@@ -14,18 +14,22 @@
   max-width: 480px;
 }
 
-.sf-back-btn {
+.sf-nav-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.sf-nav-btn {
   background: none;
   border: none;
   color: #8fa8c4;
   font-size: 14px;
   cursor: pointer;
   padding: 0;
-  margin-bottom: 24px;
-  display: block;
 }
 
-.sf-back-btn:hover { color: #c9a84c; }
+.sf-nav-btn:hover { color: #c9a84c; }
 
 /* ── 입력 화면 ── */
 .sf-input-section {

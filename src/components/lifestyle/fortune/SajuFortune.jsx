@@ -106,9 +106,10 @@ export default function SajuFortune() {
   return (
     <div className="sf-page">
       <div className="sf-container">
-        <button className="sf-back-btn" onClick={() => navigate('/bonus')}>
-          ← 보너스로
-        </button>
+        <div className="sf-nav-row">
+          <button className="sf-nav-btn" onClick={() => navigate('/')}>← 홈</button>
+          <button className="sf-nav-btn" onClick={() => navigate('/bonus')}>보너스 →</button>
+        </div>
 
         {phase === 'input' && (
           <div className="sf-input-section">
@@ -169,28 +170,6 @@ export default function SajuFortune() {
               </div>
             </div>
 
-            {/* 오행 분포 */}
-            <div className="sf-element-section">
-              <div className="sf-section-title">오행 분포</div>
-              {ELEMENT_ORDER.map(el => (
-                <div key={el} className="sf-element-row">
-                  <span className="sf-el-name" style={{ color: ELEMENT_COLORS[el] }}>
-                    {el}
-                  </span>
-                  <div className="sf-el-bar-bg">
-                    <div
-                      className="sf-el-bar-fill"
-                      style={{
-                        width: `${(result.elementDist[el] / 4) * 100}%`,
-                        background: ELEMENT_COLORS[el],
-                      }}
-                    />
-                  </div>
-                  <span className="sf-el-pct">{Math.round((result.elementDist[el] / 4) * 100)}%</span>
-                </div>
-              ))}
-            </div>
-
             {/* 오늘의 운세 */}
             <div className="sf-fortune-section">
               <div className="sf-today-date">{result.todayStr} 오늘의 운세</div>
@@ -222,6 +201,28 @@ export default function SajuFortune() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* 오행 분포 */}
+            <div className="sf-element-section">
+              <div className="sf-section-title">오행 분포</div>
+              {ELEMENT_ORDER.map(el => (
+                <div key={el} className="sf-element-row">
+                  <span className="sf-el-name" style={{ color: ELEMENT_COLORS[el] }}>
+                    {el}
+                  </span>
+                  <div className="sf-el-bar-bg">
+                    <div
+                      className="sf-el-bar-fill"
+                      style={{
+                        width: `${(result.elementDist[el] / 4) * 100}%`,
+                        background: ELEMENT_COLORS[el],
+                      }}
+                    />
+                  </div>
+                  <span className="sf-el-pct">{Math.round((result.elementDist[el] / 4) * 100)}%</span>
+                </div>
+              ))}
             </div>
 
             <button className="sf-reset-btn" onClick={handleReset}>

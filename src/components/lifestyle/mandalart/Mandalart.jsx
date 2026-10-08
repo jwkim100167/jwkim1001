@@ -473,9 +473,6 @@ const Mandalart = () => {
           {isAuthenticated && (
             <span className="user-badge">{user?.userName || user?.loginId}</span>
           )}
-          <div className="header-actions">
-            <button onClick={resetAll} className="action-btn reset-btn">초기화</button>
-          </div>
         </div>
         <div className="global-progress">
           <span className="gp-label">전체 진행률</span>
