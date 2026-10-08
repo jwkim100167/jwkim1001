@@ -2,23 +2,49 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { supabase } from '../../../supabaseClient';
+import { questions, CATEGORY_META, PERSONA_MAP } from '../../../data/lifestyle/tasteMatchData';
 import './TasteMatch.css';
 
 const CIRCUMFERENCE = 2 * Math.PI * 52;
 
 const CATEGORY_LABEL = {
-  food:     '🍔 입맛 월드컵',
-  life:     '🏠 라이프스타일',
-  relation: '👥 인간관계',
-  dilemma:  '🔥 극강의 딜레마',
+  content:  '📺 콘텐츠',
+  sensory:  '🍽️ 감각·취향',
+  space:    '🏠 공간·사물',
+  activity: '✈️ 활동·여행',
+  relation: '👥 사람·관계',
+  value:    '💭 가치·성향',
 };
+
+// 카테고리 태그 계산 (A 답변이 과반이면 A 태그)
+function calcCategoryTags(finalAnswers) {
+  return Object.entries(CATEGORY_META).reduce((acc, [cat, meta]) => {
+    const countA = meta.ids.filter(id => finalAnswers[id - 1] === '1').length;
+    acc[cat] = countA >= meta.ids.length / 2 ? meta.A : meta.B;
+    return acc;
+  }, {});
+}
+
+// 페르소나 계산 (Q28·Q12·Q31 기준)
+function calcPersona(finalAnswers) {
+  const home      = finalAnswers[27] === '1' ? '집' : '밖';      // Q28
+  const style     = finalAnswers[11] === '1' ? '미니멀' : '감성'; // Q12
+  const adventure = finalAnswers[30] === '1' ? '새것' : '익숙';   // Q31
+  const key = `${home}+${style}+${adventure}`;
+  return PERSONA_MAP[key] || { name: '🌈 취향 탐험가', desc: '다양한 취향을 가진 매력적인 사람' };
+}
+
+// 카테고리별 JW 일치율 계산
+function calcCategoryMatch(finalAnswers) {
+  return Object.entries(CATEGORY_META).map(([cat, meta]) => {
+    const matchCount = meta.ids.filter(id => finalAnswers[id - 1] === questions[id - 1].jw_answer).length;
+    return { cat, label: meta.label, matchCount, total: meta.ids.length };
+  });
+}
 
 export default function TasteMatch() {
   const { user } = useAuth();
   const navigate = useNavigate();
-
-  const [questions, setQuestions] = useState([]);
-  const [loadingQ, setLoadingQ] = useState(true);
 
   const [phase, setPhase] = useState('start');
   const [nickname, setNickname] = useState('');
@@ -31,29 +57,16 @@ export default function TasteMatch() {
   const [loadingSimilar, setLoadingSimilar] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // ── DB에서 문항 로드 ──────────────────────────────────────────
-  useEffect(() => {
-    const load = async () => {
-      const { data, error } = await supabase
-        .from('taste_match_questions')
-        .select('*')
-        .order('sort_order', { ascending: true });
-      if (!error && data) setQuestions(data);
-      setLoadingQ(false);
-    };
-    load();
-  }, []);
-
-  // ── 로그인 시 닉네임 자동 설정 ────────────────────────────────
+  // 로그인 시 닉네임 자동 설정
   useEffect(() => {
     if (user) {
       setNickname(user.userName || user.loginId || '');
     }
   }, [user]);
 
-  // ── 시작하기 ──────────────────────────────────────────────────
+  // 시작하기
   const handleStart = () => {
-    if (!nickname.trim() || questions.length === 0) return;
+    if (!nickname.trim()) return;
     setCurrentQ(0);
     setAnswers('');
     setSelected(null);
@@ -64,7 +77,7 @@ export default function TasteMatch() {
     }
   };
 
-  // ── 답변 선택 ─────────────────────────────────────────────────
+  // 답변 선택
   const handleAnswer = (choice) => {
     if (selected) return;
     setSelected(choice);
@@ -82,9 +95,9 @@ export default function TasteMatch() {
     }, 350);
   };
 
-  // ── 결과 계산 + DB 저장 + 랭킹 로드 ─────────────────────────
+  // 결과 계산 + DB 저장
   const calculateResult = async (finalAnswers) => {
-    const activeCount = questions.filter(q => q.is_active !== false).length || questions.length;
+    const activeCount = questions.filter(q => q.is_active !== false).length;
     const matchCount = finalAnswers.split('').filter(
       (ans, i) => questions[i]?.is_active !== false && ans === questions[i].jw_answer
     ).length;
@@ -92,14 +105,19 @@ export default function TasteMatch() {
     const scoreStr = `${scoreNum}%`;
     const gradeInfo = getGrade(scoreNum);
 
-    setResult({ scoreNum, scoreStr, matchCount, activeCount, ...gradeInfo });
+    const categoryTags = calcCategoryTags(finalAnswers);
+    const persona = calcPersona(finalAnswers);
+    const catMatches = calcCategoryMatch(finalAnswers);
+    const bestCat = catMatches.reduce((a, b) => a.matchCount / a.total >= b.matchCount / b.total ? a : b);
+    const worstCat = catMatches.reduce((a, b) => a.matchCount / a.total <= b.matchCount / b.total ? a : b);
+
+    setResult({ scoreNum, scoreStr, matchCount, activeCount, ...gradeInfo, categoryTags, persona, bestCat, worstCat });
     setAnswers(finalAnswers);
     setPhase('result');
     setIsSaving(true);
 
     try {
       if (user?.id != null) {
-        // 로그인 유저: u_id 기준으로 기존 행 UPDATE, 없으면 INSERT
         const { data: existing } = await supabase
           .from('taste_match_results')
           .select('id')
@@ -116,7 +134,6 @@ export default function TasteMatch() {
             .insert([{ u_id: String(user.id), nickname: nickname.trim(), answers: finalAnswers, score: scoreStr }]);
         }
       } else {
-        // 게스트: nickname + null u_id 기준으로 기존 행 UPDATE, 없으면 INSERT
         const { data: existing } = await supabase
           .from('taste_match_results')
           .select('id')
@@ -141,7 +158,7 @@ export default function TasteMatch() {
     }
   };
 
-  // ── 취향 유사 사용자 탐색 ────────────────────────────────────
+  // 취향 유사 사용자 탐색
   const handleFindSimilar = async () => {
     setShowSimilar(true);
     setLoadingSimilar(true);
@@ -180,7 +197,7 @@ export default function TasteMatch() {
     }
   };
 
-  // ── 등급 판정 ─────────────────────────────────────────────────
+  // 등급 판정
   const getGrade = (score) => {
     if (score >= 90) return {
       grade: '영혼의 단짝 💞',
@@ -204,7 +221,6 @@ export default function TasteMatch() {
     };
   };
 
-  // ── 다시 하기 ─────────────────────────────────────────────────
   const handleRestart = () => {
     setPhase('start');
     setNickname('');
@@ -216,28 +232,14 @@ export default function TasteMatch() {
     setSimilarUsers([]);
   };
 
-  // ═════════════════════════════════════════════════════════════
-  // RENDER — 로딩
-  // ═════════════════════════════════════════════════════════════
-  if (loadingQ) {
-    return (
-      <div className="tm-wrap">
-        <div className="tm-container">
-          <div className="tm-loading">⏳ 문항 불러오는 중...</div>
-        </div>
-      </div>
-    );
-  }
-
-  // ═════════════════════════════════════════════════════════════
-  // RENDER — 게스트 안내 화면
-  // ═════════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════════════════
+  // RENDER — 게스트 안내
+  // ═══════════════════════════════════════════════════════════════
   if (phase === 'guest-check') {
     return (
       <div className="tm-wrap">
         <div className="tm-container">
           <button className="tm-back-btn" onClick={() => setPhase('start')}>← 뒤로</button>
-
           <div className="tm-guest-notice">
             <div className="tm-guest-icon">🔒</div>
             <h2 className="tm-guest-title">비회원으로 진행할 경우</h2>
@@ -263,9 +265,9 @@ export default function TasteMatch() {
     );
   }
 
-  // ═════════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════════════════
   // RENDER — 시작 화면
-  // ═════════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════════════════
   if (phase === 'start') {
     return (
       <div className="tm-wrap">
@@ -278,7 +280,7 @@ export default function TasteMatch() {
             <p className="tm-subtitle">Taste Match</p>
             <p className="tm-desc">
               내 취향을 알아보자!<br />
-              <span className="tm-desc-count">{questions.filter(q => q.is_active !== false).length || questions.length}가지 질문</span>
+              <span className="tm-desc-count">{questions.length}가지 질문</span>
             </p>
 
             {user ? (
@@ -321,9 +323,9 @@ export default function TasteMatch() {
     );
   }
 
-  // ═════════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════════════════
   // RENDER — 퀴즈 화면
-  // ═════════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════════════════
   if (phase === 'quiz') {
     const q = questions[currentQ];
     const progress = (currentQ / questions.length) * 100;
@@ -331,7 +333,6 @@ export default function TasteMatch() {
     return (
       <div className="tm-wrap">
         <div className="tm-container quiz">
-          {/* 진행 바 */}
           <div className="tm-progress-wrap">
             <div className="tm-progress-bar" style={{ width: `${progress}%` }} />
           </div>
@@ -339,7 +340,6 @@ export default function TasteMatch() {
             <span>{currentQ + 1}</span> / {questions.length}
           </div>
 
-          {/* 카테고리 + 질문 제목 */}
           <div className="tm-category-label">
             {CATEGORY_LABEL[q.category] || '💭 취향 질문'}
           </div>
@@ -347,7 +347,6 @@ export default function TasteMatch() {
             <div className="tm-question-title">{q.title}</div>
           )}
 
-          {/* 선택 카드 */}
           <div className="tm-cards" key={currentQ}>
             <button
               className={`tm-card ${selected === '1' ? 'selected' : ''} ${selected && selected !== '1' ? 'dimmed' : ''}`}
@@ -374,9 +373,9 @@ export default function TasteMatch() {
     );
   }
 
-  // ═════════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════════════════
   // RENDER — 결과 화면
-  // ═════════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════════════════
   if (phase === 'result' && result) {
     const dashOffset = CIRCUMFERENCE * (1 - result.scoreNum / 100);
 
@@ -385,6 +384,7 @@ export default function TasteMatch() {
         <div className="tm-container result">
           <div className="tm-result-title">{nickname}님과 JW의 싱크로율</div>
 
+          {/* 점수 링 */}
           <div className="tm-score-wrap">
             <svg viewBox="0 0 120 120" className="tm-ring-svg">
               <circle cx="60" cy="60" r="52" className="tm-ring-bg" />
@@ -405,8 +405,45 @@ export default function TasteMatch() {
             {result.grade}
           </div>
           <div className="tm-grade-msg">"{result.gradeMsg}"</div>
-          <div className="tm-match-count">{result.activeCount || questions.length}문항 중 {result.matchCount}개 일치</div>
+          <div className="tm-match-count">{result.activeCount}문항 중 {result.matchCount}개 일치</div>
 
+          {/* ── [A] 취향 유형 (페르소나) ── */}
+          <div className="tm-persona">
+            <div className="tm-persona-label">나의 취향 유형</div>
+            <div className="tm-persona-name">{result.persona.name}</div>
+            <div className="tm-persona-desc">{result.persona.desc}</div>
+          </div>
+
+          {/* ── [B] 카테고리 태그 카드 ── */}
+          <div className="tm-profile-section">
+            <div className="tm-profile-title">나는 어떤 사람?</div>
+            <div className="tm-profile-grid">
+              {Object.entries(CATEGORY_META).map(([cat, meta]) => (
+                <div key={cat} className="tm-profile-row">
+                  <span className="tm-profile-cat">{meta.label}</span>
+                  <span className="tm-profile-tag">{result.categoryTags[cat]}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── [C] JW 카테고리 비교 ── */}
+          <div className="tm-jw-diff">
+            <div className="tm-jw-diff-card match">
+              <div className="tm-jw-diff-icon">😊</div>
+              <div className="tm-jw-diff-label">JW와 가장 비슷한 취향</div>
+              <div className="tm-jw-diff-cat">{result.bestCat.label}</div>
+              <div className="tm-jw-diff-pct">{result.bestCat.matchCount}/{result.bestCat.total} 일치</div>
+            </div>
+            <div className="tm-jw-diff-card diff">
+              <div className="tm-jw-diff-icon">😅</div>
+              <div className="tm-jw-diff-label">JW와 가장 다른 취향</div>
+              <div className="tm-jw-diff-cat">{result.worstCat.label}</div>
+              <div className="tm-jw-diff-pct">{result.worstCat.matchCount}/{result.worstCat.total} 일치</div>
+            </div>
+          </div>
+
+          {/* ── 유사 사용자 ── */}
           <div className="tm-similar-section">
             {!showSimilar ? (
               <button

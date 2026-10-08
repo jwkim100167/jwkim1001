@@ -621,6 +621,124 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+/* ── [A] 취향 유형 (페르소나) ───────────────────────────────── */
+.tm-persona {
+  text-align: center;
+  margin: 24px 0 20px;
+  padding: 20px 16px;
+  background: rgba(255, 215, 0, 0.06);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 16px;
+}
+
+.tm-persona-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.tm-persona-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffd700;
+  margin-bottom: 8px;
+}
+
+.tm-persona-desc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.5;
+}
+
+/* ── [B] 카테고리 태그 카드 ──────────────────────────────────── */
+.tm-profile-section {
+  margin: 20px 0;
+}
+
+.tm-profile-title {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.tm-profile-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tm-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
+.tm-profile-cat {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.38);
+  width: 56px;
+  flex-shrink: 0;
+}
+
+.tm-profile-tag {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* ── [C] JW 카테고리 비교 ────────────────────────────────────── */
+.tm-jw-diff {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.tm-jw-diff-card {
+  flex: 1;
+  border-radius: 14px;
+  padding: 14px 12px;
+  text-align: center;
+}
+
+.tm-jw-diff-card.match {
+  background: rgba(100, 220, 140, 0.08);
+  border: 1px solid rgba(100, 220, 140, 0.3);
+}
+
+.tm-jw-diff-card.diff {
+  background: rgba(255, 100, 100, 0.08);
+  border: 1px solid rgba(255, 100, 100, 0.3);
+}
+
+.tm-jw-diff-icon {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.tm-jw-diff-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.tm-jw-diff-cat {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.tm-jw-diff-pct {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
 /* ── 모바일 ────────────────────────────────────────────────── */
 @media (max-width: 480px) {
   .tm-container {
