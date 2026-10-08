@@ -206,22 +206,21 @@ export default function SajuFortune() {
 
               <div className="sf-message">"{result.message}"</div>
 
-              <div className="sf-luck-section">
-                <div className="sf-luck-item">
-                  <span className="sf-luck-icon">🎨</span>
-                  <span className="sf-luck-label">행운의 색</span>
-                  <span className="sf-luck-value">{result.luck.color}</span>
-                </div>
-                <div className="sf-luck-item">
-                  <span className="sf-luck-icon">🔢</span>
-                  <span className="sf-luck-label">행운의 숫자</span>
-                  <span className="sf-luck-value">{result.luck.number}</span>
-                </div>
-                <div className="sf-luck-item">
-                  <span className="sf-luck-icon">⚠️</span>
-                  <span className="sf-luck-label">오늘 피할 것</span>
-                  <span className="sf-luck-value">{result.luck.avoid}</span>
-                </div>
+              <div className="sf-luck-grid">
+                {[
+                  { icon: '🎨', label: '행운의 색',    value: result.luck.color },
+                  { icon: '🔢', label: '행운의 숫자',  value: result.luck.number },
+                  { icon: '🧭', label: '행운의 방향',  value: result.luck.direction },
+                  { icon: '🎁', label: '행운의 물건',  value: result.luck.item },
+                  { icon: '⏰', label: '좋은 시간대',  value: result.luck.time },
+                  { icon: '⚠️', label: '오늘 피할 것', value: result.luck.avoid, danger: true },
+                ].map(({ icon, label, value, danger }) => (
+                  <div key={label} className={`sf-luck-card${danger ? ' danger' : ''}`}>
+                    <span className="sf-luck-card-icon">{icon}</span>
+                    <span className="sf-luck-card-label">{label}</span>
+                    <span className="sf-luck-card-value">{value}</span>
+                  </div>
+                ))}
               </div>
             </div>
 

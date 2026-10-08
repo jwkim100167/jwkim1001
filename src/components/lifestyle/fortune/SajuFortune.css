@@ -291,36 +291,50 @@
   border-radius: 0 10px 10px 0;
   margin-bottom: 20px;
   font-style: italic;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
-/* 행운 아이템 */
-.sf-luck-section {
+/* 행운 카드 그리드 */
+.sf-luck-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.sf-luck-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 14px 12px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
 }
 
-.sf-luck-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
+.sf-luck-card.danger {
+  border-color: rgba(224,92,92,0.35);
+  background: rgba(224,92,92,0.06);
 }
 
-.sf-luck-icon {
-  font-size: 16px;
-  width: 22px;
-  text-align: center;
+.sf-luck-card-icon {
+  font-size: 18px;
 }
 
-.sf-luck-label {
+.sf-luck-card-label {
+  font-size: 11px;
   color: #8fa8c4;
-  width: 80px;
 }
 
-.sf-luck-value {
+.sf-luck-card-value {
+  font-size: 13px;
+  font-weight: 700;
   color: #e8dcc8;
-  font-weight: 600;
+  word-break: keep-all;
+}
+
+.sf-luck-card.danger .sf-luck-card-value {
+  color: #e05c5c;
 }
 
 /* 변경 버튼 */

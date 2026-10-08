@@ -119,17 +119,18 @@ export const FORTUNE_MESSAGES = {
 };
 
 // 일간(日干) 10개별 행운 아이템
+// direction: 木=동, 火=남, 土=중앙, 金=서, 水=북
 export const ILGAN_LUCK = {
-  甲: { color: '파란색', number: 3, avoid: '무리한 고집' },
-  乙: { color: '초록색', number: 8, avoid: '감정적 결정' },
-  丙: { color: '빨간색', number: 7, avoid: '성급한 행동' },
-  丁: { color: '분홍색', number: 2, avoid: '과도한 감정 표현' },
-  戊: { color: '노란색', number: 5, avoid: '변덕스러운 판단' },
-  己: { color: '황토색', number: 0, avoid: '지나친 걱정' },
-  庚: { color: '흰색',   number: 4, avoid: '독단적 결정' },
-  辛: { color: '은색',   number: 9, avoid: '날카로운 말투' },
-  壬: { color: '검정색', number: 1, avoid: '흐릿한 목표' },
-  癸: { color: '하늘색', number: 6, avoid: '감정 기복' },
+  甲: { color: '파란색', number: 3, avoid: '무리한 고집',       direction: '동쪽', item: '나무 소품 · 식물', time: '이른 오전' },
+  乙: { color: '초록색', number: 8, avoid: '감정적 결정',       direction: '동쪽', item: '꽃 · 화분',       time: '오전' },
+  丙: { color: '빨간색', number: 7, avoid: '성급한 행동',       direction: '남쪽', item: '양초 · 조명',     time: '정오 전후' },
+  丁: { color: '분홍색', number: 2, avoid: '과도한 감정 표현', direction: '남쪽', item: '노트 · 편지',     time: '오후' },
+  戊: { color: '노란색', number: 5, avoid: '변덕스러운 판단', direction: '중앙', item: '도자기 · 돌 소품', time: '낮 시간대' },
+  己: { color: '황토색', number: 0, avoid: '지나친 걱정',       direction: '중앙', item: '천 · 손수건',     time: '저녁 전' },
+  庚: { color: '흰색',   number: 4, avoid: '독단적 결정',       direction: '서쪽', item: '금속 소품 · 열쇠', time: '이른 오후' },
+  辛: { color: '은색',   number: 9, avoid: '날카로운 말투',     direction: '서쪽', item: '보석 · 귀금속',   time: '저녁' },
+  壬: { color: '검정색', number: 1, avoid: '흐릿한 목표',       direction: '북쪽', item: '음료 · 물병',     time: '밤' },
+  癸: { color: '하늘색', number: 6, avoid: '감정 기복',         direction: '북쪽', item: '거울 · 유리 소품', time: '늦은 밤' },
 };
 
 // 일간별 오행 성격
