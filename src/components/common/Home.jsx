@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getServiceConfig, incrementMenuClickCount } from '../../services/core/supabaseAdmin';
 import './Home.css';
-import AdBanner from './AdBanner';
 
 const SERVICE_LIST = [
   { id: 'bonus',         title: '보너스',                   icon: '🎁', path: '/bonus',              cardClass: 'bonus-card',      desc: '로또 번호 · 오늘 메뉴 한 번에' },
@@ -89,8 +88,6 @@ const Home = () => {
 
         </div>
 
-        <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_HOME_TOP} className="ad-home-top" />
-
         <div className="navigation-cards">
           {orderedServiceList.map((svc) => {
             const status = getStatus(svc.id);
@@ -116,8 +113,6 @@ const Home = () => {
             );
           })}
         </div>
-
-        <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_HOME_BOTTOM} className="ad-home-bottom" />
 
         <div className="home-footer">
           <div className="stats">

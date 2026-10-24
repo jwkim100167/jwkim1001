@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
-import AdBanner from '../../common/AdBanner';
 import { supabase } from '../../../supabaseClient';
 import {
   createRoom,
@@ -46,12 +45,10 @@ export default function TurneyKiaGame() {
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
   const [generating, setGenerating] = useState(false);
-  const [startAdCountdown, setStartAdCountdown] = useState(0); // 0 = no ad
 
   const [onlinePlayerIds, setOnlinePlayerIds] = useState(null);
   const channelRef = useRef(null);
   const presenceChannelRef = useRef(null);
-  const startAdRef = useRef(null);
   const currentPlayerRef = useRef(null);
   useEffect(() => { currentPlayerRef.current = currentPlayer; }, [currentPlayer]);
 
@@ -202,21 +199,8 @@ export default function TurneyKiaGame() {
 
   const handleStartGame = () => {
     if (players.length < 2) { setError('2명 이상이어야 게임을 시작할 수 있습니다.'); return; }
-    setStartAdCountdown(10);
+    doStartGame();
   };
-
-  useEffect(() => {
-    if (startAdCountdown <= 0) return;
-    if (startAdCountdown === 1) {
-      startAdRef.current = setTimeout(() => {
-        setStartAdCountdown(0);
-        doStartGame();
-      }, 1000);
-      return;
-    }
-    startAdRef.current = setTimeout(() => setStartAdCountdown((n) => n - 1), 1000);
-    return () => clearTimeout(startAdRef.current);
-  }, [startAdCountdown, doStartGame]);
 
   const handleCopyCode = () => {
     if (!currentRoom) return;
@@ -305,15 +289,6 @@ export default function TurneyKiaGame() {
   // ─── WAITING ROOM ───
   return (
     <div className="tkg-page">
-      {startAdCountdown > 0 && (
-        <div className="tkg-ad-overlay">
-          <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_COBRA} className="tkg-ad-banner" />
-          <div className="tkg-ad-countdown">
-            <div className="tkg-ad-countdown-num">{startAdCountdown}</div>
-            <p className="tkg-ad-countdown-msg">잠시 후 게임이 시작됩니다...</p>
-          </div>
-        </div>
-      )}
       <div className="tkg-container tkg-container--wide">
         <button className="tkg-back-btn" onClick={handleLeave}>← 나가기</button>
 
@@ -392,8 +367,6 @@ export default function TurneyKiaGame() {
         {!currentPlayer?.is_host && (
           <p className="tkg-waiting-text">방장이 게임을 시작하길 기다리는 중...</p>
         )}
-
-        <AdBanner slot={import.meta.env.VITE_ADSENSE_SLOT_COBRA} className="tkg-ad-bottom" />
       </div>
     </div>
   );
