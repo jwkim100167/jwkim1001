@@ -40,25 +40,6 @@
   margin: 0;
 }
 
-.header-actions {
-  display: flex;
-  gap: 6px;
-}
-
-.action-btn {
-  padding: 6px 12px;
-  border: 1px solid #E5E7EB;
-  border-radius: 6px;
-  background: #fff;
-  font-size: 13px;
-  cursor: pointer;
-  color: #374151;
-  transition: background 0.15s;
-}
-.action-btn:hover { background: #F3F4F6; }
-
-.reset-btn { color: #EF4444; border-color: #FECACA; }
-.reset-btn:hover { background: #FEF2F2; }
 
 /* ── Global progress bar ── */
 .global-progress {
@@ -715,8 +696,6 @@
 
 /* ── Responsive ── */
 @media (max-width: 600px) {
-  .header-actions { gap: 4px; }
-  .action-btn { padding: 5px 8px; font-size: 12px; }
   .header-title { font-size: 16px; }
   .mandalart-grid-wrapper { padding: 8px; }
   .mandalart-cell { font-size: clamp(10px, 3vw, 14px); }

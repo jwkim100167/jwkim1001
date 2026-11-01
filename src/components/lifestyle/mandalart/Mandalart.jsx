@@ -334,13 +334,6 @@ const Mandalart = () => {
     setContextMenu(prev => ({ ...prev, visible: false }));
   };
 
-  const resetAll = () => {
-    if (!confirm('모든 내용을 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) return;
-    setCells(initEmptyState());
-    setSelectedCell(null);
-    setPanelOpen(false);
-  };
-
   const totalProgress = getTotalProgress(cells);
 
   const getCellStyle = (cell, row, col) => {
@@ -473,9 +466,6 @@ const Mandalart = () => {
           {isAuthenticated && (
             <span className="user-badge">{user?.userName || user?.loginId}</span>
           )}
-          <div className="header-actions">
-            <button onClick={resetAll} className="action-btn reset-btn">초기화</button>
-          </div>
         </div>
         <div className="global-progress">
           <span className="gp-label">전체 진행률</span>
