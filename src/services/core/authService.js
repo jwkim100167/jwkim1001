@@ -1,6 +1,19 @@
 import { supabase } from '../../supabaseClient';
 import { notifyLogin, notifyNewUser } from './telegramNotify';
 
+const KEEP_LOGIN_MS = 30 * 24 * 60 * 60 * 1000; // 로그인 상태 유지: 30일
+
+/**
+ * 로그인 사용자 localStorage 저장 (로그인 상태 유지 시 30일 만료 시각 포함)
+ */
+function saveUser(user, keepLogin) {
+  if (keepLogin) {
+    user.keepLogin = true;
+    user.expiresAt = Date.now() + KEEP_LOGIN_MS;
+  }
+  localStorage.setItem('user', JSON.stringify(user));
+}
+
 /**
  * 비밀번호 강도 검사: 3종 8자 이상 또는 2종 10자 이상
  * 종류: 영문 대문자, 영문 소문자, 숫자, 특수문자
@@ -40,9 +53,9 @@ export async function changePassword(userId, newPassword) {
 /**
  * 로그인 마무리 처리 (localStorage 저장 + last_login_at 업데이트 + 히스토리 기록)
  */
-export async function finishLogin(userId, loginId, createdAt, userName) {
+export async function finishLogin(userId, loginId, createdAt, userName, keepLogin = false) {
   const user = { id: userId, loginId, userName: userName || loginId, createdAt, loginTime: Date.now() };
-  localStorage.setItem('user', JSON.stringify(user));
+  saveUser(user, keepLogin);
 
   if (loginId !== 'admin' && loginId !== 'test') {
     try {
@@ -60,9 +73,10 @@ export async function finishLogin(userId, loginId, createdAt, userName) {
  * 로그인 함수
  * @param {string} loginId
  * @param {string} password
+ * @param {boolean} keepLogin - 로그인 상태 유지 여부
  * @returns {Promise<{success: boolean, user?: object, needsVerification?: boolean, needsPasswordChange?: boolean, error?: string}>}
  */
-export async function login(loginId, password) {
+export async function login(loginId, password, keepLogin = false) {
   try {
     const { data, error } = await supabase
       .from('userTable')
@@ -107,7 +121,7 @@ export async function login(loginId, password) {
 
     // 로그인 성공 - localStorage에 저장 (1시간 만료 시간 포함)
     const user = buildUser(data);
-    localStorage.setItem('user', JSON.stringify(user));
+    saveUser(user, keepLogin);
 
     // last_login_at 업데이트 + 날짜 변경 시 userLife +3 + 로그인 히스토리 저장 (admin, test 제외)
     if (loginId !== 'admin' && loginId !== 'test') {
@@ -164,7 +178,7 @@ export async function getVerificationQuestions() {
 /**
  * 답변 검증 후 status ONLINE 으로 변경, 로그인 처리
  */
-export async function verifyAndActivate(userId, loginId, createdAt, questionId, answer, recommendPerson = '', userName = '') {
+export async function verifyAndActivate(userId, loginId, createdAt, questionId, answer, recommendPerson = '', userName = '', keepLogin = false) {
   try {
     // 답변 확인
     const { data: qData, error: qError } = await supabase
@@ -199,7 +213,7 @@ export async function verifyAndActivate(userId, loginId, createdAt, questionId, 
 
     // 로그인 처리
     const user = { id: userId, loginId, userName: userName || loginId, createdAt, loginTime: Date.now() };
-    localStorage.setItem('user', JSON.stringify(user));
+    saveUser(user, keepLogin);
 
     if (loginId !== 'admin' && loginId !== 'test') {
       try {
@@ -232,6 +246,17 @@ export function getCurrentUser() {
 
   try {
     const user = JSON.parse(userStr);
+
+    // 로그인 상태 유지: 만료 시각 체크 후, 유효하면 방문 시점부터 30일 연장
+    if (user.keepLogin) {
+      if (typeof user.expiresAt !== 'number' || Date.now() > user.expiresAt) {
+        logout();
+        return null;
+      }
+      user.expiresAt = Date.now() + KEEP_LOGIN_MS;
+      localStorage.setItem('user', JSON.stringify(user));
+      return user;
+    }
 
     // 로그인 시간 체크 (30분 = 1800000ms)
     if (user.loginTime) {

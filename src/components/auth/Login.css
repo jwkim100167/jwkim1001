@@ -62,6 +62,29 @@
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
+.keep-login {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: #2c3e50;
+  cursor: pointer;
+  user-select: none;
+}
+
+.keep-login input {
+  width: 18px;
+  height: 18px;
+  accent-color: #667eea;
+  cursor: pointer;
+}
+
+.keep-login-notice {
+  margin: -8px 0 0;
+  font-size: 0.85rem;
+  color: #888;
+}
+
 .error-message {
   background: #fee;
   color: #c33;

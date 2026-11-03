@@ -71,17 +71,28 @@ export function AuthProvider({ children }) {
     const currentUser = getCurrentUser();
     setUser(currentUser);
     setLoading(false);
-    if (currentUser?.loginTime) {
+    // 로그인 상태 유지 중이면 30분 세션 타이머를 쓰지 않음
+    if (currentUser?.loginTime && !currentUser.keepLogin) {
       startSessionTimer(currentUser.loginTime);
     }
     return () => clearSessionTimers();
   }, []);
 
-  const login = async (loginId, password) => {
-    const result = await loginService(loginId, password);
+  // 로그인 상태 유지면 진행 중이던 30분 타이머·팝업을 정리, 아니면 30분 타이머 시작
+  const applySessionTimer = (user) => {
+    if (user?.keepLogin) {
+      clearSessionTimers();
+      setShowExtendModal(false);
+    } else if (user?.loginTime) {
+      startSessionTimer(user.loginTime);
+    }
+  };
+
+  const login = async (loginId, password, keepLogin = false) => {
+    const result = await loginService(loginId, password, keepLogin);
     if (result.success) {
       setUser(result.user);
-      startSessionTimer(result.user.loginTime);
+      applySessionTimer(result.user);
     }
     return result;
   };
@@ -92,7 +103,7 @@ export function AuthProvider({ children }) {
 
   const loginDirect = (user) => {
     setUser(user);
-    if (user?.loginTime) startSessionTimer(user.loginTime);
+    applySessionTimer(user);
   };
 
   const handleExtend = () => {
