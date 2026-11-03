@@ -31,6 +31,12 @@
   transition: color 0.15s;
 }
 .back-btn:hover { color: #374151; }
+.back-btn-plain {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
 
 .header-title {
   flex: 1;
@@ -657,10 +663,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  gap: 12px;
   height: 100vh;
   font-size: 16px;
   color: #6B7280;
 }
+
+/* ── Group button ── */
+.group-btn {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4A6FDC;
+  background: #EEF2FF;
+  padding: 3px 10px;
+  border-radius: 12px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.group-btn:hover { background: #E0E7FF; }
 
 /* ── User badge ── */
 .user-badge {
@@ -738,4 +759,103 @@
     width: min(calc(100vh - 130px), calc(100vw - 348px), 720px);
     height: min(calc(100vh - 130px), calc(100vw - 348px), 720px);
   }
+}
+
+/* ── 내 설정 / 목표 달성률 ── */
+.user-badge-btn {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.user-badge-btn:hover { background: #E5E7EB; color: #374151; }
+
+.gp-track,
+.cell-gauge-auto-wrap,
+.cell-gauge-range-wrap {
+  position: relative;
+}
+
+.gp-target-line,
+.range-target-line {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  margin-left: -1px;
+  background: #F59E0B;
+  border-radius: 1px;
+  pointer-events: none;
+}
+.range-target-line { top: 50%; height: 14px; bottom: auto; transform: translateY(-50%); }
+
+.gp-target {
+  font-size: 12px;
+  font-weight: 400;
+  color: #9CA3AF;
+  white-space: nowrap;
+}
+
+.achieved-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #B45309;
+  background: #FEF3C7;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-right: 6px;
+  white-space: nowrap;
+}
+
+.smg-target-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.mandalart-cell.achieved .smg-fill { background: #FCD34D; }
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.settings-desc {
+  font-size: 12px;
+  color: #6B7280;
+}
+
+.target-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.target-chip {
+  padding: 8px 16px;
+  border: 1px solid #E5E7EB;
+  background: #fff;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.target-chip:hover { border-color: #4A6FDC; }
+.target-chip.active {
+  border-color: #4A6FDC;
+  background: #4A6FDC;
+  color: #fff;
 }
