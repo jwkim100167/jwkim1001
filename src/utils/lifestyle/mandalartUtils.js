@@ -102,22 +102,30 @@ export function normalizeCells(raw) {
   }));
 }
 
-// 섹터 내 8칸의 개인 진행도(progress) 평균
+// 제목이 입력된 칸인지
+export function hasText(cell) {
+  return !!(cell?.text || '').trim();
+}
+
+// 세부 목표 진행률 = 제목이 있는 실천 과제만 평균 (세부 목표가 없거나 과제가 0개면 null = 미정)
 export function getSectorAvgProgress(cells, sectorIndex) {
   const sRow = Math.floor(sectorIndex / 3) * 3 + 1;
   const sCol = (sectorIndex % 3) * 3 + 1;
+  const subGoal = cells.find(c => c.row === sRow && c.col === sCol);
+  if (!hasText(subGoal)) return null;
   const actionCells = cells.filter(
-    c => c.sectorIndex === sectorIndex && !(c.row === sRow && c.col === sCol)
+    c => c.sectorIndex === sectorIndex && !(c.row === sRow && c.col === sCol) && hasText(c)
   );
-  if (actionCells.length === 0) return 0;
+  if (actionCells.length === 0) return null;
   const sum = actionCells.reduce((acc, c) => acc + (c.progress ?? 0), 0);
   return Math.round(sum / actionCells.length);
 }
 
-// 전체 진행률 = 외부 8개 섹터 평균 진행도의 평균
+// 전체(핵심 목표) 진행률 = 진행률이 있는 세부 목표만 평균 (하나도 없으면 0)
 export function getTotalProgress(cells) {
   const outerSectors = [0, 1, 2, 3, 5, 6, 7, 8];
-  const avgs = outerSectors.map(s => getSectorAvgProgress(cells, s));
+  const avgs = outerSectors.map(s => getSectorAvgProgress(cells, s)).filter(v => v !== null);
+  if (avgs.length === 0) return 0;
   return Math.round(avgs.reduce((a, v) => a + v, 0) / avgs.length);
 }
 
@@ -131,9 +139,9 @@ export function normalizeSettings(raw) {
   return { ...DEFAULT_SETTINGS, ...(raw || {}), targetRate };
 }
 
-// 목표 달성 여부
+// 목표 달성 여부 (null = 미정 → 미달성)
 export function isAchieved(pct, targetRate) {
-  return pct >= targetRate;
+  return pct !== null && pct !== undefined && pct >= targetRate;
 }
 
 // ── 칸 종류 (용어) ──
@@ -153,4 +161,64 @@ export function getCellRole(row, col) {
 // 세부 목표 번호 1~8 (중앙 영역은 0)
 export function getSubGoalNo(sectorIndex) {
   return [0, 1, 2, 3, 5, 6, 7, 8].indexOf(sectorIndex) + 1;
+}
+
+// 영역(섹터) 가운데 칸 = 그 영역의 세부 목표
+export function getSubGoalCell(cells, sectorIndex) {
+  const row = Math.floor(sectorIndex / 3) * 3 + 1;
+  const col = (sectorIndex % 3) * 3 + 1;
+  return cells.find(c => c.row === row && c.col === col);
+}
+
+// 입력 순서 잠금: 핵심 목표 → 세부 목표 → 실천 과제
+// 반환값 null(열림) | 'core'(핵심 목표 먼저) | 'sub'(세부 목표 먼저)
+export function getLockReason(cells, row, col) {
+  const role = getCellRole(row, col);
+  if (role === 'core') return null;
+  const core = cells.find(c => c.row === 4 && c.col === 4);
+  if (!hasText(core)) return 'core';
+  if (role === 'sub') return null;
+  return hasText(getSubGoalCell(cells, getSectorIndex(row, col))) ? null : 'sub';
+}
+
+// ── 그룹 멤버 색깔 (그룹 안 1색 1명 → 최대 7명) ──
+// 이웃한 색끼리 밝기 차이를 크게 둬서 작은 원에서도 구분되게 함 (빨=진하게, 주=밝게 …)
+export const MEMBER_COLORS = [
+  // ink: 칩 위 글자색 (밝은 색은 어두운 글자)
+  { key: 'red',    label: '빨', hex: '#DC2626', ink: '#fff' },
+  { key: 'orange', label: '주', hex: '#FB923C', ink: '#1F2937' },
+  { key: 'yellow', label: '노', hex: '#FACC15', ink: '#1F2937' },
+  { key: 'green',  label: '초', hex: '#16A34A', ink: '#fff' },
+  { key: 'blue',   label: '파', hex: '#38BDF8', ink: '#1F2937' },
+  { key: 'navy',   label: '남', hex: '#1E3A8A', ink: '#fff' },
+  { key: 'purple', label: '보', hex: '#C084FC', ink: '#1F2937' },
+];
+export const GROUP_MAX_MEMBERS = MEMBER_COLORS.length;
+
+export function memberColorHex(key) {
+  return MEMBER_COLORS.find(c => c.key === key)?.hex ?? '#9CA3AF'; // 미배정 = 회색
+}
+
+// 사용 중이지 않은 첫 번째 색 (빨→보 순)
+export function firstFreeColor(usedKeys) {
+  return MEMBER_COLORS.find(c => !usedKeys.includes(c.key))?.key ?? null;
+}
+
+// 색 n개를 원에 n등분: conic-gradient 문자열 (0개 → null)
+// 조각 사이에 흰 틈을 넣어, 비슷한 색끼리도 몇 명으로 나뉘었는지 보이게 함
+const PIE_GAP = 1.5; // % (≈ 5.4°)
+export function pieGradient(hexes) {
+  if (!hexes.length) return null;
+  if (hexes.length === 1) return hexes[0];
+  const step = 100 / hexes.length;
+  const stops = hexes.flatMap((h, i) => {
+    const start = i * step;
+    const end = (i + 1) * step;
+    return [
+      `#fff ${start.toFixed(2)}% ${(start + PIE_GAP / 2).toFixed(2)}%`,
+      `${h} ${(start + PIE_GAP / 2).toFixed(2)}% ${(end - PIE_GAP / 2).toFixed(2)}%`,
+      `#fff ${(end - PIE_GAP / 2).toFixed(2)}% ${end.toFixed(2)}%`,
+    ];
+  });
+  return `conic-gradient(${stops.join(', ')})`;
 }

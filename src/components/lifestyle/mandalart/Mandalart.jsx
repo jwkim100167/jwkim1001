@@ -14,6 +14,7 @@ import {
   getSectorAvgProgress, getTotalProgress,
   TARGET_OPTIONS, DEFAULT_SETTINGS, normalizeSettings, isAchieved,
   CELL_ROLE_NAMES, getCellRole, getSubGoalNo,
+  hasText, getLockReason, getSubGoalCell,
 } from '../../../utils/lifestyle/mandalartUtils';
 import './Mandalart.css';
 
@@ -68,6 +69,7 @@ const Mandalart = () => {
   const loggedTextRef = useRef(null);
   const flushTextLogRef = useRef(() => {});
   const [logOpen, setLogOpen] = useState(false);
+  const [lockNotice, setLockNotice] = useState(null); // { reason: 'core' | 'sub', sectorIndex }
 
   // 마운트 시 데이터 로드
   useEffect(() => {
@@ -143,6 +145,7 @@ const Mandalart = () => {
         if (focusSector !== null) { setFocusSector(null); return; }
         setSettingsOpen(false);
         setLogOpen(false);
+        setLockNotice(null);
         flushTextLogRef.current();
         setPanelOpen(false);
         setContextMenu(prev => ({ ...prev, visible: false }));
@@ -214,22 +217,42 @@ const Mandalart = () => {
   };
 
   // 중앙 섹터 셀 클릭 시 → 연동된 섹터 중앙 셀의 패널을 열기
+  // 상위 목표가 없으면 패널 대신 "먼저 ○○ 목표를 정해 주세요" 안내
   const handleCellClick = (cell) => {
     if (!isAuthenticated) {
       alert('로그인 후 이용 가능합니다.');
       return;
     }
+    let target = cell;
     if (CENTER_TO_SECTOR[cell.id]) {
       const { row, col } = CENTER_TO_SECTOR[cell.id];
-      const linked = getCellByRowCol(row, col);
-      if (linked) { openPanel(linked); return; }
+      target = getCellByRowCol(row, col) ?? cell;
     }
-    openPanel(cell);
+    const reason = getLockReason(cells, target.row, target.col);
+    if (reason) {
+      // 남의 만다라트에서는 아직 정하지 않은 칸이라 안내 없이 무시
+      if (!readOnly) setLockNotice({ reason, sectorIndex: target.sectorIndex });
+      return;
+    }
+    setLockNotice(null);
+    openPanel(target);
+  };
+
+  // 잠금 안내의 [○○ 정하기] → 막고 있는 상위 목표 칸의 패널 열기
+  const openBlockingGoal = () => {
+    if (!lockNotice) return;
+    const goalCell = lockNotice.reason === 'core'
+      ? getCellByRowCol(4, 4)
+      : getSubGoalCell(cells, lockNotice.sectorIndex);
+    setLockNotice(null);
+    if (goalCell) openPanel(goalCell);
   };
 
   const openContextMenu = (e, cell) => {
     e.preventDefault();
     if (!isAuthenticated || readOnly) return;
+    // 실천 컨디션은 제목이 있고 잠기지 않은 실천 과제에서만
+    if (getCellRole(cell.row, cell.col) !== 'action' || !hasText(cell) || getLockReason(cells, cell.row, cell.col)) return;
     setContextMenu({ visible: true, x: e.clientX ?? e.pageX, y: e.clientY ?? e.pageY, cellId: cell.id });
   };
 
@@ -347,22 +370,22 @@ const Mandalart = () => {
     const isSubGoal = isCenterOfSector(row, col);
     const isMirror = isCenterSectorCell(row, col);
     const isCoreCell = row === 4 && col === 4;
-    // 미러 셀이면 연동된 외부 섹터의 진행률을 표시
-    const mirrorLinkedSectorPct = (() => {
-      if (!isMirror) return null;
-      const linked = CENTER_TO_SECTOR[cell.id];
-      if (!linked) return null;
-      return getSectorAvgProgress(cells, getSectorIndex(linked.row, linked.col));
-    })();
-    const sectorPct = isCoreCell ? totalProgress : (mirrorLinkedSectorPct !== null ? mirrorLinkedSectorPct : getSectorAvgProgress(cells, cell.sectorIndex));
+    // 진행률: 핵심 목표 = 전체, 연동(미러) 칸 = 연동된 영역, 영역 가운데 = 그 영역 (null = 미정)
+    const gaugeSector = isMirror
+      ? getSectorIndex(CENTER_TO_SECTOR[cell.id].row, CENTER_TO_SECTOR[cell.id].col)
+      : cell.sectorIndex;
+    const sectorPct = isCoreCell ? totalProgress : getSectorAvgProgress(cells, gaugeSector);
     const isSelected = selectedCell?.id === cell.id && panelOpen;
     const isCelebrating = celebratingCells.has(cell.id);
     const sectorAchieved = (isSubGoal || isMirror) && isAchieved(sectorPct, targetRate);
+    // 입력 순서 잠금 (세부 목표 없이 이미 만든 실천 과제는 orphan: 표시는 하되 진행률에서 제외)
+    const locked = !!getLockReason(cells, row, col);
+    const orphan = locked && hasText(cell);
 
     return (
       <div
         key={cell.id}
-        className={`mandalart-cell${isSelected ? ' selected' : ''}${isMirror ? ' mirror-cell' : ''}${(isSubGoal || isMirror) ? ' has-gauge' : ''}${isCelebrating ? ' celebrating' : ''}${sectorAchieved ? ' achieved' : ''}`}
+        className={`mandalart-cell${isSelected ? ' selected' : ''}${isMirror ? ' mirror-cell' : ''}${(isSubGoal || isMirror) ? ' has-gauge' : ''}${isCelebrating ? ' celebrating' : ''}${sectorAchieved ? ' achieved' : ''}${locked ? ' locked' : ''}${orphan ? ' orphan' : ''}`}
         style={getCellStyle(cell, row, col)}
         onClick={() => handleCellClick(cell)}
         onContextMenu={(e) => openContextMenu(e, cell)}
@@ -381,11 +404,15 @@ const Mandalart = () => {
           ))}
         </span>
         {isMirror && <span className="mirror-indicator" title="세부 목표와 연동됨">↗</span>}
+        {locked && !orphan && <span className="lock-indicator" aria-label="잠김">🔒</span>}
+        {orphan && <span className="orphan-indicator" title="세부 목표가 없어 진행률에서 제외돼요">⚠</span>}
         {(isSubGoal || isMirror) && (
           <>
-            <span className="smg-pct" title={sectorAchieved ? '목표 달성' : undefined}>{sectorPct}%</span>
+            <span className="smg-pct" title={sectorAchieved ? '목표 달성' : sectorPct === null ? '실천 과제를 정하면 계산돼요' : undefined}>
+              {sectorPct === null ? '–' : `${sectorPct}%`}
+            </span>
             <div className="sector-mini-gauge">
-              <div className="smg-fill" style={{ width: `${sectorPct}%` }} />
+              <div className="smg-fill" style={{ width: `${sectorPct ?? 0}%` }} />
               {targetRate < 100 && <div className="smg-target-tick" style={{ left: `${targetRate}%` }} />}
             </div>
           </>
@@ -429,14 +456,25 @@ const Mandalart = () => {
     return role === 'sub' ? subGoal : `${CELL_ROLE_NAMES.action} · ${subGoal}`;
   };
 
-  // 중간목표(섹터 중앙) 또는 큰 목표(core)는 달성률 자동 계산
-  const isAutoProgress = selectedCellData && isCenterOfSector(selectedCellData.row, selectedCellData.col);
+  // 세부 목표(영역 가운데) 또는 핵심 목표(core)는 진행률 자동 계산 (null = 미정)
+  const isAutoProgress = !!selectedCellData && isCenterOfSector(selectedCellData.row, selectedCellData.col);
   const autoProgressValue = isAutoProgress
     ? (selectedCellData.row === 4 && selectedCellData.col === 4
         ? getTotalProgress(cells)
         : getSectorAvgProgress(cells, selectedCellData.sectorIndex))
     : null;
-  const displayProgress = autoProgressValue !== null ? autoProgressValue : panelCellProgress;
+  const displayProgress = isAutoProgress ? autoProgressValue : panelCellProgress;
+  const selectedRole = selectedCellData ? getCellRole(selectedCellData.row, selectedCellData.col) : null;
+  const panelHasTitle = !!panelTitle.trim(); // 제목이 있어야 달성 기준·진행도·메모 단계로
+
+  // 단계 표시줄: ① 핵심 목표 → ② 세부 목표 n/8 → ③ 실천 과제 n/64
+  const coreDone = hasText(getCellByRowCol(4, 4));
+  const outerSectors = [0, 1, 2, 3, 5, 6, 7, 8];
+  const subDoneCount = outerSectors.filter(s => hasText(getSubGoalCell(cells, s))).length;
+  const actionDoneCount = cells.filter(c =>
+    getCellRole(c.row, c.col) === 'action' && hasText(c) && !getLockReason(cells, c.row, c.col)
+  ).length;
+  const currentStep = !coreDone ? 1 : subDoneCount === 0 ? 2 : actionDoneCount === 0 ? 3 : 4;
 
   if (loadingDB) {
     return (
@@ -496,7 +534,39 @@ const Mandalart = () => {
           <span className="gp-target">/ 목표 {targetRate}%</span>
           {isAchieved(totalProgress, targetRate) && <span className="achieved-badge">🎉 달성</span>}
         </div>
+        {!readOnly && (
+          <div className="step-bar">
+            <span className={`step${coreDone ? ' done' : ''}${currentStep === 1 ? ' current' : ''}`}>
+              ① {CELL_ROLE_NAMES.core} {coreDone ? '✔' : ''}
+            </span>
+            <span className="step-arrow">→</span>
+            <span className={`step${subDoneCount > 0 ? ' done' : ''}${currentStep === 2 ? ' current' : ''}`}>
+              ② {CELL_ROLE_NAMES.sub} {subDoneCount}/8
+            </span>
+            <span className="step-arrow">→</span>
+            <span className={`step${actionDoneCount > 0 ? ' done' : ''}${currentStep === 3 ? ' current' : ''}`}>
+              ③ {CELL_ROLE_NAMES.action} {actionDoneCount}/64
+            </span>
+            <span className="step-arrow">→</span>
+            <span className={`step${currentStep === 4 ? ' current' : ''}`}>④ 진행도 체크</span>
+          </div>
+        )}
       </div>
+
+      {!readOnly && isAuthenticated && !coreDone && (
+        <div className="start-banner">
+          <div className="start-banner-text">
+            <b>가운데 칸에 {CELL_ROLE_NAMES.core}부터 정해 보세요.</b>
+            <span>
+              {CELL_ROLE_NAMES.core} → 둘레 8칸에 {CELL_ROLE_NAMES.sub} → 바깥 칸에 {CELL_ROLE_NAMES.action} 순서로 채우고,
+              {' '}{CELL_ROLE_NAMES.action}의 진행도를 체크하면 돼요.
+            </span>
+          </div>
+          <button className="start-banner-btn" onClick={() => openPanel(getCellByRowCol(4, 4))}>
+            {CELL_ROLE_NAMES.core} 정하기
+          </button>
+        </div>
+      )}
 
       <div className="mandalart-grid-wrapper">
         <div className="mandalart-grid">
@@ -523,6 +593,14 @@ const Mandalart = () => {
           <span className="panel-title-count">{panelTitle.length}/18</span>
         </div>
 
+        {!panelHasTitle ? (
+          <div className="panel-step-hint">
+            {readOnly
+              ? '아직 정하지 않은 칸이에요.'
+              : '제목을 입력하면 달성 기준·진행도·메모를 기록할 수 있어요.'}
+          </div>
+        ) : (
+        <>
         <div className="panel-goal-wrap">
           <textarea
             className="panel-goal-input"
@@ -536,32 +614,40 @@ const Mandalart = () => {
           <span className="panel-goal-count">{panelGoal.length}/18</span>
         </div>
 
-        {!readOnly && (
-          <div className="panel-status-row">
-            {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
-              <button
-                key={key}
-                className={`status-btn${selectedCellData?.status === key ? ' active' : ''}`}
-                style={{ '--status-color': cfg.color }}
-                onClick={() => handleStatusChange(key)}
-              >
-                {key === 'good' ? '✅' : key === 'normal' ? '🟡' : '❌'} {cfg.label}
-              </button>
-            ))}
+        {!readOnly && selectedRole === 'action' && (
+          <div className="panel-condition">
+            <div className="condition-label">
+              실천 컨디션
+              <span className="condition-desc">진행도와 별개로, 요즘 이 과제를 잘 지키고 있는지 표시해요</span>
+            </div>
+            <div className="panel-status-row">
+              {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
+                <button
+                  key={key}
+                  className={`status-btn${selectedCellData?.status === key ? ' active' : ''}`}
+                  style={{ '--status-color': cfg.color }}
+                  onClick={() => handleStatusChange(key)}
+                >
+                  {key === 'good' ? '✅' : key === 'normal' ? '🟡' : '❌'} {cfg.label}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
         <div className="panel-cell-gauge">
           <div className="cell-gauge-header">
-            <span className="cell-gauge-label">진행도</span>
+            <span className="cell-gauge-label">
+              진행도{isAutoProgress && <span className="condition-desc"> (실천 과제 평균, 자동 계산)</span>}
+            </span>
             <span className="cell-gauge-value">
               {isAchieved(displayProgress, targetRate) && <span className="achieved-badge">🎉 달성</span>}
-              {displayProgress}% <span className="gp-target">/ 목표 {targetRate}%</span>
+              {displayProgress === null ? '–' : `${displayProgress}%`} <span className="gp-target">/ 목표 {targetRate}%</span>
             </span>
           </div>
           {(isAutoProgress || readOnly) ? (
             <div className="cell-gauge-auto-wrap">
-              <div className="cell-gauge-auto-bar" style={{ width: `${displayProgress}%` }} />
+              <div className="cell-gauge-auto-bar" style={{ width: `${displayProgress ?? 0}%` }} />
               {targetRate < 100 && <div className="gp-target-line" style={{ left: `${targetRate}%` }} />}
             </div>
           ) : (
@@ -596,8 +682,24 @@ const Mandalart = () => {
             onBlur={flushTextLog}
           />
         )}
+        </>
+        )}
 
       </div>
+
+      {lockNotice && (
+        <div className="lock-toast" role="status">
+          <span className="lock-toast-text">
+            🔒 먼저 {lockNotice.reason === 'core' ? CELL_ROLE_NAMES.core : CELL_ROLE_NAMES.sub}를 정해 주세요.
+          </span>
+          {!readOnly && (
+            <button className="lock-toast-btn" onClick={openBlockingGoal}>
+              {lockNotice.reason === 'core' ? CELL_ROLE_NAMES.core : CELL_ROLE_NAMES.sub} 정하기
+            </button>
+          )}
+          <button className="lock-toast-close" onClick={() => setLockNotice(null)} aria-label="닫기">✕</button>
+        </div>
+      )}
 
       {focusSector !== null && (
         <div className="focus-overlay" onClick={() => setFocusSector(null)}>

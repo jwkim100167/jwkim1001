@@ -2,7 +2,10 @@ import { supabase } from '../../supabaseClient';
 import { loadMandalartFromDB, loadMandalartSettings } from './mandalartService';
 import { isMandalartPublic } from './mandalartSocialService';
 import { writeLogs } from './mandalartLogService';
-import { normalizeCells, getTotalProgress, normalizeSettings, isAchieved } from '../../utils/lifestyle/mandalartUtils';
+import {
+  normalizeCells, getTotalProgress, normalizeSettings, isAchieved,
+  MEMBER_COLORS, GROUP_MAX_MEMBERS, firstFreeColor,
+} from '../../utils/lifestyle/mandalartUtils';
 
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 헷갈리는 0/O, 1/I 제외
 
@@ -34,7 +37,7 @@ export async function createGroup(userId, name) {
 
     const { error: memberError } = await supabase
       .from('mandalartGroupMemberTable')
-      .insert({ group_id: data.id, user_id: userId });
+      .insert({ group_id: data.id, user_id: userId, color: MEMBER_COLORS[0].key });
     if (memberError) {
       console.error('그룹 멤버 등록 실패:', memberError);
       return { error: '그룹 멤버 등록에 실패했습니다.' };
@@ -61,19 +64,34 @@ export async function joinGroupByCode(userId, code) {
   }
   if (!group) return { error: '존재하지 않는 초대코드입니다.' };
 
-  const { data: inserted, error: memberError } = await supabase
-    .from('mandalartGroupMemberTable')
-    .upsert({ group_id: group.id, user_id: userId }, { onConflict: 'group_id,user_id', ignoreDuplicates: true })
-    .select();
-  if (memberError) {
-    console.error('그룹 가입 실패:', memberError);
-    return { error: '그룹 가입에 실패했습니다.' };
-  }
-  // 이미 멤버였으면 inserted 가 비어 있음 → 로그 생략
-  if (inserted?.length) {
+  // 인원 제한(7명) 확인 후 빈 색 중 첫 번째로 가입. 동시 가입으로 색이 겹치면 한 번 재시도
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const { data: members, error: membersError } = await supabase
+      .from('mandalartGroupMemberTable')
+      .select('user_id, color')
+      .eq('group_id', group.id);
+    if (membersError) {
+      console.error('그룹 멤버 조회 실패:', membersError);
+      return { error: '그룹 가입에 실패했습니다.' };
+    }
+    if ((members || []).some(m => m.user_id === userId)) return { group }; // 이미 멤버
+    if ((members || []).length >= GROUP_MAX_MEMBERS) {
+      return { error: `그룹 인원은 최대 ${GROUP_MAX_MEMBERS}명이에요.` };
+    }
+
+    const color = firstFreeColor((members || []).map(m => m.color).filter(Boolean));
+    const { error: memberError } = await supabase
+      .from('mandalartGroupMemberTable')
+      .insert({ group_id: group.id, user_id: userId, color });
+    if (memberError?.code === '23505' && attempt === 0) continue;
+    if (memberError) {
+      console.error('그룹 가입 실패:', memberError);
+      return { error: '그룹 가입에 실패했습니다.' };
+    }
     writeLogs(userId, [{ type: 'group_join', group_id: group.id, label: group.name }]);
+    return { group };
   }
-  return { group };
+  return { error: '그룹 가입에 실패했습니다. 다시 시도해주세요.' };
 }
 
 // 방장은 다른 멤버가 있으면 위임 후에만 나갈 수 있음. 혼자 남은 방장이 나가면 그룹 삭제
@@ -182,14 +200,16 @@ export async function getMyGroups(userId) {
 export async function getGroupMembers(groupId) {
   const { data: memberships, error } = await supabase
     .from('mandalartGroupMemberTable')
-    .select('user_id, joined_at')
-    .eq('group_id', groupId);
+    .select('user_id, joined_at, color')
+    .eq('group_id', groupId)
+    .order('joined_at');
 
   if (error) {
     console.error('그룹 멤버 조회 실패:', error);
     return [];
   }
   const userIds = (memberships || []).map(m => m.user_id);
+  const membershipOf = (uid) => (memberships || []).find(x => x.user_id === uid);
   if (userIds.length === 0) return [];
 
   const [{ data: users }, { data: mandalarts }] = await Promise.all([
@@ -211,8 +231,26 @@ export async function getGroupMembers(groupId) {
       targetRate,
       achieved: isAchieved(totalProgress, targetRate),
       updatedAt: m?.updated_at ?? null,
+      color: membershipOf(uid)?.color ?? null,
+      joinedAt: membershipOf(uid)?.joined_at ?? null,
     };
   }).sort((a, b) => b.totalProgress - a.totalProgress);
+}
+
+// 그룹 안 내 색 변경 (1색 1명 — 다른 멤버가 쓰는 색이면 unique 충돌)
+export async function setMemberColor(userId, groupId, color) {
+  const { error } = await supabase
+    .from('mandalartGroupMemberTable')
+    .update({ color })
+    .eq('group_id', groupId)
+    .eq('user_id', userId);
+
+  if (error?.code === '23505') return { error: '다른 멤버가 쓰고 있는 색이에요.' };
+  if (error) {
+    console.error('색 변경 실패:', error);
+    return { error: '색 변경에 실패했습니다.' };
+  }
+  return {};
 }
 
 // 같은 그룹에 속해 있는지

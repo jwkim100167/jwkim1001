@@ -4,6 +4,7 @@ import { initEmptyState } from '../../utils/lifestyle/mandalartUtils';
 import { loadMandalartSettings, saveMandalartSettings } from './mandalartService';
 
 const GROUP_FEED_SIZE = 200; // 날짜·멤버별 건수 요약용으로 넉넉히
+const CALENDAR_FEED_SIZE = 1000; // 달력 한 달치
 
 function toRow(userId, entry) {
   return {
@@ -81,26 +82,27 @@ export async function getMyLogs(userId, { category = 'all', offset = 0, limit = 
   return { logs: (data || []).slice(0, limit), hasMore: (data || []).length > limit };
 }
 
-// 그룹 활동 피드: 멤버들의 공개 로그(그룹 로그 제외) + 이 그룹의 그룹 로그
-export async function getGroupLogs(groupId, memberIds) {
+// 멤버들의 공개 로그(그룹 로그 제외) + 이 그룹의 그룹 로그 (range: { from, to } ISO, to 미포함)
+async function fetchGroupFeed(groupId, memberIds, limit, range = null) {
   if (!memberIds?.length) return { logs: [], names: {} };
 
+  const withRange = (q) => (range ? q.gte('updated_at', range.from).lt('updated_at', range.to) : q);
   const [{ data: memberLogs }, { data: groupLogs }] = await Promise.all([
-    supabase.from('mandalartLogTable').select('*')
+    withRange(supabase.from('mandalartLogTable').select('*')
       .in('user_id', memberIds)
       .eq('is_shared', true)
-      .is('group_id', null)
+      .is('group_id', null))
       .order('updated_at', { ascending: false })
-      .limit(GROUP_FEED_SIZE),
-    supabase.from('mandalartLogTable').select('*')
-      .eq('group_id', groupId)
+      .limit(limit),
+    withRange(supabase.from('mandalartLogTable').select('*')
+      .eq('group_id', groupId))
       .order('updated_at', { ascending: false })
-      .limit(GROUP_FEED_SIZE),
+      .limit(limit),
   ]);
 
   const logs = [...(memberLogs || []), ...(groupLogs || [])]
     .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
-    .slice(0, GROUP_FEED_SIZE);
+    .slice(0, limit);
 
   // 행동한 사람 + 위임 대상 이름
   const ids = [...new Set(logs.flatMap(l => [l.user_id, l.type === 'group_owner' ? Number(l.after) : null]).filter(Boolean))];
@@ -110,4 +112,14 @@ export async function getGroupLogs(groupId, memberIds) {
     (users || []).forEach(u => { names[u.id] = u.userName || u.login_id; });
   }
   return { logs, names };
+}
+
+// 그룹 활동 피드 (최신 GROUP_FEED_SIZE 건)
+export function getGroupLogs(groupId, memberIds) {
+  return fetchGroupFeed(groupId, memberIds, GROUP_FEED_SIZE);
+}
+
+// 달력용: 해당 기간의 그룹 활동 (월 단위)
+export function getGroupLogsInRange(groupId, memberIds, fromIso, toIso) {
+  return fetchGroupFeed(groupId, memberIds, CALENDAR_FEED_SIZE, { from: fromIso, to: toIso });
 }

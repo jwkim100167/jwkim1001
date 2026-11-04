@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import {
   createGroup, joinGroupByCode, leaveGroup, getMyGroups, getGroupMembers,
-  renameGroup, transferOwner,
+  renameGroup, transferOwner, setMemberColor,
 } from '../../../services/lifestyle/mandalartGroupService';
 import { getGroupLogs } from '../../../services/lifestyle/mandalartLogService';
+import { MEMBER_COLORS, GROUP_MAX_MEMBERS, memberColorHex } from '../../../utils/lifestyle/mandalartUtils';
 import { GroupLogList } from './MandalartLogList';
 import './MandalartGroups.css';
 import './MandalartSocial.css';
@@ -109,6 +110,14 @@ const MandalartGroups = () => {
     loadGroups();
   };
 
+  // 내 색 변경 (달력에 표시되는 색, 그룹 안 1색 1명)
+  const handleColor = async (groupId, color) => {
+    const result = await setMemberColor(user.id, groupId, color);
+    if (result.error) setMessage(result.error);
+    const list = await getGroupMembers(groupId);
+    setMembers(prev => ({ ...prev, [groupId]: list }));
+  };
+
   const handleTransfer = async (group, member) => {
     if (!window.confirm(`${member.name}님에게 방장을 위임할까요? 위임하면 이름 변경·위임 권한이 넘어가요.`)) return;
     const result = await transferOwner(user.id, group.id, member.userId);
@@ -209,7 +218,8 @@ const MandalartGroups = () => {
                           onClick={e => { e.stopPropagation(); startRename(g); }}
                         >✏️</button>
                       )}
-                      <span className="mgroup-card-count">👥 {g.memberCount}명</span>
+                      <span className="mgroup-card-count">👥 {g.memberCount}/{GROUP_MAX_MEMBERS}명</span>
+                      {g.memberCount >= GROUP_MAX_MEMBERS && <span className="mgroup-full-tag">가득 참</span>}
                       {amOwner && <span className="mgroup-owner-tag">👑 내가 방장</span>}
                     </div>
                     <span className="mgroup-card-arrow">{openGroupId === g.id ? '▲' : '▼'}</span>
@@ -246,6 +256,11 @@ const MandalartGroups = () => {
                       <div key={m.userId} className="mgroup-member">
                         <div className="mgroup-member-top">
                           <span className="mgroup-member-name">
+                            <span
+                              className="mgroup-color-dot"
+                              style={{ background: memberColorHex(m.color) }}
+                              title="달력에 표시되는 색"
+                            />
                             {m.userId === g.owner_id && <span title="방장">👑 </span>}
                             {m.name}{m.userId === user.id && <span className="mgroup-me"> (나)</span>}
                           </span>
@@ -258,6 +273,24 @@ const MandalartGroups = () => {
                             <span className="mgroup-member-date">수정 {formatDate(m.updatedAt)}</span>
                           </span>
                         </div>
+                        {m.userId === user.id && (
+                          <div className="mgroup-color-chips" aria-label="내 색 선택">
+                            <span className="mgroup-color-label">내 색</span>
+                            {MEMBER_COLORS.map(c => {
+                              const takenBy = members[g.id].find(x => x.color === c.key && x.userId !== user.id);
+                              return (
+                                <button
+                                  key={c.key}
+                                  className={`mgroup-color-chip${m.color === c.key ? ' active' : ''}${takenBy ? ' taken' : ''}`}
+                                  style={{ '--chip-color': c.hex, color: c.ink }}
+                                  disabled={!!takenBy}
+                                  title={takenBy ? `${takenBy.name}님이 쓰는 색` : c.label}
+                                  onClick={() => handleColor(g.id, c.key)}
+                                >{c.label}</button>
+                              );
+                            })}
+                          </div>
+                        )}
                         <div className="mgroup-member-goal">🎯 {m.coreGoal || '핵심 목표 미설정'}</div>
                         <div className="mgroup-member-progress">
                           <div className="mgroup-track">

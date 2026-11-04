@@ -915,3 +915,150 @@
 
 /* #root 의 text-align: center 상속 방지 (제목·칸은 각자 정렬 지정) */
 .settings-section { text-align: left; }
+
+/* ── 입력 순서 잠금 (핵심 목표 → 세부 목표 → 실천 과제) ── */
+.mandalart-cell.locked {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+.mandalart-cell.locked:hover,
+.mandalart-cell.locked:active { filter: none; transform: none; }
+.mandalart-cell.locked.orphan { opacity: 0.6; } /* 세부 목표 없이 만든 기존 실천 과제 */
+
+.lock-indicator,
+.orphan-indicator {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  font-size: 10px;
+  line-height: 1;
+  z-index: 3;
+  pointer-events: none;
+}
+.orphan-indicator { color: #B45309; font-size: 12px; font-weight: 700; pointer-events: auto; }
+
+.lock-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 160;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100vw - 32px);
+  padding: 10px 12px 10px 16px;
+  background: #1F2937;
+  color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  font-size: 14px;
+  animation: slideUp 0.2s ease;
+}
+.lock-toast-text { flex: 1; }
+.lock-toast-btn {
+  padding: 6px 12px;
+  border: none;
+  background: #4A6FDC;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.lock-toast-close {
+  padding: 4px 6px;
+  border: none;
+  background: transparent;
+  color: #9CA3AF;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ── 단계 표시줄 ── */
+.step-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  margin-top: 8px;
+  font-size: 12px;
+}
+.step {
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: #F3F4F6;
+  color: #9CA3AF;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.step.done { background: #ECFDF5; color: #047857; }
+.step.current { background: #4A6FDC; color: #fff; }
+.step-arrow { color: #D1D5DB; }
+
+/* ── 첫 진입 안내 배너 ── */
+.start-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px auto 0;
+  width: min(720px, calc(100% - 32px));
+  padding: 12px 16px;
+  background: #EEF2FF;
+  border: 1px solid #C7D2FE;
+  border-radius: 12px;
+  text-align: left;
+}
+.start-banner-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  color: #374151;
+}
+.start-banner-text b { font-size: 15px; color: #1E3A8A; }
+.start-banner-btn {
+  padding: 8px 14px;
+  border: none;
+  background: #4A6FDC;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ── 패널: 단계 안내 / 실천 컨디션 ── */
+.panel-step-hint {
+  padding: 12px;
+  background: #F9FAFB;
+  border: 1px dashed #D1D5DB;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #6B7280;
+  text-align: left;
+}
+
+.panel-condition {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.condition-label {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  text-align: left;
+}
+.condition-desc {
+  font-size: 11px;
+  font-weight: 400;
+  color: #9CA3AF;
+}
+.cell-gauge-label .condition-desc { display: inline; }

@@ -363,3 +363,51 @@
 .mgroup-forms,
 .mgroup-member,
 .msocial-public-text { text-align: left; }
+
+/* ── 멤버 색 (달력 표시용, 그룹 안 1색 1명) ── */
+.mgroup-color-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.mgroup-color-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+}
+.mgroup-color-label {
+  margin-right: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6B7280;
+}
+.mgroup-color-chip {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 2px solid transparent;
+  background: var(--chip-color);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 50%;
+  cursor: pointer;
+  /* 글자색은 색별 ink 로 지정 */
+}
+.mgroup-color-chip.active { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--chip-color); }
+.mgroup-color-chip.taken { opacity: 0.25; cursor: not-allowed; }
+
+.mgroup-full-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: #B91C1C;
+  background: #FEE2E2;
+  padding: 2px 8px;
+  border-radius: 10px;
+}

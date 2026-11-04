@@ -2,7 +2,7 @@
 import {
   STATUS_CONFIG, isCenterSectorCell, isCenterOfSector,
   getSectorAvgProgress, getTotalProgress, isAchieved,
-  CELL_ROLE_NAMES, getCellRole, getSubGoalNo,
+  CELL_ROLE_NAMES, getCellRole, getSubGoalNo, hasText,
 } from './mandalartUtils';
 
 // shared: 그룹 활동 피드 공개 여부
@@ -95,10 +95,11 @@ export function diffCells(prev, next, targetRate, { fields = [...TEXT_FIELDS, ..
     if (has('note') && (p.note || '') !== (n.note || '')) {
       entries.push({ ...base, type: 'note', before: null, after: null }); // 메모 내용은 기록하지 않음
     }
-    if (has('status') && (p.status || '') !== (n.status || '')) {
+    // 제목 없는 칸의 컨디션·진행도는 무엇에 대한 기록인지 알 수 없으므로 남기지 않음
+    if (has('status') && hasText(n) && (p.status || '') !== (n.status || '')) {
       entries.push({ ...base, type: 'status', before: p.status || '', after: n.status || '' });
     }
-    if (has('progress') && isAction && (p.progress ?? 0) !== (n.progress ?? 0)) {
+    if (has('progress') && isAction && hasText(n) && (p.progress ?? 0) !== (n.progress ?? 0)) {
       const before = p.progress ?? 0;
       const after = n.progress ?? 0;
       entries.push({ ...base, type: 'progress', before: String(before), after: String(after) });
@@ -180,7 +181,7 @@ export function formatLog(log, names = {}) {
       detail = paren(`${label} :`, `${log.before}% -> ${log.after}%`);
       break;
     case 'status':
-      text = '상태가 수정되었습니다.';
+      text = '실천 컨디션이 수정되었습니다.';
       detail = paren(`${label} :`, statusText(log.after));
       break;
     case 'note':
