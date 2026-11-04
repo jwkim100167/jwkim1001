@@ -1,8 +1,9 @@
 import { supabase } from '../../supabaseClient';
 import { LOG_TYPES, typesOfCategory } from '../../utils/lifestyle/mandalartLog';
+import { initEmptyState } from '../../utils/lifestyle/mandalartUtils';
+import { loadMandalartSettings, saveMandalartSettings } from './mandalartService';
 
-const MERGE_WINDOW_MS = 5 * 60 * 1000;
-const GROUP_FEED_SIZE = 30;
+const GROUP_FEED_SIZE = 200; // 날짜·멤버별 건수 요약용으로 넉넉히
 
 function toRow(userId, entry) {
   return {
@@ -17,55 +18,49 @@ function toRow(userId, entry) {
   };
 }
 
-// 같은 셀·타입이 5분 내 다시 바뀌면 직전 로그의 after 만 갱신 (before 는 최초값 유지)
-async function mergeOrInsert(userId, entry) {
-  const since = new Date(Date.now() - MERGE_WINDOW_MS).toISOString();
-  const { data: recent } = await supabase
-    .from('mandalartLogTable')
-    .select('id, before')
-    .eq('user_id', userId)
-    .eq('type', entry.type)
-    .eq('cell_id', entry.cell_id)
-    .gte('updated_at', since)
-    .order('updated_at', { ascending: false })
-    .limit(1);
-
-  const last = recent?.[0];
-  if (!last) {
-    return supabase.from('mandalartLogTable').insert(toRow(userId, entry));
-  }
-  // 되돌려서 원래 값이 되면 로그 삭제 (예: 40 → 60 → 40)
-  if (entry.type !== 'note' && (last.before ?? '') === (entry.after ?? '')) {
-    return supabase.from('mandalartLogTable').delete().eq('id', last.id);
-  }
-  return supabase
-    .from('mandalartLogTable')
-    .update({ after: entry.after ?? null, label: entry.label ?? null, updated_at: new Date().toISOString() })
-    .eq('id', last.id);
-}
-
-// 로그 기록 실패는 만다라트 저장에 영향을 주지 않도록 에러만 출력
+// 로그는 합치거나 지우지 않고 계속 쌓음 (insert only)
+// 기록 실패는 만다라트 저장에 영향을 주지 않도록 에러만 출력
 export async function writeLogs(userId, entries) {
   if (!userId || !entries?.length) return;
   try {
-    const mergeable = entries.filter(e => LOG_TYPES[e.type]?.mergeable && e.cell_id);
-    const plain = entries.filter(e => !(LOG_TYPES[e.type]?.mergeable && e.cell_id));
-
-    for (const entry of mergeable) {
-      const { error } = await mergeOrInsert(userId, entry);
-      if (error) console.error('로그 기록 실패:', error);
-    }
-    if (plain.length) {
-      const { error } = await supabase.from('mandalartLogTable').insert(plain.map(e => toRow(userId, e)));
-      if (error) console.error('로그 기록 실패:', error);
-    }
+    const { error } = await supabase.from('mandalartLogTable').insert(entries.map(e => toRow(userId, e)));
+    if (error) console.error('로그 기록 실패:', error);
   } catch (e) {
     console.error('로그 기록 실패:', e);
   }
 }
 
-// 내 로그 (최신순, offset 페이지네이션)
+// 내 로그 초기화 시각 (settings.logClearedAt). 로그 행은 지우지 않으므로 그룹 로그에는 그대로 남음
+async function getLogClearedAt(userId) {
+  const settings = await loadMandalartSettings(userId);
+  return settings?.logClearedAt ?? null;
+}
+
+// 내 로그 초기화: 지금 시각을 기록 → 내 로그에서는 이후 로그만 표시
+export async function clearMyLogs(userId) {
+  const clearedAt = new Date().toISOString();
+  const settings = { ...(await loadMandalartSettings(userId) || {}), logClearedAt: clearedAt };
+
+  const { data, error } = await supabase
+    .from('mandalartTable')
+    .update({ settings })
+    .eq('user_id', userId)
+    .select('user_id');
+
+  if (error) {
+    console.error('내 로그 초기화 실패:', error);
+    return { error: '내 로그 초기화에 실패했습니다.' };
+  }
+  // 만다라트를 아직 저장한 적 없는 사용자 → 빈 만다라트와 함께 설정 행 생성
+  if (!data?.length && !(await saveMandalartSettings(userId, settings, initEmptyState()))) {
+    return { error: '내 로그 초기화에 실패했습니다.' };
+  }
+  return { clearedAt };
+}
+
+// 내 로그 (최신순, offset 페이지네이션, 초기화 이후 것만)
 export async function getMyLogs(userId, { category = 'all', offset = 0, limit = 20 } = {}) {
+  const clearedAt = await getLogClearedAt(userId);
   let query = supabase
     .from('mandalartLogTable')
     .select('*')
@@ -75,6 +70,7 @@ export async function getMyLogs(userId, { category = 'all', offset = 0, limit = 
 
   const types = typesOfCategory(category);
   if (types) query = query.in('type', types);
+  if (clearedAt) query = query.gt('updated_at', clearedAt);
 
   const { data, error } = await query;
   if (error) {

@@ -6,7 +6,7 @@ import {
   renameGroup, transferOwner,
 } from '../../../services/lifestyle/mandalartGroupService';
 import { getGroupLogs } from '../../../services/lifestyle/mandalartLogService';
-import { LogList } from './MandalartLogList';
+import { GroupLogList } from './MandalartLogList';
 import './MandalartGroups.css';
 import './MandalartSocial.css';
 
@@ -238,12 +238,7 @@ const MandalartGroups = () => {
                       <div className="mgroup-activity">
                         {!activity[g.id]
                           ? <div className="mgroup-empty small">활동 불러오는 중...</div>
-                          : <LogList
-                              logs={activity[g.id].logs}
-                              names={activity[g.id].names}
-                              showName
-                              emptyText="아직 그룹 활동이 없어요."
-                            />}
+                          : <GroupLogList logs={activity[g.id].logs} names={activity[g.id].names} />}
                       </div>
                     ) : !members[g.id] ? (
                       <div className="mgroup-empty small">멤버 불러오는 중...</div>

@@ -6,13 +6,14 @@ import {
 } from '../../../services/lifestyle/mandalartService';
 import { loadMemberMandalart } from '../../../services/lifestyle/mandalartGroupService';
 import { writeLogs } from '../../../services/lifestyle/mandalartLogService';
-import { diffCells } from '../../../utils/lifestyle/mandalartLog';
-import { MyLogPanel } from './MandalartLogList';
+import { diffCells, NUMERIC_FIELDS, TEXT_FIELDS } from '../../../utils/lifestyle/mandalartLog';
+import { LogPanel } from './MandalartLogList';
 import {
   SECTOR_COLORS, STATUS_CONFIG, CENTER_TO_SECTOR, getLinkedId, isCenterSectorCell,
   getSectorIndex, isCenterOfSector, initEmptyState, normalizeCells,
   getSectorAvgProgress, getTotalProgress,
   TARGET_OPTIONS, DEFAULT_SETTINGS, normalizeSettings, isAchieved,
+  CELL_ROLE_NAMES, getCellRole, getSubGoalNo,
 } from '../../../utils/lifestyle/mandalartUtils';
 import './Mandalart.css';
 
@@ -61,8 +62,12 @@ const Mandalart = () => {
   const saveDebounceRef = useRef(null);
   const longTapTimerRef = useRef(null);
   const isFirstLoad = useRef(true);
-  const lastSavedCellsRef = useRef(null); // 로그 비교용: 마지막으로 DB에 저장한 cells
-  const [settingsView, setSettingsView] = useState('settings'); // 'settings' | 'logs'
+  const loadedCellsRef = useRef(null); // 불러온 직후의 cells (변경 없으면 저장 생략)
+  // 로그 비교 기준 — 진행도·상태는 DB 저장 시점, 제목·목표·메모는 입력칸 blur 시점에 기록
+  const loggedNumericRef = useRef(null);
+  const loggedTextRef = useRef(null);
+  const flushTextLogRef = useRef(() => {});
+  const [logOpen, setLogOpen] = useState(false);
 
   // 마운트 시 데이터 로드
   useEffect(() => {
@@ -95,11 +100,15 @@ const Mandalart = () => {
         setSettings(normalizeSettings(dbSettings));
         // DB에 없으면 localStorage 데이터 마이그레이션 or 빈 상태
         const loaded = dbCells && Array.isArray(dbCells) ? normalizeCells(dbCells) : loadFromStorage();
-        lastSavedCellsRef.current = loaded;
+        loggedNumericRef.current = loaded;
+        loggedTextRef.current = loaded;
+        loadedCellsRef.current = loaded;
         setCells(loaded);
         setLoadingDB(false);
       } else {
-        setCells(loadFromStorage());
+        const local = loadFromStorage();
+        loadedCellsRef.current = local;
+        setCells(local);
       }
       isFirstLoad.current = false;
     };
@@ -109,15 +118,17 @@ const Mandalart = () => {
   // cells 변경 시 저장 (첫 로드 제외)
   useEffect(() => {
     if (isFirstLoad.current || readOnly) return; // 남의 만다라트는 절대 저장하지 않음
+    // 불러온 직후 그대로면 저장하지 않음 (방문만 해도 updated_at 이 바뀌던 문제)
+    if (cells === loadedCellsRef.current) return;
     if (isAuthenticated && user) {
       // DB 저장 debounce 1초
       if (saveDebounceRef.current) clearTimeout(saveDebounceRef.current);
       saveDebounceRef.current = setTimeout(async () => {
         const saved = await saveMandalartToDB(user.id, cells);
         if (!saved) return;
-        // 마지막 저장본과 비교해 바뀐 항목만 활동 로그로 기록
-        const entries = diffCells(lastSavedCellsRef.current, cells, settings.targetRate);
-        lastSavedCellsRef.current = cells;
+        // 진행도·상태 변경과 달성 이벤트를 활동 로그로 기록
+        const entries = diffCells(loggedNumericRef.current, cells, settings.targetRate, { fields: NUMERIC_FIELDS });
+        loggedNumericRef.current = cells;
         writeLogs(user.id, entries);
       }, 1000);
     } else {
@@ -131,6 +142,8 @@ const Mandalart = () => {
       if (e.key === 'Escape') {
         if (focusSector !== null) { setFocusSector(null); return; }
         setSettingsOpen(false);
+        setLogOpen(false);
+        flushTextLogRef.current();
         setPanelOpen(false);
         setContextMenu(prev => ({ ...prev, visible: false }));
       }
@@ -164,7 +177,34 @@ const Mandalart = () => {
     });
   };
 
+  // 선택된 셀의 제목·목표·메모 변경을 로그로 기록 (입력 중간값이 쌓이지 않도록 blur/닫기 시점에만)
+  const flushTextLog = () => {
+    if (readOnly || !isAuthenticated || !user || !selectedCell || !loggedTextRef.current) return;
+    const id = selectedCell.id;
+    // 메모는 500ms 디바운스로 반영되므로 입력 중인 값을 먼저 적용
+    if (noteDebounceRef.current) {
+      clearTimeout(noteDebounceRef.current);
+      noteDebounceRef.current = null;
+      updateCell(id, { note: panelNote });
+    }
+    const current = cells.map(c => (c.id === id ? { ...c, note: panelNote } : c));
+    const entries = diffCells(loggedTextRef.current, current, settings.targetRate, {
+      fields: TEXT_FIELDS, cellId: id, achievements: false,
+    });
+    if (!entries.length) return;
+    const updated = current.find(c => c.id === id);
+    loggedTextRef.current = loggedTextRef.current.map(c => (c.id === id ? updated : c));
+    writeLogs(user.id, entries);
+  };
+  flushTextLogRef.current = flushTextLog;
+
+  const closePanel = () => {
+    flushTextLog();
+    setPanelOpen(false);
+  };
+
   const openPanel = (cell) => {
+    flushTextLog();
     setSelectedCell(cell);
     setPanelTitle(cell.text);
     setPanelGoal(cell.goal ?? '');
@@ -340,10 +380,10 @@ const Mandalart = () => {
             <React.Fragment key={i}>{line}{i < arr.length - 1 && <br />}</React.Fragment>
           ))}
         </span>
-        {isMirror && <span className="mirror-indicator" title="섹터 목표와 연동됨">↗</span>}
+        {isMirror && <span className="mirror-indicator" title="세부 목표와 연동됨">↗</span>}
         {(isSubGoal || isMirror) && (
           <>
-            <span className="smg-pct">{sectorAchieved && '🎉 '}{sectorPct}%</span>
+            <span className="smg-pct" title={sectorAchieved ? '목표 달성' : undefined}>{sectorPct}%</span>
             <div className="sector-mini-gauge">
               <div className="smg-fill" style={{ width: `${sectorPct}%` }} />
               {targetRate < 100 && <div className="smg-target-tick" style={{ left: `${targetRate}%` }} />}
@@ -379,6 +419,15 @@ const Mandalart = () => {
   };
 
   const selectedCellData = selectedCell ? cells.find(c => c.id === selectedCell.id) : null;
+
+  // 패널 배지: 핵심 목표 / 세부 목표 N / 실천 과제 · 세부 목표 N
+  const roleBadge = (cell) => {
+    if (!cell) return '';
+    const role = getCellRole(cell.row, cell.col);
+    if (role === 'core') return CELL_ROLE_NAMES.core;
+    const subGoal = `${CELL_ROLE_NAMES.sub} ${getSubGoalNo(cell.sectorIndex)}`;
+    return role === 'sub' ? subGoal : `${CELL_ROLE_NAMES.action} · ${subGoal}`;
+  };
 
   // 중간목표(섹터 중앙) 또는 큰 목표(core)는 달성률 자동 계산
   const isAutoProgress = selectedCellData && isCenterOfSector(selectedCellData.row, selectedCellData.col);
@@ -424,11 +473,12 @@ const Mandalart = () => {
               <h1 className="header-title">만다라트 [멤버십]</h1>
               {isAuthenticated && (
                 <>
+                  <button className="log-btn" onClick={() => setLogOpen(true)}>📜 로그</button>
                   <Link to="/mandalart/groups" className="group-btn">👥 그룹</Link>
                   <Link to="/mandalart/social" className="group-btn">🌐 소셜</Link>
                   <button
                     className="user-badge user-badge-btn"
-                    onClick={() => { setSettingsView('settings'); setSettingsOpen(true); }}
+                    onClick={() => setSettingsOpen(true)}
                     title="내 설정"
                   >⚙️ {user?.userName || user?.loginId}</button>
                 </>
@@ -456,18 +506,17 @@ const Mandalart = () => {
 
       <div className={`detail-panel${panelOpen ? ' open' : ''}`}>
         <div className="panel-header">
-          <span className="panel-sector-badge">
-            섹터 {selectedCellData ? selectedCellData.sectorIndex + 1 : ''}
-          </span>
-          <button className="panel-close" onClick={() => setPanelOpen(false)}>✕</button>
+          <span className="panel-sector-badge">{roleBadge(selectedCellData)}</span>
+          <button className="panel-close" onClick={closePanel}>✕</button>
         </div>
 
         <div className="panel-title-wrap">
           <textarea
             className="panel-title-input"
-            placeholder="항목 제목 (최대 18자)"
+            placeholder={`${selectedCellData ? CELL_ROLE_NAMES[getCellRole(selectedCellData.row, selectedCellData.col)] : '제목'} (최대 18자)`}
             value={panelTitle}
             onChange={handlePanelTitleChange}
+            onBlur={flushTextLog}
             readOnly={readOnly}
             rows={2}
           />
@@ -477,9 +526,10 @@ const Mandalart = () => {
         <div className="panel-goal-wrap">
           <textarea
             className="panel-goal-input"
-            placeholder="목표 (가능하면 수치화, 최대 18자)"
+            placeholder="달성 기준 (가능하면 수치화, 최대 18자)"
             value={panelGoal}
             onChange={handlePanelGoalChange}
+            onBlur={flushTextLog}
             readOnly={readOnly}
             rows={2}
           />
@@ -543,6 +593,7 @@ const Mandalart = () => {
             rows={20}
             value={panelNote}
             onChange={handlePanelNoteChange}
+            onBlur={flushTextLog}
           />
         )}
 
@@ -553,7 +604,7 @@ const Mandalart = () => {
           <div className="focus-modal" onClick={e => e.stopPropagation()}>
             <div className="focus-modal-header">
               <span className="focus-modal-title">
-                섹터 {focusSector + 1}
+                {focusSector === 4 ? CELL_ROLE_NAMES.core : `${CELL_ROLE_NAMES.sub} ${getSubGoalNo(focusSector)}`}
                 {(() => {
                   const sRow = Math.floor(focusSector / 3) * 3 + 1;
                   const sCol = (focusSector % 3) * 3 + 1;
@@ -572,24 +623,13 @@ const Mandalart = () => {
         <div className="focus-overlay" onClick={() => setSettingsOpen(false)}>
           <div className="focus-modal settings-modal" onClick={e => e.stopPropagation()}>
             <div className="focus-modal-header">
-              {settingsView === 'logs' ? (
-                <span className="focus-modal-title">
-                  <button className="back-btn back-btn-plain settings-back" onClick={() => setSettingsView('settings')}>←</button>
-                  📜 내 활동 로그
-                </span>
-              ) : (
-                <span className="focus-modal-title">⚙️ 내 설정</span>
-              )}
+              <span className="focus-modal-title">⚙️ 내 설정</span>
               <button className="focus-modal-close" onClick={() => setSettingsOpen(false)}>✕</button>
             </div>
 
-            {settingsView === 'logs' ? (
-              <MyLogPanel userId={user.id} />
-            ) : (
-            <>
             <div className="settings-section">
               <div className="settings-label">🎯 목표 달성률</div>
-              <div className="settings-desc">이 % 이상이면 셀·섹터·전체에 '달성'으로 표시돼요.</div>
+              <div className="settings-desc">이 % 이상이면 실천 과제·세부 목표·핵심 목표에 '달성'으로 표시돼요.</div>
               <div className="target-chips">
                 {TARGET_OPTIONS.map(rate => (
                   <button
@@ -600,14 +640,21 @@ const Mandalart = () => {
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      )}
 
-            <div className="settings-section settings-divider">
-              <div className="settings-label">📜 활동 로그</div>
-              <div className="settings-desc">진행도 조정, 항목 수정, 목표 달성 기록을 볼 수 있어요.</div>
-              <button className="settings-log-btn" onClick={() => setSettingsView('logs')}>로그 보기 →</button>
+      {logOpen && (
+        <div className="focus-overlay" onClick={() => setLogOpen(false)}>
+          <div className="focus-modal settings-modal" onClick={e => e.stopPropagation()}>
+            <div className="focus-modal-header">
+              <span className="focus-modal-title">📜 활동 로그</span>
+              <button className="focus-modal-close" onClick={() => setLogOpen(false)}>✕</button>
             </div>
-            </>
-            )}
+            <LogPanel
+              userId={user.id}
+              onCleared={(clearedAt) => setSettings(prev => ({ ...prev, logClearedAt: clearedAt }))}
+            />
           </div>
         </div>
       )}

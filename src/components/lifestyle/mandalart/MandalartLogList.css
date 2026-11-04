@@ -35,14 +35,25 @@
 .mlog-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 18px;
 }
 
+/* 날짜 제목 + 오른쪽으로 이어지는 구분선 */
 .mlog-day-label {
-  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
   font-weight: 700;
-  color: #9CA3AF;
-  margin-bottom: 4px;
+  color: #374151;
+  margin-bottom: 6px;
+  white-space: nowrap;
+}
+.mlog-day-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #D1D5DB;
 }
 
 .mlog-item {
@@ -74,6 +85,16 @@
   margin-right: 4px;
 }
 
+.mlog-main {
+  font-weight: 600;
+  color: #111827;
+  margin-right: 4px;
+}
+
+.mlog-detail {
+  color: #6B7280;
+}
+
 .mlog-time {
   flex-shrink: 0;
   font-size: 11px;
@@ -100,3 +121,165 @@
   border-radius: 8px;
   cursor: pointer;
 }
+
+/* ── 내 로그 / 그룹 로그 토글 ── */
+.mlog-scope {
+  display: flex;
+  padding: 4px;
+  background: #F3F4F6;
+  border-radius: 10px;
+}
+
+.mlog-scope-btn {
+  flex: 1;
+  padding: 9px;
+  border: none;
+  background: none;
+  color: #6B7280;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.mlog-scope-btn.active {
+  background: #fff;
+  color: #4A6FDC;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.mlog-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.mlog-group {
+  padding: 4px 12px;
+  border: 1px solid #E5E7EB;
+  background: #fff;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 14px;
+  cursor: pointer;
+}
+.mlog-group.active {
+  border-color: #3DB88A;
+  background: #ECFDF5;
+  color: #047857;
+}
+
+/* ── 그룹 로그: 멤버별 건수 요약 ── */
+.mlog-member {
+  border: 1px solid #F3F4F6;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+.mlog-member.open { border-color: #C7D2FE; }
+
+.mlog-member-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: #F9FAFB;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+}
+.mlog-member-row:hover { background: #F3F4F6; }
+.mlog-member.open .mlog-member-row { background: #EEF2FF; }
+
+.mlog-member-name {
+  flex: 1;
+  font-weight: 700;
+  color: #111827;
+}
+
+.mlog-member-count {
+  font-weight: 700;
+  color: #4A6FDC;
+}
+
+.mlog-member-arrow {
+  font-size: 10px;
+  color: #9CA3AF;
+}
+
+.mlog-member-logs {
+  padding: 4px 10px 6px;
+}
+
+/* #root 의 text-align: center 상속 방지 (빈 목록 안내만 가운데) */
+.mlog-panel,
+.mlog-list { text-align: left; }
+
+/* ── 내 로그 초기화 ── */
+.mlog-filters { align-items: center; }
+
+.mlog-clear-btn {
+  margin-left: auto; /* 필터 줄 오른쪽 끝 */
+  padding: 5px 12px;
+  border: 1px solid #FCA5A5;
+  background: #fff;
+  color: #DC2626;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.mlog-clear-btn:hover { background: #FEF2F2; }
+
+.mlog-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid #FECACA;
+  background: #FEF2F2;
+  border-radius: 10px;
+}
+
+.mlog-confirm-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  color: #374151;
+}
+.mlog-confirm-text b { color: #991B1B; font-size: 14px; }
+.mlog-confirm-error { color: #DC2626; font-weight: 600; }
+
+.mlog-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.mlog-confirm-cancel,
+.mlog-confirm-ok {
+  padding: 7px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.mlog-confirm-cancel {
+  border: 1px solid #D1D5DB;
+  background: #fff;
+  color: #374151;
+}
+.mlog-confirm-ok {
+  border: 1px solid #DC2626;
+  background: #DC2626;
+  color: #fff;
+}
+.mlog-confirm-ok:hover:not(:disabled) { background: #B91C1C; }
+.mlog-confirm-cancel:disabled,
+.mlog-confirm-ok:disabled { opacity: 0.6; cursor: default; }

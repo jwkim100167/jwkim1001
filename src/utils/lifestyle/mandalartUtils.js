@@ -135,3 +135,22 @@ export function normalizeSettings(raw) {
 export function isAchieved(pct, targetRate) {
   return pct >= targetRate;
 }
+
+// ── 칸 종류 (용어) ──
+// 가운데 1칸: 핵심 목표 / 둘레 8칸(+각 영역 중앙): 세부 목표 / 나머지 64칸: 실천 과제
+export const CELL_ROLE_NAMES = {
+  core: '핵심 목표',
+  sub: '세부 목표',
+  action: '실천 과제',
+};
+
+export function getCellRole(row, col) {
+  if (row === 4 && col === 4) return 'core';
+  if (isCenterOfSector(row, col) || isCenterSectorCell(row, col)) return 'sub';
+  return 'action';
+}
+
+// 세부 목표 번호 1~8 (중앙 영역은 0)
+export function getSubGoalNo(sectorIndex) {
+  return [0, 1, 2, 3, 5, 6, 7, 8].indexOf(sectorIndex) + 1;
+}
