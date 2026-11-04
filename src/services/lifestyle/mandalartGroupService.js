@@ -1,6 +1,7 @@
 import { supabase } from '../../supabaseClient';
 import { loadMandalartFromDB, loadMandalartSettings } from './mandalartService';
 import { isMandalartPublic } from './mandalartSocialService';
+import { writeLogs } from './mandalartLogService';
 import { normalizeCells, getTotalProgress, normalizeSettings, isAchieved } from '../../utils/lifestyle/mandalartUtils';
 
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 헷갈리는 0/O, 1/I 제외
@@ -38,6 +39,7 @@ export async function createGroup(userId, name) {
       console.error('그룹 멤버 등록 실패:', memberError);
       return { error: '그룹 멤버 등록에 실패했습니다.' };
     }
+    writeLogs(userId, [{ type: 'group_join', group_id: data.id, label: data.name }]);
     return { group: data };
   }
   return { error: '초대코드 생성에 실패했습니다. 다시 시도해주세요.' };
@@ -59,12 +61,17 @@ export async function joinGroupByCode(userId, code) {
   }
   if (!group) return { error: '존재하지 않는 초대코드입니다.' };
 
-  const { error: memberError } = await supabase
+  const { data: inserted, error: memberError } = await supabase
     .from('mandalartGroupMemberTable')
-    .upsert({ group_id: group.id, user_id: userId }, { onConflict: 'group_id,user_id', ignoreDuplicates: true });
+    .upsert({ group_id: group.id, user_id: userId }, { onConflict: 'group_id,user_id', ignoreDuplicates: true })
+    .select();
   if (memberError) {
     console.error('그룹 가입 실패:', memberError);
     return { error: '그룹 가입에 실패했습니다.' };
+  }
+  // 이미 멤버였으면 inserted 가 비어 있음 → 로그 생략
+  if (inserted?.length) {
+    writeLogs(userId, [{ type: 'group_join', group_id: group.id, label: group.name }]);
   }
   return { group };
 }
@@ -97,6 +104,7 @@ export async function leaveGroup(userId, group) {
     console.error('그룹 나가기 실패:', error);
     return { error: '그룹 나가기에 실패했습니다.' };
   }
+  writeLogs(userId, [{ type: 'group_leave', group_id: group.id, label: group.name }]);
   return {};
 }
 
@@ -104,6 +112,12 @@ export async function leaveGroup(userId, group) {
 export async function renameGroup(userId, groupId, name) {
   const trimmed = name.trim();
   if (!trimmed) return { error: '그룹 이름을 입력해주세요.' };
+
+  const { data: before } = await supabase
+    .from('mandalartGroupTable')
+    .select('name')
+    .eq('id', groupId)
+    .maybeSingle();
 
   const { data, error } = await supabase
     .from('mandalartGroupTable')
@@ -115,6 +129,9 @@ export async function renameGroup(userId, groupId, name) {
   if (error || !data?.length) {
     console.error('그룹 이름 변경 실패:', error);
     return { error: '방장만 그룹 이름을 바꿀 수 있어요.' };
+  }
+  if (before?.name !== trimmed) {
+    writeLogs(userId, [{ type: 'group_rename', group_id: groupId, label: trimmed, before: before?.name ?? '', after: trimmed }]);
   }
   return { group: data[0] };
 }
@@ -132,6 +149,7 @@ export async function transferOwner(userId, groupId, newOwnerId) {
     console.error('방장 위임 실패:', error);
     return { error: '방장만 위임할 수 있어요.' };
   }
+  writeLogs(userId, [{ type: 'group_owner', group_id: groupId, label: data[0].name, before: String(userId), after: String(newOwnerId) }]);
   return { group: data[0] };
 }
 

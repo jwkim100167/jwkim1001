@@ -859,3 +859,29 @@
   background: #4A6FDC;
   color: #fff;
 }
+
+/* ── 설정 > 활동 로그 ── */
+.settings-divider {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #F3F4F6;
+}
+
+.settings-log-btn {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 8px 14px;
+  border: 1px solid #4A6FDC;
+  background: #fff;
+  color: #4A6FDC;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.settings-log-btn:hover { background: #EEF2FF; }
+
+.settings-back {
+  font-size: 17px;
+  margin-right: 6px;
+}

@@ -320,3 +320,29 @@
   border-radius: 10px;
   white-space: nowrap;
 }
+
+/* ── 멤버 / 활동 탭 ── */
+.mgroup-tabs {
+  display: flex;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.mgroup-tab {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: #6B7280;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.mgroup-tab.active {
+  color: #4A6FDC;
+  border-bottom-color: #4A6FDC;
+}
+
+.mgroup-activity {
+  padding: 12px 14px;
+}

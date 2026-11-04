@@ -1,4 +1,5 @@
 import { supabase } from '../../supabaseClient';
+import { writeLogs } from './mandalartLogService';
 import { normalizeCells, getTotalProgress, normalizeSettings, isAchieved } from '../../utils/lifestyle/mandalartUtils';
 
 const FEED_SIZE = 10;
@@ -30,6 +31,7 @@ export async function setMyPublic(userId, isPublic) {
     return { error: '공개 설정 변경에 실패했습니다.' };
   }
   if (!data?.length) return { error: '만다라트를 먼저 작성한 후 공개할 수 있어요.' };
+  writeLogs(userId, [{ type: 'visibility', after: String(!!data[0].is_public) }]);
   return { isPublic: !!data[0].is_public };
 }
 

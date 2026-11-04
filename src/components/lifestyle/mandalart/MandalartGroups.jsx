@@ -5,6 +5,8 @@ import {
   createGroup, joinGroupByCode, leaveGroup, getMyGroups, getGroupMembers,
   renameGroup, transferOwner,
 } from '../../../services/lifestyle/mandalartGroupService';
+import { getGroupLogs } from '../../../services/lifestyle/mandalartLogService';
+import { LogList } from './MandalartLogList';
 import './MandalartGroups.css';
 import './MandalartSocial.css';
 
@@ -26,6 +28,8 @@ const MandalartGroups = () => {
   const [busy, setBusy] = useState(false);
   const [editingGroupId, setEditingGroupId] = useState(null);
   const [editName, setEditName] = useState('');
+  const [groupTab, setGroupTab] = useState('members'); // 'members' | 'activity'
+  const [activity, setActivity] = useState({}); // groupId → { logs, names }
 
   const loadGroups = async () => {
     if (!user) return;
@@ -41,8 +45,18 @@ const MandalartGroups = () => {
   const toggleGroup = async (groupId) => {
     if (openGroupId === groupId) { setOpenGroupId(null); return; }
     setOpenGroupId(groupId);
+    setGroupTab('members');
     const list = await getGroupMembers(groupId);
     setMembers(prev => ({ ...prev, [groupId]: list }));
+  };
+
+  // 그룹 활동 탭: 멤버 목록 기준으로 활동 로그 조회 (열 때마다 새로고침)
+  const openActivity = async (groupId) => {
+    setGroupTab('activity');
+    setActivity(prev => ({ ...prev, [groupId]: null }));
+    const list = members[groupId] ?? await getGroupMembers(groupId);
+    const result = await getGroupLogs(groupId, list.map(m => m.userId));
+    setActivity(prev => ({ ...prev, [groupId]: result }));
   };
 
   const handleCreate = async () => {
@@ -210,7 +224,28 @@ const MandalartGroups = () => {
 
                 {openGroupId === g.id && (
                   <div className="mgroup-members">
-                    {!members[g.id] ? (
+                    <div className="mgroup-tabs">
+                      <button
+                        className={`mgroup-tab${groupTab === 'members' ? ' active' : ''}`}
+                        onClick={() => setGroupTab('members')}
+                      >👥 멤버</button>
+                      <button
+                        className={`mgroup-tab${groupTab === 'activity' ? ' active' : ''}`}
+                        onClick={() => openActivity(g.id)}
+                      >📜 활동</button>
+                    </div>
+                    {groupTab === 'activity' ? (
+                      <div className="mgroup-activity">
+                        {!activity[g.id]
+                          ? <div className="mgroup-empty small">활동 불러오는 중...</div>
+                          : <LogList
+                              logs={activity[g.id].logs}
+                              names={activity[g.id].names}
+                              showName
+                              emptyText="아직 그룹 활동이 없어요."
+                            />}
+                      </div>
+                    ) : !members[g.id] ? (
                       <div className="mgroup-empty small">멤버 불러오는 중...</div>
                     ) : members[g.id].map(m => (
                       <div key={m.userId} className="mgroup-member">

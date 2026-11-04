@@ -5,6 +5,9 @@ import {
   loadMandalartFromDB, saveMandalartToDB, loadMandalartSettings, saveMandalartSettings,
 } from '../../../services/lifestyle/mandalartService';
 import { loadMemberMandalart } from '../../../services/lifestyle/mandalartGroupService';
+import { writeLogs } from '../../../services/lifestyle/mandalartLogService';
+import { diffCells } from '../../../utils/lifestyle/mandalartLog';
+import { MyLogPanel } from './MandalartLogList';
 import {
   SECTOR_COLORS, STATUS_CONFIG, CENTER_TO_SECTOR, getLinkedId, isCenterSectorCell,
   getSectorIndex, isCenterOfSector, initEmptyState, normalizeCells,
@@ -58,6 +61,8 @@ const Mandalart = () => {
   const saveDebounceRef = useRef(null);
   const longTapTimerRef = useRef(null);
   const isFirstLoad = useRef(true);
+  const lastSavedCellsRef = useRef(null); // 로그 비교용: 마지막으로 DB에 저장한 cells
+  const [settingsView, setSettingsView] = useState('settings'); // 'settings' | 'logs'
 
   // 마운트 시 데이터 로드
   useEffect(() => {
@@ -88,13 +93,10 @@ const Mandalart = () => {
           loadMandalartSettings(user.id),
         ]);
         setSettings(normalizeSettings(dbSettings));
-        if (dbCells && Array.isArray(dbCells)) {
-          setCells(normalizeCells(dbCells));
-        } else {
-          // DB에 없으면 localStorage 데이터 마이그레이션 or 빈 상태
-          const local = loadFromStorage();
-          setCells(local);
-        }
+        // DB에 없으면 localStorage 데이터 마이그레이션 or 빈 상태
+        const loaded = dbCells && Array.isArray(dbCells) ? normalizeCells(dbCells) : loadFromStorage();
+        lastSavedCellsRef.current = loaded;
+        setCells(loaded);
         setLoadingDB(false);
       } else {
         setCells(loadFromStorage());
@@ -110,8 +112,13 @@ const Mandalart = () => {
     if (isAuthenticated && user) {
       // DB 저장 debounce 1초
       if (saveDebounceRef.current) clearTimeout(saveDebounceRef.current);
-      saveDebounceRef.current = setTimeout(() => {
-        saveMandalartToDB(user.id, cells);
+      saveDebounceRef.current = setTimeout(async () => {
+        const saved = await saveMandalartToDB(user.id, cells);
+        if (!saved) return;
+        // 마지막 저장본과 비교해 바뀐 항목만 활동 로그로 기록
+        const entries = diffCells(lastSavedCellsRef.current, cells, settings.targetRate);
+        lastSavedCellsRef.current = cells;
+        writeLogs(user.id, entries);
       }, 1000);
     } else {
       saveToStorage(cells);
@@ -209,9 +216,13 @@ const Mandalart = () => {
   const targetRate = settings.targetRate;
 
   const handleTargetChange = async (rate) => {
+    if (rate === settings.targetRate) return;
     const next = { ...settings, targetRate: rate };
+    const prevRate = settings.targetRate;
     setSettings(next);
-    if (isAuthenticated && user) await saveMandalartSettings(user.id, next, cells);
+    if (isAuthenticated && user && await saveMandalartSettings(user.id, next, cells)) {
+      writeLogs(user.id, [{ type: 'target_rate', before: String(prevRate), after: String(rate) }]);
+    }
   };
 
   const handleCellProgressChange = (e) => {
@@ -417,7 +428,7 @@ const Mandalart = () => {
                   <Link to="/mandalart/social" className="group-btn">🌐 소셜</Link>
                   <button
                     className="user-badge user-badge-btn"
-                    onClick={() => setSettingsOpen(true)}
+                    onClick={() => { setSettingsView('settings'); setSettingsOpen(true); }}
                     title="내 설정"
                   >⚙️ {user?.userName || user?.loginId}</button>
                 </>
@@ -561,10 +572,21 @@ const Mandalart = () => {
         <div className="focus-overlay" onClick={() => setSettingsOpen(false)}>
           <div className="focus-modal settings-modal" onClick={e => e.stopPropagation()}>
             <div className="focus-modal-header">
-              <span className="focus-modal-title">⚙️ 내 설정</span>
+              {settingsView === 'logs' ? (
+                <span className="focus-modal-title">
+                  <button className="back-btn back-btn-plain settings-back" onClick={() => setSettingsView('settings')}>←</button>
+                  📜 내 활동 로그
+                </span>
+              ) : (
+                <span className="focus-modal-title">⚙️ 내 설정</span>
+              )}
               <button className="focus-modal-close" onClick={() => setSettingsOpen(false)}>✕</button>
             </div>
 
+            {settingsView === 'logs' ? (
+              <MyLogPanel userId={user.id} />
+            ) : (
+            <>
             <div className="settings-section">
               <div className="settings-label">🎯 목표 달성률</div>
               <div className="settings-desc">이 % 이상이면 셀·섹터·전체에 '달성'으로 표시돼요.</div>
@@ -578,6 +600,14 @@ const Mandalart = () => {
                 ))}
               </div>
             </div>
+
+            <div className="settings-section settings-divider">
+              <div className="settings-label">📜 활동 로그</div>
+              <div className="settings-desc">진행도 조정, 항목 수정, 목표 달성 기록을 볼 수 있어요.</div>
+              <button className="settings-log-btn" onClick={() => setSettingsView('logs')}>로그 보기 →</button>
+            </div>
+            </>
+            )}
           </div>
         </div>
       )}
