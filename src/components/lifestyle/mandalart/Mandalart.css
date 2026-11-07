@@ -1062,3 +1062,12 @@
   color: #9CA3AF;
 }
 .cell-gauge-label .condition-desc { display: inline; }
+
+/* 핵심 목표: 순서와 무관한 선택 단계 (나중에 적어도 됨) */
+.step.step-optional {
+  margin-left: 6px;
+  background: transparent;
+  border: 1px dashed #D1D5DB;
+  font-weight: 500;
+}
+.step.step-optional.done { border-style: solid; border-color: #A7F3D0; background: #ECFDF5; }

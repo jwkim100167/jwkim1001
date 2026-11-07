@@ -170,14 +170,11 @@ export function getSubGoalCell(cells, sectorIndex) {
   return cells.find(c => c.row === row && c.col === col);
 }
 
-// 입력 순서 잠금: 핵심 목표 → 세부 목표 → 실천 과제
-// 반환값 null(열림) | 'core'(핵심 목표 먼저) | 'sub'(세부 목표 먼저)
+// 입력 순서 잠금: 실천 과제는 그 영역의 세부 목표가 있어야 입력 가능
+// (핵심 목표·세부 목표는 언제든 입력 가능 — 핵심 목표는 나중에 적어도 됨)
+// 반환값 null(열림) | 'sub'(세부 목표 먼저)
 export function getLockReason(cells, row, col) {
-  const role = getCellRole(row, col);
-  if (role === 'core') return null;
-  const core = cells.find(c => c.row === 4 && c.col === 4);
-  if (!hasText(core)) return 'core';
-  if (role === 'sub') return null;
+  if (getCellRole(row, col) !== 'action') return null;
   return hasText(getSubGoalCell(cells, getSectorIndex(row, col))) ? null : 'sub';
 }
 

@@ -69,7 +69,7 @@ const Mandalart = () => {
   const loggedTextRef = useRef(null);
   const flushTextLogRef = useRef(() => {});
   const [logOpen, setLogOpen] = useState(false);
-  const [lockNotice, setLockNotice] = useState(null); // { reason: 'core' | 'sub', sectorIndex }
+  const [lockNotice, setLockNotice] = useState(null); // { reason: 'sub', sectorIndex } — 세부 목표 없는 영역의 실천 과제 클릭
 
   // 마운트 시 데이터 로드
   useEffect(() => {
@@ -238,12 +238,10 @@ const Mandalart = () => {
     openPanel(target);
   };
 
-  // 잠금 안내의 [○○ 정하기] → 막고 있는 상위 목표 칸의 패널 열기
+  // 잠금 안내의 [세부 목표 정하기] → 그 영역 가운데(세부 목표) 칸의 패널 열기
   const openBlockingGoal = () => {
     if (!lockNotice) return;
-    const goalCell = lockNotice.reason === 'core'
-      ? getCellByRowCol(4, 4)
-      : getSubGoalCell(cells, lockNotice.sectorIndex);
+    const goalCell = getSubGoalCell(cells, lockNotice.sectorIndex);
     setLockNotice(null);
     if (goalCell) openPanel(goalCell);
   };
@@ -474,7 +472,8 @@ const Mandalart = () => {
   const actionDoneCount = cells.filter(c =>
     getCellRole(c.row, c.col) === 'action' && hasText(c) && !getLockReason(cells, c.row, c.col)
   ).length;
-  const currentStep = !coreDone ? 1 : subDoneCount === 0 ? 2 : actionDoneCount === 0 ? 3 : 4;
+  // 핵심 목표는 순서와 무관(나중에 적어도 됨) → 세부 목표 → 실천 과제 → 진행도 체크
+  const currentStep = subDoneCount === 0 ? 1 : actionDoneCount === 0 ? 2 : 3;
 
   if (loadingDB) {
     return (
@@ -536,34 +535,33 @@ const Mandalart = () => {
         </div>
         {!readOnly && (
           <div className="step-bar">
-            <span className={`step${coreDone ? ' done' : ''}${currentStep === 1 ? ' current' : ''}`}>
-              ① {CELL_ROLE_NAMES.core} {coreDone ? '✔' : ''}
+            <span className={`step${subDoneCount > 0 ? ' done' : ''}${currentStep === 1 ? ' current' : ''}`}>
+              ① {CELL_ROLE_NAMES.sub} {subDoneCount}/8
             </span>
             <span className="step-arrow">→</span>
-            <span className={`step${subDoneCount > 0 ? ' done' : ''}${currentStep === 2 ? ' current' : ''}`}>
-              ② {CELL_ROLE_NAMES.sub} {subDoneCount}/8
+            <span className={`step${actionDoneCount > 0 ? ' done' : ''}${currentStep === 2 ? ' current' : ''}`}>
+              ② {CELL_ROLE_NAMES.action} {actionDoneCount}/64
             </span>
             <span className="step-arrow">→</span>
-            <span className={`step${actionDoneCount > 0 ? ' done' : ''}${currentStep === 3 ? ' current' : ''}`}>
-              ③ {CELL_ROLE_NAMES.action} {actionDoneCount}/64
+            <span className={`step${currentStep === 3 ? ' current' : ''}`}>③ 진행도 체크</span>
+            <span className={`step step-optional${coreDone ? ' done' : ''}`}>
+              {CELL_ROLE_NAMES.core} {coreDone ? '✔' : '· 나중에 정해도 돼요'}
             </span>
-            <span className="step-arrow">→</span>
-            <span className={`step${currentStep === 4 ? ' current' : ''}`}>④ 진행도 체크</span>
           </div>
         )}
       </div>
 
-      {!readOnly && isAuthenticated && !coreDone && (
+      {!readOnly && isAuthenticated && subDoneCount === 0 && (
         <div className="start-banner">
           <div className="start-banner-text">
-            <b>가운데 칸에 {CELL_ROLE_NAMES.core}부터 정해 보세요.</b>
+            <b>{CELL_ROLE_NAMES.sub}부터 정해 보세요.</b>
             <span>
-              {CELL_ROLE_NAMES.core} → 둘레 8칸에 {CELL_ROLE_NAMES.sub} → 바깥 칸에 {CELL_ROLE_NAMES.action} 순서로 채우고,
-              {' '}{CELL_ROLE_NAMES.action}의 진행도를 체크하면 돼요.
+              각 영역 가운데 칸에 {CELL_ROLE_NAMES.sub}를 정하면 그 둘레에 {CELL_ROLE_NAMES.action}를 채울 수 있고,
+              {' '}{CELL_ROLE_NAMES.action}의 진행도를 체크하면 돼요. 가운데 {CELL_ROLE_NAMES.core}는 나중에 적어도 돼요.
             </span>
           </div>
-          <button className="start-banner-btn" onClick={() => openPanel(getCellByRowCol(4, 4))}>
-            {CELL_ROLE_NAMES.core} 정하기
+          <button className="start-banner-btn" onClick={() => openPanel(getSubGoalCell(cells, 0))}>
+            {CELL_ROLE_NAMES.sub} 정하기
           </button>
         </div>
       )}
@@ -690,11 +688,11 @@ const Mandalart = () => {
       {lockNotice && (
         <div className="lock-toast" role="status">
           <span className="lock-toast-text">
-            🔒 먼저 {lockNotice.reason === 'core' ? CELL_ROLE_NAMES.core : CELL_ROLE_NAMES.sub}를 정해 주세요.
+            🔒 먼저 이 영역의 {CELL_ROLE_NAMES.sub}를 정해 주세요.
           </span>
           {!readOnly && (
             <button className="lock-toast-btn" onClick={openBlockingGoal}>
-              {lockNotice.reason === 'core' ? CELL_ROLE_NAMES.core : CELL_ROLE_NAMES.sub} 정하기
+              {CELL_ROLE_NAMES.sub} 정하기
             </button>
           )}
           <button className="lock-toast-close" onClick={() => setLockNotice(null)} aria-label="닫기">✕</button>
