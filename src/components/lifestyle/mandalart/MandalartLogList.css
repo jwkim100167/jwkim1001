@@ -1,0 +1,408 @@
+/* ── 활동 로그 ── */
+.mlog-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mlog-filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.mlog-filter {
+  padding: 5px 12px;
+  border: 1px solid #E5E7EB;
+  background: #fff;
+  color: #6B7280;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 14px;
+  cursor: pointer;
+}
+.mlog-filter.active {
+  border-color: #4A6FDC;
+  background: #4A6FDC;
+  color: #fff;
+}
+
+.mlog-scroll {
+  max-height: 55vh;
+  overflow-y: auto;
+}
+
+.mlog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* 날짜 제목 + 오른쪽으로 이어지는 구분선 */
+.mlog-day-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 6px;
+  white-space: nowrap;
+}
+.mlog-day-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #D1D5DB;
+}
+
+.mlog-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 7px 4px;
+  border-bottom: 1px solid #F3F4F6;
+  font-size: 13px;
+}
+.mlog-item:last-child { border-bottom: none; }
+.mlog-item.achieve { background: #FFFBEB; border-radius: 6px; }
+
+.mlog-icon {
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+
+.mlog-text {
+  flex: 1;
+  min-width: 0;
+  color: #374151;
+  word-break: break-all;
+}
+
+.mlog-name {
+  color: #111827;
+  margin-right: 4px;
+}
+
+.mlog-main {
+  font-weight: 600;
+  color: #111827;
+  margin-right: 4px;
+}
+
+.mlog-detail {
+  color: #6B7280;
+}
+
+.mlog-time {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: #9CA3AF;
+  white-space: nowrap;
+}
+
+.mlog-empty {
+  padding: 24px 8px;
+  text-align: center;
+  font-size: 13px;
+  color: #9CA3AF;
+}
+
+.mlog-more {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  border: 1px solid #E5E7EB;
+  background: #fff;
+  color: #4A6FDC;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ── 내 로그 / 그룹 로그 토글 ── */
+.mlog-scope {
+  display: flex;
+  padding: 4px;
+  background: #F3F4F6;
+  border-radius: 10px;
+}
+
+.mlog-scope-btn {
+  flex: 1;
+  padding: 9px;
+  border: none;
+  background: none;
+  color: #6B7280;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.mlog-scope-btn.active {
+  background: #fff;
+  color: #4A6FDC;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.mlog-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.mlog-group {
+  padding: 4px 12px;
+  border: 1px solid #E5E7EB;
+  background: #fff;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 14px;
+  cursor: pointer;
+}
+.mlog-group.active {
+  border-color: #3DB88A;
+  background: #ECFDF5;
+  color: #047857;
+}
+
+/* ── 그룹 로그: 멤버별 건수 요약 ── */
+.mlog-member {
+  border: 1px solid #F3F4F6;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+.mlog-member.open { border-color: #C7D2FE; }
+
+.mlog-member-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: #F9FAFB;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+}
+.mlog-member-row:hover { background: #F3F4F6; }
+.mlog-member.open .mlog-member-row { background: #EEF2FF; }
+
+.mlog-member-name {
+  flex: 1;
+  font-weight: 700;
+  color: #111827;
+}
+
+.mlog-member-count {
+  font-weight: 700;
+  color: #4A6FDC;
+}
+
+.mlog-member-arrow {
+  font-size: 10px;
+  color: #9CA3AF;
+}
+
+.mlog-member-logs {
+  padding: 4px 10px 6px;
+}
+
+/* #root 의 text-align: center 상속 방지 (빈 목록 안내만 가운데) */
+.mlog-panel,
+.mlog-list { text-align: left; }
+
+/* ── 내 로그 초기화 ── */
+.mlog-filters { align-items: center; }
+
+.mlog-clear-btn {
+  margin-left: auto; /* 필터 줄 오른쪽 끝 */
+  padding: 5px 12px;
+  border: 1px solid #FCA5A5;
+  background: #fff;
+  color: #DC2626;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.mlog-clear-btn:hover { background: #FEF2F2; }
+
+.mlog-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid #FECACA;
+  background: #FEF2F2;
+  border-radius: 10px;
+}
+
+.mlog-confirm-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  color: #374151;
+}
+.mlog-confirm-text b { color: #991B1B; font-size: 14px; }
+.mlog-confirm-error { color: #DC2626; font-weight: 600; }
+
+.mlog-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.mlog-confirm-cancel,
+.mlog-confirm-ok {
+  padding: 7px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.mlog-confirm-cancel {
+  border: 1px solid #D1D5DB;
+  background: #fff;
+  color: #374151;
+}
+.mlog-confirm-ok {
+  border: 1px solid #DC2626;
+  background: #DC2626;
+  color: #fff;
+}
+.mlog-confirm-ok:hover:not(:disabled) { background: #B91C1C; }
+.mlog-confirm-cancel:disabled,
+.mlog-confirm-ok:disabled { opacity: 0.6; cursor: default; }
+
+/* ── 그룹 로그: 목록/달력 토글 ── */
+.mlog-view-toggle {
+  margin-left: auto; /* 내 로그 초기화와 같은 자리 (필터 줄 오른쪽 끝) */
+  padding: 5px 12px;
+  border: 1px solid #A5B4FC;
+  background: #fff;
+  color: #4338CA;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.mlog-view-toggle:hover { background: #EEF2FF; }
+
+/* ── 그룹 로그 달력 ── */
+.mlog-cal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mlog-cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.mlog-cal-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  min-width: 110px;
+  text-align: center;
+}
+.mlog-cal-nav {
+  width: 30px;
+  height: 30px;
+  padding: 0; /* index.css 전역 button padding 제거 → 정원 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #E5E7EB;
+  background: #fff;
+  color: #374151;
+  font-size: 18px;
+  line-height: 1;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.mlog-cal-nav:hover { background: #F3F4F6; }
+
+.mlog-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.mlog-cal-week {
+  padding: 2px 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6B7280;
+  text-align: center;
+}
+.mlog-cal-week.sun { color: #EF4444; }
+.mlog-cal-week.sat { color: #3B82F6; }
+
+.mlog-cal-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 0 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.mlog-cal-day:hover { background: #F9FAFB; }
+.mlog-cal-day.selected { border-color: #4A6FDC; background: #EEF2FF; }
+
+.mlog-cal-num {
+  font-size: 11px;
+  color: #6B7280;
+  line-height: 1;
+}
+.mlog-cal-day.today .mlog-cal-num { color: #4A6FDC; font-weight: 800; }
+
+/* 활동한 멤버 색으로 n등분된 원 (없으면 흰 원) */
+.mlog-cal-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid #E5E7EB;
+  box-sizing: border-box;
+}
+.mlog-cal-day.today .mlog-cal-dot { box-shadow: 0 0 0 2px #fff, 0 0 0 3px #4A6FDC; }
+
+.mlog-cal-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 12px;
+  font-size: 12px;
+  color: #374151;
+}
+.mlog-cal-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.mlog-cal-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.mlog-cal-detail {
+  padding-top: 8px;
+  border-top: 1px solid #F3F4F6;
+}

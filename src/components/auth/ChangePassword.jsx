@@ -14,7 +14,7 @@ export default function ChangePassword() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { userId, loginId, userName, createdAt, status } = location.state || {};
+  const { userId, loginId, userName, createdAt, status, keepLogin } = location.state || {};
 
   useEffect(() => {
     if (!userId || !loginId) {
@@ -47,11 +47,11 @@ export default function ChangePassword() {
 
     // 비밀번호 변경 성공 → status에 따라 분기
     if (status === 'ONLINE') {
-      const user = await finishLogin(userId, loginId, createdAt, userName);
+      const user = await finishLogin(userId, loginId, createdAt, userName, keepLogin);
       loginDirect(user);
       navigate('/');
     } else {
-      navigate('/verify', { state: { userId, loginId, userName, createdAt } });
+      navigate('/verify', { state: { userId, loginId, userName, createdAt, keepLogin } });
     }
   };
 

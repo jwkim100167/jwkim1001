@@ -6,6 +6,7 @@ import './Login.css';
 export default function Login() {
   const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
+  const [keepLogin, setKeepLogin] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -18,7 +19,7 @@ export default function Login() {
     setError('');
     setLoading(true);
 
-    const result = await login(loginId, password);
+    const result = await login(loginId, password, keepLogin);
 
     if (result.success) {
       const next = new URLSearchParams(location.search).get('next');
@@ -31,6 +32,7 @@ export default function Login() {
           userName: result.userName,
           createdAt: result.createdAt,
           status: result.status,
+          keepLogin,
         },
       });
     } else if (result.needsVerification) {
@@ -40,6 +42,7 @@ export default function Login() {
           loginId: result.loginId,
           userName: result.userName,
           createdAt: result.createdAt,
+          keepLogin,
         },
       });
     } else {
@@ -80,7 +83,21 @@ export default function Login() {
             />
           </div>
 
-          {error && <div className="error-message">{error}</div>}
+          <label className="keep-login">
+            <input
+              type="checkbox"
+              checked={keepLogin}
+              onChange={(e) => setKeepLogin(e.target.checked)}
+            />
+            로그인 상태 유지
+          </label>
+          {keepLogin && (
+            <p className="keep-login-notice">
+              개인정보 보호를 위해 본인 기기에서만 사용하세요. 30일 동안 로그인이 유지됩니다.
+            </p>
+          )}
+
+          {error &&<div className="error-message">{error}</div>}
 
           <button type="submit" className="login-btn" disabled={loading}>
             {loading ? '로그인 중...' : '로그인'}

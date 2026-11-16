@@ -1,0 +1,142 @@
+/* 공통 레이아웃은 MandalartGroups.css 재사용 */
+
+.msocial-nav {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4A6FDC;
+  background: #EEF2FF;
+  padding: 3px 10px;
+  border-radius: 12px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* ── 공개 설정 ── */
+.msocial-public {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.msocial-public-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.msocial-public-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.msocial-public-desc {
+  font-size: 12px;
+  color: #6B7280;
+}
+
+.msocial-switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 48px;
+  height: 28px;
+  border: none;
+  border-radius: 14px;
+  background: #D1D5DB;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.msocial-switch.on { background: #3DB88A; }
+.msocial-switch:disabled { opacity: 0.5; cursor: default; }
+
+.msocial-switch-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: left 0.2s;
+}
+.msocial-switch.on .msocial-switch-knob { left: 23px; }
+
+/* ── 탭 ── */
+.msocial-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.msocial-tab {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #E5E7EB;
+  background: #fff;
+  color: #6B7280;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.msocial-tab.active {
+  border-color: #4A6FDC;
+  background: #4A6FDC;
+  color: #fff;
+}
+
+/* ── 카드 ── */
+.msocial-card .mgroup-member { border-bottom: none; }
+
+.msocial-rank {
+  display: inline-block;
+  min-width: 20px;
+  margin-right: 6px;
+  font-weight: 800;
+  color: #4A6FDC;
+}
+
+.msocial-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.msocial-actions .mgroup-view {
+  flex: 1;
+  min-width: 0;
+  margin-top: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.msocial-like {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 10px 14px;
+  border: 2px solid #F59E0B;
+  background: #fff;
+  color: #B45309;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, transform 0.1s;
+}
+.msocial-like-icon { font-size: 18px; line-height: 1; }
+.msocial-like:hover:not(:disabled) { background: #FFFBEB; }
+.msocial-like:active:not(:disabled) { transform: scale(0.95); }
+.msocial-like.liked {
+  background: #F59E0B;
+  color: #fff;
+}
+.msocial-like:disabled {
+  cursor: default;
+  border-color: #E5E7EB;
+  color: #6B7280;
+}

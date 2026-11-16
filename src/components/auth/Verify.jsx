@@ -16,7 +16,7 @@ export default function Verify() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { userId, loginId, userName, createdAt } = location.state || {};
+  const { userId, loginId, userName, createdAt, keepLogin } = location.state || {};
 
   // 잘못된 접근 방지
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function Verify() {
     }
 
     setLoading(true);
-    const result = await verifyAndActivate(userId, loginId, createdAt, selectedQuestionId, answer, recommendPerson, userName);
+    const result = await verifyAndActivate(userId, loginId, createdAt, selectedQuestionId, answer, recommendPerson, userName, keepLogin);
     setLoading(false);
 
     if (result.success) {

@@ -89,16 +89,7 @@ export default function PrivacyPolicy() {
           </Info>
         </Section>
 
-        <Section title="7. 광고 서비스 (Google AdSense)">
-          <p>본 서비스는 Google AdSense를 통해 광고를 제공합니다. Google은 광고 제공 과정에서 쿠키 등을 사용하여 이용자의 광고 관심 분야를 파악할 수 있습니다.</p>
-          <ul style={{ paddingLeft: '20px', lineHeight: 2 }}>
-            <li>Google의 광고 쿠키 사용으로 인해 관심 기반 광고가 표시될 수 있습니다.</li>
-            <li>Google 개인정보처리방침: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: '#4ecdc4' }}>policies.google.com/privacy</a></li>
-            <li>광고 맞춤 설정 해제: <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style={{ color: '#4ecdc4' }}>google.com/settings/ads</a></li>
-          </ul>
-        </Section>
-
-        <Section title="8. 이용자의 권리">
+        <Section title="7. 이용자의 권리">
           <p>이용자는 언제든지 다음 권리를 행사할 수 있습니다.</p>
           <ul style={{ paddingLeft: '20px', lineHeight: 2 }}>
             <li>개인정보 열람 요구</li>
@@ -108,14 +99,14 @@ export default function PrivacyPolicy() {
           <p>권리 행사는 마이페이지 또는 아래 연락처를 통해 요청하실 수 있습니다.</p>
         </Section>
 
-        <Section title="9. 개인정보 보호책임자">
+        <Section title="8. 개인정보 보호책임자">
           <Info>
             <Row label="담당자" value="jwkim100167" />
             <Row label="GitHub" value="github.com/jwkim100167" />
           </Info>
         </Section>
 
-        <Section title="10. 방침 변경 안내">
+        <Section title="9. 방침 변경 안내">
           <p>본 개인정보처리방침은 법령·서비스 변경에 따라 수정될 수 있으며, 변경 시 서비스 내 공지를 통해 안내합니다.</p>
         </Section>
 

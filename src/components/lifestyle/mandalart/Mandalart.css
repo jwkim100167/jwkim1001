@@ -1,4 +1,8 @@
 .mandalart-app {
+  /* 브라우저 다크모드에서도 라이트 디자인으로 고정
+     (index.css 의 color-scheme: light dark 때문에 입력칸·스크롤바만 어둡게 그려지던 문제) */
+  color-scheme: light;
+  color: #1F2937;
   min-height: 100vh;
   background: #F8F9FA;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -31,6 +35,12 @@
   transition: color 0.15s;
 }
 .back-btn:hover { color: #374151; }
+.back-btn-plain {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
 
 .header-title {
   flex: 1;
@@ -40,25 +50,6 @@
   margin: 0;
 }
 
-.header-actions {
-  display: flex;
-  gap: 6px;
-}
-
-.action-btn {
-  padding: 6px 12px;
-  border: 1px solid #E5E7EB;
-  border-radius: 6px;
-  background: #fff;
-  font-size: 13px;
-  cursor: pointer;
-  color: #374151;
-  transition: background 0.15s;
-}
-.action-btn:hover { background: #F3F4F6; }
-
-.reset-btn { color: #EF4444; border-color: #FECACA; }
-.reset-btn:hover { background: #FEF2F2; }
 
 /* ── Global progress bar ── */
 .global-progress {
@@ -157,7 +148,8 @@
 }
 
 .mandalart-cell.has-gauge .sector-mini-gauge {
-  position: static;
+  position: relative; /* 흐름 배치는 유지하면서 목표 눈금(smg-target-tick)의 기준이 됨 */
+  inset: auto;        /* 기본 .sector-mini-gauge 의 left/right/bottom 오프셋이 relative 이동으로 적용되지 않게 */
   width: calc(100% - 8px);
   height: 4px;
   margin: 0;
@@ -276,6 +268,7 @@
   border-radius: 8px;
   font-size: 15px;
   color: #111827;
+  background-color: #fff; /* 글자색과 짝으로 지정 — 다크모드에서 어두운 바탕 위 어두운 글자 방지 */
   outline: none;
   box-sizing: border-box;
   resize: none;
@@ -308,6 +301,7 @@
   border-radius: 8px;
   font-size: 14px;
   color: #111827;
+  background-color: #fff;
   outline: none;
   box-sizing: border-box;
   resize: none;
@@ -450,6 +444,7 @@
   border-radius: 8px;
   font-size: 14px;
   color: #374151;
+  background-color: #fff;
   resize: vertical;
   font-family: inherit;
   outline: none;
@@ -676,10 +671,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  gap: 12px;
   height: 100vh;
   font-size: 16px;
   color: #6B7280;
 }
+
+/* ── Group button ── */
+.group-btn {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4A6FDC;
+  background: #EEF2FF;
+  padding: 3px 10px;
+  border-radius: 12px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.group-btn:hover { background: #E0E7FF; }
 
 /* ── User badge ── */
 .user-badge {
@@ -715,8 +725,6 @@
 
 /* ── Responsive ── */
 @media (max-width: 600px) {
-  .header-actions { gap: 4px; }
-  .action-btn { padding: 5px 8px; font-size: 12px; }
   .header-title { font-size: 16px; }
   .mandalart-grid-wrapper { padding: 8px; }
   .mandalart-cell { font-size: clamp(10px, 3vw, 14px); }
@@ -760,3 +768,306 @@
     height: min(calc(100vh - 130px), calc(100vw - 348px), 720px);
   }
 }
+
+/* ── 내 설정 / 목표 달성률 ── */
+.user-badge-btn {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.user-badge-btn:hover { background: #E5E7EB; color: #374151; }
+
+.gp-track,
+.cell-gauge-auto-wrap,
+.cell-gauge-range-wrap {
+  position: relative;
+}
+
+.gp-target-line,
+.range-target-line {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  margin-left: -1px;
+  background: #F59E0B;
+  border-radius: 1px;
+  pointer-events: none;
+}
+.range-target-line { top: 50%; height: 14px; bottom: auto; transform: translateY(-50%); }
+
+.gp-target {
+  font-size: 12px;
+  font-weight: 400;
+  color: #9CA3AF;
+  white-space: nowrap;
+}
+
+.achieved-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #B45309;
+  background: #FEF3C7;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-right: 6px;
+  white-space: nowrap;
+}
+
+.smg-target-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.mandalart-cell.achieved .smg-fill { background: #FCD34D; }
+.mandalart-cell.achieved .smg-pct { color: #FDE68A; }
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.settings-desc {
+  font-size: 12px;
+  color: #6B7280;
+}
+
+.target-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.target-chip {
+  padding: 8px 16px;
+  border: 1px solid #E5E7EB;
+  background: #fff;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.target-chip:hover { border-color: #4A6FDC; }
+.target-chip.active {
+  border-color: #4A6FDC;
+  background: #4A6FDC;
+  color: #fff;
+}
+
+/* ── 헤더 로그 버튼 ── */
+.log-btn {
+  padding: 6px 14px;
+  border: none;
+  background: #4A6FDC;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(74, 111, 220, 0.3);
+  transition: background 0.15s, transform 0.1s;
+}
+.log-btn:hover { background: #3B5BC4; }
+.log-btn:active { transform: scale(0.96); }
+
+/* 버튼이 많아진 헤더 — 좁은 화면에서는 줄바꿈 */
+@media (max-width: 600px) {
+  .header-top { flex-wrap: wrap; row-gap: 8px; }
+  .header-title { flex-basis: calc(100% - 60px); }
+}
+
+/* ── 밝은 배경의 연동(미러) 칸: 진행률·게이지를 진한 색으로 ── */
+.mandalart-cell.mirror-cell .smg-pct {
+  color: #374151;
+  text-shadow: none;
+}
+.mandalart-cell.mirror-cell .sector-mini-gauge { background: rgba(0, 0, 0, 0.12); }
+.mandalart-cell.mirror-cell .smg-fill { background: rgba(55, 65, 81, 0.6); }
+.mandalart-cell.mirror-cell .smg-target-tick { background: rgba(55, 65, 81, 0.75); }
+
+.mandalart-cell.mirror-cell.achieved .smg-pct { color: #B45309; }
+.mandalart-cell.mirror-cell.achieved .smg-fill { background: #F59E0B; }
+
+/* ── 전역(index.css) 버튼 기본값 보정 ──
+   :where() 로 명시도를 낮춰 각 버튼 클래스 스타일은 그대로 우선 적용됨 */
+:where(.mandalart-app) button {
+  background-color: #f9f9f9; /* 다크모드 전역값 #1a1a1a 대신 라이트 값 */
+  color: inherit;
+}
+/* 마우스 클릭 후 남는 굵은 포커스 테두리 제거 (키보드 이동 시 focus-visible 은 유지) */
+:where(.mandalart-app) button:focus:not(:focus-visible) { outline: none; }
+
+/* #root 의 text-align: center 상속 방지 (제목·칸은 각자 정렬 지정) */
+.settings-section { text-align: left; }
+
+/* ── 입력 순서 잠금 (핵심 목표 → 세부 목표 → 실천 과제) ── */
+.mandalart-cell.locked {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+.mandalart-cell.locked:hover,
+.mandalart-cell.locked:active { filter: none; transform: none; }
+.mandalart-cell.locked.orphan { opacity: 0.6; } /* 세부 목표 없이 만든 기존 실천 과제 */
+
+.lock-indicator,
+.orphan-indicator {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  font-size: 10px;
+  line-height: 1;
+  z-index: 3;
+  pointer-events: none;
+}
+.orphan-indicator { color: #B45309; font-size: 12px; font-weight: 700; pointer-events: auto; }
+
+.lock-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 160;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100vw - 32px);
+  padding: 10px 12px 10px 16px;
+  background: #1F2937;
+  color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  font-size: 14px;
+  animation: slideUp 0.2s ease;
+}
+.lock-toast-text { flex: 1; }
+.lock-toast-btn {
+  padding: 6px 12px;
+  border: none;
+  background: #4A6FDC;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.lock-toast-close {
+  padding: 4px 6px;
+  border: none;
+  background: transparent;
+  color: #9CA3AF;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ── 단계 표시줄 ── */
+.step-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  margin-top: 8px;
+  font-size: 12px;
+}
+.step {
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: #F3F4F6;
+  color: #9CA3AF;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.step.done { background: #ECFDF5; color: #047857; }
+.step.current { background: #4A6FDC; color: #fff; }
+.step-arrow { color: #D1D5DB; }
+
+/* ── 첫 진입 안내 배너 ── */
+.start-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px auto 0;
+  width: min(720px, calc(100% - 32px));
+  padding: 12px 16px;
+  background: #EEF2FF;
+  border: 1px solid #C7D2FE;
+  border-radius: 12px;
+  text-align: left;
+}
+.start-banner-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  color: #374151;
+}
+.start-banner-text b { font-size: 15px; color: #1E3A8A; }
+.start-banner-btn {
+  padding: 8px 14px;
+  border: none;
+  background: #4A6FDC;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ── 패널: 단계 안내 / 실천 컨디션 ── */
+.panel-step-hint {
+  padding: 12px;
+  background: #F9FAFB;
+  border: 1px dashed #D1D5DB;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #6B7280;
+  text-align: left;
+}
+
+.panel-condition {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.condition-label {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  text-align: left;
+}
+.condition-desc {
+  font-size: 11px;
+  font-weight: 400;
+  color: #9CA3AF;
+}
+.cell-gauge-label .condition-desc { display: inline; }
+
+/* 핵심 목표: 순서와 무관한 선택 단계 (나중에 적어도 됨) */
+.step.step-optional {
+  margin-left: 6px;
+  background: transparent;
+  border: 1px dashed #D1D5DB;
+  font-weight: 500;
+}
+.step.step-optional.done { border-style: solid; border-color: #A7F3D0; background: #ECFDF5; }

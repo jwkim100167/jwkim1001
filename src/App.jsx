@@ -28,6 +28,8 @@ import WorldCupPredict from './components/WorldCupPredict';
 import WorldCupPredictForm from './components/WorldCupPredictForm';
 import CobraGame from './components/games/cobra/CobraGame';
 import Mandalart from './components/lifestyle/mandalart/Mandalart';
+import MandalartGroups from './components/lifestyle/mandalart/MandalartGroups';
+import MandalartSocial from './components/lifestyle/mandalart/MandalartSocial';
 import PrivacyPolicy from './components/common/PrivacyPolicy';
 import TurneyKiaGame from './components/games/turneyKia/TurneyKiaGame';
 import TypingGame from './components/games/brain/BrainHub';
@@ -73,7 +75,10 @@ function App() {
           <Route path="/world-cup-predict/result" element={<WorldCupPredict />} />
           <Route path="/world-cup-predict/form" element={<WorldCupPredictForm />} />
           <Route path="/cobra" element={<CobraGame />} />
-          <Route path="/mandalart" element={<Mandalart />} />
+          <Route path="/mandalart" element={<Mandalart key="own" />} />
+          <Route path="/mandalart/groups" element={<MandalartGroups />} />
+          <Route path="/mandalart/social" element={<MandalartSocial />} />
+          <Route path="/mandalart/view/:userId" element={<Mandalart key="view" />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/turneyia" element={<TurneyKiaGame />} />
           <Route path="/mini-arcade" element={<TypingGame />} />

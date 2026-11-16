@@ -242,7 +242,7 @@ export async function peekCard(roomId, playerId, cardIndex, table = 'cobra_rooms
     const allReady = gameState.player_order.every(pid => newReady[pid]);
     newState = { ...newState, viewing_ready: newReady, phase: allReady ? 'playing' : 'viewing' };
   }
-  await updateGameState(roomId, newState);
+  await updateGameState(roomId, newState, table);
 }
 
 // ─────────────────────────────────────────
