@@ -193,12 +193,16 @@ export async function startGame(roomId, players, timerSeconds = 30) {
   const corners = {};
   assignedColors.forEach((color) => { corners[color] = COLOR_CORNERS[color]; });
 
+  const lives = {};
+  assignedColors.forEach((color) => { lives[color] = 3; });
+
   const gameState = {
     phase: 'playing',
     board,
     turn_order: turnOrder,
     turn_index: 0,
     passed: [],
+    lives,
     timer_seconds: timerSeconds,
     turn_started_at: new Date().toISOString(),
     corners,
@@ -272,9 +276,15 @@ export async function passTurn(roomId, color) {
   const currentColor = state.turn_order[state.turn_index];
   if (currentColor !== color) return;
 
-  // Add to passed if not already
-  if (!state.passed.includes(color)) {
-    state.passed.push(color);
+  // 목숨 감소 → 0이 되면 탈락(passed)
+  if (state.lives?.[color] !== undefined) {
+    state.lives[color] = Math.max(0, state.lives[color] - 1);
+    if (state.lives[color] <= 0 && !state.passed.includes(color)) {
+      state.passed.push(color);
+    }
+  } else {
+    // lives 필드 없는 구버전 방 호환
+    if (!state.passed.includes(color)) state.passed.push(color);
   }
 
   const { nextIndex, nextPassed } = advanceTurn(state);

@@ -237,6 +237,17 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
     }
   }, [isMyTurn, selectedPiece, hoveredBoardCells, hoverValid, roomId, myColor, selectedPieceId, soundOn]);
 
+  // ── D-pad move ─────────────────────────────────────────
+  const moveHover = useCallback((dr, dc) => {
+    setHoverCell((prev) => {
+      const base = prev ?? [9, 9];
+      return [
+        Math.max(0, Math.min(19, base[0] + dr)),
+        Math.max(0, Math.min(19, base[1] + dc)),
+      ];
+    });
+  }, []);
+
   // ── Pass ───────────────────────────────────────────────
   const handlePass = useCallback(async () => {
     if (!isMyTurn) return;
@@ -292,20 +303,7 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
     const touch = e.changedTouches[0];
     if (!touch) return;
     const cell = getCellFromTouch(touch);
-    if (!cell) return;
-    const clickedCells = currentCells.map(([dr, dc]) => [dr + cell[0], dc + cell[1]]);
-    const valid = isValidPlacement(gameState.board, clickedCells, myColor, isFirstMove, cornerCell, gameState.remaining[myColor]);
-    if (valid) {
-      if (soundOn) playPlace();
-      doPlacePiece(roomId, myColor, selectedPieceId, clickedCells)
-        .then(() => {
-          setSelectedPieceId(null);
-          setRotation(0);
-          setFlipped(false);
-          setHoverCell(null);
-        })
-        .catch((err) => console.error('placePiece error:', err));
-    }
+    if (cell) setHoverCell(cell); // 프리뷰만 갱신, 배치는 오버레이 버튼으로
   };
 
   // ── Render board ───────────────────────────────────────
@@ -448,6 +446,23 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
           >
             {boardCells}
           </div>
+          {isMyTurn && selectedPiece && (
+            <div className="blk-board-overlay">
+              <div className="blk-dpad">
+                <button className="blk-dpad-btn blk-dpad-up" onClick={() => moveHover(-1, 0)}>↑</button>
+                <button className="blk-dpad-btn blk-dpad-left" onClick={() => moveHover(0, -1)}>←</button>
+                <button className="blk-dpad-btn blk-dpad-right" onClick={() => moveHover(0, 1)}>→</button>
+                <button className="blk-dpad-btn blk-dpad-down" onClick={() => moveHover(1, 0)}>↓</button>
+              </div>
+              <button
+                className="blk-place-overlay-btn"
+                disabled={!hoverValid}
+                onClick={handlePlace}
+              >
+                여기에 놓기
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Right Panel */}
@@ -472,8 +487,13 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
                     <span className="blk-offline-badge">연결 끊김</span>
                   )}
                   {hasPassed
-                    ? <span className="blk-panel-player-passed-badge">기권</span>
-                    : <span className="blk-panel-player-remaining">{remainingCount}개</span>
+                    ? <span className="blk-panel-player-passed-badge">탈락</span>
+                    : <>
+                        {gameState.lives?.[color] !== undefined && (
+                          <span className="blk-lives">{'❤️'.repeat(gameState.lives[color])}</span>
+                        )}
+                        <span className="blk-panel-player-remaining">{remainingCount}개</span>
+                      </>
                   }
                 </div>
               );
@@ -495,13 +515,6 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
                   ✕ 취소
                 </button>
               </div>
-              <button
-                className="blk-place-btn"
-                disabled={!hoverValid || !selectedPiece}
-                onClick={handlePlace}
-              >
-                여기에 놓기
-              </button>
             </div>
           )}
 
@@ -522,7 +535,7 @@ export default function BlokusPlay({ gameState, currentPlayer, players, roomId, 
                         setSelectedPieceId(piece.id);
                         setRotation(0);
                         setFlipped(false);
-                        setHoverCell(null);
+                        setHoverCell((prev) => prev ?? [9, 9]);
                       }}
                       title={piece.name}
                     >
