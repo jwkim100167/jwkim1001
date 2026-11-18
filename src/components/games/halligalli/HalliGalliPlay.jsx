@@ -5,6 +5,15 @@ import './HalliGalliPlay.css';
 
 const DISCARD_TIMEOUT = 10000;
 
+// 주사위 눈 패턴: 3×3 그리드 기준 [row, col] (1-indexed)
+const FRUIT_GRID = {
+  1: [[2, 2]],
+  2: [[1, 1], [3, 3]],
+  3: [[1, 1], [2, 2], [3, 3]],
+  4: [[1, 1], [1, 3], [3, 1], [3, 3]],
+  5: [[1, 1], [1, 3], [2, 2], [3, 1], [3, 3]],
+};
+
 export default function HalliGalliPlay({
   gameState,
   currentPlayer,
@@ -360,12 +369,17 @@ export default function HalliGalliPlay({
                         <span className="hg-top-card-count" style={{ color: '#a78bfa' }}>ALL</span>
                       </>
                     ) : (
-                      <>
-                        <span>{FRUIT_EMOJI[topCard.fruit]}</span>
-                        <span className="hg-top-card-count">
-                          {FRUIT_EMOJI[topCard.fruit].repeat(topCard.count)}
-                        </span>
-                      </>
+                      <div className="hg-fruit-grid">
+                        {FRUIT_GRID[topCard.count]?.map(([r, c], i) => (
+                          <span
+                            key={i}
+                            className="hg-fruit-cell"
+                            style={{ gridRow: r, gridColumn: c }}
+                          >
+                            {FRUIT_EMOJI[topCard.fruit]}
+                          </span>
+                        ))}
+                      </div>
                     )
                   ) : (
                     <span style={{ opacity: 0.3, fontSize: '1rem' }}>—</span>
@@ -428,7 +442,7 @@ export default function HalliGalliPlay({
           <button
             className="hg-bell-btn"
             onClick={handleBell}
-            disabled={busy}
+            disabled={busy || phase !== 'playing'}
           >
             🔔 <span className="hg-bell-btn-text">벨!</span>
           </button>

@@ -112,26 +112,37 @@
 }
 
 .hg-top-card {
-  width: 64px;
-  height: 80px;
+  width: 72px;
+  height: 90px;
   border-radius: 10px;
   background: #2a1800;
   border: 2px solid rgba(255,255,255,0.15);
+  padding: 6px;
+  box-sizing: border-box;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  font-size: 1.6rem;
 }
 .hg-top-card.empty {
   opacity: 0.3;
 }
 .hg-top-card-count {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 800;
-  color: #fbbf24;
-  letter-spacing: 1px;
+  color: #a78bfa;
+}
+.hg-fruit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 100%;
+  height: 100%;
+}
+.hg-fruit-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
 }
 
 .hg-deck-icon {
