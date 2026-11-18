@@ -251,8 +251,9 @@ export async function peekCard(roomId, playerId, cardIndex, table = 'cobra_rooms
 
 /** 덱에서 카드 한 장 뽑기 */
 export async function drawFromDeck(roomId, _playerId, gameState, table = 'cobra_rooms') {
-  let deck = [...gameState.deck];
-  let discardPile = [...gameState.discard_pile];
+  const latestState = await fetchLatestState(roomId, table);
+  let deck = [...latestState.deck];
+  let discardPile = [...latestState.discard_pile];
 
   if (deck.length === 0) {
     const top = discardPile.pop();
@@ -263,7 +264,7 @@ export async function drawFromDeck(roomId, _playerId, gameState, table = 'cobra_
 
   const drawnCard = deck.pop();
   await updateGameState(roomId, {
-    ...gameState,
+    ...latestState,
     deck,
     discard_pile: discardPile,
     drawn_card: drawnCard,
@@ -275,26 +276,27 @@ export async function drawFromDeck(roomId, _playerId, gameState, table = 'cobra_
 
 /** 뽑은 카드를 버리기 (손패 유지) — J/Q/K 특수 능력 처리 포함 */
 export async function discardDrawn(roomId, playerId, gameState, table = 'cobra_rooms') {
-  const discardedCard = gameState.drawn_card;
-  const newDiscard = [...gameState.discard_pile, discardedCard];
+  const latestState = await fetchLatestState(roomId, table);
+  const discardedCard = latestState.drawn_card;
+  const newDiscard = [...latestState.discard_pile, discardedCard];
 
-  if (gameState.options?.specialCards) {
+  if (latestState.options?.specialCards) {
     const val = getCardDisplayValue(discardedCard);
     if (val === 'J' || val === 'Q' || val === 'K') {
       // J: 비공개 카드가 없으면 턴 pass
       if (val === 'J') {
-        const faceUpArr = gameState.face_up[playerId];
-        const selfKnown = gameState.private_knowledge?.[playerId]?.[playerId] || {};
-        const hasUnknown = gameState.hands[playerId].some((_, i) => !faceUpArr[i] && !selfKnown[i]);
+        const faceUpArr = latestState.face_up[playerId];
+        const selfKnown = latestState.private_knowledge?.[playerId]?.[playerId] || {};
+        const hasUnknown = latestState.hands[playerId].some((_, i) => !faceUpArr[i] && !selfKnown[i]);
         if (!hasUnknown) {
-          const newState = { ...gameState, discard_pile: newDiscard, drawn_card: null, turn_phase: 'draw' };
+          const newState = { ...latestState, discard_pile: newDiscard, drawn_card: null, turn_phase: 'draw' };
           await advanceTurn(roomId, playerId, newState, table);
           return;
         }
       }
       const type = val === 'J' ? 'peek_own' : val === 'Q' ? 'peek_opp' : 'swap';
       await updateGameState(roomId, {
-        ...gameState,
+        ...latestState,
         discard_pile: newDiscard,
         drawn_card: null,
         turn_phase: 'special',
@@ -305,7 +307,7 @@ export async function discardDrawn(roomId, playerId, gameState, table = 'cobra_r
   }
 
   // 카드 버림 → 다른 플레이어 즉시 선점 가능 창 열기
-  const newState = { ...gameState, discard_pile: newDiscard, drawn_card: null, turn_phase: 'draw', seonjeom_window: true, last_discarder_id: playerId };
+  const newState = { ...latestState, discard_pile: newDiscard, drawn_card: null, turn_phase: 'draw', seonjeom_window: true, last_discarder_id: playerId };
   await advanceTurn(roomId, playerId, newState, table);
 }
 
@@ -383,15 +385,16 @@ export async function resolveSpecialSwap(roomId, initiatorId, p1Id, p1Idx, p2Id,
 
 /** 손패의 카드와 뽑은 카드 교체 (손패 카드가 버리기 패로) */
 export async function swapWithHand(roomId, playerId, handIndex, gameState, table = 'cobra_rooms') {
-  const handCard = gameState.hands[playerId][handIndex];
-  const drawnCard = gameState.drawn_card;
+  const latestState = await fetchLatestState(roomId, table);
+  const handCard = latestState.hands[playerId][handIndex];
+  const drawnCard = latestState.drawn_card;
 
-  const newHand = [...gameState.hands[playerId]];
+  const newHand = [...latestState.hands[playerId]];
   newHand[handIndex] = drawnCard;
 
   // 교체 시 손패 카드 버림 → 선점 창 열기
   const { newFaceUp, newPK: clearedPK } = clearPositionKnowledge(
-    gameState.face_up, gameState.private_knowledge || {}, playerId, handIndex
+    latestState.face_up, latestState.private_knowledge || {}, playerId, handIndex
   );
   // 나는 뽑은 카드를 봤으므로 private_knowledge 에만 기록 (나만 앎)
   const myKnowledge = clearedPK[playerId] || {};
@@ -402,11 +405,11 @@ export async function swapWithHand(roomId, playerId, handIndex, gameState, table
   };
 
   const newState = {
-    ...gameState,
-    hands: { ...gameState.hands, [playerId]: newHand },
+    ...latestState,
+    hands: { ...latestState.hands, [playerId]: newHand },
     face_up: newFaceUp,
     private_knowledge: newPK,
-    discard_pile: [...gameState.discard_pile, handCard],
+    discard_pile: [...latestState.discard_pile, handCard],
     drawn_card: null,
     turn_phase: 'draw',
     seonjeom_window: true,
@@ -422,23 +425,24 @@ export async function swapWithHand(roomId, playerId, handIndex, gameState, table
 
 /** 뽑은 카드와 손패 카드가 같은 숫자 → 둘 다 버리기 */
 export async function matchAndDiscard(roomId, playerId, handIndex, gameState, table = 'cobra_rooms') {
-  const handCard = gameState.hands[playerId][handIndex];
-  const drawnCard = gameState.drawn_card;
+  const latestState = await fetchLatestState(roomId, table);
+  const handCard = latestState.hands[playerId][handIndex];
+  const drawnCard = latestState.drawn_card;
 
   if (!cardsMatch(handCard, drawnCard)) throw new Error('같은 숫자가 아닙니다.');
 
-  const newHand = gameState.hands[playerId].filter((_, i) => i !== handIndex);
+  const newHand = latestState.hands[playerId].filter((_, i) => i !== handIndex);
   // 카드 제거 → 인덱스 조정 + private_knowledge 정리
   const { newFaceUp, newPK } = removePositionKnowledge(
-    gameState.face_up, gameState.private_knowledge || {}, playerId, handIndex
+    latestState.face_up, latestState.private_knowledge || {}, playerId, handIndex
   );
 
   const newState = {
-    ...gameState,
-    hands: { ...gameState.hands, [playerId]: newHand },
+    ...latestState,
+    hands: { ...latestState.hands, [playerId]: newHand },
     face_up: newFaceUp,
     private_knowledge: newPK,
-    discard_pile: [...gameState.discard_pile, drawnCard, handCard],
+    discard_pile: [...latestState.discard_pile, drawnCard, handCard],
     drawn_card: null,
     turn_phase: 'draw',
     seonjeom_window: true,
@@ -458,25 +462,26 @@ export async function matchAndDiscard(roomId, playerId, handIndex, gameState, ta
  * 덱을 뽑기 전에 선점해서 두 장 모두 버리기
  */
 export async function takeFromDiscard(roomId, playerId, handIndex, gameState, table = 'cobra_rooms') {
-  const discardPile = gameState.discard_pile || [];
+  const latestState = await fetchLatestState(roomId, table);
+  const discardPile = latestState.discard_pile || [];
   if (discardPile.length === 0) throw new Error('버린 패가 없습니다.');
 
   const discardTop = discardPile[discardPile.length - 1];
-  const handCard = gameState.hands[playerId][handIndex];
+  const handCard = latestState.hands[playerId][handIndex];
 
   if (!cardsMatch(discardTop, handCard)) throw new Error('같은 숫자가 아닙니다.');
 
-  const newHand = gameState.hands[playerId].filter((_, i) => i !== handIndex);
+  const newHand = latestState.hands[playerId].filter((_, i) => i !== handIndex);
   // 카드 제거 → 인덱스 조정 + private_knowledge 정리
   const { newFaceUp, newPK } = removePositionKnowledge(
-    gameState.face_up, gameState.private_knowledge || {}, playerId, handIndex
+    latestState.face_up, latestState.private_knowledge || {}, playerId, handIndex
   );
   // discard top 제거 (선점으로 소모됨)
   const newDiscardPile = discardPile.slice(0, -1);
 
   const newState = {
-    ...gameState,
-    hands: { ...gameState.hands, [playerId]: newHand },
+    ...latestState,
+    hands: { ...latestState.hands, [playerId]: newHand },
     face_up: newFaceUp,
     private_knowledge: newPK,
     discard_pile: newDiscardPile,
